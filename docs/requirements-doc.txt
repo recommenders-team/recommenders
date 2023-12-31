@@ -1,4 +1,0 @@
-jupyter-book
-sphinx
-sphinx_inline_tabs
-ghp-import

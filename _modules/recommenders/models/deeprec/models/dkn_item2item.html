@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.deeprec.models.dkn_item2item &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/deeprec/models/dkn_item2item';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/deeprec/models/dkn_item2item.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/deeprec/models/dkn_item2item.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.deeprec.models.dkn_item2item</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.dkn</span> <span class="kn">import</span> <span class="n">DKN</span>
+<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.deeprec_utils</span> <span class="kn">import</span> <span class="n">cal_metric</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This new model adapts DKN&#39;s structure for item-to-item recommendations.</span>
+<span class="sd">The tutorial can be found at: https://github.com/microsoft/recommenders/blob/main/examples/07_tutorials/KDD2020-tutorial/step4_run_dkn_item2item.ipynb</span>
+<span class="sd"> &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="DKNItem2Item"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn_item2item.DKNItem2Item">[docs]</a><span class="k">class</span> <span class="nc">DKNItem2Item</span><span class="p">(</span><span class="n">DKN</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for item-to-item recommendations using DKN.</span>
+<span class="sd">    See https://github.com/microsoft/recommenders/blob/main/examples/07_tutorials/KDD2020-tutorial/step4_run_dkn_item2item.ipynb&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_compute_data_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred</span>
+        <span class="n">data_loss</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data_loss</span>
+
+    <span class="k">def</span> <span class="nf">_build_dkn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create DKN&#39;s logic.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Prediction of item2item relation scores made by the DKN model, in the shape of (`batch_size`, `num_negative` + 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">news_field_embed_final_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_doc_embedding</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">candidate_news_index_batch</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">candidate_news_entity_index_batch</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">news_field_embed_final_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">l2_normalize</span><span class="p">(</span>
+            <span class="n">news_field_embed_final_batch</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-12</span>
+        <span class="p">)</span>
+
+        <span class="n">item_embs_train</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">news_field_embed_final_batch</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">neg_num</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">news_field_embed_final_batch</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">],</span>
+        <span class="p">)</span>  <span class="c1"># (B, group, D)</span>
+
+        <span class="n">item_embs_source</span> <span class="o">=</span> <span class="n">item_embs_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># get the source item</span>
+        <span class="n">item_embs_source</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">item_embs_source</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">item_embs_target</span> <span class="o">=</span> <span class="n">item_embs_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="n">item_relation</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">item_embs_target</span><span class="p">,</span> <span class="n">item_embs_source</span><span class="p">)</span>
+        <span class="n">item_relation</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+            <span class="n">input_tensor</span><span class="o">=</span><span class="n">item_relation</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+        <span class="p">)</span>  <span class="c1"># (B, neg_num + 1)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pred_logits</span> <span class="o">=</span> <span class="n">item_relation</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_logits</span>
+
+    <span class="k">def</span> <span class="nf">_get_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logit</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_build_doc_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidate_word_batch</span><span class="p">,</span> <span class="n">candidate_entity_batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        To make the document embedding be dense, we add one tanh layer on top of the `kims_cnn` module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;kcnn&quot;</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span><span class="p">):</span>
+            <span class="n">news_field_embed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kims_cnn</span><span class="p">(</span>
+                <span class="n">candidate_word_batch</span><span class="p">,</span> <span class="n">candidate_entity_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+            <span class="p">)</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;W_doc_trans&quot;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">news_field_embed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_filters_total</span><span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">VarianceScaling</span><span class="p">(</span>
+                    <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fan_avg&quot;</span><span class="p">,</span>
+                    <span class="n">distribution</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;uniform&quot;</span> <span class="k">if</span> <span class="kc">False</span> <span class="k">else</span> <span class="s2">&quot;truncated_normal&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">W</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+            <span class="n">news_field_embed</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">news_field_embed</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">news_field_embed</span>
+
+<div class="viewcode-block" id="DKNItem2Item.eval"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn_item2item.DKNItem2Item.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sess</span><span class="p">,</span> <span class="n">feed_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the data in `feed_dict` with current model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sess (object): The model session object.</span>
+<span class="sd">            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray, numpy.ndarray: A tuple with predictions and labels arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feed_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_keeps</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_prob_test</span>
+        <span class="n">feed_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">is_train_stage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pred</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="n">feed_dict</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">labels</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DKNItem2Item.run_eval"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn_item2item.DKNItem2Item.run_eval">[docs]</a>    <span class="k">def</span> <span class="nf">run_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the given file and returns some evaluation metrics.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): A file name that will be evaluated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary containing evaluation metrics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">load_sess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess</span>
+        <span class="n">group_preds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">group_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">batch_data_input</span><span class="p">,</span>
+            <span class="n">newsid_list</span><span class="p">,</span>
+            <span class="n">data_size</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">load_data_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">batch_data_input</span><span class="p">:</span>
+                <span class="n">step_pred</span><span class="p">,</span> <span class="n">step_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">load_sess</span><span class="p">,</span> <span class="n">batch_data_input</span><span class="p">)</span>
+                <span class="n">group_preds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">step_pred</span><span class="p">)</span>
+                <span class="n">group_labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">step_labels</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">cal_metric</span><span class="p">(</span><span class="n">group_labels</span><span class="p">,</span> <span class="n">group_preds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">pairwise_metrics</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

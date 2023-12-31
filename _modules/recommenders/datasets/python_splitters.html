@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.datasets.python_splitters &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/datasets/python_splitters';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/datasets/python_splitters.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/datasets/python_splitters.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.datasets.python_splitters</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span> <span class="k">as</span> <span class="n">sk_split</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">recommenders.datasets.split_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">process_split_ratio</span><span class="p">,</span>
+    <span class="n">min_rating_filter_pandas</span><span class="p">,</span>
+    <span class="n">split_pandas_data_with_ratios</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="python_random_split"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.python_splitters.python_random_split">[docs]</a><span class="k">def</span> <span class="nf">python_random_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas random splitter.</span>
+
+<span class="sd">    The splitter randomly splits the input data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (pandas.DataFrame): Pandas DataFrame to be split.</span>
+<span class="sd">        ratio (float or list): Ratio for splitting data. If it is a single float number</span>
+<span class="sd">            it splits data into two halves and the ratio argument indicates the ratio</span>
+<span class="sd">            of training data set; if it is a list of float numbers, the splitter splits</span>
+<span class="sd">            data into several portions corresponding to the split ratios. If a list is</span>
+<span class="sd">            provided and the ratios are not summed to 1, they will be normalized.</span>
+<span class="sd">        seed (int): Seed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: Splits of the input data as pandas.DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multi_split</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">process_split_ratio</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">multi_split</span><span class="p">:</span>
+        <span class="n">splits</span> <span class="o">=</span> <span class="n">split_pandas_data_with_ratios</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">splits_new</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;split_index&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">splits_new</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sk_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_do_stratification</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">min_rating</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">filter_by</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">is_random</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_timestamp</span><span class="o">=</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># A few preliminary checks.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">filter_by</span> <span class="o">==</span> <span class="s2">&quot;user&quot;</span> <span class="ow">or</span> <span class="n">filter_by</span> <span class="o">==</span> <span class="s2">&quot;item&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;filter_by should be either &#39;user&#39; or &#39;item&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">min_rating</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min_rating should be integer and larger than or equal to 1.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">col_user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of data not valid. Missing User Col&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">col_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of data not valid. Missing Item Col&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_random</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col_timestamp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of data not valid. Missing Timestamp Col&quot;</span><span class="p">)</span>
+
+    <span class="n">multi_split</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">process_split_ratio</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+
+    <span class="n">split_by_column</span> <span class="o">=</span> <span class="n">col_user</span> <span class="k">if</span> <span class="n">filter_by</span> <span class="o">==</span> <span class="s2">&quot;user&quot;</span> <span class="k">else</span> <span class="n">col_item</span>
+
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">ratio</span> <span class="k">if</span> <span class="n">multi_split</span> <span class="k">else</span> <span class="p">[</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">min_rating</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">min_rating_filter_pandas</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">min_rating</span><span class="o">=</span><span class="n">min_rating</span><span class="p">,</span>
+            <span class="n">filter_by</span><span class="o">=</span><span class="n">filter_by</span><span class="p">,</span>
+            <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+            <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_random</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;random&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">order_by</span> <span class="o">=</span> <span class="s2">&quot;random&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">order_by</span> <span class="o">=</span> <span class="n">col_timestamp</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">split_by_column</span><span class="p">,</span> <span class="n">order_by</span><span class="p">])</span>
+
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">split_by_column</span><span class="p">)</span>
+
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="n">split_by_column</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">cumcount</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">is_random</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">splits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prev_threshold</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">round</span><span class="p">(</span><span class="n">threshold</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">prev_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">condition</span> <span class="o">&amp;=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">round</span><span class="p">(</span><span class="n">prev_threshold</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">])</span>
+        <span class="n">splits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">prev_threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+
+    <span class="k">return</span> <span class="n">splits</span>
+
+
+<div class="viewcode-block" id="python_chrono_split"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.python_splitters.python_chrono_split">[docs]</a><span class="k">def</span> <span class="nf">python_chrono_split</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">min_rating</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">filter_by</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_timestamp</span><span class="o">=</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas chronological splitter.</span>
+
+<span class="sd">    This function splits data in a chronological manner. That is, for each user / item, the</span>
+<span class="sd">    split function takes proportions of ratings which is specified by the split ratio(s).</span>
+<span class="sd">    The split is stratified.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (pandas.DataFrame): Pandas DataFrame to be split.</span>
+<span class="sd">        ratio (float or list): Ratio for splitting data. If it is a single float number</span>
+<span class="sd">            it splits data into two halves and the ratio argument indicates the ratio of</span>
+<span class="sd">            training data set; if it is a list of float numbers, the splitter splits</span>
+<span class="sd">            data into several portions corresponding to the split ratios. If a list is</span>
+<span class="sd">            provided and the ratios are not summed to 1, they will be normalized.</span>
+<span class="sd">        seed (int): Seed.</span>
+<span class="sd">        min_rating (int): minimum number of ratings for user or item.</span>
+<span class="sd">        filter_by (str): either &quot;user&quot; or &quot;item&quot;, depending on which of the two is to</span>
+<span class="sd">            filter with min_rating.</span>
+<span class="sd">        col_user (str): column name of user IDs.</span>
+<span class="sd">        col_item (str): column name of item IDs.</span>
+<span class="sd">        col_timestamp (str): column name of timestamps.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: Splits of the input data as pandas.DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_do_stratification</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">ratio</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span>
+        <span class="n">min_rating</span><span class="o">=</span><span class="n">min_rating</span><span class="p">,</span>
+        <span class="n">filter_by</span><span class="o">=</span><span class="n">filter_by</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_timestamp</span><span class="o">=</span><span class="n">col_timestamp</span><span class="p">,</span>
+        <span class="n">is_random</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="python_stratified_split"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.python_splitters.python_stratified_split">[docs]</a><span class="k">def</span> <span class="nf">python_stratified_split</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">min_rating</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">filter_by</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas stratified splitter.</span>
+
+<span class="sd">    For each user / item, the split function takes proportions of ratings which is</span>
+<span class="sd">    specified by the split ratio(s). The split is stratified.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (pandas.DataFrame): Pandas DataFrame to be split.</span>
+<span class="sd">        ratio (float or list): Ratio for splitting data. If it is a single float number</span>
+<span class="sd">            it splits data into two halves and the ratio argument indicates the ratio of</span>
+<span class="sd">            training data set; if it is a list of float numbers, the splitter splits</span>
+<span class="sd">            data into several portions corresponding to the split ratios. If a list is</span>
+<span class="sd">            provided and the ratios are not summed to 1, they will be normalized.</span>
+<span class="sd">        seed (int): Seed.</span>
+<span class="sd">        min_rating (int): minimum number of ratings for user or item.</span>
+<span class="sd">        filter_by (str): either &quot;user&quot; or &quot;item&quot;, depending on which of the two is to</span>
+<span class="sd">            filter with min_rating.</span>
+<span class="sd">        col_user (str): column name of user IDs.</span>
+<span class="sd">        col_item (str): column name of item IDs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: Splits of the input data as pandas.DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_do_stratification</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">ratio</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span>
+        <span class="n">min_rating</span><span class="o">=</span><span class="n">min_rating</span><span class="p">,</span>
+        <span class="n">filter_by</span><span class="o">=</span><span class="n">filter_by</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">is_random</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="numpy_stratified_split"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.python_splitters.numpy_stratified_split">[docs]</a><span class="k">def</span> <span class="nf">numpy_stratified_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split the user/item affinity matrix (sparse matrix) into train and test set matrices while maintaining</span>
+<span class="sd">    local (i.e. per user) ratios.</span>
+
+<span class="sd">    Main points :</span>
+
+<span class="sd">    1. In a typical recommender problem, different users rate a different number of items,</span>
+<span class="sd">    and therefore the user/affinity matrix has a sparse structure with variable number</span>
+<span class="sd">    of zeroes (unrated items) per row (user). Cutting a total amount of ratings will</span>
+<span class="sd">    result in a non-homogeneous distribution between train and test set, i.e. some test</span>
+<span class="sd">    users may have many ratings while other very little if none.</span>
+
+<span class="sd">    2. In an unsupervised learning problem, no explicit answer is given. For this reason</span>
+<span class="sd">    the split needs to be implemented in a different way then in supervised learningself.</span>
+<span class="sd">    In the latter, one typically split the dataset by rows (by examples), ending up with</span>
+<span class="sd">    the same number of features but different number of examples in the train/test setself.</span>
+<span class="sd">    This scheme does not work in the unsupervised case, as part of the rated items needs to</span>
+<span class="sd">    be used as a test set for fixed number of users.</span>
+
+<span class="sd">    Solution:</span>
+
+<span class="sd">    1. Instead of cutting a total percentage, for each user we cut a relative ratio of the rated</span>
+<span class="sd">    items. For example, if user1 has rated 4 items and user2 10, cutting 25% will correspond to</span>
+<span class="sd">    1 and 2.6 ratings in the test set, approximated as 1 and 3 according to the round() function.</span>
+<span class="sd">    In this way, the 0.75 ratio is satisfied both locally and globally, preserving the original</span>
+<span class="sd">    distribution of ratings across the train and test set.</span>
+
+<span class="sd">    2. It is easy (and fast) to satisfy this requirements by creating the test via element subtraction</span>
+<span class="sd">    from the original dataset X. We first create two copies of X; for each user we select a random</span>
+<span class="sd">    sample of local size ratio (point 1) and erase the remaining ratings, obtaining in this way the</span>
+<span class="sd">    train set matrix Xtst. The train set matrix is obtained in the opposite way.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X (numpy.ndarray, int): a sparse matrix to be split</span>
+<span class="sd">        ratio (float): fraction of the entire dataset to constitute the train set</span>
+<span class="sd">        seed (int): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray, numpy.ndarray:</span>
+<span class="sd">        - Xtr: The train set user/item affinity matrix.</span>
+<span class="sd">        - Xtst: The test set user/item affinity matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># set the random seed</span>
+    <span class="n">test_cut</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># percentage of ratings to go in the test set</span>
+
+    <span class="c1"># initialize train and test set matrices</span>
+    <span class="n">Xtr</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Xtst</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># find the number of rated movies per user</span>
+    <span class="n">rated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Xtr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># for each user, cut down a test_size% for the test set</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">((</span><span class="n">rated</span> <span class="o">*</span> <span class="n">test_cut</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="c1"># For each user obtain the index of rated movies</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Xtr</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># extract a random subset of size n from the set of rated movies without repetition</span>
+        <span class="n">idx_tst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">tst</span><span class="p">[</span><span class="n">u</span><span class="p">],</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">idx_train</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">idx_tst</span><span class="p">)))</span>
+
+        <span class="c1"># change the selected rated movies to unrated in the train set</span>
+        <span class="n">Xtr</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">idx_tst</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># set the movies that appear already in the train set as 0</span>
+        <span class="n">Xtst</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">idx_train</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">del</span> <span class="n">idx</span><span class="p">,</span> <span class="n">idx_train</span><span class="p">,</span> <span class="n">idx_tst</span>
+
+    <span class="k">return</span> <span class="n">Xtr</span><span class="p">,</span> <span class="n">Xtst</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

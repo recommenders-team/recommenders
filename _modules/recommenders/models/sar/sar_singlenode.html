@@ -1,0 +1,988 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.sar.sar_singlenode &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/sar/sar_singlenode';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/sar/sar_singlenode.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/sar/sar_singlenode.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.sar.sar_singlenode</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.python_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">cosine_similarity</span><span class="p">,</span>
+    <span class="n">inclusion_index</span><span class="p">,</span>
+    <span class="n">jaccard</span><span class="p">,</span>
+    <span class="n">lexicographers_mutual_information</span><span class="p">,</span>
+    <span class="n">lift</span><span class="p">,</span>
+    <span class="n">mutual_information</span><span class="p">,</span>
+    <span class="n">exponential_decay</span><span class="p">,</span>
+    <span class="n">get_top_k_scored_items</span><span class="p">,</span>
+    <span class="n">rescale</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">recommenders.utils</span> <span class="kn">import</span> <span class="n">constants</span>
+
+
+<span class="n">SIM_COOCCUR</span> <span class="o">=</span> <span class="s2">&quot;cooccurrence&quot;</span>
+<span class="n">SIM_COSINE</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span>
+<span class="n">SIM_INCLUSION_INDEX</span> <span class="o">=</span> <span class="s2">&quot;inclusion index&quot;</span>
+<span class="n">SIM_JACCARD</span> <span class="o">=</span> <span class="s2">&quot;jaccard&quot;</span>
+<span class="n">SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION</span> <span class="o">=</span> <span class="s2">&quot;lexicographers mutual information&quot;</span>
+<span class="n">SIM_LIFT</span> <span class="o">=</span> <span class="s2">&quot;lift&quot;</span>
+<span class="n">SIM_MUTUAL_INFORMATION</span> <span class="o">=</span> <span class="s2">&quot;mutual information&quot;</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="SARSingleNode"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode">[docs]</a><span class="k">class</span> <span class="nc">SARSingleNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple Algorithm for Recommendations (SAR) implementation</span>
+
+<span class="sd">    SAR is a fast scalable adaptive algorithm for personalized recommendations based on user transaction history</span>
+<span class="sd">    and items description. The core idea behind SAR is to recommend items like those that a user already has</span>
+<span class="sd">    demonstrated an affinity to. It does this by 1) estimating the affinity of users for items, 2) estimating</span>
+<span class="sd">    similarity across items, and then 3) combining the estimates to generate a set of recommendations for a given user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+        <span class="n">col_timestamp</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+        <span class="n">similarity_type</span><span class="o">=</span><span class="n">SIM_JACCARD</span><span class="p">,</span>
+        <span class="n">time_decay_coefficient</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">time_now</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timedecay_formula</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize model parameters</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col_user (str): user column name</span>
+<span class="sd">            col_item (str): item column name</span>
+<span class="sd">            col_rating (str): rating column name</span>
+<span class="sd">            col_timestamp (str): timestamp column name</span>
+<span class="sd">            col_prediction (str): prediction column name</span>
+<span class="sd">            similarity_type (str): [&#39;cooccurrence&#39;, &#39;cosine&#39;, &#39;inclusion index&#39;, &#39;jaccard&#39;,</span>
+<span class="sd">              &#39;lexicographers mutual information&#39;, &#39;lift&#39;, &#39;mutual information&#39;] option for</span>
+<span class="sd">              computing item-item similarity</span>
+<span class="sd">            time_decay_coefficient (float): number of days till ratings are decayed by 1/2</span>
+<span class="sd">            time_now (int | None): current time for time decay calculation</span>
+<span class="sd">            timedecay_formula (bool): flag to apply time decay</span>
+<span class="sd">            threshold (int): item-item co-occurrences below this threshold will be removed</span>
+<span class="sd">            normalize (bool): option for normalizing predictions to scale of original ratings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_timestamp</span> <span class="o">=</span> <span class="n">col_timestamp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span> <span class="o">=</span> <span class="n">col_prediction</span>
+
+        <span class="n">available_similarity_types</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">SIM_COOCCUR</span><span class="p">,</span>
+            <span class="n">SIM_COSINE</span><span class="p">,</span>
+            <span class="n">SIM_INCLUSION_INDEX</span><span class="p">,</span>
+            <span class="n">SIM_JACCARD</span><span class="p">,</span>
+            <span class="n">SIM_LIFT</span><span class="p">,</span>
+            <span class="n">SIM_MUTUAL_INFORMATION</span><span class="p">,</span>
+            <span class="n">SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">similarity_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_similarity_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Similarity type must be one of [&quot;&#39;</span>
+                <span class="o">+</span> <span class="s1">&#39;&quot; | &quot;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">available_similarity_types</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">=</span> <span class="n">similarity_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_decay_half_life</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">time_decay_coefficient</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="p">)</span>  <span class="c1"># convert to seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_decay_flag</span> <span class="o">=</span> <span class="n">timedecay_formula</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_now</span> <span class="o">=</span> <span class="n">time_now</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_frequencies</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_frequencies</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># threshold - items below this number get set to zero in co-occurrence counts</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Threshold cannot be &lt; 1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set flag to capture unity-rating user-affinity matrix for scaling scores</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_unity_rating</span> <span class="o">=</span> <span class="s2">&quot;_unity_rating&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unity_user_affinity</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># column for mapping user / item ids to internal indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item_id</span> <span class="o">=</span> <span class="s2">&quot;_indexed_items&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user_id</span> <span class="o">=</span> <span class="s2">&quot;_indexed_users&quot;</span>
+
+        <span class="c1"># obtain all the users and items from both training and test data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># The min and max of the rating scale, obtained from the training data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_max</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># mapping for item to matrix element</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user2index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item2index</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># the opposite of the above maps - map array index to actual string ID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index2item</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index2user</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SARSingleNode.compute_affinity_matrix"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_affinity_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">compute_affinity_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">rating_col</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Affinity matrix.</span>
+
+<span class="sd">        The user-affinity matrix can be constructed by treating the users and items as</span>
+<span class="sd">        indices in a sparse matrix, and the events as the data. Here, we&#39;re treating</span>
+<span class="sd">        the ratings as the event weights.  We convert between different sparse-matrix</span>
+<span class="sd">        formats to de-duplicate user-item pairs, otherwise they will get added up.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): Indexed df of users and items</span>
+<span class="sd">            rating_col (str): Name of column to use for ratings</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sparse.csr: Affinity matrix in Compressed Sparse Row (CSR) format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">rating_col</span><span class="p">],</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user_id</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item_id</span><span class="p">])),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_users</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span><span class="p">),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.compute_time_decay"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_time_decay">[docs]</a>    <span class="k">def</span> <span class="nf">compute_time_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">decay_column</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute time decay on provided column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): DataFrame of users and items</span>
+<span class="sd">            decay_column (str): column to decay</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: with column decayed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># if time_now is None use the latest time</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_now</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_now</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_timestamp</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="c1"># apply time decay to each rating</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">decay_column</span><span class="p">]</span> <span class="o">*=</span> <span class="n">exponential_decay</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_timestamp</span><span class="p">],</span>
+            <span class="n">max_val</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_now</span><span class="p">,</span>
+            <span class="n">half_life</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_decay_half_life</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># group time decayed ratings by user-item and take the sum as the user-item affinity</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.compute_cooccurrence_matrix"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_cooccurrence_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">compute_cooccurrence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Co-occurrence matrix.</span>
+
+<span class="sd">        The co-occurrence matrix is defined as :math:`C = U^T * U`</span>
+
+<span class="sd">        where U is the user_affinity matrix with 1&#39;s as values (instead of ratings).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): DataFrame of users and items</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: Co-occurrence matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_item_hits</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user_id</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item_id</span><span class="p">])),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_users</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span><span class="p">),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+
+        <span class="n">item_cooccurrence</span> <span class="o">=</span> <span class="n">user_item_hits</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">user_item_hits</span><span class="p">)</span>
+        <span class="n">item_cooccurrence</span> <span class="o">=</span> <span class="n">item_cooccurrence</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span>
+            <span class="n">item_cooccurrence</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">item_cooccurrence</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.set_index"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.set_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate continuous indices for users and items to reduce memory usage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): dataframe with user and item ids</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># generate a map of continuous index values to items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index2item</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index2user</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+
+        <span class="c1"># invert the mappings from above</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item2index</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">index2item</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user2index</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">index2user</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># set values for the total count of users and items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user2index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index2item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.fit"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main fit method for SAR.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Please make sure that `df` has no duplicates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): User item rating dataframe (without duplicates).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">select_columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_decay_flag</span><span class="p">:</span>
+            <span class="n">select_columns</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_timestamp</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">select_columns</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There should not be duplicates in the dataframe&quot;</span><span class="p">)</span>
+
+        <span class="c1"># generate continuous indices if this hasn&#39;t been done</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">index2item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Collecting user affinity matrix&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Rating column data type must be numeric&quot;</span><span class="p">)</span>
+
+        <span class="c1"># copy the DataFrame to avoid modification of the input</span>
+        <span class="n">temp_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">select_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_decay_flag</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating time-decayed affinities&quot;</span><span class="p">)</span>
+            <span class="n">temp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_time_decay</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">temp_df</span><span class="p">,</span> <span class="n">decay_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating index columns&quot;</span><span class="p">)</span>
+        <span class="c1"># add mapping of user and item ids to indices</span>
+        <span class="n">temp_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">temp_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">user</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rating_min</span> <span class="o">=</span> <span class="n">temp_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rating_max</span> <span class="o">=</span> <span class="n">temp_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating normalization factors&quot;</span><span class="p">)</span>
+            <span class="n">temp_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_unity_rating</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_decay_flag</span><span class="p">:</span>
+                <span class="n">temp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_time_decay</span><span class="p">(</span>
+                    <span class="n">df</span><span class="o">=</span><span class="n">temp_df</span><span class="p">,</span> <span class="n">decay_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_unity_rating</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unity_user_affinity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_affinity_matrix</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">=</span><span class="n">temp_df</span><span class="p">,</span> <span class="n">rating_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_unity_rating</span>
+            <span class="p">)</span>
+
+        <span class="c1"># affinity matrix</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Building user affinity sparse matrix&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_affinity_matrix</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">=</span><span class="n">temp_df</span><span class="p">,</span> <span class="n">rating_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span>
+        <span class="p">)</span>
+
+        <span class="c1"># calculate item co-occurrence</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating item co-occurrence&quot;</span><span class="p">)</span>
+        <span class="n">item_cooccurrence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cooccurrence_matrix</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">temp_df</span><span class="p">)</span>
+
+        <span class="c1"># free up some space</span>
+        <span class="k">del</span> <span class="n">temp_df</span>
+
+        <span class="c1"># creates an array with the frequency of every unique item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_frequencies</span> <span class="o">=</span> <span class="n">item_cooccurrence</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating item similarity&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_COOCCUR</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using co-occurrence based similarity&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">item_cooccurrence</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_COSINE</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using cosine similarity&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">item_cooccurrence</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_INCLUSION_INDEX</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using inclusion index&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">inclusion_index</span><span class="p">(</span><span class="n">item_cooccurrence</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_JACCARD</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using jaccard based similarity&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">jaccard</span><span class="p">(</span><span class="n">item_cooccurrence</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using lexicographers mutual information similarity&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">lexicographers_mutual_information</span><span class="p">(</span><span class="n">item_cooccurrence</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_LIFT</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using lift based similarity&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">lift</span><span class="p">(</span><span class="n">item_cooccurrence</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span> <span class="o">==</span> <span class="n">SIM_MUTUAL_INFORMATION</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using mutual information similarity&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span> <span class="o">=</span> <span class="n">mutual_information</span><span class="p">(</span><span class="n">item_cooccurrence</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown similarity type: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">similarity_type</span><span class="p">))</span>
+
+        <span class="c1"># free up some space</span>
+        <span class="k">del</span> <span class="n">item_cooccurrence</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done training&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.score"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Score all items for test users.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            test (pandas.DataFrame): user to test</span>
+<span class="sd">            remove_seen (bool): flag to remove items seen in training from recommendation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: Value of interest of all items for the users.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get user / item indices from test set</span>
+        <span class="n">user_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">user</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">),</span>
+                <span class="n">test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">user_ids</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SAR cannot score users that are not in the training set&quot;</span><span class="p">)</span>
+
+        <span class="c1"># calculate raw scores with a matrix multiplication</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating recommendation scores&quot;</span><span class="p">)</span>
+        <span class="n">test_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span><span class="p">[</span><span class="n">user_ids</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span><span class="p">)</span>
+
+        <span class="c1"># ensure we&#39;re working with a dense ndarray</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_scores</span><span class="p">,</span> <span class="n">sparse</span><span class="o">.</span><span class="n">spmatrix</span><span class="p">):</span>
+            <span class="n">test_scores</span> <span class="o">=</span> <span class="n">test_scores</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unity_user_affinity</span><span class="p">[</span><span class="n">user_ids</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span><span class="p">)</span>
+            <span class="n">user_min_scores</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">test_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_min</span>
+            <span class="p">)</span>
+            <span class="n">user_max_scores</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">test_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_max</span>
+            <span class="p">)</span>
+            <span class="n">test_scores</span> <span class="o">=</span> <span class="n">rescale</span><span class="p">(</span>
+                <span class="n">test_scores</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rating_min</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rating_max</span><span class="p">,</span>
+                <span class="n">user_min_scores</span><span class="p">,</span>
+                <span class="n">user_max_scores</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># remove items in the train set so recommended items are always novel</span>
+        <span class="k">if</span> <span class="n">remove_seen</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing seen items&quot;</span><span class="p">)</span>
+            <span class="n">test_scores</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span><span class="p">[</span><span class="n">user_ids</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="k">return</span> <span class="n">test_scores</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.get_popularity_based_topk"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.get_popularity_based_topk">[docs]</a>    <span class="k">def</span> <span class="nf">get_popularity_based_topk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get top K most frequently occurring items across all users.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            top_k (int): number of top items to recommend.</span>
+<span class="sd">            sort_top_k (bool): flag to sort top k results.</span>
+<span class="sd">            items (bool): if false, return most frequent users instead</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: top k most popular items.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">frequencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_frequencies</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index2item</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_frequencies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">user_frequencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span><span class="o">.</span><span class="n">getnnz</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                    <span class="s2">&quot;int64&quot;</span>
+                <span class="p">)</span>
+            <span class="n">frequencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_frequencies</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index2user</span>
+
+        <span class="n">test_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">frequencies</span><span class="p">])</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting top K&quot;</span><span class="p">)</span>
+        <span class="n">top_components</span><span class="p">,</span> <span class="n">top_scores</span> <span class="o">=</span> <span class="n">get_top_k_scored_items</span><span class="p">(</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">test_scores</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="n">sort_top_k</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">top_components</span><span class="o">.</span><span class="n">flatten</span><span class="p">()],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">:</span> <span class="n">top_scores</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.get_item_based_topk"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.get_item_based_topk">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_based_topk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get top K similar items to provided seed items based on similarity metric defined.</span>
+<span class="sd">        This method will take a set of items and use them to recommend the most similar items to that set</span>
+<span class="sd">        based on the similarity matrix fit during training.</span>
+<span class="sd">        This allows recommendations for cold-users (unseen during training), note - the model is not updated.</span>
+
+<span class="sd">        The following options are possible based on information provided in the items input:</span>
+<span class="sd">        1. Single user or seed of items: only item column (ratings are assumed to be 1)</span>
+<span class="sd">        2. Single user or seed of items w/ ratings: item column and rating column</span>
+<span class="sd">        3. Separate users or seeds of items: item and user column (user ids are only used to separate item sets)</span>
+<span class="sd">        4. Separate users or seeds of items with ratings: item, user and rating columns provided</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            items (pandas.DataFrame): DataFrame with item, user (optional), and rating (optional) columns</span>
+<span class="sd">            top_k (int): number of top items to recommend</span>
+<span class="sd">            sort_top_k (bool): flag to sort top k results</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: sorted top k recommendation items</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># convert item ids to indices</span>
+        <span class="n">item_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">),</span>
+                    <span class="n">items</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># if no ratings were provided assume they are all 1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">ratings</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ratings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">item_ids</span><span class="p">))</span>
+
+        <span class="c1"># create local map of user ids</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">test_users</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span>
+            <span class="n">user2index</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())}</span>
+            <span class="n">user_ids</span> <span class="o">=</span> <span class="n">test_users</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">user2index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if no user column exists assume all entries are for a single user</span>
+            <span class="n">test_users</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">item_ids</span><span class="p">))</span>
+            <span class="n">user_ids</span> <span class="o">=</span> <span class="n">test_users</span>
+        <span class="n">n_users</span> <span class="o">=</span> <span class="n">user_ids</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># generate pseudo user affinity using seed items</span>
+        <span class="n">pseudo_affinity</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="p">(</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+
+        <span class="c1"># calculate raw scores with a matrix multiplication</span>
+        <span class="n">test_scores</span> <span class="o">=</span> <span class="n">pseudo_affinity</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_similarity</span><span class="p">)</span>
+
+        <span class="c1"># remove items in the seed set so recommended items are novel</span>
+        <span class="n">test_scores</span><span class="p">[</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="n">top_items</span><span class="p">,</span> <span class="n">top_scores</span> <span class="o">=</span> <span class="n">get_top_k_scored_items</span><span class="p">(</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">test_scores</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="n">sort_top_k</span>
+        <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
+                    <span class="n">test_users</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">top_items</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index2item</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">top_items</span><span class="o">.</span><span class="n">flatten</span><span class="p">()],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">:</span> <span class="n">top_scores</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># drop invalid items</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.get_topk_most_similar_users"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.get_topk_most_similar_users">[docs]</a>    <span class="k">def</span> <span class="nf">get_topk_most_similar_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Based on user affinity towards items, calculate the most similar users to the given user.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (int): user to retrieve most similar users for</span>
+<span class="sd">            top_k (int): number of top items to recommend</span>
+<span class="sd">            sort_top_k (bool): flag to sort top k results</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: top k most similar users and their scores</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2index</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
+        <span class="n">similarities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span><span class="p">[</span><span class="n">user_idx</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_affinity</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+        <span class="n">similarities</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_idx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="n">top_items</span><span class="p">,</span> <span class="n">top_scores</span> <span class="o">=</span> <span class="n">get_top_k_scored_items</span><span class="p">(</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">similarities</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="n">sort_top_k</span>
+        <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index2user</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">top_items</span><span class="o">.</span><span class="n">flatten</span><span class="p">()],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">:</span> <span class="n">top_scores</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># drop invalid items</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.recommend_k_items"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.recommend_k_items">[docs]</a>    <span class="k">def</span> <span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recommend top K items for all users which are in the test set</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            test (pandas.DataFrame): users to test</span>
+<span class="sd">            top_k (int): number of top items to recommend</span>
+<span class="sd">            sort_top_k (bool): flag to sort top k results</span>
+<span class="sd">            remove_seen (bool): flag to remove items seen in training from recommendation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: top k recommendation items for each user</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">test_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="n">remove_seen</span><span class="p">)</span>
+
+        <span class="n">top_items</span><span class="p">,</span> <span class="n">top_scores</span> <span class="o">=</span> <span class="n">get_top_k_scored_items</span><span class="p">(</span>
+            <span class="n">scores</span><span class="o">=</span><span class="n">test_scores</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="n">sort_top_k</span>
+        <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
+                    <span class="n">test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">top_items</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index2item</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">top_items</span><span class="o">.</span><span class="n">flatten</span><span class="p">()],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">:</span> <span class="n">top_scores</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># drop invalid items</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SARSingleNode.predict"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output SAR scores for only the users-items pairs which are in the test set</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            test (pandas.DataFrame): DataFrame that contains users and items to test</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: DataFrame contains the prediction results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">test_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+        <span class="n">user_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">user</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">),</span>
+                    <span class="n">test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># create mapping of new items to zeros</span>
+        <span class="n">item_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">),</span>
+                    <span class="n">test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">item_ids</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">nans</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Items found in test not seen during training, new items will have score of 0&quot;</span>
+            <span class="p">)</span>
+            <span class="n">test_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_scores</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_users</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">item_ids</span><span class="p">[</span><span class="n">nans</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span>
+            <span class="n">item_ids</span> <span class="o">=</span> <span class="n">item_ids</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int64&quot;</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">:</span> <span class="n">test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">:</span> <span class="n">test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">:</span> <span class="n">test_scores</span><span class="p">[</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">],</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

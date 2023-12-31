@@ -1,0 +1,2047 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.evaluation.python_evaluation &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/evaluation/python_evaluation';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/evaluation/python_evaluation.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/evaluation/python_evaluation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.evaluation.python_evaluation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">mean_squared_error</span><span class="p">,</span>
+    <span class="n">mean_absolute_error</span><span class="p">,</span>
+    <span class="n">r2_score</span><span class="p">,</span>
+    <span class="n">explained_variance_score</span><span class="p">,</span>
+    <span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="n">log_loss</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RELEVANCE_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">recommenders.datasets.pandas_df_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">has_columns</span><span class="p">,</span>
+    <span class="n">has_same_base_dtype</span><span class="p">,</span>
+    <span class="n">lru_cache_df</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="ColumnMismatchError"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ColumnMismatchError">[docs]</a><span class="k">class</span> <span class="nc">ColumnMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when there is a mismatch in columns.</span>
+
+<span class="sd">    This exception is raised when an operation involving columns</span>
+<span class="sd">    encounters a mismatch or inconsistency.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        message (str): Explanation of the error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ColumnTypeMismatchError"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ColumnTypeMismatchError">[docs]</a><span class="k">class</span> <span class="nc">ColumnTypeMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when there is a mismatch in column types.</span>
+
+<span class="sd">    This exception is raised when an operation involving column types</span>
+<span class="sd">    encounters a mismatch or inconsistency.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        message (str): Explanation of the error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_column_dtypes</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks columns of DataFrame inputs</span>
+
+<span class="sd">    This includes the checks on:</span>
+
+<span class="sd">    * whether the input columns exist in the input DataFrames</span>
+<span class="sd">    * whether the data types of col_user as well as col_item are matched in the two input DataFrames.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func (function): function that will be wrapped</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function: Wrapper function for checking dtypes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_column_dtypes_wrapper</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check columns of DataFrame inputs</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rating_true (pandas.DataFrame): True data</span>
+<span class="sd">            rating_pred (pandas.DataFrame): Predicted data</span>
+<span class="sd">            col_user (str): column name for user</span>
+<span class="sd">            col_item (str): column name for item</span>
+<span class="sd">            col_rating (str): column name for rating</span>
+<span class="sd">            col_prediction (str): column name for prediction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Some ranking metrics don&#39;t have the rating column, so we don&#39;t need to check.</span>
+        <span class="n">expected_true_columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s2">&quot;col_rating&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">expected_true_columns</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;col_rating&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">rating_true</span><span class="p">,</span> <span class="n">expected_true_columns</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ColumnMismatchError</span><span class="p">(</span><span class="s2">&quot;Missing columns in true rating DataFrame&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">rating_pred</span><span class="p">,</span> <span class="p">{</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_prediction</span><span class="p">}):</span>
+            <span class="k">raise</span> <span class="n">ColumnMismatchError</span><span class="p">(</span><span class="s2">&quot;Missing columns in predicted rating DataFrame&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_same_base_dtype</span><span class="p">(</span>
+            <span class="n">rating_true</span><span class="p">,</span> <span class="n">rating_pred</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ColumnTypeMismatchError</span><span class="p">(</span>
+                <span class="s2">&quot;Columns in provided DataFrames are not the same datatype&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span>
+            <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+            <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+            <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+            <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+            <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">check_column_dtypes_wrapper</span>
+
+
+<div class="viewcode-block" id="merge_rating_true_pred"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.merge_rating_true_pred">[docs]</a><span class="nd">@_check_column_dtypes</span>
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">merge_rating_true_pred</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Join truth and prediction data frames on userID and itemID and return the true</span>
+<span class="sd">    and predicted rated with the correct index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: Array with the true ratings</span>
+<span class="sd">        numpy.ndarray: Array with the predicted ratings</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># pd.merge will apply suffixes to columns which have the same name across both dataframes</span>
+    <span class="n">suffixes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_true&quot;</span><span class="p">,</span> <span class="s2">&quot;_pred&quot;</span><span class="p">]</span>
+    <span class="n">rating_true_pred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="p">,</span> <span class="n">rating_pred</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">],</span> <span class="n">suffixes</span><span class="o">=</span><span class="n">suffixes</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">col_rating</span> <span class="ow">in</span> <span class="n">rating_pred</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span> <span class="o">+</span> <span class="n">suffixes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">col_prediction</span> <span class="ow">in</span> <span class="n">rating_true</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">col_prediction</span> <span class="o">=</span> <span class="n">col_prediction</span> <span class="o">+</span> <span class="n">suffixes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">rating_true_pred</span><span class="p">[</span><span class="n">col_rating</span><span class="p">],</span> <span class="n">rating_true_pred</span><span class="p">[</span><span class="n">col_prediction</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="rmse"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.rmse">[docs]</a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Root Mean Squared Error</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Root mean squared error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">merge_rating_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="mae"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.mae">[docs]</a><span class="k">def</span> <span class="nf">mae</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Mean Absolute Error.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Mean Absolute Error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">merge_rating_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rsquared"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.rsquared">[docs]</a><span class="k">def</span> <span class="nf">rsquared</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate R squared</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: R squared (min=0, max=1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">merge_rating_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="exp_var"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.exp_var">[docs]</a><span class="k">def</span> <span class="nf">exp_var</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate explained variance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Explained variance (min=0, max=1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">merge_rating_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">explained_variance_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="auc"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.auc">[docs]</a><span class="k">def</span> <span class="nf">auc</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the Area-Under-Curve metric for implicit feedback typed</span>
+<span class="sd">    recommender, where rating is binary and prediction is float number ranging</span>
+<span class="sd">    from 0 to 1.</span>
+
+<span class="sd">    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The evaluation does not require a leave-one-out scenario.</span>
+<span class="sd">        This metric does not calculate group-based AUC which considers the AUC scores</span>
+<span class="sd">        averaged across users. It is also not limited to k. Instead, it calculates the</span>
+<span class="sd">        scores on the entire prediction results regardless the users.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: auc_score (min=0, max=1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">merge_rating_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logloss"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.logloss">[docs]</a><span class="k">def</span> <span class="nf">logloss</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the logloss metric for implicit feedback typed</span>
+<span class="sd">    recommender, where rating is binary and prediction is float number ranging</span>
+<span class="sd">    from 0 to 1.</span>
+
+<span class="sd">    https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True data</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted data</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: log_loss_score (min=-inf, max=inf)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">merge_rating_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="merge_ranking_true_pred"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.merge_ranking_true_pred">[docs]</a><span class="nd">@_check_column_dtypes</span>
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">merge_ranking_true_pred</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter truth and prediction data frames on common users</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user (optional)</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame, pandas.DataFrame, int: DataFrame of recommendation hits, sorted by `col_user` and `rank`</span>
+<span class="sd">        DataFrame of hit counts vs actual relevant items per user number of unique user ids</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make sure the prediction and true data frames have the same set of users</span>
+    <span class="n">common_users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">rating_true</span><span class="p">[</span><span class="n">col_user</span><span class="p">])</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rating_pred</span><span class="p">[</span><span class="n">col_user</span><span class="p">]))</span>
+    <span class="n">rating_true_common</span> <span class="o">=</span> <span class="n">rating_true</span><span class="p">[</span><span class="n">rating_true</span><span class="p">[</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">common_users</span><span class="p">)]</span>
+    <span class="n">rating_pred_common</span> <span class="o">=</span> <span class="n">rating_pred</span><span class="p">[</span><span class="n">rating_pred</span><span class="p">[</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">common_users</span><span class="p">)]</span>
+    <span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_users</span><span class="p">)</span>
+
+    <span class="c1"># Return hit items in prediction data frame with ranking information. This is used for calculating NDCG and MAP.</span>
+    <span class="c1"># Use first to generate unique ranking values for each item. This is to align with the implementation in</span>
+    <span class="c1"># Spark evaluation metrics, where index of each recommended items (the indices are unique to items) is used</span>
+    <span class="c1"># to calculate penalized precision of the ordered items.</span>
+    <span class="k">if</span> <span class="n">relevancy_method</span> <span class="o">==</span> <span class="s2">&quot;top_k&quot;</span><span class="p">:</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="n">k</span>
+    <span class="k">elif</span> <span class="n">relevancy_method</span> <span class="o">==</span> <span class="s2">&quot;by_threshold&quot;</span><span class="p">:</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="n">threshold</span>
+    <span class="k">elif</span> <span class="n">relevancy_method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Invalid relevancy_method&quot;</span><span class="p">)</span>
+    <span class="n">df_hit</span> <span class="o">=</span> <span class="n">get_top_k_items</span><span class="p">(</span>
+        <span class="n">dataframe</span><span class="o">=</span><span class="n">rating_pred_common</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">df_hit</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_hit</span><span class="p">,</span> <span class="n">rating_true_common</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">])[</span>
+        <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="c1"># count the number of hits vs actual relevant items per user</span>
+    <span class="n">df_hit_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">df_hit</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;hit&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">}),</span>
+        <span class="n">rating_true_common</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">}</span>
+        <span class="p">),</span>
+        <span class="n">on</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_hit</span><span class="p">,</span> <span class="n">df_hit_count</span><span class="p">,</span> <span class="n">n_users</span></div>
+
+
+<div class="viewcode-block" id="precision_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.precision_at_k">[docs]</a><span class="k">def</span> <span class="nf">precision_at_k</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Precision at K.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        We use the same formula to calculate precision@k as that in Spark.</span>
+<span class="sd">        More details can be found at</span>
+<span class="sd">        http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt</span>
+<span class="sd">        In particular, the maximum achievable precision may be &lt; 1, if the number of items for a</span>
+<span class="sd">        user in rating_pred is less than k.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: precision at k (min=0, max=1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_hit</span><span class="p">,</span> <span class="n">df_hit_count</span><span class="p">,</span> <span class="n">n_users</span> <span class="o">=</span> <span class="n">merge_ranking_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">df_hit_count</span><span class="p">[</span><span class="s2">&quot;hit&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_users</span></div>
+
+
+<div class="viewcode-block" id="recall_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.recall_at_k">[docs]</a><span class="k">def</span> <span class="nf">recall_at_k</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recall at K.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than</span>
+<span class="sd">        k items exist for a user in rating_true.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_hit</span><span class="p">,</span> <span class="n">df_hit_count</span><span class="p">,</span> <span class="n">n_users</span> <span class="o">=</span> <span class="n">merge_ranking_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">df_hit_count</span><span class="p">[</span><span class="s2">&quot;hit&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df_hit_count</span><span class="p">[</span><span class="s2">&quot;actual&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_users</span></div>
+
+
+<div class="viewcode-block" id="ndcg_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ndcg_at_k">[docs]</a><span class="k">def</span> <span class="nf">ndcg_at_k</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="n">score_type</span><span class="o">=</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span>
+    <span class="n">discfun_type</span><span class="o">=</span><span class="s2">&quot;loge&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalized Discounted Cumulative Gain (nDCG).</span>
+
+<span class="sd">    Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+<span class="sd">        score_type (str): type of relevance scores [&#39;binary&#39;, &#39;raw&#39;, &#39;exp&#39;]. With the default option &#39;binary&#39;, the</span>
+<span class="sd">            relevance score is reduced to either 1 (hit) or 0 (miss). Option &#39;raw&#39; uses the raw relevance score.</span>
+<span class="sd">            Option &#39;exp&#39; uses (2 ** RAW_RELEVANCE - 1) as the relevance score</span>
+<span class="sd">        discfun_type (str): type of discount function [&#39;loge&#39;, &#39;log2&#39;] used to calculate DCG.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: nDCG at k (min=0, max=1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_hit</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">merge_ranking_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">df_dcg</span> <span class="o">=</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">rating_pred</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">])</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_left&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">score_type</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
+        <span class="n">df_dcg</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">score_type</span> <span class="o">==</span> <span class="s2">&quot;raw&quot;</span><span class="p">:</span>
+        <span class="n">df_dcg</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_dcg</span><span class="p">[</span><span class="n">col_rating</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">score_type</span> <span class="o">==</span> <span class="s2">&quot;exp&quot;</span><span class="p">:</span>
+        <span class="n">df_dcg</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">df_dcg</span><span class="p">[</span><span class="n">col_rating</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;score_type must be one of &#39;binary&#39;, &#39;raw&#39;, &#39;exp&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">discfun_type</span> <span class="o">==</span> <span class="s2">&quot;loge&quot;</span><span class="p">:</span>
+        <span class="n">discfun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span>
+    <span class="k">elif</span> <span class="n">discfun_type</span> <span class="o">==</span> <span class="s2">&quot;log2&quot;</span><span class="p">:</span>
+        <span class="n">discfun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;discfun_type must be one of &#39;loge&#39;, &#39;log2&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the actual discounted gain for each record</span>
+    <span class="n">df_dcg</span><span class="p">[</span><span class="s2">&quot;dcg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_dcg</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">discfun</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df_dcg</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Calculate the ideal discounted gain for each record</span>
+    <span class="n">df_idcg</span> <span class="o">=</span> <span class="n">df_dcg</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df_idcg</span><span class="p">[</span><span class="s2">&quot;irank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_idcg</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span>
+        <span class="n">col_rating</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df_idcg</span><span class="p">[</span><span class="s2">&quot;idcg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_idcg</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">discfun</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df_idcg</span><span class="p">[</span><span class="s2">&quot;irank&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Calculate the actual DCG for each user</span>
+    <span class="n">df_user</span> <span class="o">=</span> <span class="n">df_dcg</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;dcg&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">})</span>
+
+    <span class="c1"># Calculate the ideal DCG for each user</span>
+    <span class="n">df_user</span> <span class="o">=</span> <span class="n">df_user</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">df_idcg</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;idcg&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">}),</span>
+        <span class="n">on</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># DCG over IDCG is the normalized DCG</span>
+    <span class="n">df_user</span><span class="p">[</span><span class="s2">&quot;ndcg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_user</span><span class="p">[</span><span class="s2">&quot;dcg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df_user</span><span class="p">[</span><span class="s2">&quot;idcg&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df_user</span><span class="p">[</span><span class="s2">&quot;ndcg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+
+
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_reciprocal_rank</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">df_hit</span><span class="p">,</span> <span class="n">df_hit_count</span><span class="p">,</span> <span class="n">n_users</span> <span class="o">=</span> <span class="n">merge_ranking_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_users</span>
+
+    <span class="c1"># calculate reciprocal rank of items for each user and sum them up</span>
+    <span class="n">df_hit_sorted</span> <span class="o">=</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df_hit_sorted</span><span class="p">[</span><span class="s2">&quot;rr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_hit_sorted</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">cumcount</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="n">df_hit_sorted</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span>
+    <span class="n">df_hit_sorted</span> <span class="o">=</span> <span class="n">df_hit_sorted</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;rr&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_hit_sorted</span><span class="p">,</span> <span class="n">df_hit_count</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">col_user</span><span class="p">),</span> <span class="n">n_users</span>
+
+
+<div class="viewcode-block" id="map"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.map">[docs]</a><span class="k">def</span> <span class="nf">map</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Average Precision for top k prediction items</span>
+
+<span class="sd">    The implementation of MAP is referenced from Spark MLlib evaluation metrics.</span>
+<span class="sd">    https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems</span>
+
+<span class="sd">    A good reference can be found at:</span>
+<span class="sd">    http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of</span>
+<span class="sd">        relevant items in the ground truth data, instead of k.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: MAP (min=0, max=1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_merge</span><span class="p">,</span> <span class="n">n_users</span> <span class="o">=</span> <span class="n">_get_reciprocal_rank</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_merge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">df_merge</span><span class="p">[</span><span class="s2">&quot;rr&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df_merge</span><span class="p">[</span><span class="s2">&quot;actual&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_users</span></div>
+
+
+<div class="viewcode-block" id="map_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.map_at_k">[docs]</a><span class="k">def</span> <span class="nf">map_at_k</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Average Precision at k</span>
+
+<span class="sd">    The implementation of MAP@k is referenced from Spark MLlib evaluation metrics.</span>
+<span class="sd">    https://github.com/apache/spark/blob/b938ff9f520fd4e4997938284ffa0aba9ea271fc/mllib/src/main/scala/org/apache/spark/mllib/evaluation/RankingMetrics.scala#L99</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: MAP@k (min=0, max=1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_merge</span><span class="p">,</span> <span class="n">n_users</span> <span class="o">=</span> <span class="n">_get_reciprocal_rank</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_merge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">df_merge</span><span class="p">[</span><span class="s2">&quot;rr&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df_merge</span><span class="p">[</span><span class="s2">&quot;actual&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_users</span></div>
+
+
+<div class="viewcode-block" id="get_top_k_items"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.get_top_k_items">[docs]</a><span class="k">def</span> <span class="nf">get_top_k_items</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the input customer-item-rating tuple in the format of Pandas</span>
+<span class="sd">    DataFrame, output a Pandas DataFrame in the dense format of top k items</span>
+<span class="sd">    for each user.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        If it is implicit rating, just append a column of constants to be</span>
+<span class="sd">        ratings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe (pandas.DataFrame): DataFrame of rating data (in the format</span>
+<span class="sd">        customerID-itemID-rating)</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_rating (str): column name for rating</span>
+<span class="sd">        k (int or None): number of items for each user; None means that the input has already been</span>
+<span class="sd">        filtered out top k items and sorted by ratings and there is no need to do that again.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sort dataframe by col_user and (top k) col_rating</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">top_k_items</span> <span class="o">=</span> <span class="n">dataframe</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">top_k_items</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">dataframe</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="c1"># Add ranks</span>
+    <span class="n">top_k_items</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_k_items</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">cumcount</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">top_k_items</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;Function name and function mapper.</span>
+<span class="sd">Useful when we have to serialize evaluation metric names</span>
+<span class="sd">and call the functions based on deserialized names&quot;&quot;&quot;</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">rmse</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">rmse</span><span class="p">,</span>
+    <span class="n">mae</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">mae</span><span class="p">,</span>
+    <span class="n">rsquared</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">rsquared</span><span class="p">,</span>
+    <span class="n">exp_var</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">exp_var</span><span class="p">,</span>
+    <span class="n">precision_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">precision_at_k</span><span class="p">,</span>
+    <span class="n">recall_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">recall_at_k</span><span class="p">,</span>
+    <span class="n">ndcg_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">ndcg_at_k</span><span class="p">,</span>
+    <span class="n">map_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">map_at_k</span><span class="p">,</span>
+    <span class="nb">map</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="nb">map</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># diversity metrics</span>
+<span class="k">def</span> <span class="nf">_check_column_dtypes_diversity_serendipity</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks columns of DataFrame inputs</span>
+
+<span class="sd">    This includes the checks on:</span>
+
+<span class="sd">    * whether the input columns exist in the input DataFrames</span>
+<span class="sd">    * whether the data types of col_user as well as col_item are matched in the two input DataFrames.</span>
+<span class="sd">    * whether reco_df contains any user_item pairs that are already shown in train_df</span>
+<span class="sd">    * check relevance column in reco_df</span>
+<span class="sd">    * check column names in item_feature_df</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func (function): function that will be wrapped</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function: Wrapper function for checking dtypes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_column_dtypes_diversity_serendipity_wrapper</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+        <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check columns of DataFrame inputs</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">            reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">            item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">                It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">                Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">            col_item_features (str): item feature column name.</span>
+<span class="sd">            col_user (str): User id column name.</span>
+<span class="sd">            col_item (str): Item id column name.</span>
+<span class="sd">            col_sim (str): This column indicates the column name for item similarity.</span>
+<span class="sd">            col_relevance (str): This column indicates whether the recommended item is actually</span>
+<span class="sd">                relevant to the user or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing columns in train_df DataFrame&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">reco_df</span><span class="p">,</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing columns in reco_df DataFrame&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_same_base_dtype</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Columns in provided DataFrames are not the same datatype&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">col_relevance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">col_relevance</span> <span class="o">=</span> <span class="n">DEFAULT_RELEVANCE_COL</span>
+            <span class="c1"># relevance term, default is 1 (relevant) for all</span>
+            <span class="n">reco_df</span> <span class="o">=</span> <span class="n">reco_df</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]]</span>
+            <span class="n">reco_df</span><span class="p">[</span><span class="n">col_relevance</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col_relevance</span> <span class="o">=</span> <span class="n">col_relevance</span>
+            <span class="n">reco_df</span> <span class="o">=</span> <span class="n">reco_df</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_relevance</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">col_relevance</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_feature_vector&quot;</span><span class="p">:</span>
+            <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_item</span><span class="p">,</span> <span class="n">col_item_features</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">item_feature_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">item_feature_df</span><span class="p">,</span> <span class="n">required_columns</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing columns in item_feature_df DataFrame&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;item_feature_df not specified! item_feature_df must be provided &quot;</span>
+                    <span class="s2">&quot;if choosing to use item_feature_vector to calculate item similarity. &quot;</span>
+                    <span class="s2">&quot;item_feature_df should have columns: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">required_columns</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="c1"># check if reco_df contains any user_item pairs that are already shown in train_df</span>
+        <span class="n">count_intersection</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">count_intersection</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;reco_df should not contain any user_item pairs that are already shown in train_df&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span>
+            <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
+            <span class="n">reco_df</span><span class="o">=</span><span class="n">reco_df</span><span class="p">,</span>
+            <span class="n">item_feature_df</span><span class="o">=</span><span class="n">item_feature_df</span><span class="p">,</span>
+            <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">item_sim_measure</span><span class="p">,</span>
+            <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+            <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+            <span class="n">col_sim</span><span class="o">=</span><span class="n">col_sim</span><span class="p">,</span>
+            <span class="n">col_relevance</span><span class="o">=</span><span class="n">col_relevance</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">check_column_dtypes_diversity_serendipity_wrapper</span>
+
+
+<span class="k">def</span> <span class="nf">_check_column_dtypes_novelty_coverage</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks columns of DataFrame inputs</span>
+
+<span class="sd">    This includes the checks on:</span>
+
+<span class="sd">    * whether the input columns exist in the input DataFrames</span>
+<span class="sd">    * whether the data types of col_user as well as col_item are matched in the two input DataFrames.</span>
+<span class="sd">    * whether reco_df contains any user_item pairs that are already shown in train_df</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func (function): function that will be wrapped</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function: Wrapper function for checking dtypes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_column_dtypes_novelty_coverage_wrapper</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check columns of DataFrame inputs</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">                Interaction here follows the *item choice model* from Castells et al.</span>
+<span class="sd">            reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">            col_user (str): User id column name.</span>
+<span class="sd">            col_item (str): Item id column name.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing columns in train_df DataFrame&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">reco_df</span><span class="p">,</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing columns in reco_df DataFrame&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_same_base_dtype</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Columns in provided DataFrames are not the same datatype&quot;</span><span class="p">)</span>
+
+        <span class="n">count_intersection</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">count_intersection</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;reco_df should not contain any user_item pairs that are already shown in train_df&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span>
+            <span class="n">train_df</span><span class="o">=</span><span class="n">train_df</span><span class="p">,</span>
+            <span class="n">reco_df</span><span class="o">=</span><span class="n">reco_df</span><span class="p">,</span>
+            <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+            <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">check_column_dtypes_novelty_coverage_wrapper</span>
+
+
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_pairwise_items</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])&quot;&quot;&quot;</span>
+    <span class="n">df_user_i1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]]</span>
+    <span class="n">df_user_i1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;i1&quot;</span><span class="p">]</span>
+
+    <span class="n">df_user_i2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]]</span>
+    <span class="n">df_user_i2</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">]</span>
+
+    <span class="n">df_user_i1_i2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_user_i1</span><span class="p">,</span> <span class="n">df_user_i2</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">])</span>
+
+    <span class="n">df_pairwise_items</span> <span class="o">=</span> <span class="n">df_user_i1_i2</span><span class="p">[(</span><span class="n">df_user_i1_i2</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">df_user_i1_i2</span><span class="p">[</span><span class="s2">&quot;i2&quot;</span><span class="p">])][</span>
+        <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">]</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_pairwise_items</span>
+
+
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_cosine_similarity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_cooccurrence_count&quot;</span><span class="p">:</span>
+        <span class="c1"># calculate item-item similarity based on item co-occurrence count</span>
+        <span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="n">_get_cooccurrence_similarity</span><span class="p">(</span>
+            <span class="n">train_df</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_sim</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_feature_vector&quot;</span><span class="p">:</span>
+        <span class="c1"># calculdf_cosine_similarity = ate item-item similarity based on item feature vectors</span>
+        <span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="n">_get_item_feature_similarity</span><span class="p">(</span>
+            <span class="n">item_feature_df</span><span class="p">,</span> <span class="n">col_item_features</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;item_sim_measure not recognized! The available options include &#39;item_cooccurrence_count&#39; and &#39;item_feature_vector&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_cosine_similarity</span>
+
+
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_cooccurrence_similarity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cosine similarity metric from</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:</span>
+<span class="sd">        introducing serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">    The item indexes in the result are such that i1 &lt;= i2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">_get_pairwise_items</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">)</span>
+    <span class="n">pairs_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">pairs</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">item_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">train_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">col_item</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">item_count</span><span class="p">[</span><span class="s2">&quot;item_sqrt_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item_count</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">item_co_occur</span> <span class="o">=</span> <span class="n">pairs_count</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">item_count</span><span class="p">[[</span><span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;item_sqrt_count&quot;</span><span class="p">]],</span>
+        <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">],</span>
+        <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="n">col_item</span><span class="p">],</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">col_item</span><span class="p">])</span>
+
+    <span class="n">item_co_occur</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;i1_sqrt_count&quot;</span><span class="p">]</span>
+
+    <span class="n">item_co_occur</span> <span class="o">=</span> <span class="n">item_co_occur</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">item_count</span><span class="p">[[</span><span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;item_sqrt_count&quot;</span><span class="p">]],</span>
+        <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;i2&quot;</span><span class="p">],</span>
+        <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="n">col_item</span><span class="p">],</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">col_item</span><span class="p">])</span>
+    <span class="n">item_co_occur</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;i1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i1_sqrt_count&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i2_sqrt_count&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">item_co_occur</span><span class="p">[</span><span class="n">col_sim</span><span class="p">]</span> <span class="o">=</span> <span class="n">item_co_occur</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">item_co_occur</span><span class="p">[</span><span class="s2">&quot;i1_sqrt_count&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">item_co_occur</span><span class="p">[</span><span class="s2">&quot;i2_sqrt_count&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">item_co_occur</span><span class="p">[[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">,</span> <span class="n">col_sim</span><span class="p">]]</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_cosine_similarity</span>
+
+
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_item_feature_similarity</span><span class="p">(</span>
+    <span class="n">item_feature_df</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cosine similarity metric based on item feature vectors</span>
+
+<span class="sd">    The item indexes in the result are such that i1 &lt;= i2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">item_feature_df</span><span class="p">[[</span><span class="n">col_item</span><span class="p">,</span> <span class="n">col_item_features</span><span class="p">]]</span>
+    <span class="n">df1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">]</span>
+    <span class="n">df1</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">item_feature_df</span><span class="p">[[</span><span class="n">col_item</span><span class="p">,</span> <span class="n">col_item_features</span><span class="p">]]</span>
+    <span class="n">df2</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;i2&quot;</span><span class="p">,</span> <span class="s2">&quot;f2&quot;</span><span class="p">]</span>
+    <span class="n">df2</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df_item_feature_pair</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;i2&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">df_item_feature_pair</span><span class="p">[</span><span class="n">col_sim</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_item_feature_pair</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">f1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">f2</span><span class="p">))</span>
+        <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">f1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">f2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="n">df_item_feature_pair</span><span class="p">[[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">,</span> <span class="n">col_sim</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_cosine_similarity</span>
+
+
+<span class="c1"># Diversity metrics</span>
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_intralist_similarity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Intra-list similarity from</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        &quot;Improving Recommendation Lists Through Topic Diversification&quot;,</span>
+<span class="sd">        Ziegler, McNee, Konstan and Lausen, 2005.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">_get_pairwise_items</span><span class="p">(</span><span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">)</span>
+    <span class="n">similarity_df</span> <span class="o">=</span> <span class="n">_get_cosine_similarity</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items.</span>
+    <span class="c1"># e.g. i1 and i2 have never occurred together.</span>
+
+    <span class="n">item_pair_sim</span> <span class="o">=</span> <span class="n">pairs</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">similarity_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+    <span class="n">item_pair_sim</span><span class="p">[</span><span class="n">col_sim</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">item_pair_sim</span> <span class="o">=</span> <span class="n">item_pair_sim</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+        <span class="n">item_pair_sim</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">item_pair_sim</span><span class="p">[</span><span class="s2">&quot;i2&quot;</span><span class="p">]</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_intralist_similarity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">item_pair_sim</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">col_user</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">col_sim</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">df_intralist_similarity</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;avg_il_sim&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df_intralist_similarity</span>
+
+
+<div class="viewcode-block" id="user_diversity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.user_diversity">[docs]</a><span class="nd">@_check_column_dtypes_diversity_serendipity</span>
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">user_diversity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate average diversity of recommendations for each user.</span>
+<span class="sd">    The metric definition is based on formula (3) in the following reference:</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:</span>
+<span class="sd">        introducing serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with;</span>
+<span class="sd">            contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item, col_relevance (optional).</span>
+<span class="sd">            Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">            It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">        col_item_features (str): item feature column name.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+<span class="sd">        col_sim (str): This column indicates the column name for item similarity.</span>
+<span class="sd">        col_relevance (str): This column indicates whether the recommended item is actually relevant to the user or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: A dataframe with the following columns: col_user, user_diversity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df_intralist_similarity</span> <span class="o">=</span> <span class="n">_get_intralist_similarity</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">df_user_diversity</span> <span class="o">=</span> <span class="n">df_intralist_similarity</span>
+    <span class="n">df_user_diversity</span><span class="p">[</span><span class="s2">&quot;user_diversity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">df_user_diversity</span><span class="p">[</span><span class="s2">&quot;avg_il_sim&quot;</span><span class="p">]</span>
+    <span class="n">df_user_diversity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_user_diversity</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;user_diversity&quot;</span><span class="p">]]</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_user_diversity</span></div>
+
+
+<div class="viewcode-block" id="diversity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.diversity">[docs]</a><span class="nd">@_check_column_dtypes_diversity_serendipity</span>
+<span class="k">def</span> <span class="nf">diversity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate average diversity of recommendations across all users.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with;</span>
+<span class="sd">            contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item, col_relevance (optional).</span>
+<span class="sd">            Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">            It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">        col_item_features (str): item feature column name.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+<span class="sd">        col_sim (str): This column indicates the column name for item similarity.</span>
+<span class="sd">        col_relevance (str): This column indicates whether the recommended item is actually relevant to the user or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: diversity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_user_diversity</span> <span class="o">=</span> <span class="n">user_diversity</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">avg_diversity</span> <span class="o">=</span> <span class="n">df_user_diversity</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;user_diversity&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">avg_diversity</span></div>
+
+
+<span class="c1"># Novelty metrics</span>
+<div class="viewcode-block" id="historical_item_novelty"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.historical_item_novelty">[docs]</a><span class="nd">@_check_column_dtypes_novelty_coverage</span>
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">historical_item_novelty</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate novelty for each item. Novelty is computed as the minus logarithm of</span>
+<span class="sd">    (number of interactions with item / total number of interactions). The definition of the metric</span>
+<span class="sd">    is based on the following reference using the choice model (eqs. 1 and 6):</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:</span>
+<span class="sd">        choice, discovery and relevance, ECIR 2011</span>
+
+<span class="sd">    The novelty of an item can be defined relative to a set of observed events on the set of all items.</span>
+<span class="sd">    These can be events of user choice (item &quot;is picked&quot; by a random user) or user discovery</span>
+<span class="sd">    (item &quot;is known&quot; to a random user). The above definition of novelty reflects a factor of item popularity.</span>
+<span class="sd">    High novelty values correspond to long-tail items in the density function, that few users have interacted</span>
+<span class="sd">    with and low novelty values correspond to popular head items.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">                Interaction here follows the *item choice model* from Castells et al.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: A dataframe with the following columns: col_item, item_novelty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_records</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">item_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">train_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">col_item</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">item_count</span><span class="p">[</span><span class="s2">&quot;item_novelty&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">item_count</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_records</span><span class="p">)</span>
+    <span class="n">df_item_novelty</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">item_count</span><span class="p">[[</span><span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;item_novelty&quot;</span><span class="p">]]</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">col_item</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_item_novelty</span></div>
+
+
+<div class="viewcode-block" id="novelty"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.novelty">[docs]</a><span class="nd">@_check_column_dtypes_novelty_coverage</span>
+<span class="k">def</span> <span class="nf">novelty</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the average novelty in a list of recommended items (this assumes that the recommendation list</span>
+<span class="sd">    is already computed). Follows section 5 from</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:</span>
+<span class="sd">        choice, discovery and relevance, ECIR 2011</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">                Interaction here follows the *item choice model* from Castells et al.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: novelty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df_item_novelty</span> <span class="o">=</span> <span class="n">historical_item_novelty</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">)</span>
+    <span class="n">n_recommendations</span> <span class="o">=</span> <span class="n">reco_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">reco_item_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">reco_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">col_item</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">reco_item_novelty</span> <span class="o">=</span> <span class="n">reco_item_count</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_item_novelty</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">col_item</span><span class="p">)</span>
+    <span class="n">reco_item_novelty</span><span class="p">[</span><span class="s2">&quot;product&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">reco_item_novelty</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">reco_item_novelty</span><span class="p">[</span><span class="s2">&quot;item_novelty&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">avg_novelty</span> <span class="o">=</span> <span class="n">reco_item_novelty</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;product&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">})[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_recommendations</span>
+
+    <span class="k">return</span> <span class="n">avg_novelty</span></div>
+
+
+<span class="c1"># Serendipity metrics</span>
+<div class="viewcode-block" id="user_item_serendipity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.user_item_serendipity">[docs]</a><span class="nd">@_check_column_dtypes_diversity_serendipity</span>
+<span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">user_item_serendipity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate serendipity of each item in the recommendations for each user.</span>
+<span class="sd">    The metric definition is based on the following references:</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">    Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:</span>
+<span class="sd">    introducing serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">    Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,</span>
+<span class="sd">    eugeneyan.com, April 2020</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">            It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">        col_item_features (str): item feature column name.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+<span class="sd">        col_sim (str): This column indicates the column name for item similarity.</span>
+<span class="sd">        col_relevance (str): This column indicates whether the recommended item is actually</span>
+<span class="sd">              relevant to the user or not.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># for every col_user, col_item in reco_df, join all interacted items from train_df.</span>
+    <span class="c1"># These interacted items are repeated for each item in reco_df for a specific user.</span>
+    <span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="n">_get_cosine_similarity</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">reco_user_item</span> <span class="o">=</span> <span class="n">reco_df</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]]</span>
+    <span class="n">reco_user_item</span><span class="p">[</span><span class="s2">&quot;reco_item_tmp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reco_user_item</span><span class="p">[</span><span class="n">col_item</span><span class="p">]</span>
+
+    <span class="n">train_user_item</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]]</span>
+    <span class="n">train_user_item</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;train_item_tmp&quot;</span><span class="p">]</span>
+
+    <span class="n">reco_train_user_item</span> <span class="o">=</span> <span class="n">reco_user_item</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">train_user_item</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">])</span>
+    <span class="n">reco_train_user_item</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reco_train_user_item</span><span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;reco_item_tmp&quot;</span><span class="p">,</span> <span class="s2">&quot;train_item_tmp&quot;</span><span class="p">]</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">reco_train_user_item</span><span class="p">[</span><span class="s2">&quot;i2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reco_train_user_item</span><span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;reco_item_tmp&quot;</span><span class="p">,</span> <span class="s2">&quot;train_item_tmp&quot;</span><span class="p">]</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">reco_train_user_item_sim</span> <span class="o">=</span> <span class="n">reco_train_user_item</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">df_cosine_similarity</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+    <span class="p">)</span>
+    <span class="n">reco_train_user_item_sim</span><span class="p">[</span><span class="n">col_sim</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">reco_user_item_avg_sim</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">reco_train_user_item_sim</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">col_sim</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">reco_user_item_avg_sim</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="s2">&quot;avg_item2interactedHistory_sim&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">df_user_item_serendipity</span> <span class="o">=</span> <span class="n">reco_user_item_avg_sim</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">reco_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">df_user_item_serendipity</span><span class="p">[</span><span class="s2">&quot;user_item_serendipity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">1</span> <span class="o">-</span> <span class="n">df_user_item_serendipity</span><span class="p">[</span><span class="s2">&quot;avg_item2interactedHistory_sim&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">*</span> <span class="n">df_user_item_serendipity</span><span class="p">[</span><span class="n">col_relevance</span><span class="p">]</span>
+    <span class="n">df_user_item_serendipity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_user_item_serendipity</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;user_item_serendipity&quot;</span><span class="p">]]</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_user_item_serendipity</span></div>
+
+
+<div class="viewcode-block" id="user_serendipity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.user_serendipity">[docs]</a><span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@_check_column_dtypes_diversity_serendipity</span>
+<span class="k">def</span> <span class="nf">user_serendipity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate average serendipity for each user&#39;s recommendations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">            It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">        col_item_features (str): item feature column name.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+<span class="sd">        col_sim (str): This column indicates the column name for item similarity.</span>
+<span class="sd">        col_relevance (str): This column indicates whether the recommended item is actually</span>
+<span class="sd">              relevant to the user or not.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: A dataframe with following columns: col_user, user_serendipity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_user_item_serendipity</span> <span class="o">=</span> <span class="n">user_item_serendipity</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="p">,</span>
+        <span class="n">col_relevance</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">df_user_serendipity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_user_item_serendipity</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;user_item_serendipity&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">df_user_serendipity</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;user_serendipity&quot;</span><span class="p">]</span>
+    <span class="n">df_user_serendipity</span> <span class="o">=</span> <span class="n">df_user_serendipity</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_user_serendipity</span></div>
+
+
+<div class="viewcode-block" id="serendipity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.serendipity">[docs]</a><span class="nd">@_check_column_dtypes_diversity_serendipity</span>
+<span class="k">def</span> <span class="nf">serendipity</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">reco_df</span><span class="p">,</span>
+    <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_sim</span><span class="o">=</span><span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate average serendipity for recommendations across all users.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">            It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">        col_item_features (str): item feature column name.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+<span class="sd">        col_sim (str): This column indicates the column name for item similarity.</span>
+<span class="sd">        col_relevance (str): This column indicates whether the recommended item is actually</span>
+<span class="sd">              relevant to the user or not.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: serendipity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_user_serendipity</span> <span class="o">=</span> <span class="n">user_serendipity</span><span class="p">(</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="p">,</span>
+        <span class="n">col_item_features</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_sim</span><span class="p">,</span>
+        <span class="n">col_relevance</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">avg_serendipity</span> <span class="o">=</span> <span class="n">df_user_serendipity</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;user_serendipity&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">avg_serendipity</span></div>
+
+
+<span class="c1"># Coverage metrics</span>
+<div class="viewcode-block" id="catalog_coverage"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.catalog_coverage">[docs]</a><span class="nd">@_check_column_dtypes_novelty_coverage</span>
+<span class="k">def</span> <span class="nf">catalog_coverage</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate catalog coverage for recommendations across all users.</span>
+<span class="sd">    The metric definition is based on the &quot;catalog coverage&quot; definition in the following reference:</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        G. Shani and A. Gunawardana, Evaluating Recommendation Systems,</span>
+<span class="sd">        Recommender Systems Handbook pp. 257-297, 2010.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">                Interaction here follows the *item choice model* from Castells et al.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: catalog coverage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># distinct item count in reco_df</span>
+    <span class="n">count_distinct_item_reco</span> <span class="o">=</span> <span class="n">reco_df</span><span class="p">[</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+    <span class="c1"># distinct item count in train_df</span>
+    <span class="n">count_distinct_item_train</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+
+    <span class="c1"># catalog coverage</span>
+    <span class="n">c_coverage</span> <span class="o">=</span> <span class="n">count_distinct_item_reco</span> <span class="o">/</span> <span class="n">count_distinct_item_train</span>
+    <span class="k">return</span> <span class="n">c_coverage</span></div>
+
+
+<div class="viewcode-block" id="distributional_coverage"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.distributional_coverage">[docs]</a><span class="nd">@_check_column_dtypes_novelty_coverage</span>
+<span class="k">def</span> <span class="nf">distributional_coverage</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate distributional coverage for recommendations across all users.</span>
+<span class="sd">    The metric definition is based on formula (21) in the following reference:</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        G. Shani and A. Gunawardana, Evaluating Recommendation Systems,</span>
+<span class="sd">        Recommender Systems Handbook pp. 257-297, 2010.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">                Interaction here follows the *item choice model* from Castells et al.</span>
+<span class="sd">        reco_df (pandas.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">        col_user (str): User id column name.</span>
+<span class="sd">        col_item (str): Item id column name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: distributional coverage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># In reco_df, how  many times each col_item is being recommended</span>
+    <span class="n">df_itemcnt_reco</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">reco_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">col_item</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="c1"># the number of total recommendations</span>
+    <span class="n">count_row_reco</span> <span class="o">=</span> <span class="n">reco_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">df_entropy</span> <span class="o">=</span> <span class="n">df_itemcnt_reco</span>
+    <span class="n">df_entropy</span><span class="p">[</span><span class="s2">&quot;p(i)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_entropy</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">count_row_reco</span>
+    <span class="n">df_entropy</span><span class="p">[</span><span class="s2">&quot;entropy(i)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_entropy</span><span class="p">[</span><span class="s2">&quot;p(i)&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">df_entropy</span><span class="p">[</span><span class="s2">&quot;p(i)&quot;</span><span class="p">])</span>
+
+    <span class="n">d_coverage</span> <span class="o">=</span> <span class="o">-</span><span class="n">df_entropy</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;entropy(i)&quot;</span><span class="p">:</span> <span class="s2">&quot;sum&quot;</span><span class="p">})[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">d_coverage</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

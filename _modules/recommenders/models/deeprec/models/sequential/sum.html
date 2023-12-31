@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.deeprec.models.sequential.sum &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/deeprec/models/sequential/sum';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/deeprec/models/sequential/sum.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/deeprec/models/sequential/sum.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.deeprec.models.sequential.sum</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.compat.v1.nn</span> <span class="kn">import</span> <span class="n">dynamic_rnn</span>
+<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.sequential.sequential_base_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SequentialBaseModel</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.sequential.sum_cells</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SUMCell</span><span class="p">,</span>
+    <span class="n">SUMV2Cell</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="SUMModel"><a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.sum.SUMModel">[docs]</a><span class="k">class</span> <span class="nc">SUMModel</span><span class="p">(</span><span class="n">SequentialBaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sequential User Matrix Model</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        Lian, J., Batal, I., Liu, Z., Soni, A., Kang, E. Y., Wang, Y., &amp; Xie, X.,</span>
+<span class="sd">        &quot;Multi-Interest-Aware User Modeling for Large-Scale Sequential Recommendations&quot;, arXiv preprint arXiv:2102.09211, 2021.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_build_seq_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create SUM model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: The output of SUM section, which is a concatenation of user vector and target item vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>  <span class="c1"># noqa: F841</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;sum&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">history_embedding</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">item_history_embedding</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cate_history_embedding</span><span class="p">],</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="n">cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_sumcell</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">final_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_sum</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">_p</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">parameter_set</span><span class="p">:</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">_p</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_p</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;_alpha&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">_alpha</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">_alpha</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">_alpha</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;_beta&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">_beta</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">_beta</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">_beta</span><span class="p">)</span>
+
+            <span class="n">final_state</span><span class="p">,</span> <span class="n">att_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attention_query_by_state</span><span class="p">(</span>
+                <span class="n">final_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_item_embedding</span>
+            <span class="p">)</span>
+            <span class="n">model_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">final_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_item_embedding</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;model_output&quot;</span><span class="p">,</span> <span class="n">model_output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model_output</span>
+
+    <span class="k">def</span> <span class="nf">_attention_query_by_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_output</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge a user&#39;s memory states conditioned by a query item.</span>
+
+<span class="sd">        Params:</span>
+<span class="sd">            seq_output: A flatten representation of SUM memory states for (a batch of) users</span>
+<span class="sd">            query: (a batch of) target item candidates</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor, tf.Tensor: Merged user representation. Attention weights of each memory channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dim_q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">att_weights</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;query_att&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">slots</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">query_att_W</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;query_att_W&quot;</span><span class="p">,</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">dim_q</span><span class="p">],</span>
+                    <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># reshape the memory states to (BatchSize, Slots, HiddenSize)</span>
+                <span class="n">memory_state</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">seq_output</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">slots</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="n">att_weights</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span>
+                    <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span>
+                        <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span>
+                            <span class="n">tf</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">memory_state</span><span class="p">,</span> <span class="n">query_att_W</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                            <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="p">),</span>
+                        <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># merge the memory states, the final shape is (BatchSize, HiddenSize)</span>
+                <span class="n">att_res</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                    <span class="n">input_tensor</span><span class="o">=</span><span class="n">memory_state</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">att_weights</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">att_res</span> <span class="o">=</span> <span class="n">seq_output</span>
+
+        <span class="k">return</span> <span class="n">att_res</span><span class="p">,</span> <span class="n">att_weights</span>
+
+    <span class="k">def</span> <span class="nf">_create_sumcell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a SUM cell</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: An initialized SUM cell</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="n">input_embedding_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_embedding</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">input_params</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">hparams</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">*</span> <span class="n">hparams</span><span class="o">.</span><span class="n">slots</span> <span class="o">+</span> <span class="n">input_embedding_dim</span><span class="p">,</span>
+            <span class="n">hparams</span><span class="o">.</span><span class="n">slots</span><span class="p">,</span>
+            <span class="n">hparams</span><span class="o">.</span><span class="n">attention_size</span><span class="p">,</span>
+            <span class="n">input_embedding_dim</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">sumcells</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SUM&quot;</span><span class="p">:</span> <span class="n">SUMCell</span><span class="p">,</span> <span class="s2">&quot;SUMV2&quot;</span><span class="p">:</span> <span class="n">SUMV2Cell</span><span class="p">}</span>
+        <span class="n">sumCell</span> <span class="o">=</span> <span class="n">sumcells</span><span class="p">[</span><span class="n">hparams</span><span class="o">.</span><span class="n">cell</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">cell</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;SUM&quot;</span><span class="p">,</span> <span class="s2">&quot;SUMV2&quot;</span><span class="p">]:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">sumCell</span><span class="p">(</span><span class="o">*</span><span class="n">input_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ERROR! Cell type not support: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">cell</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">_build_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate  user memory states from behavior sequence</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            object: An initialied SUM cell.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: A flatten representation of user memory states, in the shape of (BatchSize, SlotsNum x HiddenSize)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;sum&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">mask</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sequence_length</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">input_tensor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">rum_outputs</span><span class="p">,</span> <span class="n">final_state</span> <span class="o">=</span> <span class="n">dynamic_rnn</span><span class="p">(</span>
+                <span class="n">cell</span><span class="p">,</span>
+                <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history_embedding</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">sequence_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sequence_length</span><span class="p">,</span>
+                <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+                <span class="n">initial_state</span><span class="o">=</span><span class="n">cell</span><span class="o">.</span><span class="n">zero_state</span><span class="p">(</span>
+                    <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history_embedding</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_state</span><span class="p">[:,</span> <span class="p">:</span> <span class="n">hparams</span><span class="o">.</span><span class="n">slots</span> <span class="o">*</span> <span class="n">hparams</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">heads</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">heads</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">_alpha</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">_beta</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;SUM_outputs&quot;</span><span class="p">,</span> <span class="n">rum_outputs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">final_state</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

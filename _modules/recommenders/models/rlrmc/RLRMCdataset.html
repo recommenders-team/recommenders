@@ -1,0 +1,544 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.rlrmc.RLRMCdataset &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/rlrmc/RLRMCdataset';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/rlrmc/RLRMCdataset.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/rlrmc/RLRMCdataset.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.rlrmc.RLRMCdataset</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="RLRMCdataset"><a class="viewcode-back" href="../../../../models.html#recommenders.models.rlrmc.RLRMCdataset.RLRMCdataset">[docs]</a><span class="k">class</span> <span class="nc">RLRMCdataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RLRMC dataset implementation. Creates sparse data structures for RLRMC algorithm.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">train</span><span class="p">,</span>
+        <span class="n">validation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mean_center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+        <span class="n">col_timestamp</span><span class="o">=</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+        <span class="c1"># seed=42,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train (pandas.DataFrame: training data with at least columns (col_user, col_item, col_rating)</span>
+<span class="sd">            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data</span>
+<span class="sd">            mean_center (bool): flag to mean center the ratings in train (and validation) data</span>
+<span class="sd">            col_user (str): user column name</span>
+<span class="sd">            col_item (str): item column name</span>
+<span class="sd">            col_rating (str): rating column name</span>
+<span class="sd">            col_timestamp (str): timestamp column name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># initialize user and item index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_idx</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># get col name of user, item and rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_timestamp</span> <span class="o">=</span> <span class="n">col_timestamp</span>
+        <span class="c1"># set random seed</span>
+        <span class="c1"># random.seed(seed)</span>
+
+        <span class="c1"># data preprocessing for training and validation data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_processing</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">mean_center</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_data_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">validation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mean_center</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the dataset to reindex userID and itemID</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train (pandas.DataFrame): training data with at least columns (col_user, col_item, col_rating)</span>
+<span class="sd">            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data</span>
+<span class="sd">            mean_center (bool): flag to mean center the ratings in train (and validation) data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: train and validation pandas.DataFrame Dataset, which have been reindexed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/main/recommenders/models/ncf/dataset.py</span>
+        <span class="c1"># If validation dataset is None</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">train</span> <span class="k">if</span> <span class="n">validation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">validation</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span> <span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+        <span class="c1"># Reindex user and item index</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Map user id</span>
+            <span class="n">user_idx</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">()</span>
+            <span class="n">user_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">+</span> <span class="s2">&quot;_idx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">user_idx</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_idx</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_idx</span> <span class="o">=</span> <span class="n">user_idx</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">user_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">],</span> <span class="n">user_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">+</span> <span class="s2">&quot;_idx&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id2user</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Map item id</span>
+            <span class="n">item_idx</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+            <span class="n">item_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">+</span> <span class="s2">&quot;_idx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item_idx</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_idx</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_idx</span> <span class="o">=</span> <span class="n">item_idx</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">item_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">],</span> <span class="n">item_idx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">+</span> <span class="s2">&quot;_idx&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id2item</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">}</span>
+
+        <span class="n">df_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_idx</span><span class="p">)</span>  <span class="c1"># number of rows</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_idx</span><span class="p">)</span>  <span class="c1"># number of columns</span>
+
+        <span class="n">rows_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;userID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">cols_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;itemID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">entries_omega</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;rating&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">if</span> <span class="n">mean_center</span><span class="p">:</span>
+            <span class="n">train_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">entries_omega</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">train_mean</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">entries_train</span> <span class="o">=</span> <span class="n">entries_omega</span> <span class="o">-</span> <span class="n">train_mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_param</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num_row&quot;</span><span class="p">:</span> <span class="n">d</span><span class="p">,</span> <span class="s2">&quot;num_col&quot;</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="s2">&quot;train_mean&quot;</span><span class="p">:</span> <span class="n">train_mean</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">entries_train</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">rows_train</span><span class="p">,</span> <span class="n">cols_train</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">validation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_validation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span><span class="p">(</span><span class="n">validation</span><span class="p">)</span>
+            <span class="n">rows_validation</span> <span class="o">=</span> <span class="n">df_validation</span><span class="p">[</span><span class="s2">&quot;userID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">cols_validation</span> <span class="o">=</span> <span class="n">df_validation</span><span class="p">[</span><span class="s2">&quot;itemID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">entries_validation</span> <span class="o">=</span> <span class="n">df_validation</span><span class="p">[</span><span class="s2">&quot;rating&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">train_mean</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">entries_validation</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">rows_validation</span><span class="p">,</span> <span class="n">cols_validation</span><span class="p">)),</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_reindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process dataset to reindex userID and itemID</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: train and validation pandas.DataFrame Dataset, which have been reindexed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># If validation dataset is None</span>
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Map user_idx and item_idx</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_idx</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_idx</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Select relevant columns</span>
+        <span class="n">df_reindex</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">+</span> <span class="s2">&quot;_idx&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">+</span> <span class="s2">&quot;_idx&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">df_reindex</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">df_reindex</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,962 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.ncf.dataset &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/ncf/dataset';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/ncf/dataset.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/ncf/dataset.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.ncf.dataset</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EmptyFileException"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.EmptyFileException">[docs]</a><span class="k">class</span> <span class="nc">EmptyFileException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if file is empty&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MissingFieldsException"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.MissingFieldsException">[docs]</a><span class="k">class</span> <span class="nc">MissingFieldsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if file is missing expected fields&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="FileNotSortedException"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.FileNotSortedException">[docs]</a><span class="k">class</span> <span class="nc">FileNotSortedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if file is not sorted correctly&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="MissingUserException"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.MissingUserException">[docs]</a><span class="k">class</span> <span class="nc">MissingUserException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if user is not in file&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DataFile class for NCF. Iterator to read data from a csv file.</span>
+<span class="sd">    Data must be sorted by user. Includes utilities for loading user data from</span>
+<span class="sd">    file, formatting it and returning a Pandas dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">,</span> <span class="n">col_test_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Path to file to be processed.</span>
+<span class="sd">            col_user (str): User column name.</span>
+<span class="sd">            col_item (str): Item column name.</span>
+<span class="sd">            col_rating (str): Rating column name.</span>
+<span class="sd">            col_test_batch (str): Test batch column name.</span>
+<span class="sd">            binary (bool): If true, set rating &gt; 0 to rating = 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span> <span class="o">=</span> <span class="n">col_test_batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_fields</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expected_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2user</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2item</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">end_of_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;UTF8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_for_missing_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_fields</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_row_data</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">EmptyFileException</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is empty.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>  <span class="c1"># end of file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_row_data</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span>
+
+    <span class="k">def</span> <span class="nf">_check_for_missing_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_to_check</span><span class="p">):</span>
+        <span class="n">missing_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fields_to_check</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">fieldnames</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_fields</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">MissingFieldsException</span><span class="p">(</span>
+                <span class="s2">&quot;Columns </span><span class="si">{}</span><span class="s2"> not in header of file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">missing_fields</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_extract_row_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">row</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">])</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">])</span>
+        <span class="n">rating</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">:</span>
+            <span class="n">rating</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rating</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">test_batch</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">:</span>
+            <span class="n">test_batch</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">:</span> <span class="n">item</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">:</span> <span class="n">rating</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">:</span> <span class="n">test_batch</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Compile lists of unique users and items, assign IDs to users and items,</span>
+        <span class="c1"># and ensure file is sorted by user (and batch index if test set)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Indexing </span><span class="si">{}</span><span class="s2"> ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">user_items</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(),</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">batch_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span>
+                <span class="n">test_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_of_file</span><span class="p">:</span>
+                    <span class="n">next_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span>
+                    <span class="n">next_test_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">)</span>
+                <span class="n">user_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">next_user</span> <span class="o">!=</span> <span class="n">user</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_of_file</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">next_user</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">FileNotSortedException</span><span class="p">(</span>
+                                <span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> is not sorted by user&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                            <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">next_test_batch</span> <span class="o">!=</span> <span class="n">test_batch</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_of_file</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">next_test_batch</span> <span class="o">&lt;</span> <span class="n">batch_index</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="n">FileNotSortedException</span><span class="p">(</span>
+                                    <span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> is not sorted by </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span>
+                                    <span class="p">)</span>
+                                <span class="p">)</span>
+                        <span class="n">batch_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_indices_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span>
+
+<div class="viewcode-block" id="DataFile.load_data"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.DataFile.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load data for a specified user or test batch</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (int): user or test batch index</span>
+<span class="sd">            by_user (bool): load data by usr if True, else by test batch</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">key_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="k">if</span> <span class="n">by_user</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span>
+
+        <span class="c1"># fast forward in file to user/test batch</span>
+        <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="n">key_col</span><span class="p">]</span> <span class="o">!=</span> <span class="n">key</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_of_file</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MissingUserException</span><span class="p">(</span>
+                    <span class="s2">&quot;User </span><span class="si">{}</span><span class="s2"> not in file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># collect user/test batch data</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">[</span><span class="n">key_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">]</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_of_file</span><span class="p">:</span>
+                <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="NegativeSampler"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler">[docs]</a><span class="k">class</span> <span class="nc">NegativeSampler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;NegativeSampler class for NCF. Samples a subset of negative items from a given population of items.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">user</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="p">,</span>
+        <span class="n">user_positive_item_pool</span><span class="p">,</span>
+        <span class="n">item_pool</span><span class="p">,</span>
+        <span class="n">sample_with_replacement</span><span class="p">,</span>
+        <span class="n">print_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str or int): User to be sampled for.</span>
+<span class="sd">            n_samples (int): Number of required samples.</span>
+<span class="sd">            user_positive_item_pool (set): Set of items with which user has previously interacted.</span>
+<span class="sd">            item_pool (set): Set of all items in population.</span>
+<span class="sd">            sample_with_replacement (bool): If true, sample negative examples with replacement,</span>
+<span class="sd">                otherwise without replacement.</span>
+<span class="sd">            print_warnings (bool): If true, prints warnings if sampling without replacement and</span>
+<span class="sd">                there are not enough items to sample from to satisfy n_neg or n_neg_test.</span>
+<span class="sd">            training (bool): Set to true if sampling for the training set or false if for the test set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_positive_item_pool</span> <span class="o">=</span> <span class="n">user_positive_item_pool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_pool</span> <span class="o">=</span> <span class="n">item_pool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span> <span class="o">=</span> <span class="n">sample_with_replacement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_warnings</span> <span class="o">=</span> <span class="n">print_warnings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="n">training</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_negative_item_pool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_user_negatives_pool</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_negative_item_pool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_negatives_with_replacement</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_negatives_without_replacement</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_sample_size</span><span class="p">()</span>
+
+<div class="viewcode-block" id="NegativeSampler.sample"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method for sampling uniformly from a population of negative items</span>
+
+<span class="sd">        Returns: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_user_negatives_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># get list of items user has not interacted with</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_pool</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_positive_item_pool</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_sample_negatives_with_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_negative_item_pool</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_sample_negatives_without_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_negative_item_pool</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># if sampling without replacement, check sample population is sufficient and reduce</span>
+        <span class="c1"># n_samples if not.</span>
+        <span class="n">n_neg_var</span> <span class="o">=</span> <span class="s2">&quot;n_neg&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="k">else</span> <span class="s2">&quot;n_neg_test&quot;</span>
+        <span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="k">else</span> <span class="s2">&quot;test&quot;</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_warnings</span><span class="p">:</span>
+            <span class="n">warning_string</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;The population of negative items to sample from is too small for user </span><span class="si">{}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Samples needed = </span><span class="si">{}</span><span class="s2">, negative items = </span><span class="si">{}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Reducing samples to </span><span class="si">{}</span><span class="s2"> for this user.&quot;</span>
+                <span class="s2">&quot;If an equal number of negative samples for each user is required in the </span><span class="si">{}</span><span class="s2"> set, sample with replacement or reduce </span><span class="si">{}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;This warning can be turned off by setting print_warnings=False&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">population_size</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">population_size</span><span class="p">,</span>
+                    <span class="n">dataset_name</span><span class="p">,</span>
+                    <span class="n">n_neg_var</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_string</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="n">k</span></div>
+
+
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset class for NCF&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">train_file</span><span class="p">,</span>
+        <span class="n">test_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">test_file_full</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">overwrite_test_file_full</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">n_neg</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">n_neg_test</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+        <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sample_with_replacement</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">print_warnings</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_file (str): Path to training dataset file.</span>
+<span class="sd">            test_file (str): Path to test dataset file for leave-one-out evaluation.</span>
+<span class="sd">            test_file_full (str): Path to full test dataset file including negative samples.</span>
+<span class="sd">            overwrite_test_file_full (bool): If true, recreate and overwrite test_file_full.</span>
+<span class="sd">            n_neg (int): Number of negative samples per positive example for training set.</span>
+<span class="sd">            n_neg_test (int): Number of negative samples per positive example for test set.</span>
+<span class="sd">            col_user (str): User column name.</span>
+<span class="sd">            col_item (str): Item column name.</span>
+<span class="sd">            col_rating (str): Rating column name.</span>
+<span class="sd">            binary (bool): If true, set rating &gt; 0 to rating = 1.</span>
+<span class="sd">            seed (int): Seed.</span>
+<span class="sd">            sample_with_replacement (bool): If true, sample negative examples with replacement,</span>
+<span class="sd">                otherwise without replacement.</span>
+<span class="sd">            print_warnings (bool): If true, prints warnings if sampling without replacement and</span>
+<span class="sd">                there are not enough items to sample from to satisfy n_neg or n_neg_test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_file</span> <span class="o">=</span> <span class="n">train_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_file</span> <span class="o">=</span> <span class="n">test_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span> <span class="o">=</span> <span class="n">test_file_full</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite_test_file_full</span> <span class="o">=</span> <span class="n">overwrite_test_file_full</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_neg</span> <span class="o">=</span> <span class="n">n_neg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_neg_test</span> <span class="o">=</span> <span class="n">n_neg_test</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span> <span class="o">=</span> <span class="n">sample_with_replacement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_warnings</span> <span class="o">=</span> <span class="n">print_warnings</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span> <span class="o">=</span> <span class="s2">&quot;test_batch&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">(</span>
+            <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_file</span><span class="p">,</span>
+            <span class="n">col_user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+            <span class="n">col_item</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+            <span class="n">col_rating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">,</span>
+            <span class="n">binary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">users</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">user2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">item2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">id2user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">id2item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">data_len</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_datafile</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file</span><span class="p">,</span>
+                <span class="n">col_user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+                <span class="n">col_item</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+                <span class="n">col_rating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">,</span>
+                <span class="n">binary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_full.csv&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite_test_file_full</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_test_file</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_full_datafile</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">,</span>
+                <span class="n">col_user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+                <span class="n">col_item</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+                <span class="n">col_rating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">,</span>
+                <span class="n">col_test_batch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">,</span>
+                <span class="n">binary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># set random seed</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_negative_examples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">user_negative_samples</span><span class="p">):</span>
+        <span class="c1"># create dataframe containing negative examples for user assigned zero rating</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_negative_samples</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">:</span> <span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_samples</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">:</span> <span class="n">user_negative_samples</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_samples</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_test_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Creating full leave-one-out test file </span><span class="si">{}</span><span class="s2"> ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># create empty csv</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">batch_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span> <span class="k">as</span> <span class="n">train_datafile</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_datafile</span> <span class="k">as</span> <span class="n">test_datafile</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">test_datafile</span><span class="o">.</span><span class="n">users</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">train_datafile</span><span class="o">.</span><span class="n">users</span><span class="p">:</span>
+                        <span class="n">user_test_data</span> <span class="o">=</span> <span class="n">test_datafile</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+                        <span class="n">user_train_data</span> <span class="o">=</span> <span class="n">train_datafile</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+                        <span class="c1"># for leave-one-out evaluation, exclude items seen in both training and test sets</span>
+                        <span class="c1"># when sampling negatives</span>
+                        <span class="n">user_positive_item_pool</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                            <span class="n">user_test_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">user_train_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+                        <span class="n">sampler</span> <span class="o">=</span> <span class="n">NegativeSampler</span><span class="p">(</span>
+                            <span class="n">user</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">n_neg_test</span><span class="p">,</span>
+                            <span class="n">user_positive_item_pool</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">print_warnings</span><span class="p">,</span>
+                            <span class="n">training</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                        <span class="n">user_examples_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="c1"># sample n_neg_test negatives for each positive example and assign a batch index</span>
+                        <span class="k">for</span> <span class="n">positive_example</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span>
+                            <span class="n">user_test_data</span><span class="p">,</span> <span class="n">user_test_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="p">):</span>
+                            <span class="n">negative_examples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_negative_examples_df</span><span class="p">(</span>
+                                <span class="n">user</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+                            <span class="p">)</span>
+                            <span class="n">examples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">positive_example</span><span class="p">,</span> <span class="n">negative_examples</span><span class="p">])</span>
+                            <span class="n">examples</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_idx</span>
+                            <span class="n">user_examples_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span>
+                            <span class="n">batch_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1"># append user test data to file</span>
+                        <span class="n">user_examples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">user_examples_dfs</span><span class="p">)</span>
+                        <span class="n">user_examples</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_split_into_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shuffle_buffer</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">shuffle_buffer</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_batch_with_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
+            <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_batch_without_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_release_shuffle_buffer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">yield_id</span><span class="p">,</span> <span class="n">write_to</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">prepare_batch</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_batch_with_id</span> <span class="k">if</span> <span class="n">yield_id</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_batch_without_id</span>
+        <span class="p">)</span>
+        <span class="n">shuffle_buffer_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">shuffle_buffer</span><span class="p">)</span>
+        <span class="n">shuffle_buffer_df</span> <span class="o">=</span> <span class="n">shuffle_buffer_df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+            <span class="n">shuffle_buffer_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># shuffle the buffer</span>
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_into_batches</span><span class="p">(</span><span class="n">shuffle_buffer_df</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">write_to</span><span class="p">:</span>
+                    <span class="n">batch</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">write_to</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">prepare_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">batch</span>
+
+<div class="viewcode-block" id="Dataset.train_loader"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset.train_loader">[docs]</a>    <span class="k">def</span> <span class="nf">train_loader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yield_id</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">write_to</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator for serving batches of training data. Positive examples are loaded from the</span>
+<span class="sd">        original training file, to which negative samples are added. Data is loaded in memory into a</span>
+<span class="sd">        shuffle buffer up to a maximum of shuffle_size rows, before the data is shuffled and released.</span>
+<span class="sd">        If out-of-memory errors are encountered, try reducing shuffle_size.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch_size (int): Number of examples in each batch.</span>
+<span class="sd">            shuffle_size (int): Maximum number of examples in shuffle buffer.</span>
+<span class="sd">            yield_id (bool): If true, return assigned user and item IDs, else return original values.</span>
+<span class="sd">            write_to (str): Path of file to write full dataset (including negative examples).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># if shuffle_size not supplied, use (estimated) full data size i.e. complete in-memory shuffle</span>
+        <span class="k">if</span> <span class="n">shuffle_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shuffle_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_len</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_neg</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">write_to</span><span class="p">:</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">write_to</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">shuffle_buffer</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span> <span class="k">as</span> <span class="n">train_datafile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">train_datafile</span><span class="o">.</span><span class="n">users</span><span class="p">:</span>
+                <span class="n">user_positive_examples</span> <span class="o">=</span> <span class="n">train_datafile</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+                <span class="n">user_positive_item_pool</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                    <span class="n">user_positive_examples</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_neg</span> <span class="o">*</span> <span class="n">user_positive_examples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">NegativeSampler</span><span class="p">(</span>
+                    <span class="n">user</span><span class="p">,</span>
+                    <span class="n">n_samples</span><span class="p">,</span>
+                    <span class="n">user_positive_item_pool</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">train_datafile</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">print_warnings</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">user_negative_examples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_negative_examples_df</span><span class="p">(</span>
+                    <span class="n">user</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">user_examples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">user_positive_examples</span><span class="p">,</span> <span class="n">user_negative_examples</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">shuffle_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_examples</span><span class="p">)</span>
+                <span class="n">shuffle_buffer_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">shuffle_buffer</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">shuffle_buffer_len</span> <span class="o">&gt;=</span> <span class="n">shuffle_size</span><span class="p">:</span>
+                    <span class="n">buffer_remainder</span> <span class="o">=</span> <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_release_shuffle_buffer</span><span class="p">(</span>
+                        <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">yield_id</span><span class="p">,</span> <span class="n">write_to</span>
+                    <span class="p">)</span>
+                    <span class="n">shuffle_buffer</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="p">[</span><span class="n">buffer_remainder</span><span class="p">]</span> <span class="k">if</span> <span class="n">buffer_remainder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+                    <span class="p">)</span>
+            <span class="c1"># yield remaining buffer</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_release_shuffle_buffer</span><span class="p">(</span>
+                <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">yield_id</span><span class="p">,</span> <span class="n">write_to</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.test_loader"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset.test_loader">[docs]</a>    <span class="k">def</span> <span class="nf">test_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yield_id</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator for serving batches of test data for leave-one-out evaluation. Data is loaded from test_file_full.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            yield_id (bool): If true, return assigned user and item IDs, else return original values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prepare_batch</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_batch_with_id</span> <span class="k">if</span> <span class="n">yield_id</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_batch_without_id</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_full_datafile</span> <span class="k">as</span> <span class="n">test_full_datafile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">test_batch_idx</span> <span class="ow">in</span> <span class="n">test_full_datafile</span><span class="o">.</span><span class="n">batch_indices_range</span><span class="p">:</span>
+                <span class="n">test_batch_data</span> <span class="o">=</span> <span class="n">test_full_datafile</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span>
+                    <span class="n">test_batch_idx</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="k">yield</span> <span class="n">prepare_batch</span><span class="p">(</span><span class="n">test_batch_data</span><span class="p">)</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

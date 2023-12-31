@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.geoimc.geoimc_data &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/geoimc/geoimc_data';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/geoimc/geoimc_data.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/geoimc/geoimc_data.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.geoimc.geoimc_data</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">isspmatrix_csr</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">normalize</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.python_utils</span> <span class="kn">import</span> <span class="n">binarize</span>
+<span class="kn">from</span> <span class="nn">.geoimc_utils</span> <span class="kn">import</span> <span class="n">length_normalize</span><span class="p">,</span> <span class="n">reduce_dims</span>
+
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;geoimc&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DataPtr"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.DataPtr">[docs]</a><span class="k">class</span> <span class="nc">DataPtr</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Holds data and its respective indices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">entities</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a data pointer</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (csr_matrix): The target data matrix.</span>
+<span class="sd">            entities (Iterator): An iterator (of 2 elements (ndarray)) containing</span>
+<span class="sd">            the features of row, col entities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">isspmatrix_csr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_indices</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_indices</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+<div class="viewcode-block" id="DataPtr.get_data"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.DataPtr.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            csr_matrix: Target matrix (based on the data_indices filter)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_indices</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DataPtr.get_entity"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.DataPtr.get_entity">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">of</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get entity</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            of (str): The entity, either &#39;row&#39; or &#39;col&#39;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: Entity matrix (based on the entity_indices filter)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">of</span> <span class="o">==</span> <span class="s2">&quot;row&quot;</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span></div></div>
+
+
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class that holds necessary (minimal) information needed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">features_dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">target_transform</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of the dataset</span>
+<span class="sd">            features_dim (uint): Dimension of the features. If not 0, PCA is performed</span>
+<span class="sd">                on the features as the dimensionality reduction technique</span>
+<span class="sd">            normalize (bool): Normalize the features</span>
+<span class="sd">            target_transform (str): Transform the target values. Current options are</span>
+<span class="sd">                &#39;normalize&#39; (Normalize the values), &#39;&#39; (Do nothing), &#39;binarize&#39; (convert</span>
+<span class="sd">                the values using a threshold defined per dataset)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span> <span class="o">=</span> <span class="n">features_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feat_normalize</span> <span class="o">=</span> <span class="n">normalize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_transform</span> <span class="o">=</span> <span class="n">target_transform</span>
+
+<div class="viewcode-block" id="Dataset.normalize"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.Dataset.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalizes the entity features&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_normalize</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">isspmatrix_csr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Normalizing CSR matrix&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">length_normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Dataset.generate_train_test_data"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.Dataset.generate_train_test_data">[docs]</a>    <span class="k">def</span> <span class="nf">generate_train_test_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">test_ratio</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate train, test split. The split is performed on the row</span>
+<span class="sd">        entities. So, this essentially becomes a cold start row entity test.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (csr_matrix): The entire target matrix.</span>
+<span class="sd">            test_ratio (float): Ratio of test split.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">DataPtr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span> <span class="o">=</span> <span class="n">DataPtr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="o">.</span><span class="n">data_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span><span class="o">.</span><span class="n">data_indices</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+            <span class="n">test_size</span><span class="o">=</span><span class="n">test_ratio</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="o">.</span><span class="n">entity_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="o">.</span><span class="n">data_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span><span class="o">.</span><span class="n">entity_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span><span class="o">.</span><span class="n">data_indices</span></div>
+
+<div class="viewcode-block" id="Dataset.reduce_dims"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.Dataset.reduce_dims">[docs]</a>    <span class="k">def</span> <span class="nf">reduce_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduces the dimensionality of entity features.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduce_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduce_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dimensionality reduced ...&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ML_100K"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.ML_100K">[docs]</a><span class="k">class</span> <span class="nc">ML_100K</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handles MovieLens-100K</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_rating</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_rating</span> <span class="o">=</span> <span class="mi">5</span>
+
+<div class="viewcode-block" id="ML_100K.df2coo"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.ML_100K.df2coo">[docs]</a>    <span class="k">def</span> <span class="nf">df2coo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the input dataframe into a coo matrix</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): DataFrame containing the target matrix information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;user id&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;item id&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rating&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="p">[</span><span class="n">val</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_transform</span> <span class="o">==</span> <span class="s2">&quot;normalize&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rating</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_rating</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_transform</span> <span class="o">==</span> <span class="s2">&quot;binarize&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">binarize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Get this from `u.info`</span>
+        <span class="k">return</span> <span class="n">coo_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">943</span><span class="p">,</span> <span class="mi">1682</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the traget matrix from file at path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): Path to the target matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;user id&quot;</span><span class="p">,</span> <span class="s2">&quot;item id&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">],</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;timestamp&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df2coo</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ML_100K.load_data"><a class="viewcode-back" href="../../../../models.html#recommenders.models.geoimc.geoimc_data.ML_100K.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load dataset</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): Path to the directory containing ML100K dataset</span>
+<span class="sd">            e1_path (str): Path to the file containing row (user) features of ML100K dataset</span>
+<span class="sd">            e2_path (str): Path to the file containing col (movie) features of ML100K dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_user_features</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/u.user&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_item_features</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/u.item&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduce_dims</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">DataPtr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_from_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/u1.base&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_data</span> <span class="o">=</span> <span class="n">DataPtr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_from_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/u1.test&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_load_user_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load user features</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): Path to the file containing user features information</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;occupation&quot;</span><span class="p">,</span> <span class="s2">&quot;zip_code&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">features_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">],</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;occupation&quot;</span><span class="p">]),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;zip_code&quot;</span><span class="p">]),</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">features_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;user_id&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">user_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">features_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">user_features</span>
+
+    <span class="k">def</span> <span class="nf">_load_item_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load item features</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): Path to the file containing item features information</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;movie_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;movie_title&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;release_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;video_release_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;IMDb_URL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Action&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Adventure&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Animation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Childrens&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Comedy&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Crime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Documentary&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Drama&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Fantasy&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Film-Noir&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Horror&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Musical&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Mystery&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Romance&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Sci-Fi&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Thriller&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;War&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Western&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">)</span>
+
+        <span class="n">features_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;movie_title&quot;</span><span class="p">]),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;release_date&quot;</span><span class="p">]),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="s2">&quot;video_release_date&quot;</span><span class="p">),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="s2">&quot;IMDb_URL&quot;</span><span class="p">),</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">header</span><span class="p">[</span><span class="mi">5</span><span class="p">:]],</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">item_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">features_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">item_features</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

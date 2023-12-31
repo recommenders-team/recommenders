@@ -1,0 +1,1347 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.evaluation.spark_evaluation &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/evaluation/spark_evaluation';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/evaluation/spark_evaluation.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/evaluation/spark_evaluation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.evaluation.spark_evaluation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyspark.mllib.evaluation</span> <span class="kn">import</span> <span class="n">RegressionMetrics</span><span class="p">,</span> <span class="n">RankingMetrics</span>
+    <span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">Window</span><span class="p">,</span> <span class="n">DataFrame</span>
+    <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">row_number</span><span class="p">,</span> <span class="n">expr</span>
+    <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">udf</span>
+    <span class="kn">import</span> <span class="nn">pyspark.sql.functions</span> <span class="k">as</span> <span class="nn">F</span>
+    <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">,</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span>
+    <span class="kn">from</span> <span class="nn">pyspark.ml.linalg</span> <span class="kn">import</span> <span class="n">VectorUDT</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>  <span class="c1"># skip this import if we are in pure python environment</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RELEVANCE_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_SIMILARITY_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+    <span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="SparkRatingEvaluation"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation">[docs]</a><span class="k">class</span> <span class="nc">SparkRatingEvaluation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Rating Evaluator&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializer.</span>
+
+<span class="sd">        This is the Spark version of rating metrics evaluator.</span>
+<span class="sd">        The methods of this class, calculate rating metrics such as root mean squared error, mean absolute error,</span>
+<span class="sd">        R squared, and explained variance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rating_true (pyspark.sql.DataFrame): True labels.</span>
+<span class="sd">            rating_pred (pyspark.sql.DataFrame): Predicted labels.</span>
+<span class="sd">            col_user (str): column name for user.</span>
+<span class="sd">            col_item (str): column name for item.</span>
+<span class="sd">            col_rating (str): column name for rating.</span>
+<span class="sd">            col_prediction (str): column name for prediction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span> <span class="o">=</span> <span class="n">rating_true</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span> <span class="o">=</span> <span class="n">rating_pred</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span> <span class="o">=</span> <span class="n">col_prediction</span>
+
+        <span class="c1"># Check if inputs are Spark DataFrames.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;rating_true should be but is not a Spark DataFrame&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;rating_pred should be but is not a Spark DataFrame&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+
+        <span class="c1"># Check if columns exist.</span>
+        <span class="n">true_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">pred_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="k">if</span> <span class="n">rating_true</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty input dataframe&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rating_pred</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty input dataframe&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_true not valid. Missing User Col&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_true not valid. Missing Item Col&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_true not valid. Missing Rating Col&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pred_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Schema of rating_pred not valid. Missing User Col&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pred_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Schema of rating_pred not valid. Missing Item Col&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pred_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_pred not valid. Missing Prediction Col&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+            <span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">),</span>
+            <span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">),</span>
+            <span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;double&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+            <span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">),</span>
+            <span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">),</span>
+            <span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s2">&quot;double&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_pred_true</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">],</span> <span class="s2">&quot;inner&quot;</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">RegressionMetrics</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_pred_true</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">prediction</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SparkRatingEvaluation.rmse"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rmse">[docs]</a>    <span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Root Mean Squared Error.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Root mean squared error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">rootMeanSquaredError</span></div>
+
+<div class="viewcode-block" id="SparkRatingEvaluation.mae"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.mae">[docs]</a>    <span class="k">def</span> <span class="nf">mae</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Mean Absolute Error.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Mean Absolute Error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">meanAbsoluteError</span></div>
+
+<div class="viewcode-block" id="SparkRatingEvaluation.rsquared"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rsquared">[docs]</a>    <span class="k">def</span> <span class="nf">rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate R squared.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: R squared.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">r2</span></div>
+
+<div class="viewcode-block" id="SparkRatingEvaluation.exp_var"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.exp_var">[docs]</a>    <span class="k">def</span> <span class="nf">exp_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate explained variance.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">           Spark MLLib&#39;s implementation is buggy (can lead to values &gt; 1), hence we use var().</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Explained variance (min=0, max=1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">var1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_pred_true</span><span class="o">.</span><span class="n">selectExpr</span><span class="p">(</span><span class="s2">&quot;variance(label-prediction)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">var2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_pred_true</span><span class="o">.</span><span class="n">selectExpr</span><span class="p">(</span><span class="s2">&quot;variance(label)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">var1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">var2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># numpy divide is more tolerant to var2 being zero</span>
+            <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SparkRankingEvaluation"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation">[docs]</a><span class="k">class</span> <span class="nc">SparkRankingEvaluation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Ranking Evaluator&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization.</span>
+<span class="sd">        This is the Spark version of ranking metrics evaluator.</span>
+<span class="sd">        The methods of this class, calculate ranking metrics such as precision@k, recall@k, ndcg@k, and mean average</span>
+<span class="sd">        precision.</span>
+
+<span class="sd">        The implementations of precision@k, ndcg@k, and mean average precision are referenced from Spark MLlib, which</span>
+<span class="sd">        can be found at `the link &lt;https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems&gt;`_.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rating_true (pyspark.sql.DataFrame): DataFrame of true rating data (in the</span>
+<span class="sd">                format of customerID-itemID-rating tuple).</span>
+<span class="sd">            rating_pred (pyspark.sql.DataFrame): DataFrame of predicted rating data (in</span>
+<span class="sd">                the format of customerID-itemID-rating tuple).</span>
+<span class="sd">            col_user (str): column name for user.</span>
+<span class="sd">            col_item (str): column name for item.</span>
+<span class="sd">            col_rating (str): column name for rating.</span>
+<span class="sd">            col_prediction (str): column name for prediction.</span>
+<span class="sd">            k (int): number of items to recommend to each user.</span>
+<span class="sd">            relevancy_method (str): method for determining relevant items. Possible</span>
+<span class="sd">                values are &quot;top_k&quot;, &quot;by_time_stamp&quot;, and &quot;by_threshold&quot;.</span>
+<span class="sd">            threshold (float): threshold for determining the relevant recommended items.</span>
+<span class="sd">                This is used for the case that predicted ratings follow a known</span>
+<span class="sd">                distribution. NOTE: this option is only activated if `relevancy_method` is</span>
+<span class="sd">                set to &quot;by_threshold&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span> <span class="o">=</span> <span class="n">rating_true</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span> <span class="o">=</span> <span class="n">rating_pred</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span> <span class="o">=</span> <span class="n">col_prediction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+
+        <span class="c1"># Check if inputs are Spark DataFrames.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;rating_true should be but is not a Spark DataFrame&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;rating_pred should be but is not a Spark DataFrame&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+
+        <span class="c1"># Check if columns exist.</span>
+        <span class="n">true_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">pred_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Schema of rating_true not valid. Missing User Col: &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">true_columns</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_true not valid. Missing Item Col&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_true not valid. Missing Rating Col&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pred_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Schema of rating_pred not valid. Missing User Col&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pred_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Schema of rating_pred not valid. Missing Item Col&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma : No Cover</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pred_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Schema of rating_pred not valid. Missing Prediction Col&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="n">relevant_func</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;top_k&quot;</span><span class="p">:</span> <span class="n">_get_top_k_items</span><span class="p">,</span>
+            <span class="s2">&quot;by_time_stamp&quot;</span><span class="p">:</span> <span class="n">_get_relevant_items_by_timestamp</span><span class="p">,</span>
+            <span class="s2">&quot;by_threshold&quot;</span><span class="p">:</span> <span class="n">_get_relevant_items_by_threshold</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">relevancy_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relevant_func</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;relevancy_method should be one of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">relevant_func</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">relevant_func</span><span class="p">[</span><span class="n">relevancy_method</span><span class="p">](</span>
+                <span class="n">dataframe</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="p">,</span>
+                <span class="n">col_user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+                <span class="n">col_item</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+                <span class="n">col_rating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">,</span>
+                <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">relevancy_method</span> <span class="o">==</span> <span class="s2">&quot;by_threshold&quot;</span>
+            <span class="k">else</span> <span class="n">relevant_func</span><span class="p">[</span><span class="n">relevancy_method</span><span class="p">](</span>
+                <span class="n">dataframe</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span><span class="p">,</span>
+                <span class="n">col_user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+                <span class="n">col_item</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+                <span class="n">col_rating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">,</span>
+                <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate ranking metrics.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_true</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rating_true</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">expr</span><span class="p">(</span><span class="s2">&quot;collect_list(&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">+</span> <span class="s2">&quot;) as ground_truth&quot;</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;ground_truth&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_pred</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_true</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">RankingMetrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_all</span><span class="o">.</span><span class="n">rdd</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SparkRankingEvaluation.precision_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.precision_at_k">[docs]</a>    <span class="k">def</span> <span class="nf">precision_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get precision@k.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            More details can be found</span>
+<span class="sd">            `on the precisionAt PySpark documentation &lt;http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt&gt;`_.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            float: precision at k (min=0, max=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">precisionAt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SparkRankingEvaluation.recall_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.recall_at_k">[docs]</a>    <span class="k">def</span> <span class="nf">recall_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get recall@K.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            More details can be found</span>
+<span class="sd">            `on the recallAt PySpark documentation &lt;http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.recallAt&gt;`_.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            float: recall at k (min=0, max=1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">recallAt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SparkRankingEvaluation.ndcg_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.ndcg_at_k">[docs]</a>    <span class="k">def</span> <span class="nf">ndcg_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Normalized Discounted Cumulative Gain (NDCG)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            More details can be found</span>
+<span class="sd">            `on the ndcgAt PySpark documentation &lt;http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt&gt;`_.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            float: nDCG at k (min=0, max=1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">ndcgAt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SparkRankingEvaluation.map"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map">[docs]</a>    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mean average precision.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            float: MAP (min=0, max=1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">meanAveragePrecision</span></div>
+
+<div class="viewcode-block" id="SparkRankingEvaluation.map_at_k"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map_at_k">[docs]</a>    <span class="k">def</span> <span class="nf">map_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mean average precision at k.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            More details `on the meanAveragePrecision PySpark documentation &lt;http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision&gt;`_.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            float: MAP at k (min=0, max=1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">meanAveragePrecisionAt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_get_top_k_items</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the input customer-item-rating tuple in the format of Spark</span>
+<span class="sd">    DataFrame, output a Spark DataFrame in the dense format of top k items</span>
+<span class="sd">    for each user.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        if it is implicit rating, just append a column of constants to be ratings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe (pyspark.sql.DataFrame): DataFrame of rating data (in the format of</span>
+<span class="sd">        customerID-itemID-rating tuple).</span>
+<span class="sd">        col_user (str): column name for user.</span>
+<span class="sd">        col_item (str): column name for item.</span>
+<span class="sd">        col_rating (str): column name for rating.</span>
+<span class="sd">        col_prediction (str): column name for prediction.</span>
+<span class="sd">        k (int): number of items for each user.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        pyspark.sql.DataFrame: DataFrame of top k items for each user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">window_spec</span> <span class="o">=</span> <span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="n">col_rating</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+
+    <span class="c1"># this does not work for rating of the same value.</span>
+    <span class="n">items_for_user</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">dataframe</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+            <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">,</span> <span class="n">row_number</span><span class="p">()</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">window_spec</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;rank&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rank&quot;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">col_prediction</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">items_for_user</span>
+
+
+<span class="k">def</span> <span class="nf">_get_relevant_items_by_threshold</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get relevant items for each customer in the input rating data.</span>
+
+<span class="sd">    Relevant items are defined as those having ratings above certain threshold.</span>
+<span class="sd">    The threshold is defined as a statistical measure of the ratings for a</span>
+<span class="sd">    user, e.g., median.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: Spark DataFrame of customerID-itemID-rating tuples.</span>
+<span class="sd">        col_user (str): column name for user.</span>
+<span class="sd">        col_item (str): column name for item.</span>
+<span class="sd">        col_rating (str): column name for rating.</span>
+<span class="sd">        col_prediction (str): column name for prediction.</span>
+<span class="sd">        threshold (float): threshold for determining the relevant recommended items.</span>
+<span class="sd">            This is used for the case that predicted ratings follow a known</span>
+<span class="sd">            distribution.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        pyspark.sql.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant</span>
+<span class="sd">        items.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">items_for_user</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">dataframe</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">col_rating</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">col_rating</span> <span class="o">+</span> <span class="s2">&quot; &gt;= &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">threshold</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+            <span class="n">col_prediction</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">col_user</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_prediction</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">dropDuplicates</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">items_for_user</span>
+
+
+<span class="k">def</span> <span class="nf">_get_relevant_items_by_timestamp</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">col_timestamp</span><span class="o">=</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get relevant items for each customer defined by timestamp.</span>
+
+<span class="sd">    Relevant items are defined as k items that appear mostly recently</span>
+<span class="sd">    according to timestamps.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe (pyspark.sql.DataFrame): A Spark DataFrame of customerID-itemID-rating-timeStamp</span>
+<span class="sd">            tuples.</span>
+<span class="sd">        col_user (str): column name for user.</span>
+<span class="sd">        col_item (str): column name for item.</span>
+<span class="sd">        col_rating (str): column name for rating.</span>
+<span class="sd">        col_timestamp (str): column name for timestamp.</span>
+<span class="sd">        col_prediction (str): column name for prediction.</span>
+<span class="sd">        k: number of relevant items to be filtered by the function.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        pyspark.sql.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant items.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">window_spec</span> <span class="o">=</span> <span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="n">col_timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+
+    <span class="n">items_for_user</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">dataframe</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+            <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">,</span> <span class="n">row_number</span><span class="p">()</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">window_spec</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;rank&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rank&quot;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+            <span class="n">col_prediction</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">col_user</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_prediction</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">dropDuplicates</span><span class="p">([</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_prediction</span><span class="p">])</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">items_for_user</span>
+
+
+<div class="viewcode-block" id="SparkDiversityEvaluation"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation">[docs]</a><span class="k">class</span> <span class="nc">SparkDiversityEvaluation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Evaluator for diversity, coverage, novelty, serendipity&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">train_df</span><span class="p">,</span>
+        <span class="n">reco_df</span><span class="p">,</span>
+        <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_relevance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializer.</span>
+
+<span class="sd">        This is the Spark version of diversity metrics evaluator.</span>
+<span class="sd">        The methods of this class calculate the following diversity metrics:</span>
+
+<span class="sd">        * Coverage - it includes two metrics:</span>
+<span class="sd">            1. catalog_coverage, which measures the proportion of items that get recommended from the item catalog;</span>
+<span class="sd">            2. distributional_coverage, which measures how unequally different items are recommended in the</span>
+<span class="sd">               recommendations to all users.</span>
+<span class="sd">        * Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.</span>
+<span class="sd">        * Diversity - The dissimilarity of items being recommended.</span>
+<span class="sd">        * Serendipity - The &quot;unusualness&quot; or &quot;surprise&quot; of recommendations to a user. When &#39;col_relevance&#39; is used,</span>
+<span class="sd">            it indicates how &quot;pleasant surprise&quot; of recommendations is to a user.</span>
+
+<span class="sd">        The metric definitions/formulations are based on the following references with modification:</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,</span>
+<span class="sd">            Recommender Systems Handbook pp. 257-297, 2010.</span>
+
+<span class="sd">            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing</span>
+<span class="sd">            serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:</span>
+<span class="sd">            choice, discovery and relevance, ECIR 2011</span>
+
+<span class="sd">            Eugene Yan, Serendipity: Accuracy&#39;s unpopular best friend in Recommender Systems,</span>
+<span class="sd">            eugeneyan.com, April 2020</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df (pyspark.sql.DataFrame): Data set with historical data for users and items they</span>
+<span class="sd">                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.</span>
+<span class="sd">                Interaction here follows the *item choice model* from Castells et al.</span>
+<span class="sd">            reco_df (pyspark.sql.DataFrame): Recommender&#39;s prediction output, containing col_user, col_item,</span>
+<span class="sd">                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</span>
+<span class="sd">            item_feature_df (pyspark.sql.DataFrame): (Optional) It is required only when item_sim_measure=&#39;item_feature_vector&#39;.</span>
+<span class="sd">                It contains two columns: col_item and features (a feature vector).</span>
+<span class="sd">            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.</span>
+<span class="sd">                Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</span>
+<span class="sd">            col_user (str): User id column name.</span>
+<span class="sd">            col_item (str): Item id column name.</span>
+<span class="sd">            col_relevance (str): Optional. This column indicates whether the recommended item is actually</span>
+<span class="sd">                relevant to the user or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_col</span> <span class="o">=</span> <span class="n">DEFAULT_SIMILARITY_COL</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_user_item_serendipity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_user_serendipity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg_serendipity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_item_novelty</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg_novelty</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_intralist_similarity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_user_diversity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg_diversity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_feature_df</span> <span class="o">=</span> <span class="n">item_feature_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_sim_measure</span> <span class="o">=</span> <span class="n">item_sim_measure</span>
+
+        <span class="k">if</span> <span class="n">col_relevance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_relevance</span> <span class="o">=</span> <span class="n">DEFAULT_RELEVANCE_COL</span>
+            <span class="c1"># relevance term, default is 1 (relevant) for all</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span> <span class="o">=</span> <span class="n">reco_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_relevance</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_relevance</span> <span class="o">=</span> <span class="n">col_relevance</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span> <span class="o">=</span> <span class="n">reco_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_relevance</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">DoubleType</span><span class="p">())</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_feature_vector&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">col_item_features</span> <span class="o">=</span> <span class="n">DEFAULT_ITEM_FEATURES_COL</span>
+            <span class="n">required_schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">StructField</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>
+                    <span class="n">StructField</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item_features</span><span class="p">,</span> <span class="n">VectorUDT</span><span class="p">()),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_feature_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">required_schema</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item_feature_df</span><span class="o">.</span><span class="n">schema</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="s2">&quot;Incorrect schema! item_feature_df should have schema &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">required_schema</span><span class="p">)</span><span class="si">}</span><span class="s2"> but have </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item_feature_df</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;item_feature_df not specified! item_feature_df must be provided &quot;</span>
+                    <span class="s2">&quot;if choosing to use item_feature_vector to calculate item similarity. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;item_feature_df should have schema </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">required_schema</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># check if reco_df contains any user_item pairs that are already shown in train_df</span>
+        <span class="n">count_intersection</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">count_intersection</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;reco_df should not contain any user_item pairs that are already shown in train_df&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_pairwise_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;_user&quot;</span><span class="p">),</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i2&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;_user&quot;</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i2&quot;</span><span class="p">)),</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_cosine_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_cooccurrence_count&quot;</span><span class="p">:</span>
+            <span class="c1"># calculate item-item similarity based on item co-occurrence count</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_cooccurrence_similarity</span><span class="p">(</span><span class="n">n_partitions</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_feature_vector&quot;</span><span class="p">:</span>
+            <span class="c1"># calculate item-item similarity based on item feature vectors</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_feature_similarity</span><span class="p">(</span><span class="n">n_partitions</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;item_sim_measure not recognized! The available options include &#39;item_cooccurrence_count&#39; and &#39;item_feature_vector&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span>
+
+    <span class="k">def</span> <span class="nf">_get_cooccurrence_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cosine similarity metric from</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:</span>
+<span class="sd">            introducing serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">        The item indexes in the result are such that i1 &lt;= i2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pairwise_items</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">)</span>
+            <span class="n">item_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">pairs</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">item_count</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">),</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i1_sqrt_count&quot;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">item_count</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i2&quot;</span><span class="p">),</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i2_sqrt_count&quot;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                    <span class="s2">&quot;i1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+                        <span class="o">/</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i1_sqrt_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i2_sqrt_count&quot;</span><span class="p">))</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_col</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">repartition</span><span class="p">(</span><span class="n">n_partitions</span><span class="p">,</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@udf</span><span class="p">(</span><span class="n">returnType</span><span class="o">=</span><span class="n">DoubleType</span><span class="p">())</span>
+    <span class="k">def</span> <span class="nf">sim_cos</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">v2</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_get_item_feature_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cosine similarity metric based on item feature vectors</span>
+
+<span class="sd">        The item indexes in the result are such that i1 &lt;= i2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">item_feature_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">),</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item_features</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;f1&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">item_feature_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i2&quot;</span><span class="p">),</span>
+                        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item_features</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;f2&quot;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                    <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i2&quot;</span><span class="p">)),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_cos</span><span class="p">(</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;f2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;sim&quot;</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">repartition</span><span class="p">(</span><span class="n">n_partitions</span><span class="p">,</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span>
+
+    <span class="c1"># Diversity metrics</span>
+    <span class="k">def</span> <span class="nf">_get_intralist_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Intra-list similarity from</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            &quot;Improving Recommendation Lists Through Topic Diversification&quot;,</span>
+<span class="sd">            Ziegler, McNee, Konstan and Lausen, 2005.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_intralist_similarity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pairwise_items</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">similarity_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cosine_similarity</span><span class="p">()</span>
+            <span class="c1"># Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items.</span>
+            <span class="c1"># e.g. i1 and i2 have never occurred together.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_intralist_similarity</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">pairs</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">similarity_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;i2&quot;</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_col</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;avg_il_sim&quot;</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;avg_il_sim&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_intralist_similarity</span>
+
+<div class="viewcode-block" id="SparkDiversityEvaluation.user_diversity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_diversity">[docs]</a>    <span class="k">def</span> <span class="nf">user_diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average diversity of recommendations for each user.</span>
+<span class="sd">        The metric definition is based on formula (3) in the following reference:</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:</span>
+<span class="sd">            introducing serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_user, user_diversity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_diversity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_intralist_similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_intralist_similarity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_user_diversity</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_intralist_similarity</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+                    <span class="s2">&quot;user_diversity&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;avg_il_sim&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;user_diversity&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_diversity</span></div>
+
+<div class="viewcode-block" id="SparkDiversityEvaluation.diversity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.diversity">[docs]</a>    <span class="k">def</span> <span class="nf">diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average diversity of recommendations across all users.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: diversity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_diversity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_user_diversity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_diversity</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">avg_diversity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_diversity</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;user_diversity&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">}</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_diversity</span></div>
+
+    <span class="c1"># Novelty metrics</span>
+<div class="viewcode-block" id="SparkDiversityEvaluation.historical_item_novelty"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.historical_item_novelty">[docs]</a>    <span class="k">def</span> <span class="nf">historical_item_novelty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate novelty for each item. Novelty is computed as the minus logarithm of</span>
+<span class="sd">        (number of interactions with item / total number of interactions). The definition of the metric</span>
+<span class="sd">        is based on the following reference using the choice model (eqs. 1 and 6):</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:</span>
+<span class="sd">            choice, discovery and relevance, ECIR 2011</span>
+
+<span class="sd">        The novelty of an item can be defined relative to a set of observed events on the set of all items.</span>
+<span class="sd">        These can be events of user choice (item &quot;is picked&quot; by a random user) or user discovery</span>
+<span class="sd">        (item &quot;is known&quot; to a random user). The above definition of novelty reflects a factor of item popularity.</span>
+<span class="sd">        High novelty values correspond to long-tail items in the density function, that few users have interacted</span>
+<span class="sd">        with and low novelty values correspond to popular head items.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_item, item_novelty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_item_novelty</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_item_novelty</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;item_novelty&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_records</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;item_novelty&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_item_novelty</span></div>
+
+<div class="viewcode-block" id="SparkDiversityEvaluation.novelty"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.novelty">[docs]</a>    <span class="k">def</span> <span class="nf">novelty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the average novelty in a list of recommended items (this assumes that the recommendation list</span>
+<span class="sd">        is already computed). Follows section 5 from</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:</span>
+<span class="sd">            choice, discovery and relevance, ECIR 2011</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: novelty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_novelty</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_item_novelty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">historical_item_novelty</span><span class="p">()</span>
+            <span class="n">n_recommendations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">avg_novelty</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_item_novelty</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">selectExpr</span><span class="p">(</span><span class="s2">&quot;sum(count * item_novelty)&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">first</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="o">/</span> <span class="n">n_recommendations</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_novelty</span></div>
+
+    <span class="c1"># Serendipity metrics</span>
+<div class="viewcode-block" id="SparkDiversityEvaluation.user_item_serendipity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_item_serendipity">[docs]</a>    <span class="k">def</span> <span class="nf">user_item_serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate serendipity of each item in the recommendations for each user.</span>
+<span class="sd">        The metric definition is based on the following references:</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:</span>
+<span class="sd">            introducing serendipity into music recommendation, WSDM 2012</span>
+
+<span class="sd">            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,</span>
+<span class="sd">            eugeneyan.com, April 2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pyspark.sql.dataframe.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># for every col_user, col_item in reco_df, join all interacted items from train_df.</span>
+        <span class="c1"># These interacted items are repeated for each item in reco_df for a specific user.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_item_serendipity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cosine_similarity</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_user_item_serendipity</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span>
+                        <span class="s2">&quot;reco_item_tmp&quot;</span>
+                    <span class="p">),</span>  <span class="c1"># duplicate col_item to keep</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;train_item_tmp&quot;</span><span class="p">)</span>
+                    <span class="p">),</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">least</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;reco_item_tmp&quot;</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;train_item_tmp&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span>
+                        <span class="s2">&quot;i1&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">F</span><span class="o">.</span><span class="n">greatest</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;reco_item_tmp&quot;</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;train_item_tmp&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span>
+                        <span class="s2">&quot;i2&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_col</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;avg_item2interactedHistory_sim&quot;</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">])</span>
+                <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+                    <span class="s2">&quot;user_item_serendipity&quot;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;avg_item2interactedHistory_sim&quot;</span><span class="p">))</span>
+                    <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_relevance</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">,</span> <span class="s2">&quot;user_item_serendipity&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_item_serendipity</span></div>
+
+<div class="viewcode-block" id="SparkDiversityEvaluation.user_serendipity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_serendipity">[docs]</a>    <span class="k">def</span> <span class="nf">user_serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average serendipity for each user&#39;s recommendations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_serendipity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_serendipity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_user_item_serendipity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_item_serendipity</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_user_serendipity</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_user_item_serendipity</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;user_item_serendipity&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;user_serendipity&quot;</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_serendipity</span></div>
+
+<div class="viewcode-block" id="SparkDiversityEvaluation.serendipity"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.serendipity">[docs]</a>    <span class="k">def</span> <span class="nf">serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average serendipity for recommendations across all users.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: serendipity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_serendipity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_user_serendipity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_serendipity</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">avg_serendipity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_user_serendipity</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;user_serendipity&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">}</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_serendipity</span></div>
+
+    <span class="c1"># Coverage metrics</span>
+<div class="viewcode-block" id="SparkDiversityEvaluation.catalog_coverage"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.catalog_coverage">[docs]</a>    <span class="k">def</span> <span class="nf">catalog_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate catalog coverage for recommendations across all users.</span>
+<span class="sd">        The metric definition is based on the &quot;catalog coverage&quot; definition in the following reference:</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,</span>
+<span class="sd">            Recommender Systems Handbook pp. 257-297, 2010.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: catalog coverage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># distinct item count in reco_df</span>
+        <span class="n">count_distinct_item_reco</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="c1"># distinct item count in train_df</span>
+        <span class="n">count_distinct_item_train</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># catalog coverage</span>
+        <span class="n">c_coverage</span> <span class="o">=</span> <span class="n">count_distinct_item_reco</span> <span class="o">/</span> <span class="n">count_distinct_item_train</span>
+        <span class="k">return</span> <span class="n">c_coverage</span></div>
+
+<div class="viewcode-block" id="SparkDiversityEvaluation.distributional_coverage"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.distributional_coverage">[docs]</a>    <span class="k">def</span> <span class="nf">distributional_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate distributional coverage for recommendations across all users.</span>
+<span class="sd">        The metric definition is based on formula (21) in the following reference:</span>
+
+<span class="sd">        :Citation:</span>
+
+<span class="sd">            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,</span>
+<span class="sd">            Recommender Systems Handbook pp. 257-297, 2010.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: distributional coverage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># In reco_df, how  many times each col_item is being recommended</span>
+        <span class="n">df_itemcnt_reco</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="c1"># the number of total recommendations</span>
+        <span class="n">count_row_reco</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reco_df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">df_entropy</span> <span class="o">=</span> <span class="n">df_itemcnt_reco</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+            <span class="s2">&quot;p(i)&quot;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">count_row_reco</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;entropy(i)&quot;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;p(i)&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">F</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;p(i)&quot;</span><span class="p">)))</span>
+        <span class="c1"># distributional coverage</span>
+        <span class="n">d_coverage</span> <span class="o">=</span> <span class="o">-</span><span class="n">df_entropy</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;entropy(i)&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">d_coverage</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

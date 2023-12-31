@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.datasets.criteo &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/datasets/criteo';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/datasets/criteo.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/datasets/criteo.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.datasets.criteo</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>  <span class="c1"># so the environment without spark doesn&#39;t break</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span><span class="p">,</span> <span class="n">download_path</span>
+<span class="kn">from</span> <span class="nn">recommenders.utils.notebook_utils</span> <span class="kn">import</span> <span class="n">is_databricks</span>
+
+
+<span class="n">CRITEO_URL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/10082655&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">DEFAULT_HEADER</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+    <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;int</span><span class="si">{0:02d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">)]</span>
+    <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;cat</span><span class="si">{0:02d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">)]</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_pandas_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.load_pandas_df">[docs]</a><span class="k">def</span> <span class="nf">load_pandas_df</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the Criteo DAC dataset as `pandas.DataFrame`. This function download, untar, and load the dataset.</span>
+
+<span class="sd">    The dataset consists of a portion of Criteo’s traffic over a period</span>
+<span class="sd">    of 24 days. Each row corresponds to a display ad served by Criteo and the first</span>
+<span class="sd">    column indicates whether this ad has been clicked or not.</span>
+
+<span class="sd">    There are 13 features taking integer values (mostly count features) and 26</span>
+<span class="sd">    categorical features. The values of the categorical features have been hashed</span>
+<span class="sd">    onto 32 bits for anonymization purposes.</span>
+
+<span class="sd">    The schema is:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &lt;label&gt; &lt;integer feature 1&gt; ... &lt;integer feature 13&gt; &lt;categorical feature 1&gt; ... &lt;categorical feature 26&gt;</span>
+
+<span class="sd">    More details (need to accept user terms to see the information):</span>
+<span class="sd">    http://labs.criteo.com/2013/12/download-terabyte-click-logs/</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Dataset size. It can be &quot;sample&quot; or &quot;full&quot;.</span>
+<span class="sd">        local_cache_path (str): Path where to cache the tar.gz file locally</span>
+<span class="sd">        header (list): Dataset header names.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: Criteo DAC sample dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">local_cache_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">download_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">extract_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="load_spark_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.load_spark_df">[docs]</a><span class="k">def</span> <span class="nf">load_spark_df</span><span class="p">(</span>
+    <span class="n">spark</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">,</span>
+    <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dbfs_datapath</span><span class="o">=</span><span class="s2">&quot;dbfs:/FileStore/dac&quot;</span><span class="p">,</span>
+    <span class="n">dbutils</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the Criteo DAC dataset as `pySpark.DataFrame`.</span>
+
+<span class="sd">    The dataset consists of a portion of Criteo’s traffic over a period</span>
+<span class="sd">    of 24 days. Each row corresponds to a display ad served by Criteo and the first</span>
+<span class="sd">    column is indicates whether this ad has been clicked or not.</span>
+
+<span class="sd">    There are 13 features taking integer values (mostly count features) and 26</span>
+<span class="sd">    categorical features. The values of the categorical features have been hashed</span>
+<span class="sd">    onto 32 bits for anonymization purposes.</span>
+
+<span class="sd">    The schema is:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &lt;label&gt; &lt;integer feature 1&gt; ... &lt;integer feature 13&gt; &lt;categorical feature 1&gt; ... &lt;categorical feature 26&gt;</span>
+
+<span class="sd">    More details (need to accept user terms to see the information):</span>
+<span class="sd">    http://labs.criteo.com/2013/12/download-terabyte-click-logs/</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        spark (pySpark.SparkSession): Spark session.</span>
+<span class="sd">        size (str): Dataset size. It can be &quot;sample&quot; or &quot;full&quot;.</span>
+<span class="sd">        local_cache_path (str): Path where to cache the tar.gz file locally.</span>
+<span class="sd">        header (list): Dataset header names.</span>
+<span class="sd">        dbfs_datapath (str): Where to store the extracted files on Databricks.</span>
+<span class="sd">        dbutils (Databricks.dbutils): Databricks utility object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pyspark.sql.DataFrame: Criteo DAC training dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">local_cache_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">download_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">extract_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_databricks</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Driver node&#39;s file path</span>
+                <span class="n">node_path</span> <span class="o">=</span> <span class="s2">&quot;file:&quot;</span> <span class="o">+</span> <span class="n">filepath</span>
+                <span class="c1"># needs to be on dbfs to load</span>
+                <span class="n">dbutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">cp</span><span class="p">(</span><span class="n">node_path</span><span class="p">,</span> <span class="n">dbfs_datapath</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">dbfs_datapath</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;To use on a Databricks notebook, dbutils object should be passed as an argument&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">filepath</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">get_spark_schema</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>  <span class="c1"># trigger execution to overcome spark&#39;s lazy evaluation</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="download_criteo"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.download_criteo">[docs]</a><span class="k">def</span> <span class="nf">download_criteo</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download criteo dataset as a compressed file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Size of criteo dataset. It can be &quot;full&quot; or &quot;sample&quot;.</span>
+<span class="sd">        work_directory (str): Working directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Path of the downloaded file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">CRITEO_URL</span><span class="p">[</span><span class="n">size</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">work_directory</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="extract_criteo"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.extract_criteo">[docs]</a><span class="k">def</span> <span class="nf">extract_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">compressed_file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Criteo dataset tar.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Size of Criteo dataset. It can be &quot;full&quot; or &quot;sample&quot;.</span>
+<span class="sd">        compressed_file (str): Path to compressed file.</span>
+<span class="sd">        path (str): Path to extract the file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Path to the extracted file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">compressed_file</span><span class="p">)</span>
+        <span class="n">extracted_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;dac&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">extracted_dir</span> <span class="o">=</span> <span class="n">path</span>
+
+    <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">compressed_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">is_within_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+
+            <span class="n">abs_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+            <span class="n">abs_target</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">([</span><span class="n">abs_directory</span><span class="p">,</span> <span class="n">abs_target</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">prefix</span> <span class="o">==</span> <span class="n">abs_directory</span>
+
+        <span class="k">def</span> <span class="nf">safe_extract</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">members</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">numeric_owner</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+            <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">getmembers</span><span class="p">():</span>
+                <span class="n">member_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_within_directory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">member_path</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Attempted Path Traversal in Tar File&quot;</span><span class="p">)</span>
+
+            <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="n">numeric_owner</span><span class="o">=</span><span class="n">numeric_owner</span><span class="p">)</span>
+
+        <span class="n">safe_extract</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">extracted_dir</span><span class="p">)</span>
+
+    <span class="n">filename_selector</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;dac_sample.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="s2">&quot;train.txt&quot;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extracted_dir</span><span class="p">,</span> <span class="n">filename_selector</span><span class="p">[</span><span class="n">size</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="get_spark_schema"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.get_spark_schema">[docs]</a><span class="k">def</span> <span class="nf">get_spark_schema</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get Spark schema from header.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        header (list): Dataset header names.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pyspark.sql.types.StructType: Spark schema.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create schema</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">()</span>
+    <span class="c1"># do label + ints</span>
+    <span class="n">n_ints</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_ints</span><span class="p">):</span>
+        <span class="n">schema</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">StructField</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">IntegerType</span><span class="p">()))</span>
+    <span class="c1"># do categoricals</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">):</span>
+        <span class="n">schema</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">StructField</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_ints</span><span class="p">],</span> <span class="n">StringType</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">schema</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,853 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.newsrec.io.mind_iterator &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/newsrec/io/mind_iterator';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/newsrec/io/mind_iterator.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/newsrec/io/mind_iterator.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.newsrec.io.mind_iterator</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.io.iterator</span> <span class="kn">import</span> <span class="n">BaseIterator</span>
+<span class="kn">from</span> <span class="nn">recommenders.models.newsrec.newsrec_utils</span> <span class="kn">import</span> <span class="n">word_tokenize</span><span class="p">,</span> <span class="n">newsample</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MINDIterator&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MINDIterator"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator">[docs]</a><span class="k">class</span> <span class="nc">MINDIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Train data loader for NAML model.</span>
+<span class="sd">    The model require a special type of data format, where each instance contains a label, impresion id, user id,</span>
+<span class="sd">    the candidate news articles and user&#39;s clicked news article. Articles are represented by title words,</span>
+<span class="sd">    body words, verts and subverts.</span>
+
+<span class="sd">    Iterator will not load the whole data into memory. Instead, it loads data into memory</span>
+<span class="sd">    per mini-batch, so that large files can be used as input data.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        col_spliter (str): column spliter in one line.</span>
+<span class="sd">        ID_spliter (str): ID spliter in one line.</span>
+<span class="sd">        batch_size (int): the samples num in one batch.</span>
+<span class="sd">        title_size (int): max word num in news title.</span>
+<span class="sd">        his_size (int): max clicked news num in user click history.</span>
+<span class="sd">        npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hparams</span><span class="p">,</span>
+        <span class="n">npratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an iterator. Create necessary placeholders for the model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hparams (object): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.</span>
+<span class="sd">            npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.</span>
+<span class="sd">            col_spliter (str): column spliter in one line.</span>
+<span class="sd">            ID_spliter (str): ID spliter in one line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_spliter</span> <span class="o">=</span> <span class="n">col_spliter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ID_spliter</span> <span class="o">=</span> <span class="n">ID_spliter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title_size</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">title_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">his_size</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">his_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npratio</span> <span class="o">=</span> <span class="n">npratio</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">wordDict_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid2index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">userDict_file</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MINDIterator.load_dict"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;load pickle file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file path (str): file path</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: pickle loaded object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MINDIterator.init_news"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.init_news">[docs]</a>    <span class="k">def</span> <span class="nf">init_news</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;init news information given news file, such as news_title_index and nid2index.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            news_file: path of news file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nid2index</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">news_title</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">news_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rd</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">:</span>
+                <span class="n">nid</span><span class="p">,</span> <span class="n">vert</span><span class="p">,</span> <span class="n">subvert</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">ab</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">col_spliter</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">nid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nid2index</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">nid2index</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nid2index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+                <span class="n">news_title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">news_title</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">title_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">news_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">news_title</span><span class="p">)):</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">news_title</span><span class="p">[</span><span class="n">news_index</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">word_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">title</span><span class="p">))):</span>
+                <span class="k">if</span> <span class="n">title</span><span class="p">[</span><span class="n">word_index</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_dict</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[</span><span class="n">news_index</span><span class="p">,</span> <span class="n">word_index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_dict</span><span class="p">[</span>
+                        <span class="n">title</span><span class="p">[</span><span class="n">word_index</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="p">]</span></div>
+
+<div class="viewcode-block" id="MINDIterator.init_behaviors"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.init_behaviors">[docs]</a>    <span class="k">def</span> <span class="nf">init_behaviors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaviors_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;init behavior logs given behaviors file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        behaviors_file: path of behaviors file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">histories</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imprs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uindexes</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">behaviors_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rd</span><span class="p">:</span>
+            <span class="n">impr_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">:</span>
+                <span class="n">uid</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span> <span class="n">impr</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_spliter</span><span class="p">)[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
+
+                <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nid2index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">history</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">his_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">))</span> <span class="o">+</span> <span class="n">history</span><span class="p">[</span>
+                    <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">his_size</span>
+                <span class="p">]</span>
+
+                <span class="n">impr_news</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nid2index</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">impr</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">impr</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="n">uindex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid2index</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="k">if</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid2index</span> <span class="k">else</span> <span class="mi">0</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">histories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">imprs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">impr_news</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">impr_index</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">uindexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uindex</span><span class="p">)</span>
+                <span class="n">impr_index</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="MINDIterator.parser_one_line"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.parser_one_line">[docs]</a>    <span class="k">def</span> <span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse one behavior sample into feature values.</span>
+<span class="sd">        if npratio is larger than 0, return negtive sampled result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            line (int): sample index.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            list: Parsed results including label, impression id , user id,</span>
+<span class="sd">            candidate_title_index, clicked_title_index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">npratio</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">impr_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">line</span><span class="p">]</span>
+            <span class="n">impr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imprs</span><span class="p">[</span><span class="n">line</span><span class="p">]</span>
+
+            <span class="n">poss</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">negs</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">news</span><span class="p">,</span> <span class="n">click</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">impr</span><span class="p">,</span> <span class="n">impr_label</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">click</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">poss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">news</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">negs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">news</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poss</span><span class="p">:</span>
+                <span class="n">candidate_title_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">impr_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">user_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">npratio</span>
+
+                <span class="n">n</span> <span class="o">=</span> <span class="n">newsample</span><span class="p">(</span><span class="n">negs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npratio</span><span class="p">)</span>
+                <span class="n">candidate_title_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[[</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span>
+                <span class="n">click_title_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">histories</span><span class="p">[</span><span class="n">line</span><span class="p">]]</span>
+                <span class="n">impr_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span><span class="p">[</span><span class="n">line</span><span class="p">])</span>
+                <span class="n">user_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uindexes</span><span class="p">[</span><span class="n">line</span><span class="p">])</span>
+
+                <span class="k">yield</span> <span class="p">(</span>
+                    <span class="n">label</span><span class="p">,</span>
+                    <span class="n">impr_index</span><span class="p">,</span>
+                    <span class="n">user_index</span><span class="p">,</span>
+                    <span class="n">candidate_title_index</span><span class="p">,</span>
+                    <span class="n">click_title_index</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">impr_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">line</span><span class="p">]</span>
+            <span class="n">impr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imprs</span><span class="p">[</span><span class="n">line</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">news</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">impr</span><span class="p">,</span> <span class="n">impr_label</span><span class="p">):</span>
+                <span class="n">candidate_title_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">impr_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">user_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
+
+                <span class="n">candidate_title_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[</span><span class="n">news</span><span class="p">])</span>
+                <span class="n">click_title_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">histories</span><span class="p">[</span><span class="n">line</span><span class="p">]]</span>
+                <span class="n">impr_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span><span class="p">[</span><span class="n">line</span><span class="p">])</span>
+                <span class="n">user_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uindexes</span><span class="p">[</span><span class="n">line</span><span class="p">])</span>
+
+                <span class="k">yield</span> <span class="p">(</span>
+                    <span class="n">label</span><span class="p">,</span>
+                    <span class="n">impr_index</span><span class="p">,</span>
+                    <span class="n">user_index</span><span class="p">,</span>
+                    <span class="n">candidate_title_index</span><span class="p">,</span>
+                    <span class="n">click_title_index</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="MINDIterator.load_data_from_file"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_data_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">,</span> <span class="n">behavior_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse data from news file and behavior file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            news_file (str): A file contains several informations of news.</span>
+<span class="sd">            beahaviros_file (str): A file contains information of user impressions.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            object: An iterator that yields parsed results, in the format of dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;news_title_index&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_news</span><span class="p">(</span><span class="n">news_file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;impr_indexes&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_behaviors</span><span class="p">(</span><span class="n">behavior_file</span><span class="p">)</span>
+
+        <span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">imp_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">user_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">candidate_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">click_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">npratio</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span>
+                <span class="n">label</span><span class="p">,</span>
+                <span class="n">imp_index</span><span class="p">,</span>
+                <span class="n">user_index</span><span class="p">,</span>
+                <span class="n">candidate_title_index</span><span class="p">,</span>
+                <span class="n">click_title_index</span><span class="p">,</span>
+            <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser_one_line</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+                <span class="n">candidate_title_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate_title_index</span><span class="p">)</span>
+                <span class="n">click_title_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">click_title_index</span><span class="p">)</span>
+                <span class="n">imp_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imp_index</span><span class="p">)</span>
+                <span class="n">user_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_index</span><span class="p">)</span>
+                <span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+                <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_data</span><span class="p">(</span>
+                        <span class="n">label_list</span><span class="p">,</span>
+                        <span class="n">imp_indexes</span><span class="p">,</span>
+                        <span class="n">user_indexes</span><span class="p">,</span>
+                        <span class="n">candidate_title_indexes</span><span class="p">,</span>
+                        <span class="n">click_title_indexes</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">imp_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">user_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">candidate_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">click_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_data</span><span class="p">(</span>
+                <span class="n">label_list</span><span class="p">,</span>
+                <span class="n">imp_indexes</span><span class="p">,</span>
+                <span class="n">user_indexes</span><span class="p">,</span>
+                <span class="n">candidate_title_indexes</span><span class="p">,</span>
+                <span class="n">click_title_indexes</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">label_list</span><span class="p">,</span>
+        <span class="n">imp_indexes</span><span class="p">,</span>
+        <span class="n">user_indexes</span><span class="p">,</span>
+        <span class="n">candidate_title_indexes</span><span class="p">,</span>
+        <span class="n">click_title_indexes</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert data into numpy arrays that are good for further model operation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            label_list (list): a list of ground-truth labels.</span>
+<span class="sd">            imp_indexes (list): a list of impression indexes.</span>
+<span class="sd">            user_indexes (list): a list of user indexes.</span>
+<span class="sd">            candidate_title_indexes (list): the candidate news titles&#39; words indices.</span>
+<span class="sd">            click_title_indexes (list): words indices for user&#39;s clicked news titles.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">label_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">imp_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">imp_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">user_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">user_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">candidate_title_index_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">candidate_title_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+        <span class="p">)</span>
+        <span class="n">click_title_index_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">click_title_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;impression_index_batch&quot;</span><span class="p">:</span> <span class="n">imp_indexes</span><span class="p">,</span>
+            <span class="s2">&quot;user_index_batch&quot;</span><span class="p">:</span> <span class="n">user_indexes</span><span class="p">,</span>
+            <span class="s2">&quot;clicked_title_batch&quot;</span><span class="p">:</span> <span class="n">click_title_index_batch</span><span class="p">,</span>
+            <span class="s2">&quot;candidate_title_batch&quot;</span><span class="p">:</span> <span class="n">candidate_title_index_batch</span><span class="p">,</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">labels</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="MINDIterator.load_user_from_file"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_user_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_user_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">,</span> <span class="n">behavior_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse user data from news file and behavior file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            news_file (str): A file contains several informations of news.</span>
+<span class="sd">            beahaviros_file (str): A file contains information of user impressions.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            object: An iterator that yields parsed user feature, in the format of dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;news_title_index&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_news</span><span class="p">(</span><span class="n">news_file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;impr_indexes&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_behaviors</span><span class="p">(</span><span class="n">behavior_file</span><span class="p">)</span>
+
+        <span class="n">user_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">impr_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">click_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span><span class="p">)):</span>
+            <span class="n">click_title_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">histories</span><span class="p">[</span><span class="n">index</span><span class="p">]])</span>
+            <span class="n">user_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uindexes</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">impr_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
+            <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_user_data</span><span class="p">(</span>
+                    <span class="n">user_indexes</span><span class="p">,</span>
+                    <span class="n">impr_indexes</span><span class="p">,</span>
+                    <span class="n">click_title_indexes</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">user_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">impr_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">click_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_user_data</span><span class="p">(</span>
+                <span class="n">user_indexes</span><span class="p">,</span>
+                <span class="n">impr_indexes</span><span class="p">,</span>
+                <span class="n">click_title_indexes</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_convert_user_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">user_indexes</span><span class="p">,</span>
+        <span class="n">impr_indexes</span><span class="p">,</span>
+        <span class="n">click_title_indexes</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert data into numpy arrays that are good for further model operation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_indexes (list): a list of user indexes.</span>
+<span class="sd">            click_title_indexes (list): words indices for user&#39;s clicked news titles.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">user_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">user_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">impr_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">impr_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">click_title_index_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">click_title_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;user_index_batch&quot;</span><span class="p">:</span> <span class="n">user_indexes</span><span class="p">,</span>
+            <span class="s2">&quot;impr_index_batch&quot;</span><span class="p">:</span> <span class="n">impr_indexes</span><span class="p">,</span>
+            <span class="s2">&quot;clicked_title_batch&quot;</span><span class="p">:</span> <span class="n">click_title_index_batch</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="MINDIterator.load_news_from_file"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_news_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_news_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse user data from news file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            news_file (str): A file contains several informations of news.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            object: An iterator that yields parsed news feature, in the format of dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;news_title_index&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_news</span><span class="p">(</span><span class="n">news_file</span><span class="p">)</span>
+
+        <span class="n">news_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">candidate_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">)):</span>
+            <span class="n">news_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">candidate_title_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">news_title_index</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
+            <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_news_data</span><span class="p">(</span>
+                    <span class="n">news_indexes</span><span class="p">,</span>
+                    <span class="n">candidate_title_indexes</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">news_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">candidate_title_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_news_data</span><span class="p">(</span>
+                <span class="n">news_indexes</span><span class="p">,</span>
+                <span class="n">candidate_title_indexes</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_convert_news_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">news_indexes</span><span class="p">,</span>
+        <span class="n">candidate_title_indexes</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert data into numpy arrays that are good for further model operation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            news_indexes (list): a list of news indexes.</span>
+<span class="sd">            candidate_title_indexes (list): the candidate news titles&#39; words indices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">news_indexes_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">news_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">candidate_title_index_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">candidate_title_indexes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;news_index_batch&quot;</span><span class="p">:</span> <span class="n">news_indexes_batch</span><span class="p">,</span>
+            <span class="s2">&quot;candidate_title_batch&quot;</span><span class="p">:</span> <span class="n">candidate_title_index_batch</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="MINDIterator.load_impression_from_file"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_impression_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_impression_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaivors_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse impression data from behaivors file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            behaivors_file (str): A file contains several informations of behaviros.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            object: An iterator that yields parsed impression data, in the format of dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;histories&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_behaviors</span><span class="p">(</span><span class="n">behaivors_file</span><span class="p">)</span>
+
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
+            <span class="n">impr_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span><span class="p">)</span>
+            <span class="n">impr_news</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imprs</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span><span class="p">)</span>
+
+            <span class="k">yield</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">impr_indexes</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">impr_news</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">uindexes</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">impr_label</span><span class="p">,</span>
+            <span class="p">)</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

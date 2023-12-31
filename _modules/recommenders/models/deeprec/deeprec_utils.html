@@ -1,0 +1,1005 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.deeprec.deeprec_utils &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/deeprec/deeprec_utils';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/deeprec/deeprec_utils.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/deeprec/deeprec_utils.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.deeprec.deeprec_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="n">log_loss</span><span class="p">,</span>
+    <span class="n">mean_squared_error</span><span class="p">,</span>
+    <span class="n">accuracy_score</span><span class="p">,</span>
+    <span class="n">f1_score</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pkl</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span>
+
+
+<div class="viewcode-block" id="flat_config"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.flat_config">[docs]</a><span class="k">def</span> <span class="nf">flat_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flat config loaded from a yaml file to a flat dict.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict): Configuration loaded from a yaml file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Configuration dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f_config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">category</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">cate</span> <span class="ow">in</span> <span class="n">category</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="n">cate</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">f_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">f_config</span></div>
+
+
+<div class="viewcode-block" id="check_type"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.check_type">[docs]</a><span class="k">def</span> <span class="nf">check_type</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the config parameters are the correct type</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict): Configuration dictionary.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: If the parameters are not the correct type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">int_parameters</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;word_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;entity_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;doc_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FEATURE_COUNT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;FIELD_COUNT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dim&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epochs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;show_step&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;save_epoch&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PAIR_NUM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DNN_FIELD_NUM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attention_layer_sizes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_item&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_user_attr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_item_attr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;item_embedding_dim&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cate_embedding_dim&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;user_embedding_dim&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max_seq_length&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hidden_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;L&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_v&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_h&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kernel_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;min_seq_length&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attention_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epochs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;show_step&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;save_epoch&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;train_num_ngs&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">int_parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Parameters </span><span class="si">{0}</span><span class="s2"> must be int&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+    <span class="n">float_parameters</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;init_value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;embed_l2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;embed_l1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;layer_l2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;layer_l1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mu&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">float_parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Parameters </span><span class="si">{0}</span><span class="s2"> must be float&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+    <span class="n">str_parameters</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;train_file&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;eval_file&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;test_file&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;infer_file&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;load_model_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;infer_model_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;init_method&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attention_activation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;user_vocab&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;item_vocab&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cate_vocab&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">str_parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Parameters </span><span class="si">{0}</span><span class="s2"> must be str&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+    <span class="n">list_parameters</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;layer_sizes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;activation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dropout&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;att_fcn_layer_sizes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dilations&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">list_parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Parameters </span><span class="si">{0}</span><span class="s2"> must be list&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="check_nn_config"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.check_nn_config">[docs]</a><span class="k">def</span> <span class="nf">check_nn_config</span><span class="p">(</span><span class="n">f_config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check neural networks configuration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f_config (dict): Neural network configuration.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the parameters are not correct.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fm&quot;</span><span class="p">,</span> <span class="s2">&quot;FM&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FEATURE_COUNT&quot;</span><span class="p">,</span> <span class="s2">&quot;dim&quot;</span><span class="p">,</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">,</span> <span class="s2">&quot;LR&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FEATURE_COUNT&quot;</span><span class="p">,</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;dkn&quot;</span><span class="p">,</span> <span class="s2">&quot;DKN&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;doc_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;history_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;wordEmb_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;entityEmb_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;contextEmb_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;news_feature_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_history_file&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;word_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;entity_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;use_entity&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;use_context&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data_format&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;layer_sizes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attention_activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attention_activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attention_dropout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data_format&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dropout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;num_filters&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;filter_sizes&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;exDeepFM&quot;</span><span class="p">,</span> <span class="s2">&quot;xDeepFM&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;FIELD_COUNT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;FEATURE_COUNT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;layer_sizes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cross_layer_sizes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;activation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data_format&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dropout&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">if</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gru&quot;</span><span class="p">,</span> <span class="s2">&quot;GRU&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;item_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_seq_length&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;item_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hidden_size&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;caser&quot;</span><span class="p">,</span> <span class="s2">&quot;CASER&quot;</span><span class="p">,</span> <span class="s2">&quot;Caser&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;item_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_seq_length&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;item_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;L&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_v&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_h&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min_seq_length&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;asvd&quot;</span><span class="p">,</span> <span class="s2">&quot;ASVD&quot;</span><span class="p">,</span> <span class="s2">&quot;a2svd&quot;</span><span class="p">,</span> <span class="s2">&quot;A2SVD&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;item_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_seq_length&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;item_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_vocab&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;slirec&quot;</span><span class="p">,</span> <span class="s2">&quot;sli_rec&quot;</span><span class="p">,</span> <span class="s2">&quot;SLI_REC&quot;</span><span class="p">,</span> <span class="s2">&quot;Sli_rec&quot;</span><span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;item_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_seq_length&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;item_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attention_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hidden_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;att_fcn_layer_sizes&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;nextitnet&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;next_it_net&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NextItNet&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NEXT_IT_NET&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;item_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_embedding_dim&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_seq_length&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;item_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cate_vocab&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dilations&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kernel_size&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min_seq_length&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">required_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># check required parameters</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">required_parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f_config</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameters </span><span class="si">{0}</span><span class="s2"> must be set&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;exDeepFM&quot;</span><span class="p">,</span> <span class="s2">&quot;xDeepFM&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;ffm&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;For xDeepFM model, data format must be &#39;ffm&#39;, but your set is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;model_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;dkn&quot;</span><span class="p">,</span> <span class="s2">&quot;DKN&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;dkn&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;For dkn model, data format must be &#39;dkn&#39;, but your set is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">f_config</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+    <span class="n">check_type</span><span class="p">(</span><span class="n">f_config</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_yaml"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.load_yaml">[docs]</a><span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a yaml file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Filename.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">config</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>  <span class="c1"># for file not found</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># for other exceptions</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;load </span><span class="si">{0}</span><span class="s2"> error!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="HParams"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.HParams">[docs]</a><span class="k">class</span> <span class="nc">HParams</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for holding hyperparameters for DeepRec algorithms.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an HParams object from a dictionary of hyperparameter values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hparams_dict (dict): Dictionary with the model hyperparameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">hparams_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Hyperparameter value </span><span class="si">{}</span><span class="s2"> should be integer, float, string or list.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">val</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">hparams_dict</span>
+        <span class="k">for</span> <span class="n">hparam</span> <span class="ow">in</span> <span class="n">hparams_dict</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparam</span><span class="p">,</span> <span class="n">hparams_dict</span><span class="p">[</span><span class="n">hparam</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;HParams object with values </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+
+<div class="viewcode-block" id="HParams.values"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.HParams.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the hyperparameter values as a dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Dictionary with the hyperparameter values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span></div></div>
+
+
+<div class="viewcode-block" id="create_hparams"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.create_hparams">[docs]</a><span class="k">def</span> <span class="nf">create_hparams</span><span class="p">(</span><span class="n">flags</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the model hyperparameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        flags (dict): Dictionary with the model requirements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        HParams: Hyperparameter object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">init_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># dkn</span>
+        <span class="s2">&quot;use_entity&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_context&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="c1"># model</span>
+        <span class="s2">&quot;cross_activation&quot;</span><span class="p">:</span> <span class="s2">&quot;identity&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;user_dropout&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;dropout&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+        <span class="s2">&quot;attention_dropout&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;load_saved_model&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;fast_CIN_d&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;use_Linear_part&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_FM_part&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_CIN_part&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_DNN_part&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># train</span>
+        <span class="s2">&quot;init_method&quot;</span><span class="p">:</span> <span class="s2">&quot;tnormal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;init_value&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="s2">&quot;embed_l2&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;embed_l1&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;layer_l2&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;layer_l1&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;cross_l2&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;cross_l1&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;reg_kg&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
+        <span class="s2">&quot;lr_rs&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;lr_kg&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="s2">&quot;kg_training_interval&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;max_grad_norm&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;is_clip_norm&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="s2">&quot;adam&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epochs&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;enable_BN&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># show info</span>
+        <span class="s2">&quot;show_step&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;save_model&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;save_epoch&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;write_tfevents&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># sequential</span>
+        <span class="s2">&quot;train_num_ngs&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;need_sample&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_dropout&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;EARLY_STOP&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="c1"># caser,</span>
+        <span class="s2">&quot;min_seq_length&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="c1"># sum</span>
+        <span class="s2">&quot;slots&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">&quot;cell&quot;</span><span class="p">:</span> <span class="s2">&quot;SUM&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">init_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">HParams</span><span class="p">(</span><span class="n">init_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="prepare_hparams"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.prepare_hparams">[docs]</a><span class="k">def</span> <span class="nf">prepare_hparams</span><span class="p">(</span><span class="n">yaml_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare the model hyperparameters and check that all have the correct value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        yaml_file (str): YAML file as configuration.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        HParams: Hyperparameter object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">yaml_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">flat_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">config</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">check_nn_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">create_hparams</span><span class="p">(</span><span class="n">config</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="download_deeprec_resources"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.download_deeprec_resources">[docs]</a><span class="k">def</span> <span class="nf">download_deeprec_resources</span><span class="p">(</span><span class="n">azure_container_url</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">remote_resource_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download resources.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        azure_container_url (str): URL of Azure container.</span>
+<span class="sd">        data_path (str): Path to download the resources.</span>
+<span class="sd">        remote_resource_name (str): Name of the resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">remote_path</span> <span class="o">=</span> <span class="n">azure_container_url</span> <span class="o">+</span> <span class="n">remote_resource_name</span>
+    <span class="n">maybe_download</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">remote_resource_name</span><span class="p">,</span> <span class="n">data_path</span><span class="p">)</span>
+    <span class="n">zip_ref</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">remote_resource_name</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+    <span class="n">zip_ref</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">remote_resource_name</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="mrr_score"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.mrr_score">[docs]</a><span class="k">def</span> <span class="nf">mrr_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computing mrr score metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (np.ndarray): Ground-truth labels.</span>
+<span class="sd">        y_score (np.ndarray): Predicted labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: mrr scores.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">y_score</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+    <span class="n">rr_score</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rr_score</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ndcg_score"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.ndcg_score">[docs]</a><span class="k">def</span> <span class="nf">ndcg_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computing ndcg score metric at k.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (np.ndarray): Ground-truth labels.</span>
+<span class="sd">        y_score (np.ndarray): Predicted labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: ndcg scores.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">dcg_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">dcg_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">actual</span> <span class="o">/</span> <span class="n">best</span></div>
+
+
+<div class="viewcode-block" id="hit_score"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.hit_score">[docs]</a><span class="k">def</span> <span class="nf">hit_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computing hit score metric at k.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (np.ndarray): ground-truth labels.</span>
+<span class="sd">        y_score (np.ndarray): predicted labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: hit score.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_true</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">argsort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">y_score</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">argsort</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">ground_truth</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="dcg_score"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.dcg_score">[docs]</a><span class="k">def</span> <span class="nf">dcg_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computing dcg score metric at k.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (np.ndarray): Ground-truth labels.</span>
+<span class="sd">        y_score (np.ndarray): Predicted labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: dcg scores.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">y_true</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">y_score</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">order</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span>
+    <span class="n">gains</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">y_true</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">discounts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">))</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gains</span> <span class="o">/</span> <span class="n">discounts</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cal_metric"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.cal_metric">[docs]</a><span class="k">def</span> <span class="nf">cal_metric</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate metrics.</span>
+
+<span class="sd">    Available options are: `auc`, `rmse`, `logloss`, `acc` (accurary), `f1`, `mean_mrr`,</span>
+<span class="sd">    `ndcg` (format like: ndcg@2;4;6;8), `hit` (format like: hit@2;4;6;8), `group_auc`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        labels (array-like): Labels.</span>
+<span class="sd">        preds (array-like): Predictions.</span>
+<span class="sd">        metrics (list): List of metric names.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        dict: Metrics.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; cal_metric(labels, preds, [&quot;ndcg@2;4;6&quot;, &quot;group_auc&quot;])</span>
+<span class="sd">        {&#39;ndcg@2&#39;: 0.4026, &#39;ndcg@4&#39;: 0.4953, &#39;ndcg@6&#39;: 0.5346, &#39;group_auc&#39;: 0.8096}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span>
+            <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">preds</span><span class="p">))</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;auc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">auc</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;rmse&quot;</span><span class="p">:</span>
+            <span class="n">rmse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">preds</span><span class="p">))</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">rmse</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;logloss&quot;</span><span class="p">:</span>
+            <span class="c1"># avoid logloss nan</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">10e-12</span><span class="p">),</span> <span class="mf">10e-12</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">preds</span><span class="p">]</span>
+            <span class="n">logloss</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">preds</span><span class="p">))</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;logloss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">logloss</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;acc&quot;</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">pred</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">pred</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">pred</span><span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;f1&quot;</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">pred</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">pred</span><span class="p">[</span><span class="n">pred</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">pred</span><span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;f1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;mean_mrr&quot;</span><span class="p">:</span>
+            <span class="n">mean_mrr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">mrr_score</span><span class="p">(</span><span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;mean_mrr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean_mrr</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ndcg&quot;</span><span class="p">):</span>  <span class="c1"># format like:  ndcg@2;4;6;8</span>
+            <span class="n">ndcg_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">ks</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ndcg_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ndcg_list</span><span class="p">:</span>
+                <span class="n">ndcg_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">ndcg_score</span><span class="p">(</span><span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">res</span><span class="p">[</span><span class="s2">&quot;ndcg@</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">ndcg_temp</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;hit&quot;</span><span class="p">):</span>  <span class="c1"># format like:  hit@2;4;6;8</span>
+            <span class="n">hit_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">ks</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">hit_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">hit_list</span><span class="p">:</span>
+                <span class="n">hit_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">hit_score</span><span class="p">(</span><span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">res</span><span class="p">[</span><span class="s2">&quot;hit@</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">hit_temp</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;group_auc&quot;</span><span class="p">:</span>
+            <span class="n">group_auc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">each_labels</span><span class="p">,</span> <span class="n">each_preds</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;group_auc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">group_auc</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Metric </span><span class="si">{0}</span><span class="s2"> not defined&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metric</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="load_dict"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.load_dict">[docs]</a><span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the vocabularies.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Filename of user, item or category vocabulary.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A saved vocabulary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f_pkl</span> <span class="o">=</span> <span class="n">pkl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">f_pkl</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

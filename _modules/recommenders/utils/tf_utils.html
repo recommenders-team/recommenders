@@ -1,0 +1,748 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.utils.tf_utils &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/utils/tf_utils';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/utils/tf_utils.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/utils/tf_utils.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.utils.tf_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow_estimator.python.estimator.export.export</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_supervised_input_receiver_fn_from_input_fn</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">MODEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;model_checkpoints&quot;</span>
+
+
+<span class="n">OPTIMIZERS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">adadelta</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdadeltaOptimizer</span><span class="p">,</span>
+    <span class="n">adagrad</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdagradOptimizer</span><span class="p">,</span>
+    <span class="n">adam</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">,</span>
+    <span class="n">ftrl</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">FtrlOptimizer</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">MomentumOptimizer</span><span class="p">,</span>
+    <span class="n">rmsprop</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">RMSPropOptimizer</span><span class="p">,</span>
+    <span class="n">sgd</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="pandas_input_fn_for_saved_model"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model">[docs]</a><span class="k">def</span> <span class="nf">pandas_input_fn_for_saved_model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">feat_name_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas input function for TensorFlow SavedModel.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): Data containing features.</span>
+<span class="sd">        feat_name_type (dict): Feature name and type spec. E.g.</span>
+<span class="sd">            `{&#39;userID&#39;: int, &#39;itemID&#39;: int, &#39;rating&#39;: float}`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        func: Input function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">feat_type</span> <span class="ow">in</span> <span class="n">feat_name_type</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">assert</span> <span class="n">feat_type</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">input_fn</span><span class="p">():</span>
+        <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">ex</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Example</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">feat_name</span><span class="p">,</span> <span class="n">feat_type</span> <span class="ow">in</span> <span class="n">feat_name_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">feat</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">feature</span><span class="p">[</span><span class="n">feat_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">feat_type</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                    <span class="n">feat</span><span class="o">.</span><span class="n">int64_list</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">sample</span><span class="p">[</span><span class="n">feat_name</span><span class="p">]])</span>
+                <span class="k">elif</span> <span class="n">feat_type</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+                    <span class="n">feat</span><span class="o">.</span><span class="n">float_list</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">sample</span><span class="p">[</span><span class="n">feat_name</span><span class="p">]])</span>
+                <span class="k">elif</span> <span class="n">feat_type</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="n">feat</span><span class="o">.</span><span class="n">float_list</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">feat_name</span><span class="p">])</span>
+            <span class="n">examples</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">examples</span><span class="p">)}</span>
+
+    <span class="k">return</span> <span class="n">input_fn</span></div>
+
+
+<div class="viewcode-block" id="pandas_input_fn"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.pandas_input_fn">[docs]</a><span class="k">def</span> <span class="nf">pandas_input_fn</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas input function for TensorFlow high-level API Estimator.</span>
+<span class="sd">    This function returns a `tf.data.Dataset` function.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        `tf.estimator.inputs.pandas_input_fn` cannot handle array/list column properly.</span>
+<span class="sd">        For more information, see https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): Data containing features.</span>
+<span class="sd">        y_col (str): Label column name if df has it.</span>
+<span class="sd">        batch_size (int): Batch size for the input function.</span>
+<span class="sd">        num_epochs (int): Number of epochs to iterate over data. If `None`, it will run forever.</span>
+<span class="sd">        shuffle (bool): If True, shuffles the data queue.</span>
+<span class="sd">        seed (int): Random seed for shuffle.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tf.data.Dataset: Function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">X_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">y_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">X_df</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">y_col</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">X_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+
+    <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">_dataset</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_dataset</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span>
+            <span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">reshuffle_each_iteration</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># buffer size = 1000</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">warnings</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Seed was set but `shuffle=False`. Seed will be ignored.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="build_optimizer"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.build_optimizer">[docs]</a><span class="k">def</span> <span class="nf">build_optimizer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an optimizer for TensorFlow high-level API Estimator.</span>
+
+<span class="sd">    Available options are: `adadelta`, `adagrad`, `adam`, `ftrl`, `momentum`, `rmsprop` or `sgd`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Optimizer name.</span>
+<span class="sd">        lr (float): Learning rate</span>
+<span class="sd">        kwargs: Optimizer arguments as key-value pairs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tf.train.Optimizer: Tensorflow optimizer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">optimizer_class</span> <span class="o">=</span> <span class="n">OPTIMIZERS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Optimizer name should be one of: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">OPTIMIZERS</span><span class="p">)))</span>
+
+    <span class="c1"># Set parameters</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;ftrl&quot;</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;l1_regularization_strength&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;l1_regularization_strength&quot;</span><span class="p">,</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;l2_regularization_strength&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;l2_regularization_strength&quot;</span><span class="p">,</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;momentum&quot;</span> <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;rmsprop&quot;</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;momentum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;momentum&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">optimizer_class</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="export_model"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.export_model">[docs]</a><span class="k">def</span> <span class="nf">export_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_input_fn</span><span class="p">,</span> <span class="n">eval_input_fn</span><span class="p">,</span> <span class="n">tf_feat_cols</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export TensorFlow estimator (model).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (tf.estimator.Estimator): Model to export.</span>
+<span class="sd">        train_input_fn (function): Training input function to create data receiver spec.</span>
+<span class="sd">        eval_input_fn (function): Evaluation input function to create data receiver spec.</span>
+<span class="sd">        tf_feat_cols (list(tf.feature_column)): Feature columns.</span>
+<span class="sd">        base_dir (str): Base directory to export the model.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Exported model path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+    <span class="n">train_rcvr_fn</span> <span class="o">=</span> <span class="n">build_supervised_input_receiver_fn_from_input_fn</span><span class="p">(</span><span class="n">train_input_fn</span><span class="p">)</span>
+    <span class="n">eval_rcvr_fn</span> <span class="o">=</span> <span class="n">build_supervised_input_receiver_fn_from_input_fn</span><span class="p">(</span><span class="n">eval_input_fn</span><span class="p">)</span>
+    <span class="n">serve_rcvr_fn</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">export</span><span class="o">.</span><span class="n">build_parsing_serving_input_receiver_fn</span><span class="p">(</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">feature_column</span><span class="o">.</span><span class="n">make_parse_example_spec</span><span class="p">(</span><span class="n">tf_feat_cols</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">rcvr_fn_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">ModeKeys</span><span class="o">.</span><span class="n">TRAIN</span><span class="p">:</span> <span class="n">train_rcvr_fn</span><span class="p">,</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">ModeKeys</span><span class="o">.</span><span class="n">EVAL</span><span class="p">:</span> <span class="n">eval_rcvr_fn</span><span class="p">,</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">ModeKeys</span><span class="o">.</span><span class="n">PREDICT</span><span class="p">:</span> <span class="n">serve_rcvr_fn</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">exported_path</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">experimental_export_all_saved_models</span><span class="p">(</span>
+        <span class="n">export_dir_base</span><span class="o">=</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">input_receiver_fn_map</span><span class="o">=</span><span class="n">rcvr_fn_map</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">exported_path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="evaluation_log_hook"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.evaluation_log_hook">[docs]</a><span class="k">def</span> <span class="nf">evaluation_log_hook</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="p">,</span>
+    <span class="n">logger</span><span class="p">,</span>
+    <span class="n">true_df</span><span class="p">,</span>
+    <span class="n">y_col</span><span class="p">,</span>
+    <span class="n">eval_df</span><span class="p">,</span>
+    <span class="n">every_n_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+    <span class="n">model_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+    <span class="n">eval_fns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">eval_kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluation log hook for TensorFlow high-level API Estimator.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">       TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.</span>
+<span class="sd">       In order to get the most up-to-date evaluation results while training,</span>
+<span class="sd">       set model&#39;s `save_checkpoints_steps` to be equal or greater than hook&#39;s `every_n_iter`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        estimator (tf.estimator.Estimator): Model to evaluate.</span>
+<span class="sd">        logger (Logger): Custom logger to log the results.</span>
+<span class="sd">            E.g., define a subclass of Logger for AzureML logging.</span>
+<span class="sd">        true_df (pd.DataFrame): Ground-truth data.</span>
+<span class="sd">        y_col (str): Label column name in true_df</span>
+<span class="sd">        eval_df (pd.DataFrame): Evaluation data without label column.</span>
+<span class="sd">        every_n_iter (int): Evaluation frequency (steps).</span>
+<span class="sd">        model_dir (str): Model directory to save the summaries to. If None, does not record.</span>
+<span class="sd">        batch_size (int): Number of samples fed into the model at a time.</span>
+<span class="sd">            Note, the batch size doesn&#39;t affect on evaluation results.</span>
+<span class="sd">        eval_fns (iterable of functions): List of evaluation functions that have signature of</span>
+<span class="sd">            `(true_df, prediction_df, **eval_kwargs)`-&gt;`float`. If None, loss is calculated on `true_df`.</span>
+<span class="sd">        eval_kwargs: Evaluation function&#39;s keyword arguments.</span>
+<span class="sd">            Note, prediction column name should be &#39;prediction&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tf.train.SessionRunHook: Session run hook to evaluate the model while training.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">_TrainLogHook</span><span class="p">(</span>
+        <span class="n">estimator</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">,</span>
+        <span class="n">true_df</span><span class="p">,</span>
+        <span class="n">y_col</span><span class="p">,</span>
+        <span class="n">eval_df</span><span class="p">,</span>
+        <span class="n">every_n_iter</span><span class="p">,</span>
+        <span class="n">model_dir</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">eval_fns</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">eval_kwargs</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">_TrainLogHook</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">SessionRunHook</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">estimator</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">,</span>
+        <span class="n">true_df</span><span class="p">,</span>
+        <span class="n">y_col</span><span class="p">,</span>
+        <span class="n">eval_df</span><span class="p">,</span>
+        <span class="n">every_n_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">model_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">eval_fns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">eval_kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluation log hook class&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">estimator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">true_df</span> <span class="o">=</span> <span class="n">true_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_col</span> <span class="o">=</span> <span class="n">y_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_df</span> <span class="o">=</span> <span class="n">eval_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">every_n_iter</span> <span class="o">=</span> <span class="n">every_n_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">=</span> <span class="n">model_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_fns</span> <span class="o">=</span> <span class="n">eval_fns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_kwargs</span> <span class="o">=</span> <span class="n">eval_kwargs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">FileWriterCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">get_or_create_global_step</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_context</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">requests</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;global_step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">SessionRunArgs</span><span class="p">(</span><span class="n">requests</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_context</span><span class="p">,</span> <span class="n">run_values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">run_values</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;global_step&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">every_n_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_prev_log_level</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">get_verbosity</span><span class="p">()</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_fns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+                    <span class="n">input_fn</span><span class="o">=</span><span class="n">pandas_input_fn</span><span class="p">(</span>
+                        <span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">true_df</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+                    <span class="p">)</span>
+                <span class="p">)[</span><span class="s2">&quot;average_loss&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="s2">&quot;validation_loss&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">predictions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+                            <span class="n">input_fn</span><span class="o">=</span><span class="n">pandas_input_fn</span><span class="p">(</span>
+                                <span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_df</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+                            <span class="p">)</span>
+                        <span class="p">),</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_df</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">prediction_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">prediction_df</span><span class="p">[</span><span class="s2">&quot;prediction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;predictions&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_fns</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">true_df</span><span class="p">,</span> <span class="n">prediction_df</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_kwargs</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">_prev_log_level</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">Summary</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">simple_value</span><span class="o">=</span><span class="n">value</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span><span class="o">.</span><span class="n">add_summary</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MetricsLogger"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger">[docs]</a><span class="k">class</span> <span class="nc">MetricsLogger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Metrics logger&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializer&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="MetricsLogger.log"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log metrics. Each metric&#39;s log will be stored in the corresponding list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric (str): Metric name.</span>
+<span class="sd">            value (float): Value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MetricsLogger.get_log"><a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger.get_log">[docs]</a>    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Log metrics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

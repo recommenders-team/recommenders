@@ -1,0 +1,923 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.deeprec.models.xDeepFM &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/deeprec/models/xDeepFM';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/deeprec/models/xDeepFM.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/deeprec/models/xDeepFM.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.deeprec.models.xDeepFM</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;XDeepFMModel&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="XDeepFMModel"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.xDeepFM.XDeepFMModel">[docs]</a><span class="k">class</span> <span class="nc">XDeepFMModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;xDeepFM model</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        J. Lian, X. Zhou, F. Zhang, Z. Chen, X. Xie, G. Sun, &quot;xDeepFM: Combining Explicit</span>
+<span class="sd">        and Implicit Feature Interactions for Recommender Systems&quot;, in Proceedings of the</span>
+<span class="sd">        24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining,</span>
+<span class="sd">        KDD 2018, London, 2018.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create xdeepfm&#39;s logic.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: The prediction score made by the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_prob_train</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_prob_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;XDeepFM&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
+            <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span>
+                <span class="s2">&quot;embedding&quot;</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">escope</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;embedding_layer&quot;</span><span class="p">,</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">hparams</span><span class="o">.</span><span class="n">FEATURE_COUNT</span><span class="p">,</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span><span class="p">],</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embed_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">)</span>
+                <span class="n">embed_out</span><span class="p">,</span> <span class="n">embed_layer_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_embedding</span><span class="p">()</span>
+
+            <span class="n">logit</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">use_Linear_part</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Add linear part.&quot;</span><span class="p">)</span>
+                <span class="n">logit</span> <span class="o">=</span> <span class="n">logit</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_linear</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">use_FM_part</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Add FM part.&quot;</span><span class="p">)</span>
+                <span class="n">logit</span> <span class="o">=</span> <span class="n">logit</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_fm</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">use_CIN_part</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Add CIN part.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">fast_CIN_d</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">logit</span> <span class="o">=</span> <span class="n">logit</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_CIN</span><span class="p">(</span>
+                        <span class="n">embed_out</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_masked</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logit</span> <span class="o">=</span> <span class="n">logit</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_fast_CIN</span><span class="p">(</span>
+                        <span class="n">embed_out</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">use_DNN_part</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Add DNN part.&quot;</span><span class="p">)</span>
+                <span class="n">logit</span> <span class="o">=</span> <span class="n">logit</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_dnn</span><span class="p">(</span><span class="n">embed_out</span><span class="p">,</span> <span class="n">embed_layer_size</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">logit</span>
+
+    <span class="k">def</span> <span class="nf">_build_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The field embedding layer. MLP requires fixed-length vectors as input.</span>
+<span class="sd">        This function makes sum pooling of feature embeddings for each field.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            embedding:  The result of field embedding layer, with size of #_fields * #_dim.</span>
+<span class="sd">            embedding_size: #_fields * #_dim</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="n">fm_sparse_index</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">SparseTensor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">dnn_feat_indices</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">dnn_feat_values</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">dnn_feat_shape</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">fm_sparse_weight</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">SparseTensor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">dnn_feat_indices</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">dnn_feat_weights</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">dnn_feat_shape</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">w_fm_nn_input_orgin</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup_sparse</span><span class="p">(</span>
+            <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span>
+            <span class="n">sp_ids</span><span class="o">=</span><span class="n">fm_sparse_index</span><span class="p">,</span>
+            <span class="n">sp_weights</span><span class="o">=</span><span class="n">fm_sparse_weight</span><span class="p">,</span>
+            <span class="n">combiner</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">w_fm_nn_input_orgin</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span> <span class="o">*</span> <span class="n">hparams</span><span class="o">.</span><span class="n">FIELD_COUNT</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">embedding_size</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">FIELD_COUNT</span> <span class="o">*</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span>
+        <span class="k">return</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">embedding_size</span>
+
+    <span class="k">def</span> <span class="nf">_build_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the linear part for the model.</span>
+<span class="sd">        This is a linear regression.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Prediction score made by linear regression.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span>
+            <span class="s2">&quot;linear_part&quot;</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">FEATURE_COUNT</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">SparseTensor</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_indices</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_values</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_shape</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">linear_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">sparse_dense_matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;linear_part/w&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;linear_part/b&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">linear_output</span>
+
+    <span class="k">def</span> <span class="nf">_build_fm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the factorization machine part for the model.</span>
+<span class="sd">        This is a traditional 2-order FM module.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Prediction score made by factorization machine.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;fm_part&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">SparseTensor</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_indices</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_values</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_shape</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">xx</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">SparseTensor</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_indices</span><span class="p">,</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_values</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">fm_feat_shape</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">fm_output</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                <span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">sparse_dense_matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="o">-</span> <span class="n">tf</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">sparse_dense_matmul</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">fm_output</span>
+
+    <span class="k">def</span> <span class="nf">_build_CIN</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">nn_input</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_masked</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the compressed interaction network.</span>
+<span class="sd">        This component provides explicit and vector-wise higher-order feature interactions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nn_input (object): The output of field-embedding layer. This is the input for CIN.</span>
+<span class="sd">            res (bool): Whether use residual structure to fuse the results from each layer of CIN.</span>
+<span class="sd">            direct (bool): If true, then all hidden units are connected to both next layer and output layer;</span>
+<span class="sd">                    otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.</span>
+<span class="sd">            bias (bool): Whether to add bias term when calculating the feature maps.</span>
+<span class="sd">            is_masked (bool): Controls whether to remove self-interaction in the first layer of CIN.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Prediction score made by CIN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="n">hidden_nn_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">field_nums</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">final_len</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">field_num</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">FIELD_COUNT</span>
+        <span class="n">nn_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nn_input</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">field_num</span><span class="p">),</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span><span class="p">])</span>
+        <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">field_num</span><span class="p">))</span>
+        <span class="n">hidden_nn_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn_input</span><span class="p">)</span>
+        <span class="n">final_result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">split_tensor0</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">hidden_nn_layers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span> <span class="o">*</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span>
+            <span class="s2">&quot;exfm_part&quot;</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">layer_size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">cross_layer_sizes</span><span class="p">):</span>
+                <span class="n">split_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">hidden_nn_layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span> <span class="o">*</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">dot_result_m</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span>
+                    <span class="n">split_tensor0</span><span class="p">,</span> <span class="n">split_tensor</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>  <span class="c1"># shape :  (Dim, Batch, FieldNum, HiddenNum), a.k.a (D,B,F,H)</span>
+                <span class="n">dot_result_o</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">dot_result_m</span><span class="p">,</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">hparams</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">field_nums</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
+                <span class="p">)</span>  <span class="c1"># shape: (D,B,FH)</span>
+                <span class="n">dot_result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">dot_result_o</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># (B,D,FH)</span>
+
+                <span class="n">filters</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;f_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">field_nums</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">layer_size</span><span class="p">],</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">is_masked</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ones</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                    <span class="n">mask_matrix</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">band_part</span><span class="p">(</span>
+                        <span class="n">ones</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="p">)</span> <span class="o">-</span> <span class="n">tf</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">tensor_diag</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">mask_matrix</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="n">mask_matrix</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                    <span class="p">)</span>
+
+                    <span class="n">dot_result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">dot_result</span><span class="p">,</span> <span class="n">mask_matrix</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dot_result</span> <span class="o">=</span> <span class="n">dot_result</span>
+
+                <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
+                    <span class="nb">input</span><span class="o">=</span><span class="n">dot_result</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;VALID&quot;</span>
+                <span class="p">)</span>  <span class="c1"># shape : (B,D,H`)</span>
+
+                <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;f_b&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">layer_size</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                        <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+                    <span class="p">)</span>
+                    <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">bias_add</span><span class="p">(</span><span class="n">curr_out</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cross_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">enable_BN</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">batch_normalization</span><span class="p">(</span>
+                        <span class="n">curr_out</span><span class="p">,</span>
+                        <span class="n">momentum</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+                        <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+                        <span class="n">training</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_train_stage</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">curr_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activate</span><span class="p">(</span><span class="n">curr_out</span><span class="p">,</span> <span class="n">hparams</span><span class="o">.</span><span class="n">cross_activation</span><span class="p">)</span>
+
+                <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">curr_out</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># shape : (B,H,D)</span>
+
+                <span class="k">if</span> <span class="n">direct</span><span class="p">:</span>
+                    <span class="n">direct_connect</span> <span class="o">=</span> <span class="n">curr_out</span>
+                    <span class="n">next_hidden</span> <span class="o">=</span> <span class="n">curr_out</span>
+                    <span class="n">final_len</span> <span class="o">+=</span> <span class="n">layer_size</span>
+                    <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">cross_layer_sizes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">next_hidden</span><span class="p">,</span> <span class="n">direct_connect</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                            <span class="n">curr_out</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span> <span class="mi">1</span>
+                        <span class="p">)</span>
+                        <span class="n">final_len</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">direct_connect</span> <span class="o">=</span> <span class="n">curr_out</span>
+                        <span class="n">next_hidden</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">final_len</span> <span class="o">+=</span> <span class="n">layer_size</span>
+                    <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+                <span class="n">final_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">direct_connect</span><span class="p">)</span>
+                <span class="n">hidden_nn_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_hidden</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">cross_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">final_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">input_tensor</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape : (B,H)</span>
+
+            <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+                <span class="n">base_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                    <span class="n">input_tensor</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>  <span class="c1"># (B,1)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">base_score</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">w_nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;w_nn_output&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">final_len</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>
+            <span class="n">b_nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;b_nn_output&quot;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_nn_output</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_nn_output</span><span class="p">)</span>
+            <span class="n">exFM_out</span> <span class="o">=</span> <span class="n">base_score</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">xw_plus_b</span><span class="p">(</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">w_nn_output</span><span class="p">,</span> <span class="n">b_nn_output</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">exFM_out</span>
+
+    <span class="k">def</span> <span class="nf">_build_fast_CIN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nn_input</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the compressed interaction network with reduced parameters.</span>
+<span class="sd">        This component provides explicit and vector-wise higher-order feature interactions.</span>
+<span class="sd">        Parameters from the filters are reduced via a matrix decomposition method.</span>
+<span class="sd">        Fast CIN is more space and time efficient than CIN.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nn_input (object): The output of field-embedding layer. This is the input for CIN.</span>
+<span class="sd">            res (bool): Whether use residual structure to fuse the results from each layer of CIN.</span>
+<span class="sd">            direct (bool): If true, then all hidden units are connected to both next layer and output layer;</span>
+<span class="sd">                    otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.</span>
+<span class="sd">            bias (bool): Whether to add bias term when calculating the feature maps.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Prediction score made by fast CIN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="n">hidden_nn_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">field_nums</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">final_len</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">field_num</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">FIELD_COUNT</span>
+        <span class="n">fast_CIN_d</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">fast_CIN_d</span>
+        <span class="n">nn_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">nn_input</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">field_num</span><span class="p">),</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># (B,F,D)</span>
+        <span class="n">nn_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">nn_input</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># (B,D,F)</span>
+        <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">field_num</span><span class="p">))</span>
+        <span class="n">hidden_nn_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn_input</span><span class="p">)</span>
+        <span class="n">final_result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span>
+            <span class="s2">&quot;exfm_part&quot;</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">layer_size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">cross_layer_sizes</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fast_w</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;fast_CIN_w_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fast_CIN_d</span> <span class="o">*</span> <span class="n">layer_size</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cross_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fast_w</span><span class="p">)</span>
+                    <span class="n">dot_result_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
+                        <span class="nb">input</span><span class="o">=</span><span class="n">nn_input</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">fast_w</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;VALID&quot;</span>
+                    <span class="p">)</span>  <span class="c1"># shape: (B,D,d*H)</span>
+                    <span class="n">dot_result_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
+                        <span class="nb">input</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">nn_input</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                        <span class="n">filters</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">fast_w</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                        <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;VALID&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>  <span class="c1"># shape: ((B,D,d*H)</span>
+                    <span class="n">dot_result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">dot_result_1</span> <span class="o">-</span> <span class="n">dot_result_2</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">layer_size</span><span class="p">,</span> <span class="n">fast_CIN_d</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                        <span class="n">input_tensor</span><span class="o">=</span><span class="n">dot_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="p">)</span>  <span class="c1"># shape: ((B,D,H)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fast_w</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;fast_CIN_w_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">field_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fast_CIN_d</span> <span class="o">*</span> <span class="n">layer_size</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">fast_v</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;fast_CIN_v_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">field_nums</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">fast_CIN_d</span> <span class="o">*</span> <span class="n">layer_size</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cross_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fast_w</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cross_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fast_v</span><span class="p">)</span>
+
+                    <span class="n">dot_result_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
+                        <span class="nb">input</span><span class="o">=</span><span class="n">nn_input</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">fast_w</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;VALID&quot;</span>
+                    <span class="p">)</span>  <span class="c1"># shape: ((B,D,d*H)</span>
+                    <span class="n">dot_result_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
+                        <span class="nb">input</span><span class="o">=</span><span class="n">hidden_nn_layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">filters</span><span class="o">=</span><span class="n">fast_v</span><span class="p">,</span>
+                        <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;VALID&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>  <span class="c1"># shape: ((B,D,d*H)</span>
+                    <span class="n">dot_result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">dot_result_1</span><span class="p">,</span> <span class="n">dot_result_2</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">layer_size</span><span class="p">,</span> <span class="n">fast_CIN_d</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                        <span class="n">input_tensor</span><span class="o">=</span><span class="n">dot_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="p">)</span>  <span class="c1"># shape: ((B,D,H)</span>
+
+                <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;f_b&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">layer_size</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                        <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+                    <span class="p">)</span>
+                    <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">bias_add</span><span class="p">(</span><span class="n">curr_out</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cross_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">enable_BN</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">curr_out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">batch_normalization</span><span class="p">(</span>
+                        <span class="n">curr_out</span><span class="p">,</span>
+                        <span class="n">momentum</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+                        <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+                        <span class="n">training</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_train_stage</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">curr_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activate</span><span class="p">(</span><span class="n">curr_out</span><span class="p">,</span> <span class="n">hparams</span><span class="o">.</span><span class="n">cross_activation</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">direct</span><span class="p">:</span>
+                    <span class="n">direct_connect</span> <span class="o">=</span> <span class="n">curr_out</span>
+                    <span class="n">next_hidden</span> <span class="o">=</span> <span class="n">curr_out</span>
+                    <span class="n">final_len</span> <span class="o">+=</span> <span class="n">layer_size</span>
+                    <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">cross_layer_sizes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">next_hidden</span><span class="p">,</span> <span class="n">direct_connect</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                            <span class="n">curr_out</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span> <span class="mi">2</span>
+                        <span class="p">)</span>
+                        <span class="n">final_len</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">direct_connect</span> <span class="o">=</span> <span class="n">curr_out</span>
+                        <span class="n">next_hidden</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">final_len</span> <span class="o">+=</span> <span class="n">layer_size</span>
+                        <span class="n">field_nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">layer_size</span><span class="p">))</span>
+
+                <span class="n">final_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">direct_connect</span><span class="p">)</span>
+                <span class="n">hidden_nn_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_hidden</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">final_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">input_tensor</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># (B,H)</span>
+
+            <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+                <span class="n">base_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                    <span class="n">input_tensor</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>  <span class="c1"># (B,1)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">base_score</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">w_nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;w_nn_output&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">final_len</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>
+            <span class="n">b_nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;b_nn_output&quot;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_nn_output</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_nn_output</span><span class="p">)</span>
+            <span class="n">exFM_out</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">xw_plus_b</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">w_nn_output</span><span class="p">,</span> <span class="n">b_nn_output</span><span class="p">)</span> <span class="o">+</span> <span class="n">base_score</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">exFM_out</span>
+
+    <span class="k">def</span> <span class="nf">_build_dnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_out</span><span class="p">,</span> <span class="n">embed_layer_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the MLP part for the model.</span>
+<span class="sd">        This components provides implicit higher-order feature interactions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embed_out (object): The output of field-embedding layer. This is the input for DNN.</span>
+<span class="sd">            embed_layer_size (object): Shape of the embed_out</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Prediction score made by fast CIN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
+        <span class="n">w_fm_nn_input</span> <span class="o">=</span> <span class="n">embed_out</span>
+        <span class="n">last_layer_size</span> <span class="o">=</span> <span class="n">embed_layer_size</span>
+        <span class="n">layer_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">hidden_nn_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">hidden_nn_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_fm_nn_input</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span>
+            <span class="s2">&quot;nn_part&quot;</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initializer</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">layer_size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">layer_sizes</span><span class="p">):</span>
+                <span class="n">curr_w_nn_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;w_nn_layer&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">),</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">last_layer_size</span><span class="p">,</span> <span class="n">layer_size</span><span class="p">],</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">curr_b_nn_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;b_nn_layer&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">),</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">layer_size</span><span class="p">],</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                    <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                    <span class="s2">&quot;nn_part/&quot;</span> <span class="o">+</span> <span class="s2">&quot;w_nn_layer&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">),</span> <span class="n">curr_w_nn_layer</span>
+                <span class="p">)</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                    <span class="s2">&quot;nn_part/&quot;</span> <span class="o">+</span> <span class="s2">&quot;b_nn_layer&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">),</span> <span class="n">curr_b_nn_layer</span>
+                <span class="p">)</span>
+                <span class="n">curr_hidden_nn_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">xw_plus_b</span><span class="p">(</span>
+                    <span class="n">hidden_nn_layers</span><span class="p">[</span><span class="n">layer_idx</span><span class="p">],</span> <span class="n">curr_w_nn_layer</span><span class="p">,</span> <span class="n">curr_b_nn_layer</span>
+                <span class="p">)</span>
+                <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;nn_part&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>  <span class="c1"># noqa: F841</span>
+                <span class="n">activation</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">activation</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">hparams</span><span class="o">.</span><span class="n">enable_BN</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">curr_hidden_nn_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">batch_normalization</span><span class="p">(</span>
+                        <span class="n">curr_hidden_nn_layer</span><span class="p">,</span>
+                        <span class="n">momentum</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+                        <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+                        <span class="n">training</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_train_stage</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">curr_hidden_nn_layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_layer</span><span class="p">(</span>
+                    <span class="n">logit</span><span class="o">=</span><span class="n">curr_hidden_nn_layer</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span> <span class="n">layer_idx</span><span class="o">=</span><span class="n">idx</span>
+                <span class="p">)</span>
+                <span class="n">hidden_nn_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_hidden_nn_layer</span><span class="p">)</span>
+                <span class="n">layer_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">last_layer_size</span> <span class="o">=</span> <span class="n">layer_size</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_w_nn_layer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_b_nn_layer</span><span class="p">)</span>
+
+            <span class="n">w_nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;w_nn_output&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">last_layer_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>
+            <span class="n">b_nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;b_nn_output&quot;</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                <span class="s2">&quot;nn_part/&quot;</span> <span class="o">+</span> <span class="s2">&quot;w_nn_output&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">),</span> <span class="n">w_nn_output</span>
+            <span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
+                <span class="s2">&quot;nn_part/&quot;</span> <span class="o">+</span> <span class="s2">&quot;b_nn_output&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer_idx</span><span class="p">),</span> <span class="n">b_nn_output</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_nn_output</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_nn_output</span><span class="p">)</span>
+            <span class="n">nn_output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">xw_plus_b</span><span class="p">(</span>
+                <span class="n">hidden_nn_layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">w_nn_output</span><span class="p">,</span> <span class="n">b_nn_output</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">nn_output</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

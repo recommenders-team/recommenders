@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.datasets.mind &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/datasets/mind';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/datasets/mind.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/datasets/mind.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.datasets.mind</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">RegexpTokenizer</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">maybe_download</span><span class="p">,</span>
+    <span class="n">download_path</span><span class="p">,</span>
+    <span class="n">unzip_file</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">URL_MIND_LARGE_TRAIN</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip&quot;</span>
+<span class="p">)</span>
+<span class="n">URL_MIND_LARGE_VALID</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip&quot;</span>
+<span class="p">)</span>
+<span class="n">URL_MIND_SMALL_TRAIN</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip&quot;</span>
+<span class="p">)</span>
+<span class="n">URL_MIND_SMALL_VALID</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip&quot;</span>
+<span class="p">)</span>
+<span class="n">URL_MIND_DEMO_TRAIN</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip&quot;</span>
+<span class="p">)</span>
+<span class="n">URL_MIND_DEMO_VALID</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip&quot;</span>
+<span class="p">)</span>
+<span class="n">URL_MIND_DEMO_UTILS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip&quot;</span>
+<span class="p">)</span>
+
+<span class="n">URL_MIND</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;large&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">URL_MIND_LARGE_TRAIN</span><span class="p">,</span> <span class="n">URL_MIND_LARGE_VALID</span><span class="p">),</span>
+    <span class="s2">&quot;small&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">URL_MIND_SMALL_TRAIN</span><span class="p">,</span> <span class="n">URL_MIND_SMALL_VALID</span><span class="p">),</span>
+    <span class="s2">&quot;demo&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">URL_MIND_DEMO_TRAIN</span><span class="p">,</span> <span class="n">URL_MIND_DEMO_VALID</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="download_mind"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.download_mind">[docs]</a><span class="k">def</span> <span class="nf">download_mind</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">dest_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download MIND dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Dataset size. One of [&quot;small&quot;, &quot;large&quot;]</span>
+<span class="sd">        dest_path (str): Download path. If path is None, it will download the dataset on a temporal path</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str, str: Path to train and validation sets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size_options</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="s2">&quot;large&quot;</span><span class="p">,</span> <span class="s2">&quot;demo&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">size_options</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrong size option, available options are </span><span class="si">{</span><span class="n">size_options</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">url_train</span><span class="p">,</span> <span class="n">url_valid</span> <span class="o">=</span> <span class="n">URL_MIND</span><span class="p">[</span><span class="n">size</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">train_path</span> <span class="o">=</span> <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url_train</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">valid_path</span> <span class="o">=</span> <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url_valid</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_path</span><span class="p">,</span> <span class="n">valid_path</span></div>
+
+
+<div class="viewcode-block" id="extract_mind"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.extract_mind">[docs]</a><span class="k">def</span> <span class="nf">extract_mind</span><span class="p">(</span>
+    <span class="n">train_zip</span><span class="p">,</span>
+    <span class="n">valid_zip</span><span class="p">,</span>
+    <span class="n">train_folder</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+    <span class="n">valid_folder</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">clean_zip_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract MIND dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_zip (str): Path to train zip file</span>
+<span class="sd">        valid_zip (str): Path to valid zip file</span>
+<span class="sd">        train_folder (str): Destination forder for train set</span>
+<span class="sd">        valid_folder (str): Destination forder for validation set</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str, str: Train and validation folders</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">train_zip</span><span class="p">)</span>
+    <span class="n">train_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_folder</span><span class="p">,</span> <span class="n">train_folder</span><span class="p">)</span>
+    <span class="n">valid_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_folder</span><span class="p">,</span> <span class="n">valid_folder</span><span class="p">)</span>
+    <span class="n">unzip_file</span><span class="p">(</span><span class="n">train_zip</span><span class="p">,</span> <span class="n">train_path</span><span class="p">,</span> <span class="n">clean_zip_file</span><span class="o">=</span><span class="n">clean_zip_file</span><span class="p">)</span>
+    <span class="n">unzip_file</span><span class="p">(</span><span class="n">valid_zip</span><span class="p">,</span> <span class="n">valid_path</span><span class="p">,</span> <span class="n">clean_zip_file</span><span class="o">=</span><span class="n">clean_zip_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_path</span><span class="p">,</span> <span class="n">valid_path</span></div>
+
+
+<div class="viewcode-block" id="read_clickhistory"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.read_clickhistory">[docs]</a><span class="k">def</span> <span class="nf">read_clickhistory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read click history file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Folder path</span>
+<span class="sd">        filename (str): Filename</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list, dict:</span>
+<span class="sd">        - A list of user session with user_id, clicks, positive and negative interactions.</span>
+<span class="sd">        - A dictionary with user_id click history.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">userid_history</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">userid</span><span class="p">,</span> <span class="n">imp_time</span><span class="p">,</span> <span class="n">click</span><span class="p">,</span> <span class="n">imps</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">clicks</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">imps</span> <span class="o">=</span> <span class="n">imps</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="n">imps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">imp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+                <span class="n">pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">neg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">userid_history</span><span class="p">[</span><span class="n">userid</span><span class="p">]</span> <span class="o">=</span> <span class="n">clicks</span>
+        <span class="n">sessions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">userid</span><span class="p">,</span> <span class="n">clicks</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">sessions</span><span class="p">,</span> <span class="n">userid_history</span></div>
+
+
+<span class="k">def</span> <span class="nf">_newsample</span><span class="p">(</span><span class="n">nnn</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">nnn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">nnn</span> <span class="o">*</span> <span class="p">(</span><span class="n">ratio</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">nnn</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ratio</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">nnn</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_train_input"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_train_input">[docs]</a><span class="k">def</span> <span class="nf">get_train_input</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">train_file_path</span><span class="p">,</span> <span class="n">npratio</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate train file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        session (list): List of user session with user_id, clicks, positive and negative interactions.</span>
+<span class="sd">        train_file_path (str): Path to file.</span>
+<span class="sd">        npration (int): Ratio for negative sampling.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fp_train</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">train_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sess_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">session</span><span class="p">)):</span>
+        <span class="n">sess</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="n">sess_id</span><span class="p">]</span>
+        <span class="n">userid</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">poss</span><span class="p">,</span> <span class="n">negs</span> <span class="o">=</span> <span class="n">sess</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">poss</span><span class="p">)):</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">poss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">neg</span> <span class="o">=</span> <span class="n">_newsample</span><span class="p">(</span><span class="n">negs</span><span class="p">,</span> <span class="n">npratio</span><span class="p">)</span>
+            <span class="n">fp_train</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;1 &quot;</span> <span class="o">+</span> <span class="s2">&quot;train_&quot;</span> <span class="o">+</span> <span class="n">userid</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">pos</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">neg_ins</span> <span class="ow">in</span> <span class="n">neg</span><span class="p">:</span>
+                <span class="n">fp_train</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0 &quot;</span> <span class="o">+</span> <span class="s2">&quot;train_&quot;</span> <span class="o">+</span> <span class="n">userid</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">neg_ins</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">fp_train</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">train_file_path</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train file </span><span class="si">{</span><span class="n">train_file_path</span><span class="si">}</span><span class="s2"> successfully generated&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error when generating </span><span class="si">{</span><span class="n">train_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_valid_input"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_valid_input">[docs]</a><span class="k">def</span> <span class="nf">get_valid_input</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">valid_file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate validation file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        session (list): List of user session with user_id, clicks, positive and negative interactions.</span>
+<span class="sd">        valid_file_path (str): Path to file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fp_valid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">valid_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sess_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">session</span><span class="p">)):</span>
+        <span class="n">userid</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">poss</span><span class="p">,</span> <span class="n">negs</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="n">sess_id</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">poss</span><span class="p">)):</span>
+            <span class="n">fp_valid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;1 &quot;</span> <span class="o">+</span> <span class="s2">&quot;valid_&quot;</span> <span class="o">+</span> <span class="n">userid</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">poss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sess_id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">negs</span><span class="p">)):</span>
+            <span class="n">fp_valid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;0 &quot;</span> <span class="o">+</span> <span class="s2">&quot;valid_&quot;</span> <span class="o">+</span> <span class="n">userid</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">negs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sess_id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="n">fp_valid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">valid_file_path</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation file </span><span class="si">{</span><span class="n">valid_file_path</span><span class="si">}</span><span class="s2"> successfully generated&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error when generating </span><span class="si">{</span><span class="n">valid_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_user_history"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_user_history">[docs]</a><span class="k">def</span> <span class="nf">get_user_history</span><span class="p">(</span><span class="n">train_history</span><span class="p">,</span> <span class="n">valid_history</span><span class="p">,</span> <span class="n">user_history_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate user history file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_history (list): Train history.</span>
+<span class="sd">        valid_history (list): Validation history</span>
+<span class="sd">        user_history_path (str): Path to file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fp_user_history</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">user_history_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">userid</span> <span class="ow">in</span> <span class="n">train_history</span><span class="p">:</span>
+        <span class="n">fp_user_history</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s2">&quot;train_&quot;</span> <span class="o">+</span> <span class="n">userid</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">train_history</span><span class="p">[</span><span class="n">userid</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">userid</span> <span class="ow">in</span> <span class="n">valid_history</span><span class="p">:</span>
+        <span class="n">fp_user_history</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s2">&quot;valid_&quot;</span> <span class="o">+</span> <span class="n">userid</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">valid_history</span><span class="p">[</span><span class="n">userid</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">fp_user_history</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">user_history_path</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User history file </span><span class="si">{</span><span class="n">user_history_path</span><span class="si">}</span><span class="s2"> successfully generated&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error when generating </span><span class="si">{</span><span class="n">user_history_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_read_news</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">splitted</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">news_words</span><span class="p">[</span><span class="n">splitted</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">splitted</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="n">news_entities</span><span class="p">[</span><span class="n">splitted</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">splitted</span><span class="p">[</span><span class="mi">6</span><span class="p">]):</span>
+            <span class="n">news_entities</span><span class="p">[</span><span class="n">splitted</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;SurfaceForms&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;WikidataId&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span>
+
+
+<div class="viewcode-block" id="get_words_and_entities"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_words_and_entities">[docs]</a><span class="k">def</span> <span class="nf">get_words_and_entities</span><span class="p">(</span><span class="n">train_news</span><span class="p">,</span> <span class="n">valid_news</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load words and entities</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_news (str): News train file.</span>
+<span class="sd">        valid_news (str): News validation file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict, dict: Words and entities dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">news_words</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">news_entities</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">RegexpTokenizer</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\w+&quot;</span><span class="p">)</span>
+    <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span> <span class="o">=</span> <span class="n">_read_news</span><span class="p">(</span>
+        <span class="n">train_news</span><span class="p">,</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span><span class="p">,</span> <span class="n">tokenizer</span>
+    <span class="p">)</span>
+    <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span> <span class="o">=</span> <span class="n">_read_news</span><span class="p">(</span>
+        <span class="n">valid_news</span><span class="p">,</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span><span class="p">,</span> <span class="n">tokenizer</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span></div>
+
+
+<div class="viewcode-block" id="download_and_extract_glove"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.download_and_extract_glove">[docs]</a><span class="k">def</span> <span class="nf">download_and_extract_glove</span><span class="p">(</span><span class="n">dest_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download and extract the Glove embedding</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dest_path (str): Destination directory path for the downloaded file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: File path where Glove was extracted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># url = &quot;http://nlp.stanford.edu/data/glove.6B.zip&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://huggingface.co/stanfordnlp/glove/resolve/main/glove.6B.zip&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">dest_path</span><span class="p">)</span>
+    <span class="n">glove_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_path</span><span class="p">,</span> <span class="s2">&quot;glove&quot;</span><span class="p">)</span>
+    <span class="n">unzip_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">glove_path</span><span class="p">,</span> <span class="n">clean_zip_file</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">glove_path</span></div>
+
+
+<div class="viewcode-block" id="generate_embeddings"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.generate_embeddings">[docs]</a><span class="k">def</span> <span class="nf">generate_embeddings</span><span class="p">(</span>
+    <span class="n">data_path</span><span class="p">,</span>
+    <span class="n">news_words</span><span class="p">,</span>
+    <span class="n">news_entities</span><span class="p">,</span>
+    <span class="n">train_entities</span><span class="p">,</span>
+    <span class="n">valid_entities</span><span class="p">,</span>
+    <span class="n">max_sentence</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">word_embedding_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate embeddings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_path (str): Data path.</span>
+<span class="sd">        news_words (dict): News word dictionary.</span>
+<span class="sd">        news_entities (dict): News entity dictionary.</span>
+<span class="sd">        train_entities (str): Train entity file.</span>
+<span class="sd">        valid_entities (str): Validation entity file.</span>
+<span class="sd">        max_sentence (int): Max sentence size.</span>
+<span class="sd">        word_embedding_dim (int): Word embedding dimension.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str, str, str: File paths to news, word and entity embeddings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">embedding_dimensions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">word_embedding_dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">embedding_dimensions</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Wrong embedding dimension, available options are </span><span class="si">{</span><span class="n">embedding_dimensions</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Downloading glove...&quot;</span><span class="p">)</span>
+    <span class="n">glove_path</span> <span class="o">=</span> <span class="n">download_and_extract_glove</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+
+    <span class="n">word_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">word_embedding_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">entity_embedding_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading glove with embedding dimension </span><span class="si">{</span><span class="n">word_embedding_dim</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">glove_file</span> <span class="o">=</span> <span class="s2">&quot;glove.6B.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">word_embedding_dim</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;d.txt&quot;</span>
+    <span class="n">fp_pretrain_vec</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glove_path</span><span class="p">,</span> <span class="n">glove_file</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp_pretrain_vec</span><span class="p">:</span>
+        <span class="n">linesplit</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">word_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">linesplit</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">word_embedding_dict</span><span class="p">[</span><span class="n">linesplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">linesplit</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
+    <span class="n">fp_pretrain_vec</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading train entities...&quot;</span><span class="p">)</span>
+    <span class="n">fp_entity_vec_train</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">train_entities</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp_entity_vec_train</span><span class="p">:</span>
+        <span class="n">linesplit</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">entity_embedding_dict</span><span class="p">[</span><span class="n">linesplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">linesplit</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="p">)</span>
+    <span class="n">fp_entity_vec_train</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading valid entities...&quot;</span><span class="p">)</span>
+    <span class="n">fp_entity_vec_valid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">valid_entities</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp_entity_vec_valid</span><span class="p">:</span>
+        <span class="n">linesplit</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">entity_embedding_dict</span><span class="p">[</span><span class="n">linesplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">linesplit</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="p">)</span>
+    <span class="n">fp_entity_vec_valid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating word and entity indexes...&quot;</span><span class="p">)</span>
+    <span class="n">word_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">word_index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">news_word_string_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">news_entity_string_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">entity2index</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">entity_index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">news_words</span><span class="p">:</span>
+        <span class="n">news_word_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_sentence</span><span class="p">)]</span>
+        <span class="n">news_entity_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_sentence</span><span class="p">)]</span>
+        <span class="n">surfaceform_entityids</span> <span class="o">=</span> <span class="n">news_entities</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">surfaceform_entityids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entity2index</span> <span class="ow">and</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entity_embedding_dict</span><span class="p">:</span>
+                <span class="n">entity2index</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">entity_index</span>
+                <span class="n">entity_index</span> <span class="o">=</span> <span class="n">entity_index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">word_embedding_dict</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">word_dict</span><span class="p">:</span>
+                    <span class="n">word_dict</span><span class="p">[</span><span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">word_index</span>
+                    <span class="n">word_index</span> <span class="o">=</span> <span class="n">word_index</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">news_word_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">word_dict</span><span class="p">[</span><span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">news_word_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">word_dict</span><span class="p">[</span><span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">surfaceform_entityids</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">surface</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="k">for</span> <span class="n">surface_word</span> <span class="ow">in</span> <span class="n">surface</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">news_words</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">surface_word</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">entity_embedding_dict</span><span class="p">:</span>
+                                    <span class="n">news_entity_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity2index</span><span class="p">[</span>
+                                        <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                                    <span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max_sentence</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating word embeddings...&quot;</span><span class="p">)</span>
+    <span class="n">word_embeddings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">word_index</span><span class="p">,</span> <span class="n">word_embedding_dim</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_dict</span><span class="p">:</span>
+        <span class="n">word_embeddings</span><span class="p">[</span><span class="n">word_dict</span><span class="p">[</span><span class="n">word</span><span class="p">]]</span> <span class="o">=</span> <span class="n">word_embedding_dict</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating entity embeddings...&quot;</span><span class="p">)</span>
+    <span class="n">entity_embeddings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">entity_index</span><span class="p">,</span> <span class="n">word_embedding_dim</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entity2index</span><span class="p">:</span>
+        <span class="n">entity_embeddings</span><span class="p">[</span><span class="n">entity2index</span><span class="p">[</span><span class="n">entity</span><span class="p">]]</span> <span class="o">=</span> <span class="n">entity_embedding_dict</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span>
+
+    <span class="n">news_feature_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;doc_feature.txt&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving word and entity features in </span><span class="si">{</span><span class="n">news_feature_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">fp_doc_string</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">news_feature_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">news_word_string_dict</span><span class="p">:</span>
+        <span class="n">fp_doc_string</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">doc_id</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">news_word_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">])))</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">news_entity_string_dict</span><span class="p">[</span><span class="n">doc_id</span><span class="p">])))</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">word_embeddings_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;word_embeddings_5w_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">word_embedding_dim</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
+    <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving word embeddings in </span><span class="si">{</span><span class="n">word_embeddings_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">word_embeddings_path</span><span class="p">,</span> <span class="n">word_embeddings</span><span class="p">)</span>
+
+    <span class="n">entity_embeddings_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;entity_embeddings_5w_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">word_embedding_dim</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
+    <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving word embeddings in </span><span class="si">{</span><span class="n">entity_embeddings_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">entity_embeddings_path</span><span class="p">,</span> <span class="n">entity_embeddings</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">news_feature_path</span><span class="p">,</span> <span class="n">word_embeddings_path</span><span class="p">,</span> <span class="n">entity_embeddings_path</span></div>
+
+
+<div class="viewcode-block" id="load_glove_matrix"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.load_glove_matrix">[docs]</a><span class="k">def</span> <span class="nf">load_glove_matrix</span><span class="p">(</span><span class="n">path_emb</span><span class="p">,</span> <span class="n">word_dict</span><span class="p">,</span> <span class="n">word_embedding_dim</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load pretrained embedding metrics of words in word_dict</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_emb (string): Folder path of downloaded glove file</span>
+<span class="sd">        word_dict (dict): word dictionary</span>
+<span class="sd">        word_embedding_dim: dimention of word embedding vectors</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray, list: pretrained word embedding metrics, words can be found in glove files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">word_dict</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">word_embedding_dim</span><span class="p">))</span>
+    <span class="n">exist_word</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_emb</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;glove.6B.</span><span class="si">{</span><span class="n">word_embedding_dim</span><span class="si">}</span><span class="s2">d.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>  <span class="c1"># noqa: E741 ambiguous variable name &#39;l&#39;</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># noqa: E741 ambiguous variable name &#39;l&#39;</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_dict</span><span class="p">:</span>
+                    <span class="n">wordvec</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">word_dict</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+                    <span class="n">embedding_matrix</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wordvec</span><span class="p">)</span>
+                    <span class="n">exist_word</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">embedding_matrix</span><span class="p">,</span> <span class="n">exist_word</span></div>
+
+
+<div class="viewcode-block" id="word_tokenize"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.word_tokenize">[docs]</a><span class="k">def</span> <span class="nf">word_tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tokenize a sententence</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sent: the sentence need to be tokenized</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: words in the sentence</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># treat consecutive words or special punctuation as words</span>
+    <span class="n">pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\w]+|[.,!?;|]&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pat</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

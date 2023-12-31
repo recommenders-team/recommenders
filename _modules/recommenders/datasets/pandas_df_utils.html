@@ -1,0 +1,882 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.datasets.pandas_df_utils &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/datasets/pandas_df_utils';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/datasets/pandas_df_utils.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/datasets/pandas_df_utils.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.datasets.pandas_df_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span><span class="p">,</span> <span class="n">wraps</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABEL_COL</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="user_item_pairs"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.user_item_pairs">[docs]</a><span class="k">def</span> <span class="nf">user_item_pairs</span><span class="p">(</span>
+    <span class="n">user_df</span><span class="p">,</span>
+    <span class="n">item_df</span><span class="p">,</span>
+    <span class="n">user_col</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">item_col</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">user_item_filter_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all pairs of users and items data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_df (pandas.DataFrame): User data containing unique user ids and maybe their features.</span>
+<span class="sd">        item_df (pandas.DataFrame): Item data containing unique item ids and maybe their features.</span>
+<span class="sd">        user_col (str): User id column name.</span>
+<span class="sd">        item_col (str): Item id column name.</span>
+<span class="sd">        user_item_filter_df (pd.DataFrame): User-item pairs to be used as a filter.</span>
+<span class="sd">        shuffle (bool): If True, shuffles the result.</span>
+<span class="sd">        seed (int): Random seed for shuffle</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get all user-item pairs</span>
+    <span class="n">user_df</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">item_df</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">users_items</span> <span class="o">=</span> <span class="n">user_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">item_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;key&quot;</span><span class="p">)</span>
+
+    <span class="n">user_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">item_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">users_items</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Filter</span>
+    <span class="k">if</span> <span class="n">user_item_filter_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">users_items</span> <span class="o">=</span> <span class="n">filter_by</span><span class="p">(</span><span class="n">users_items</span><span class="p">,</span> <span class="n">user_item_filter_df</span><span class="p">,</span> <span class="p">[</span><span class="n">user_col</span><span class="p">,</span> <span class="n">item_col</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="n">users_items</span> <span class="o">=</span> <span class="n">users_items</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+            <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">users_items</span></div>
+
+
+<div class="viewcode-block" id="filter_by"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.filter_by">[docs]</a><span class="k">def</span> <span class="nf">filter_by</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filter_by_df</span><span class="p">,</span> <span class="n">filter_by_cols</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;From the input DataFrame `df`, remove the records whose target column `filter_by_cols` values are</span>
+<span class="sd">    exist in the filter-by DataFrame `filter_by_df`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): Source dataframe.</span>
+<span class="sd">        filter_by_df (pandas.DataFrame): Filter dataframe.</span>
+<span class="sd">        filter_by_cols (iterable of str): Filter columns.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+        <span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">filter_by_cols</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+            <span class="n">filter_by_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">filter_by_cols</span><span class="p">)</span><span class="o">.</span><span class="n">index</span>
+        <span class="p">)</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="LibffmConverter"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.LibffmConverter">[docs]</a><span class="k">class</span> <span class="nc">LibffmConverter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts an input dataframe to another dataframe in libffm format. A text file of the converted</span>
+<span class="sd">    Dataframe is optionally generated.</span>
+
+<span class="sd">    Note:</span>
+
+<span class="sd">        The input dataframe is expected to represent the feature data in the following schema:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            |field-1|field-2|...|field-n|rating|</span>
+<span class="sd">            |feature-1-1|feature-2-1|...|feature-n-1|1|</span>
+<span class="sd">            |feature-1-2|feature-2-2|...|feature-n-2|0|</span>
+<span class="sd">            ...</span>
+<span class="sd">            |feature-1-i|feature-2-j|...|feature-n-k|0|</span>
+
+<span class="sd">        Where</span>
+<span class="sd">        1. each `field-*` is the column name of the dataframe (column of label/rating is excluded), and</span>
+<span class="sd">        2. `feature-*-*` can be either a string or a numerical value, representing the categorical variable or</span>
+<span class="sd">        actual numerical variable of the feature value in the field, respectively.</span>
+<span class="sd">        3. If there are ordinal variables represented in int types, users should make sure these columns</span>
+<span class="sd">        are properly converted to string type.</span>
+
+<span class="sd">        The above data will be converted to the libffm format by following the convention as explained in</span>
+<span class="sd">        `this paper &lt;https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf&gt;`_.</span>
+
+<span class="sd">        i.e. `&lt;field_index&gt;:&lt;field_feature_index&gt;:1` or `&lt;field_index&gt;:&lt;field_feature_index&gt;:&lt;field_feature_value&gt;`,</span>
+<span class="sd">        depending on the data type of the features in the original dataframe.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filepath (str): path to save the converted data.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        field_count (int): count of field in the libffm format data</span>
+<span class="sd">        feature_count (int): count of feature in the libffm format data</span>
+<span class="sd">        filepath (str or None): file path where the output is stored - it can be None or a string</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">        &gt;&gt;&gt; df_feature = pd.DataFrame({</span>
+<span class="sd">                &#39;rating&#39;: [1, 0, 0, 1, 1],</span>
+<span class="sd">                &#39;field1&#39;: [&#39;xxx1&#39;, &#39;xxx2&#39;, &#39;xxx4&#39;, &#39;xxx4&#39;, &#39;xxx4&#39;],</span>
+<span class="sd">                &#39;field2&#39;: [3, 4, 5, 6, 7],</span>
+<span class="sd">                &#39;field3&#39;: [1.0, 2.0, 3.0, 4.0, 5.0],</span>
+<span class="sd">                &#39;field4&#39;: [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;]</span>
+<span class="sd">            })</span>
+<span class="sd">        &gt;&gt;&gt; converter = LibffmConverter().fit(df_feature, col_rating=&#39;rating&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; df_out = converter.transform(df_feature)</span>
+<span class="sd">        &gt;&gt;&gt; df_out</span>
+<span class="sd">            rating field1 field2   field3 field4</span>
+<span class="sd">        0       1  1:1:1  2:4:3  3:5:1.0  4:6:1</span>
+<span class="sd">        1       0  1:2:1  2:4:4  3:5:2.0  4:7:1</span>
+<span class="sd">        2       0  1:3:1  2:4:5  3:5:3.0  4:8:1</span>
+<span class="sd">        3       1  1:3:1  2:4:6  3:5:4.0  4:9:1</span>
+<span class="sd">        4       1  1:3:1  2:4:7  3:5:5.0  4:10:1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_count</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_count</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LibffmConverter.fit"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.LibffmConverter.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the dataframe for libffm format.</span>
+<span class="sd">        This method does nothing but check the validity of the input columns</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): input Pandas dataframe.</span>
+<span class="sd">            col_rating (str): rating of the data.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            object: the instance of the converter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check column types.</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">x</span> <span class="o">==</span> <span class="nb">object</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">types</span>
+            <span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input columns should be only object and/or numeric types.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">col_rating</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Column of </span><span class="si">{}</span><span class="s2"> is not in input dataframe columns&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col_rating</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col_rating</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="LibffmConverter.transform"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.LibffmConverter.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tranform an input dataset with the same schema (column names and dtypes) to libffm format</span>
+<span class="sd">        by using the fitted converter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): input Pandas dataframe.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            pandas.DataFrame: Output libffm format dataframe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Input dataset does not contain the label column </span><span class="si">{}</span><span class="s2"> in the fitting dataset&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Not all columns in the input dataset appear in the fitting dataset&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Encode field-feature.</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_feature_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                <span class="c1"># Check whether (field, feature) tuple exists in the dict or not.</span>
+                <span class="c1"># If not, put them into the key-values of the dict and count the index.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_feature_dict</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">field_feature_dict</span><span class="p">[(</span><span class="n">field</span><span class="p">,</span> <span class="n">feature</span><span class="p">)]</span> <span class="o">=</span> <span class="n">idx</span>
+                    <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>
+                        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_count</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">feature</span><span class="p">,</span> <span class="n">field_index</span><span class="p">,</span> <span class="n">field_feature_index_dict</span><span class="p">):</span>
+            <span class="n">field_feature_index</span> <span class="o">=</span> <span class="n">field_feature_index_dict</span><span class="p">[(</span><span class="n">field</span><span class="p">,</span> <span class="n">feature</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">feature</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field_index</span><span class="p">,</span> <span class="n">field_feature_index</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col_index</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">):</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">_convert</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_feature_dict</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Move rating column to the first.</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">[:]</span>
+        <span class="n">column_names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="LibffmConverter.fit_transform"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.LibffmConverter.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do fit and transform in a row</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): input Pandas dataframe.</span>
+<span class="sd">            col_rating (str): rating of the data.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            pandas.DataFrame: Output libffm format dataframe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col_rating</span><span class="o">=</span><span class="n">col_rating</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LibffmConverter.get_params"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.LibffmConverter.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get parameters (attributes) of the libffm converter</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            dict: A dictionary that contains parameters field count, feature count, and file path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;field count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_count</span><span class="p">,</span>
+            <span class="s2">&quot;feature count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_count</span><span class="p">,</span>
+            <span class="s2">&quot;file path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span>
+        <span class="p">}</span></div></div>
+
+
+<div class="viewcode-block" id="negative_feedback_sampler"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.negative_feedback_sampler">[docs]</a><span class="k">def</span> <span class="nf">negative_feedback_sampler</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_label</span><span class="o">=</span><span class="n">DEFAULT_LABEL_COL</span><span class="p">,</span>
+    <span class="n">col_feedback</span><span class="o">=</span><span class="s2">&quot;feedback&quot;</span><span class="p">,</span>
+    <span class="n">ratio_neg_per_user</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">pos_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">neg_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Utility function to sample negative feedback from user-item interaction dataset.</span>
+<span class="sd">    This negative sampling function will take the user-item interaction data to create</span>
+<span class="sd">    binarized feedback, i.e., 1 and 0 indicate positive and negative feedback,</span>
+<span class="sd">    respectively.</span>
+
+<span class="sd">    Negative sampling is used in the literature frequently to generate negative samples</span>
+<span class="sd">    from a user-item interaction data.</span>
+
+<span class="sd">    See for example the `neural collaborative filtering paper &lt;https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf&gt;`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): input data that contains user-item tuples.</span>
+<span class="sd">        col_user (str): user id column name.</span>
+<span class="sd">        col_item (str): item id column name.</span>
+<span class="sd">        col_label (str): label column name in df.</span>
+<span class="sd">        col_feedback (str): feedback column name in the returned data frame; it is used for the generated column</span>
+<span class="sd">            of positive and negative feedback.</span>
+<span class="sd">        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user.</span>
+<span class="sd">            If the samples exceed the number of total possible negative feedback samples, it will be reduced to the</span>
+<span class="sd">            number of all the possible samples.</span>
+<span class="sd">        pos_value (float): value of positive feedback.</span>
+<span class="sd">        neg_value (float): value of negative feedback.</span>
+<span class="sd">        inplace (bool):</span>
+<span class="sd">        seed (int): seed for the random state of the sampling function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: Data with negative feedback.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">        &gt;&gt;&gt; df = pd.DataFrame({</span>
+<span class="sd">            &#39;userID&#39;: [1, 2, 3],</span>
+<span class="sd">            &#39;itemID&#39;: [1, 2, 3],</span>
+<span class="sd">            &#39;rating&#39;: [5, 5, 5]</span>
+<span class="sd">        })</span>
+<span class="sd">        &gt;&gt;&gt; df_neg_sampled = negative_feedback_sampler(</span>
+<span class="sd">            df, col_user=&#39;userID&#39;, col_item=&#39;itemID&#39;, ratio_neg_per_user=1</span>
+<span class="sd">        )</span>
+<span class="sd">        &gt;&gt;&gt; df_neg_sampled</span>
+<span class="sd">        userID  itemID  feedback</span>
+<span class="sd">        1   1   1</span>
+<span class="sd">        1   2   0</span>
+<span class="sd">        2   2   1</span>
+<span class="sd">        2   1   0</span>
+<span class="sd">        3   3   1</span>
+<span class="sd">        3   1   0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get all of the users and items.</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">sample_items</span><span class="p">(</span><span class="n">user_df</span><span class="p">):</span>
+        <span class="c1"># Sample negative items for the data frame restricted to a specific user</span>
+        <span class="n">n_u</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_df</span><span class="p">)</span>
+        <span class="n">neg_sample_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_u</span> <span class="o">*</span> <span class="n">ratio_neg_per_user</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Draw (n_u + neg_sample_size) items and keep neg_sample_size of these</span>
+        <span class="c1"># that are not already in user_df. This requires a set difference from items_sample</span>
+        <span class="c1"># instead of items, which is more efficient when len(items) is large.</span>
+        <span class="n">sample_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_u</span> <span class="o">+</span> <span class="n">neg_sample_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+        <span class="n">items_sample</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">new_items</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">items_sample</span><span class="p">,</span> <span class="n">user_df</span><span class="p">[</span><span class="n">col_item</span><span class="p">])[:</span><span class="n">neg_sample_size</span><span class="p">]</span>
+        <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="n">col_user</span><span class="p">:</span> <span class="n">user_df</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">col_item</span><span class="p">:</span> <span class="n">new_items</span><span class="p">,</span>
+                <span class="n">col_label</span><span class="p">:</span> <span class="n">neg_value</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">user_df</span><span class="p">,</span> <span class="n">new_df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">res_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">res_df</span><span class="p">[</span><span class="n">col_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos_value</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">res_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sample_items</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">col_label</span><span class="p">:</span> <span class="n">col_feedback</span><span class="p">})</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="has_columns"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.has_columns">[docs]</a><span class="k">def</span> <span class="nf">has_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if DataFrame has necessary columns</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): DataFrame</span>
+<span class="sd">        columns (iterable(str)): columns to check for</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if DataFrame has specified columns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">columns</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="has_same_base_dtype"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.has_same_base_dtype">[docs]</a><span class="k">def</span> <span class="nf">has_same_base_dtype</span><span class="p">(</span><span class="n">df_1</span><span class="p">,</span> <span class="n">df_2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if specified columns have the same base dtypes across both DataFrames</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_1 (pandas.DataFrame): first DataFrame</span>
+<span class="sd">        df_2 (pandas.DataFrame): second DataFrame</span>
+<span class="sd">        columns (list(str)): columns to check, None checks all columns</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if DataFrames columns have the same base dtypes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df_1</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df_2</span><span class="o">.</span><span class="n">columns</span><span class="p">))):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot test all columns because they are not all shared across DataFrames&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">df_1</span><span class="o">.</span><span class="n">columns</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="n">has_columns</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df_1</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df_2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">df_1</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">__base__</span> <span class="o">!=</span> <span class="n">df_2</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">__base__</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Columns </span><span class="si">{}</span><span class="s2"> do not have the same base datatype&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">))</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="PandasHash"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.PandasHash">[docs]</a><span class="k">class</span> <span class="nc">PandasHash</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper class to allow pandas objects (DataFrames or Series) to be hashable&quot;&quot;&quot;</span>
+
+    <span class="c1"># reserve space just for a single pandas object</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;pandas_object&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pandas_object</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pandas_object (pandas.DataFrame|pandas.Series): pandas object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pandas_object</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Can only wrap pandas DataFrame or Series objects&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas_object</span> <span class="o">=</span> <span class="n">pandas_object</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Overwrite equality comparison</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (pandas.DataFrame|pandas.Series): pandas object to compare</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: whether other object is the same as this one</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Overwrite hash operator for use with pandas objects</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: hashed value of object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">hashable</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pandas_object</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pandas_object</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">hashable</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pandas_object</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hashable</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pandas_object</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">hashable</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="lru_cache_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.pandas_df_utils.lru_cache_df">[docs]</a><span class="k">def</span> <span class="nf">lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">typed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Least-recently-used cache decorator for pandas Dataframes.</span>
+
+<span class="sd">    Decorator to wrap a function with a memoizing callable that saves up to the maxsize most recent calls. It can</span>
+<span class="sd">    save time when an expensive or I/O bound function is periodically called with the same arguments.</span>
+
+<span class="sd">    Inspired in the `lru_cache function &lt;https://docs.python.org/3/library/functools.html#functools.lru_cache&gt;`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        maxsize (int|None): max size of cache, if set to None cache is boundless</span>
+<span class="sd">        typed (bool): arguments of different types are cached separately</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">to_pandas_hash</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return PandaHash object if input is a DataFrame otherwise return input unchanged&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PandasHash</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="k">else</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">from_pandas_hash</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract DataFrame if input is PandaHash object otherwise return input unchanged&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">pandas_object</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">PandasHash</span><span class="p">)</span> <span class="k">else</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">decorating_function</span><span class="p">(</span><span class="n">user_function</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">user_function</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># convert DataFrames in args and kwargs to PandaHash objects</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">to_pandas_hash</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">to_pandas_hash</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="n">cached_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">typed</span><span class="o">=</span><span class="n">typed</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">cached_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># get DataFrames from PandaHash objects in args and kwargs</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">from_pandas_hash</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">from_pandas_hash</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="n">user_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># retain lru_cache attributes</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="n">cache_info</span> <span class="o">=</span> <span class="n">cached_wrapper</span><span class="o">.</span><span class="n">cache_info</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="n">cache_clear</span> <span class="o">=</span> <span class="n">cached_wrapper</span><span class="o">.</span><span class="n">cache_clear</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorating_function</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

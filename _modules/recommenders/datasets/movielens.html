@@ -1,0 +1,1098 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.datasets.movielens &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/datasets/movielens';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/datasets/movielens.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/datasets/movielens.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.datasets.movielens</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZipFile</span>
+<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span><span class="p">,</span> <span class="n">download_path</span>
+<span class="kn">from</span> <span class="nn">recommenders.utils.notebook_utils</span> <span class="kn">import</span> <span class="n">is_databricks</span>
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_HEADER</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_TITLE_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_GENRE_COL</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">StructType</span><span class="p">,</span>
+        <span class="n">StructField</span><span class="p">,</span>
+        <span class="n">StringType</span><span class="p">,</span>
+        <span class="n">IntegerType</span><span class="p">,</span>
+        <span class="n">FloatType</span><span class="p">,</span>
+        <span class="n">LongType</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>  <span class="c1"># so the environment without spark doesn&#39;t break</span>
+
+<span class="kn">import</span> <span class="nn">pandera</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">import</span> <span class="nn">pandera.extensions</span> <span class="k">as</span> <span class="nn">extensions</span>
+<span class="kn">from</span> <span class="nn">pandera</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">pandera.typing</span> <span class="kn">import</span> <span class="n">Series</span>
+
+
+<span class="k">class</span> <span class="nc">_DataFormat</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">sep</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">,</span>
+        <span class="n">has_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">item_sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">item_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">item_has_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;MovieLens data format container as a different size of MovieLens data file</span>
+<span class="sd">        has a different format</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sep (str): Rating data delimiter</span>
+<span class="sd">            path (str): Rating data path within the original zip file</span>
+<span class="sd">            has_header (bool): Whether the rating data contains a header line or not</span>
+<span class="sd">            item_sep (str): Item data delimiter</span>
+<span class="sd">            item_path (str): Item data path within the original zip file</span>
+<span class="sd">            item_has_header (bool): Whether the item data contains a header line or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Rating file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sep</span> <span class="o">=</span> <span class="n">sep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="o">=</span> <span class="n">has_header</span>
+
+        <span class="c1"># Item file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item_sep</span> <span class="o">=</span> <span class="n">item_sep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item_path</span> <span class="o">=</span> <span class="n">item_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item_has_header</span> <span class="o">=</span> <span class="n">item_has_header</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sep</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">item_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_sep</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">item_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">item_has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_has_header</span>
+
+
+<span class="c1"># 10m and 20m data do not have user data</span>
+<span class="n">DATA_FORMAT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;100k&quot;</span><span class="p">:</span> <span class="n">_DataFormat</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-100k/u.data&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-100k/u.item&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="s2">&quot;1m&quot;</span><span class="p">:</span> <span class="n">_DataFormat</span><span class="p">(</span>
+        <span class="s2">&quot;::&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-1m/ratings.dat&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;::&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-1m/movies.dat&quot;</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;10m&quot;</span><span class="p">:</span> <span class="n">_DataFormat</span><span class="p">(</span>
+        <span class="s2">&quot;::&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-10M100K/ratings.dat&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;::&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-10M100K/movies.dat&quot;</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;20m&quot;</span><span class="p">:</span> <span class="n">_DataFormat</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-20m/ratings.csv&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;ml-20m/movies.csv&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="c1"># Fake data for testing only</span>
+<span class="n">MOCK_DATA_FORMAT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mock100&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.</span>
+<span class="n">GENRES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Action&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Adventure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Animation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Children&#39;s&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Comedy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Crime&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Documentary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Drama&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Fantasy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Film-Noir&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Horror&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Musical&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Mystery&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Romance&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sci-Fi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Thriller&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;War&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Western&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Warning and error messages</span>
+<span class="n">WARNING_MOVIE_LENS_HEADER</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;MovieLens rating dataset has four columns</span>
+<span class="s2">    (user id, movie id, rating, and timestamp), but more than four column names are provided.</span>
+<span class="s2">    Will only use the first four column names.&quot;&quot;&quot;</span>
+<span class="n">WARNING_HAVE_SCHEMA_AND_HEADER</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Both schema and header are provided.</span>
+<span class="s2">    The header argument will be ignored.&quot;&quot;&quot;</span>
+<span class="n">ERROR_MOVIE_LENS_SIZE</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Invalid data size. Should be one of {100k, 1m, 10m, or 20m, or mock100}&quot;</span>
+<span class="p">)</span>
+<span class="n">ERROR_HEADER</span> <span class="o">=</span> <span class="s2">&quot;Header error. At least user and movie column names should be provided&quot;</span>
+
+
+<div class="viewcode-block" id="load_pandas_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.load_pandas_df">[docs]</a><span class="k">def</span> <span class="nf">load_pandas_df</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="s2">&quot;100k&quot;</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">title_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">genres_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">year_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the MovieLens dataset as pd.DataFrame.</span>
+
+<span class="sd">    Download the dataset from https://files.grouplens.org/datasets/movielens, unzip, and load.</span>
+<span class="sd">    To load movie information only, you can use load_item_df function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Size of the data to load. One of (&quot;100k&quot;, &quot;1m&quot;, &quot;10m&quot;, &quot;20m&quot;, &quot;mock100&quot;).</span>
+<span class="sd">        header (list or tuple or None): Rating dataset header.</span>
+<span class="sd">            If `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, this parameter is ignored and data is rendered using the &#39;DEFAULT_HEADER&#39; instead.</span>
+<span class="sd">        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.</span>
+<span class="sd">            If None, all the intermediate files will be stored in a temporary directory and removed after use.</span>
+<span class="sd">            If `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, this parameter is ignored.</span>
+<span class="sd">        title_col (str): Movie title column name. If None, the column will not be loaded.</span>
+<span class="sd">        genres_col (str): Genres column name. Genres are &#39;|&#39; separated string.</span>
+<span class="sd">            If None, the column will not be loaded.</span>
+<span class="sd">        year_col (str): Movie release year column name. If None, the column will not be loaded.</span>
+<span class="sd">            If `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, this parameter is ignored.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: Movie rating dataset.</span>
+
+
+<span class="sd">    **Examples**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # To load just user-id, item-id, and ratings from MovieLens-1M dataset,</span>
+<span class="sd">        df = load_pandas_df(&#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;))</span>
+
+<span class="sd">        # To load rating&#39;s timestamp together,</span>
+<span class="sd">        df = load_pandas_df(&#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;, &#39;Timestamp&#39;))</span>
+
+<span class="sd">        # To load movie&#39;s title, genres, and released year info along with the ratings data,</span>
+<span class="sd">        df = load_pandas_df(&#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;, &#39;Timestamp&#39;),</span>
+<span class="sd">            title_col=&#39;Title&#39;,</span>
+<span class="sd">            genres_col=&#39;Genres&#39;,</span>
+<span class="sd">            year_col=&#39;Year&#39;</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DATA_FORMAT</span> <span class="ow">and</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MOCK_DATA_FORMAT</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">. &quot;</span> <span class="o">+</span> <span class="n">ERROR_MOVIE_LENS_SIZE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">DEFAULT_HEADER</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">ERROR_HEADER</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">WARNING_MOVIE_LENS_HEADER</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">MOCK_DATA_FORMAT</span><span class="p">:</span>
+        <span class="c1"># generate fake data</span>
+        <span class="k">return</span> <span class="n">MockMovielensSchema</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span>
+            <span class="n">keep_first_n_cols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">),</span>
+            <span class="n">keep_title_col</span><span class="o">=</span><span class="p">(</span><span class="n">title_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">keep_genre_col</span><span class="o">=</span><span class="p">(</span><span class="n">genres_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">MOCK_DATA_FORMAT</span><span class="p">[</span>
+                <span class="n">size</span>
+            <span class="p">],</span>  <span class="c1"># supply the rest of the kwarg with the dictionary</span>
+        <span class="p">)</span>
+
+    <span class="n">movie_col</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">local_cache_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;ml-</span><span class="si">{}</span><span class="s2">.zip&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">datapath</span><span class="p">,</span> <span class="n">item_datapath</span> <span class="o">=</span> <span class="n">_maybe_download_and_extract</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+
+        <span class="c1"># Load movie features such as title, genres, and release year</span>
+        <span class="n">item_df</span> <span class="o">=</span> <span class="n">_load_item_df</span><span class="p">(</span>
+            <span class="n">size</span><span class="p">,</span> <span class="n">item_datapath</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="n">title_col</span><span class="p">,</span> <span class="n">genres_col</span><span class="p">,</span> <span class="n">year_col</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Load rating data</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">datapath</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">separator</span><span class="p">,</span>
+            <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))],</span>
+            <span class="n">header</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">has_header</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Convert &#39;rating&#39; type to float</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">header</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">header</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># Merge rating df w/ item_df</span>
+        <span class="k">if</span> <span class="n">item_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">item_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="load_item_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.load_item_df">[docs]</a><span class="k">def</span> <span class="nf">load_item_df</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="s2">&quot;100k&quot;</span><span class="p">,</span>
+    <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">movie_col</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">title_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">genres_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">year_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads Movie info.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Size of the data to load. One of (&quot;100k&quot;, &quot;1m&quot;, &quot;10m&quot;, &quot;20m&quot;).</span>
+<span class="sd">        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.</span>
+<span class="sd">            If None, all the intermediate files will be stored in a temporary directory and removed after use.</span>
+<span class="sd">        movie_col (str): Movie id column name.</span>
+<span class="sd">        title_col (str): Movie title column name. If None, the column will not be loaded.</span>
+<span class="sd">        genres_col (str): Genres column name. Genres are &#39;|&#39; separated string.</span>
+<span class="sd">            If None, the column will not be loaded.</span>
+<span class="sd">        year_col (str): Movie release year column name. If None, the column will not be loaded.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: Movie information data, such as title, genres, and release year.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DATA_FORMAT</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">. &quot;</span> <span class="o">+</span> <span class="n">ERROR_MOVIE_LENS_SIZE</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">local_cache_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;ml-</span><span class="si">{}</span><span class="s2">.zip&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">item_datapath</span> <span class="o">=</span> <span class="n">_maybe_download_and_extract</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="n">item_df</span> <span class="o">=</span> <span class="n">_load_item_df</span><span class="p">(</span>
+            <span class="n">size</span><span class="p">,</span> <span class="n">item_datapath</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="n">title_col</span><span class="p">,</span> <span class="n">genres_col</span><span class="p">,</span> <span class="n">year_col</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">item_df</span></div>
+
+
+<span class="k">def</span> <span class="nf">_load_item_df</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">item_datapath</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="n">title_col</span><span class="p">,</span> <span class="n">genres_col</span><span class="p">,</span> <span class="n">year_col</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads Movie info&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">title_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">genres_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">year_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">item_header</span> <span class="o">=</span> <span class="p">[</span><span class="n">movie_col</span><span class="p">]</span>
+    <span class="n">usecols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Year is parsed from title</span>
+    <span class="k">if</span> <span class="n">title_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">year_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">item_header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;title_year&quot;</span><span class="p">)</span>
+        <span class="n">usecols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">genres_header_100k</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">genres_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 100k data&#39;s movie genres are encoded as a binary array (the last 19 fields)</span>
+        <span class="c1"># For details, see https://files.grouplens.org/datasets/movielens/ml-100k-README.txt</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="s2">&quot;100k&quot;</span><span class="p">:</span>
+            <span class="n">genres_header_100k</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">19</span><span class="p">))]</span>
+            <span class="n">item_header</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genres_header_100k</span><span class="p">)</span>
+            <span class="n">usecols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">24</span><span class="p">)])</span>  <span class="c1"># genres columns</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item_header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">genres_col</span><span class="p">)</span>
+            <span class="n">usecols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># genres column</span>
+
+    <span class="n">item_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">item_datapath</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">item_separator</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="n">item_header</span><span class="p">,</span>
+        <span class="n">usecols</span><span class="o">=</span><span class="n">usecols</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">item_has_header</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Convert 100k data&#39;s format: &#39;0|0|1|...&#39; to &#39;Action|Romance|...&quot;</span>
+    <span class="k">if</span> <span class="n">genres_header_100k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">item_df</span><span class="p">[</span><span class="n">genres_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">item_df</span><span class="p">[</span><span class="n">genres_header_100k</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">item_df</span><span class="p">[</span><span class="n">genres_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">item_df</span><span class="p">[</span><span class="n">genres_col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">GENRES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="p">)</span>
+
+        <span class="n">item_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">genres_header_100k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Parse year from movie title. Note, MovieLens title format is &quot;title (year)&quot;</span>
+    <span class="c1"># Note, there are very few records that are missing the year info.</span>
+    <span class="k">if</span> <span class="n">year_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">parse_year</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="n">parsed</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;[()]&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parsed</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isdecimal</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">parsed</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">item_df</span><span class="p">[</span><span class="n">year_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">item_df</span><span class="p">[</span><span class="s2">&quot;title_year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">parse_year</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">title_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">item_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;title_year&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">title_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">item_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title_year&quot;</span><span class="p">:</span> <span class="n">title_col</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">item_df</span>
+
+
+<div class="viewcode-block" id="load_spark_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.load_spark_df">[docs]</a><span class="k">def</span> <span class="nf">load_spark_df</span><span class="p">(</span>
+    <span class="n">spark</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="s2">&quot;100k&quot;</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dbutils</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">title_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">genres_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">year_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the MovieLens dataset as `pyspark.sql.DataFrame`.</span>
+
+<span class="sd">    Download the dataset from https://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.</span>
+
+<span class="sd">    To load movie information only, you can use `load_item_df` function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        spark (pyspark.SparkSession): Spark session.</span>
+<span class="sd">        size (str): Size of the data to load. One of (&quot;100k&quot;, &quot;1m&quot;, &quot;10m&quot;, &quot;20m&quot;, &quot;mock100&quot;).</span>
+<span class="sd">        header (list or tuple): Rating dataset header.</span>
+<span class="sd">            If `schema` is provided or `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, this argument is ignored.</span>
+<span class="sd">        schema (pyspark.StructType): Dataset schema.</span>
+<span class="sd">            If `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, data is rendered in the &#39;MockMovielensSchema&#39; instead.</span>
+<span class="sd">        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.</span>
+<span class="sd">            If None, all the intermediate files will be stored in a temporary directory and removed after use.</span>
+<span class="sd">        dbutils (Databricks.dbutils): Databricks utility object</span>
+<span class="sd">            If `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, this parameter is ignored.</span>
+<span class="sd">        title_col (str): Title column name. If None, the column will not be loaded.</span>
+<span class="sd">        genres_col (str): Genres column name. Genres are &#39;|&#39; separated string.</span>
+<span class="sd">            If None, the column will not be loaded.</span>
+<span class="sd">        year_col (str): Movie release year column name. If None, the column will not be loaded.</span>
+<span class="sd">            If `size` is set to any of &#39;MOCK_DATA_FORMAT&#39;, this parameter is ignored.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pyspark.sql.DataFrame: Movie rating dataset.</span>
+
+<span class="sd">    **Examples**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # To load just user-id, item-id, and ratings from MovieLens-1M dataset:</span>
+<span class="sd">        spark_df = load_spark_df(spark, &#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;))</span>
+
+<span class="sd">        # The schema can be defined as well:</span>
+<span class="sd">        schema = StructType([</span>
+<span class="sd">            StructField(DEFAULT_USER_COL, IntegerType()),</span>
+<span class="sd">            StructField(DEFAULT_ITEM_COL, IntegerType()),</span>
+<span class="sd">            StructField(DEFAULT_RATING_COL, FloatType()),</span>
+<span class="sd">            StructField(DEFAULT_TIMESTAMP_COL, LongType()),</span>
+<span class="sd">            ])</span>
+<span class="sd">        spark_df = load_spark_df(spark, &#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;), schema=schema)</span>
+
+<span class="sd">        # To load rating&#39;s timestamp together:</span>
+<span class="sd">        spark_df = load_spark_df(spark, &#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;, &#39;Timestamp&#39;))</span>
+
+<span class="sd">        # To load movie&#39;s title, genres, and released year info along with the ratings data:</span>
+<span class="sd">        spark_df = load_spark_df(spark, &#39;1m&#39;, (&#39;UserId&#39;, &#39;ItemId&#39;, &#39;Rating&#39;, &#39;Timestamp&#39;),</span>
+<span class="sd">            title_col=&#39;Title&#39;,</span>
+<span class="sd">            genres_col=&#39;Genres&#39;,</span>
+<span class="sd">            year_col=&#39;Year&#39;</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # On DataBricks, pass the dbutils argument as follows:</span>
+<span class="sd">        spark_df = load_spark_df(spark, dbutils=dbutils)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DATA_FORMAT</span> <span class="ow">and</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MOCK_DATA_FORMAT</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">. &quot;</span> <span class="o">+</span> <span class="n">ERROR_MOVIE_LENS_SIZE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">MOCK_DATA_FORMAT</span><span class="p">:</span>
+        <span class="c1"># generate fake data</span>
+        <span class="k">return</span> <span class="n">MockMovielensSchema</span><span class="o">.</span><span class="n">get_spark_df</span><span class="p">(</span>
+            <span class="n">spark</span><span class="p">,</span>
+            <span class="n">keep_title_col</span><span class="o">=</span><span class="p">(</span><span class="n">title_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">keep_genre_col</span><span class="o">=</span><span class="p">(</span><span class="n">genres_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">MOCK_DATA_FORMAT</span><span class="p">[</span>
+                <span class="n">size</span>
+            <span class="p">],</span>  <span class="c1"># supply the rest of the kwarg with the dictionary</span>
+        <span class="p">)</span>
+
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">_get_schema</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">ERROR_HEADER</span><span class="p">)</span>
+
+    <span class="n">movie_col</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">local_cache_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;ml-</span><span class="si">{}</span><span class="s2">.zip&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">datapath</span><span class="p">,</span> <span class="n">item_datapath</span> <span class="o">=</span> <span class="n">_maybe_download_and_extract</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="n">spark_datapath</span> <span class="o">=</span> <span class="s2">&quot;file:///&quot;</span> <span class="o">+</span> <span class="n">datapath</span>  <span class="c1"># shorten form of file://localhost/</span>
+
+        <span class="c1"># Load movie features such as title, genres, and release year.</span>
+        <span class="c1"># Since the file size is small, we directly load as pd.DataFrame from the driver node</span>
+        <span class="c1"># and then convert into pyspark.sql.DataFrame</span>
+        <span class="n">item_pd_df</span> <span class="o">=</span> <span class="n">_load_item_df</span><span class="p">(</span>
+            <span class="n">size</span><span class="p">,</span> <span class="n">item_datapath</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="n">title_col</span><span class="p">,</span> <span class="n">genres_col</span><span class="p">,</span> <span class="n">year_col</span>
+        <span class="p">)</span>
+        <span class="n">item_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">item_pd_df</span><span class="p">)</span> <span class="k">if</span> <span class="n">item_pd_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">is_databricks</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dbutils</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    To use on a Databricks, dbutils object should be passed as an argument.</span>
+<span class="sd">                    E.g. load_spark_df(spark, dbutils=dbutils)</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Move rating file to DBFS in order to load into pyspark.sql.DataFrame</span>
+            <span class="n">dbfs_datapath</span> <span class="o">=</span> <span class="s2">&quot;dbfs:/tmp/&quot;</span> <span class="o">+</span> <span class="n">datapath</span>
+            <span class="n">dbutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">spark_datapath</span><span class="p">,</span> <span class="n">dbfs_datapath</span><span class="p">)</span>
+            <span class="n">spark_datapath</span> <span class="o">=</span> <span class="n">dbfs_datapath</span>
+
+        <span class="c1"># pyspark&#39;s read csv currently doesn&#39;t support multi-character delimiter, thus we manually handle that</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">separator</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">raw_data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="n">spark_datapath</span><span class="p">)</span>
+            <span class="n">data_rdd</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">])][:</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">data_rdd</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span>
+                <span class="n">spark_datapath</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">sep</span><span class="o">=</span><span class="n">separator</span><span class="p">,</span>
+                <span class="n">header</span><span class="o">=</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">has_header</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Merge rating df w/ item_df</span>
+        <span class="k">if</span> <span class="n">item_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item_df</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Cache and force trigger action since data-file might be removed.</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Use header to generate schema</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">DEFAULT_HEADER</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">WARNING_MOVIE_LENS_HEADER</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span>
+                <span class="n">schema</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">StructField</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">IntegerType</span><span class="p">()))</span>
+                <span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">StructField</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">IntegerType</span><span class="p">()))</span>
+                <span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">StructField</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">FloatType</span><span class="p">()))</span>
+                <span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">StructField</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">LongType</span><span class="p">()))</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">WARNING_HAVE_SCHEMA_AND_HEADER</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">WARNING_MOVIE_LENS_HEADER</span><span class="p">)</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">schema</span>
+
+
+<span class="k">def</span> <span class="nf">_maybe_download_and_extract</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads and extracts MovieLens rating and item datafiles if they don’t already exist&quot;&quot;&quot;</span>
+    <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirs</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirs</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">rating_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">rating_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="n">rating_filename</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">item_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">item_path</span><span class="p">)</span>
+    <span class="n">item_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="n">item_filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rating_path</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">item_path</span><span class="p">):</span>
+        <span class="n">download_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
+        <span class="n">extract_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">rating_path</span><span class="p">,</span> <span class="n">item_path</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rating_path</span><span class="p">,</span> <span class="n">item_path</span>
+
+
+<div class="viewcode-block" id="download_movielens"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.download_movielens">[docs]</a><span class="k">def</span> <span class="nf">download_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads MovieLens datafile.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Size of the data to load. One of (&quot;100k&quot;, &quot;1m&quot;, &quot;10m&quot;, &quot;20m&quot;).</span>
+<span class="sd">        dest_path (str): File path for the downloaded file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DATA_FORMAT</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">. &quot;</span> <span class="o">+</span> <span class="n">ERROR_MOVIE_LENS_SIZE</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://files.grouplens.org/datasets/movielens/ml-&quot;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+    <span class="n">dirs</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
+    <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">dirs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="extract_movielens"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.extract_movielens">[docs]</a><span class="k">def</span> <span class="nf">extract_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">rating_path</span><span class="p">,</span> <span class="n">item_path</span><span class="p">,</span> <span class="n">zip_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract MovieLens rating and item datafiles from the MovieLens raw zip file.</span>
+
+<span class="sd">    To extract all files instead of just rating and item datafiles,</span>
+<span class="sd">    use ZipFile&#39;s extractall(path) instead.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (str): Size of the data to load. One of (&quot;100k&quot;, &quot;1m&quot;, &quot;10m&quot;, &quot;20m&quot;).</span>
+<span class="sd">        rating_path (str): Destination path for rating datafile</span>
+<span class="sd">        item_path (str): Destination path for item datafile</span>
+<span class="sd">        zip_path (str): zipfile path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">z</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">z</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">rating_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">zf</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">z</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">DATA_FORMAT</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">item_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">item_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">zf</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+<span class="c1"># For more information on data synthesis, see https://pandera.readthedocs.io/en/latest/data_synthesis_strategies.html</span>
+<span class="nd">@extensions</span><span class="o">.</span><span class="n">register_check_method</span><span class="p">(</span><span class="n">statistics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">],</span> <span class="n">supported_types</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unique_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="MockMovielensSchema"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.MockMovielensSchema">[docs]</a><span class="k">class</span> <span class="nc">MockMovielensSchema</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">SchemaModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mock dataset schema to generate fake data for testing purpose.</span>
+<span class="sd">    This schema is configured to mimic the Movielens dataset</span>
+
+<span class="sd">    https://files.grouplens.org/datasets/movielens/ml-100k/</span>
+
+<span class="sd">    Dataset schema and generation is configured using pandera.</span>
+<span class="sd">    Please see https://pandera.readthedocs.io/en/latest/schema_models.html</span>
+<span class="sd">    for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Some notebooks will do a cross join with userID and itemID,</span>
+    <span class="c1"># a sparse range for these IDs can slow down the notebook tests</span>
+    <span class="n">userID</span><span class="p">:</span> <span class="n">Series</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">in_range</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span> <span class="n">alias</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span>
+    <span class="p">)</span>
+    <span class="n">itemID</span><span class="p">:</span> <span class="n">Series</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">in_range</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span> <span class="n">alias</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span>
+    <span class="p">)</span>
+    <span class="n">rating</span><span class="p">:</span> <span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">in_range</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span> <span class="n">alias</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span>
+    <span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">Series</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">in_range</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mf">1e9</span><span class="p">},</span> <span class="n">alias</span><span class="o">=</span><span class="n">DEFAULT_TIMESTAMP_COL</span>
+    <span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Series</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">DEFAULT_TITLE_COL</span><span class="p">)</span>
+    <span class="n">genre</span><span class="p">:</span> <span class="n">Series</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="s2">&quot;genreA|0&quot;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">DEFAULT_GENRE_COL</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MockMovielensSchema.get_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.MockMovielensSchema.get_df">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">keep_first_n_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_title_col</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">keep_genre_col</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return fake movielens dataset as a Pandas Dataframe with specified rows.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            size (int): number of rows to generate</span>
+<span class="sd">            seed (int, optional): seeding the pseudo-number generation. Defaults to 100.</span>
+<span class="sd">            keep_first_n_cols (int, optional): keep the first n default movielens columns.</span>
+<span class="sd">            keep_title_col (bool): remove the title column if False. Defaults to True.</span>
+<span class="sd">            keep_genre_col (bool): remove the genre column if False. Defaults to True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: a mock dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">to_schema</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">keep_first_n_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">keep_first_n_cols</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">keep_first_n_cols</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid value for &#39;keep_first_n_cols&#39;: </span><span class="si">{</span><span class="n">keep_first_n_cols</span><span class="si">}</span><span class="s2">. Valid range: [1-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">DEFAULT_HEADER</span><span class="p">)</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="p">)</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">(</span><span class="n">DEFAULT_HEADER</span><span class="p">[</span><span class="n">keep_first_n_cols</span><span class="p">:])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_title_col</span><span class="p">:</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="n">DEFAULT_TITLE_COL</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_genre_col</span><span class="p">:</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="n">DEFAULT_GENRE_COL</span><span class="p">])</span>
+
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">schema</span><span class="o">.</span><span class="n">checks</span> <span class="o">=</span> <span class="p">[</span><span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="o">.</span><span class="n">unique_columns</span><span class="p">([</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">DEFAULT_ITEM_COL</span><span class="p">])]</span>
+        <span class="k">return</span> <span class="n">schema</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MockMovielensSchema.get_spark_df"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.MockMovielensSchema.get_spark_df">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_spark_df</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">spark</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">keep_title_col</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">keep_genre_col</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">tmp_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return fake movielens dataset as a Spark Dataframe with specified rows</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            spark (SparkSession): spark session to load the dataframe into</span>
+<span class="sd">            size (int): number of rows to generate</span>
+<span class="sd">            seed (int): seeding the pseudo-number generation. Defaults to 100.</span>
+<span class="sd">            keep_title_col (bool): remove the title column if False. Defaults to False.</span>
+<span class="sd">            keep_genre_col (bool): remove the genre column if False. Defaults to False.</span>
+<span class="sd">            tmp_path (str, optional): path to store files for serialization purpose</span>
+<span class="sd">                when transferring data from python to java.</span>
+<span class="sd">                If None, a temporal path is used instead</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pyspark.sql.DataFrame: a mock dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pandas_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">keep_title_col</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">keep_genre_col</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># generate temp folder</span>
+        <span class="k">with</span> <span class="n">download_path</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_folder</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;mock_movielens_</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+            <span class="c1"># serialize the pandas.df as a csv to avoid the expensive java &lt;-&gt; python communication</span>
+            <span class="n">pandas_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">spark_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span>
+                <span class="n">filepath</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_spark_deserialization_schema</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="c1"># Cache and force trigger action since data-file might be removed.</span>
+            <span class="n">spark_df</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+            <span class="n">spark_df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_title_col</span><span class="p">:</span>
+            <span class="n">spark_df</span> <span class="o">=</span> <span class="n">spark_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">DEFAULT_TITLE_COL</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_genre_col</span><span class="p">:</span>
+            <span class="n">spark_df</span> <span class="o">=</span> <span class="n">spark_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">DEFAULT_GENRE_COL</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">spark_df</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_spark_deserialization_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">StructType</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>
+                <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>
+                <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">()),</span>
+                <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span> <span class="n">StringType</span><span class="p">()),</span>
+                <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_TITLE_COL</span><span class="p">,</span> <span class="n">StringType</span><span class="p">()),</span>
+                <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_GENRE_COL</span><span class="p">,</span> <span class="n">StringType</span><span class="p">()),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

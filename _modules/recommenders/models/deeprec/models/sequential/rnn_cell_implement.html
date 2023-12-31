@@ -1,0 +1,1049 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.deeprec.models.sequential.rnn_cell_implement &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/deeprec/models/sequential/rnn_cell_implement';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/deeprec/models/sequential/rnn_cell_implement.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/deeprec/models/sequential/rnn_cell_implement.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.deeprec.models.sequential.rnn_cell_implement</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2015 The TensorFlow Authors. All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1"># ==============================================================================</span>
+<span class="sd">&quot;&quot;&quot;Module implementing RNN Cells.</span>
+
+<span class="sd">This module provides a number of basic commonly used RNN cells, such as LSTM</span>
+<span class="sd">(Long Short Term Memory) or GRU (Gated Recurrent Unit), and a number of</span>
+<span class="sd">operators that allow adding dropouts, projections, or embeddings for inputs.</span>
+<span class="sd">Constructing multi-layer cells is supported by the class `MultiRNNCell`, or by</span>
+<span class="sd">calling the `rnn` ops several times.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">array_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">clip_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">init_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">math_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">nn_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">partitioned_variables</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">variable_scope</span> <span class="k">as</span> <span class="n">vs</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.platform</span> <span class="kn">import</span> <span class="n">tf_logging</span> <span class="k">as</span> <span class="n">logging</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.util</span> <span class="kn">import</span> <span class="n">nest</span>
+
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops.rnn_cell_impl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RNNCell</span><span class="p">,</span>
+    <span class="n">LSTMStateTuple</span><span class="p">,</span>
+    <span class="n">_BIAS_VARIABLE_NAME</span><span class="p">,</span>
+    <span class="n">_WEIGHTS_VARIABLE_NAME</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Time4LSTMCell"><a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell">[docs]</a><span class="k">class</span> <span class="nc">Time4LSTMCell</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_units</span><span class="p">,</span>
+        <span class="n">use_peepholes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">cell_clip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">proj_clip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_unit_shards</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_proj_shards</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">forget_bias</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Time4LSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_reuse</span><span class="o">=</span><span class="n">reuse</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">state_is_tuple</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Using a concatenated state is slower and will soon be &quot;</span>
+                <span class="s2">&quot;deprecated.  Use state_is_tuple=True.&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_unit_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">num_proj_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: The num_unit_shards and proj_unit_shards parameters are &quot;</span>
+                <span class="s2">&quot;deprecated and will be removed in Jan 2017.  &quot;</span>
+                <span class="s2">&quot;Use a variable scope with a partitioner instead.&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span> <span class="o">=</span> <span class="n">num_units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span> <span class="o">=</span> <span class="n">use_peepholes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span> <span class="o">=</span> <span class="n">cell_clip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span> <span class="o">=</span> <span class="n">initializer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span> <span class="o">=</span> <span class="n">num_proj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span> <span class="o">=</span> <span class="n">proj_clip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_unit_shards</span> <span class="o">=</span> <span class="n">num_unit_shards</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj_shards</span> <span class="o">=</span> <span class="n">num_proj_shards</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forget_bias</span> <span class="o">=</span> <span class="n">forget_bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_is_tuple</span> <span class="o">=</span> <span class="n">state_is_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span> <span class="ow">or</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">tanh</span>
+
+        <span class="k">if</span> <span class="n">num_proj</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">LSTMStateTuple</span><span class="p">(</span><span class="n">num_units</span><span class="p">,</span> <span class="n">num_proj</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">state_is_tuple</span>
+                <span class="k">else</span> <span class="n">num_units</span> <span class="o">+</span> <span class="n">num_proj</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="n">num_proj</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">LSTMStateTuple</span><span class="p">(</span><span class="n">num_units</span><span class="p">,</span> <span class="n">num_units</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">state_is_tuple</span>
+                <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_units</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="n">num_units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_w_i_diag</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
+
+<div class="viewcode-block" id="Time4LSTMCell.call"><a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call method for the Time4LSTMCell.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs: A 2D Tensor of shape [batch_size, input_size].</span>
+<span class="sd">            state: A 2D Tensor of shape [batch_size, state_size].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing:</span>
+<span class="sd">            - A 2D Tensor of shape [batch_size, output_size].</span>
+<span class="sd">            - A 2D Tensor of shape [batch_size, state_size].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_now_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">inputs</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">time_last_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">inputs</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">num_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span>
+        <span class="n">sigmoid</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">sigmoid</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_is_tuple</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">c_prev</span><span class="p">,</span> <span class="n">m_prev</span><span class="p">)</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c_prev</span> <span class="o">=</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">])</span>
+            <span class="n">m_prev</span> <span class="o">=</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_proj</span><span class="p">])</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="n">input_size</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">with_rank</span><span class="p">(</span><span class="mi">2</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">input_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not infer input size from inputs.get_shape()[-1]&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit_scope</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">unit_scope</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_w1&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_bias1&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_w2&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_bias2&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_w1&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">input_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_t1&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_bias1&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_w2&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">input_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_t2&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_bias2&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_o_kernel_t1&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_o_kernel_t2&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="n">time_now_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span>
+            <span class="n">time_now_score</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias1</span>
+        <span class="p">)</span>
+        <span class="n">time_last_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span>
+            <span class="n">time_last_score</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias2</span>
+        <span class="p">)</span>
+
+        <span class="n">time_now_state</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_now_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias1</span>
+        <span class="p">)</span>
+        <span class="n">time_last_state</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_last_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias2</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit_scope</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_unit_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">unit_scope</span><span class="o">.</span><span class="n">set_partitioner</span><span class="p">(</span>
+                        <span class="n">partitioned_variables</span><span class="o">.</span><span class="n">fixed_size_partitioner</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_num_unit_shards</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span> <span class="o">=</span> <span class="n">_Linear</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">m_prev</span><span class="p">],</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># i = input_gate, j = new_input, f = forget_gate, o = output_gate</span>
+        <span class="n">lstm_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">m_prev</span><span class="p">])</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">o</span> <span class="o">=</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">lstm_matrix</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">o</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_now_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_last_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t2</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Diagonal connections</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit_scope</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">unit_scope</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;w_f_diag&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_w_i_diag</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;w_i_diag&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;w_o_diag&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forget_bias</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span> <span class="o">*</span> <span class="n">c_prev</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span>
+                <span class="n">time_last_state</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">c_prev</span> <span class="o">+</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_i_diag</span> <span class="o">*</span> <span class="n">c_prev</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span>
+                <span class="n">time_now_state</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span>
+                <span class="n">j</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forget_bias</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span>
+                <span class="n">time_last_state</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">c_prev</span> <span class="o">+</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">time_now_state</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># pylint: disable=invalid-unary-operand-type</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">clip_ops</span><span class="o">.</span><span class="n">clip_by_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span><span class="p">)</span>
+            <span class="c1"># pylint: enable=invalid-unary-operand-type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">o</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;projection&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">proj_scope</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">proj_scope</span><span class="o">.</span><span class="n">set_partitioner</span><span class="p">(</span>
+                                <span class="n">partitioned_variables</span><span class="o">.</span><span class="n">fixed_size_partitioner</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj_shards</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span> <span class="o">=</span> <span class="n">_Linear</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># pylint: disable=invalid-unary-operand-type</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">clip_ops</span><span class="o">.</span><span class="n">clip_by_value</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span><span class="p">)</span>
+                <span class="c1"># pylint: enable=invalid-unary-operand-type</span>
+
+        <span class="n">new_state</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">LSTMStateTuple</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_is_tuple</span>
+            <span class="k">else</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">m</span><span class="p">,</span> <span class="n">new_state</span></div></div>
+
+
+<div class="viewcode-block" id="Time4ALSTMCell"><a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4ALSTMCell">[docs]</a><span class="k">class</span> <span class="nc">Time4ALSTMCell</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_units</span><span class="p">,</span>
+        <span class="n">use_peepholes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">cell_clip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">proj_clip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_unit_shards</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_proj_shards</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">forget_bias</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reuse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Time4ALSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_reuse</span><span class="o">=</span><span class="n">reuse</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">state_is_tuple</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Using a concatenated state is slower and will soon be &quot;</span>
+                <span class="s2">&quot;deprecated.  Use state_is_tuple=True.&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_unit_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">num_proj_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: The num_unit_shards and proj_unit_shards parameters are &quot;</span>
+                <span class="s2">&quot;deprecated and will be removed in Jan 2017.  &quot;</span>
+                <span class="s2">&quot;Use a variable scope with a partitioner instead.&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span> <span class="o">=</span> <span class="n">num_units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span> <span class="o">=</span> <span class="n">use_peepholes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span> <span class="o">=</span> <span class="n">cell_clip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span> <span class="o">=</span> <span class="n">initializer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span> <span class="o">=</span> <span class="n">num_proj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span> <span class="o">=</span> <span class="n">proj_clip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_unit_shards</span> <span class="o">=</span> <span class="n">num_unit_shards</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj_shards</span> <span class="o">=</span> <span class="n">num_proj_shards</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forget_bias</span> <span class="o">=</span> <span class="n">forget_bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_is_tuple</span> <span class="o">=</span> <span class="n">state_is_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span> <span class="ow">or</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">tanh</span>
+
+        <span class="k">if</span> <span class="n">num_proj</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">LSTMStateTuple</span><span class="p">(</span><span class="n">num_units</span><span class="p">,</span> <span class="n">num_proj</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">state_is_tuple</span>
+                <span class="k">else</span> <span class="n">num_units</span> <span class="o">+</span> <span class="n">num_proj</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="n">num_proj</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">LSTMStateTuple</span><span class="p">(</span><span class="n">num_units</span><span class="p">,</span> <span class="n">num_units</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">state_is_tuple</span>
+                <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_units</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="n">num_units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_w_i_diag</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
+
+<div class="viewcode-block" id="Time4ALSTMCell.call"><a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4ALSTMCell.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call method for the Time4ALSTMCell.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs: A 2D Tensor of shape [batch_size, input_size].</span>
+<span class="sd">            state: A 2D Tensor of shape [batch_size, state_size].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing:</span>
+<span class="sd">            - A 2D Tensor of shape [batch_size, output_size].</span>
+<span class="sd">            - A 2D Tensor of shape [batch_size, state_size].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">att_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">inputs</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">time_now_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">inputs</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">time_last_score</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">inputs</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">num_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span>
+        <span class="n">sigmoid</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">sigmoid</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_is_tuple</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">c_prev</span><span class="p">,</span> <span class="n">m_prev</span><span class="p">)</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c_prev</span> <span class="o">=</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">])</span>
+            <span class="n">m_prev</span> <span class="o">=</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_proj</span><span class="p">])</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="n">input_size</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">with_rank</span><span class="p">(</span><span class="mi">2</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">input_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not infer input size from inputs.get_shape()[-1]&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit_scope</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">unit_scope</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_w1&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_bias1&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_w2&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_input_bias2&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_w1&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">input_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_t1&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_bias1&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_w2&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">input_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_kernel_t2&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_time_bias2&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t1</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_o_kernel_t1&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t2</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;_o_kernel_t2&quot;</span><span class="p">,</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="n">time_now_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span>
+            <span class="n">time_now_score</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias1</span>
+        <span class="p">)</span>
+        <span class="n">time_last_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span>
+            <span class="n">time_last_score</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_w2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_input_bias2</span>
+        <span class="p">)</span>
+
+        <span class="n">time_now_state</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_now_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias1</span>
+        <span class="p">)</span>
+        <span class="n">time_last_state</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_w2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_last_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_kernel_t2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_bias2</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit_scope</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_unit_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">unit_scope</span><span class="o">.</span><span class="n">set_partitioner</span><span class="p">(</span>
+                        <span class="n">partitioned_variables</span><span class="o">.</span><span class="n">fixed_size_partitioner</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_num_unit_shards</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span> <span class="o">=</span> <span class="n">_Linear</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">m_prev</span><span class="p">],</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># i = input_gate, j = new_input, f = forget_gate, o = output_gate</span>
+        <span class="n">lstm_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear1</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">m_prev</span><span class="p">])</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">o</span> <span class="o">=</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">lstm_matrix</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">o</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_now_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t1</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">time_last_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_o_kernel_t2</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Diagonal connections</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">)</span> <span class="k">as</span> <span class="n">unit_scope</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">unit_scope</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;w_f_diag&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_w_i_diag</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;w_i_diag&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="s2">&quot;w_o_diag&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_units</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forget_bias</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_f_diag</span> <span class="o">*</span> <span class="n">c_prev</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span>
+                <span class="n">time_last_state</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">c_prev</span> <span class="o">+</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_i_diag</span> <span class="o">*</span> <span class="n">c_prev</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span>
+                <span class="n">time_now_state</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span>
+                <span class="n">j</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forget_bias</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span>
+                <span class="n">time_last_state</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="n">c_prev</span> <span class="o">+</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">time_now_state</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># pylint: disable=invalid-unary-operand-type</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">clip_ops</span><span class="o">.</span><span class="n">clip_by_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_clip</span><span class="p">)</span>
+            <span class="c1"># pylint: enable=invalid-unary-operand-type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_peepholes</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">o</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initializer</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;projection&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">proj_scope</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">proj_scope</span><span class="o">.</span><span class="n">set_partitioner</span><span class="p">(</span>
+                                <span class="n">partitioned_variables</span><span class="o">.</span><span class="n">fixed_size_partitioner</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj_shards</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span> <span class="o">=</span> <span class="n">_Linear</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_proj</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear2</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># pylint: disable=invalid-unary-operand-type</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">clip_ops</span><span class="o">.</span><span class="n">clip_by_value</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proj_clip</span><span class="p">)</span>
+                <span class="c1"># pylint: enable=invalid-unary-operand-type</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">att_score</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">att_score</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">att_score</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">att_score</span><span class="p">)</span> <span class="o">*</span> <span class="n">m</span>
+        <span class="n">new_state</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">LSTMStateTuple</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_is_tuple</span>
+            <span class="k">else</span> <span class="n">array_ops</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">m</span><span class="p">,</span> <span class="n">new_state</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_Linear</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Linear map: sum_i(args[i] * W[i]), where W[i] is a variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      args: a 2D Tensor or a list of 2D, batch x n, Tensors.</span>
+<span class="sd">      output_size: int, second dimension of weight variable.</span>
+<span class="sd">      dtype: data type for variables.</span>
+<span class="sd">      build_bias: boolean, whether to build a bias variable.</span>
+<span class="sd">      bias_initializer: starting value to initialize the bias</span>
+<span class="sd">        (default is all zeros).</span>
+<span class="sd">      kernel_initializer: starting value to initialize the weight.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ValueError: if inputs_shape is wrong.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">,</span>
+        <span class="n">output_size</span><span class="p">,</span>
+        <span class="n">build_bias</span><span class="p">,</span>
+        <span class="n">bias_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kernel_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_bias</span> <span class="o">=</span> <span class="n">build_bias</span>
+
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">is_sequence</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">args</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`args` must be specified&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nest</span><span class="o">.</span><span class="n">is_sequence</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_sequence</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_sequence</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Calculate the total size of arguments on dimension 1.</span>
+        <span class="n">total_arg_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">shapes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">ndims</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;linear is expecting 2D arguments: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">shapes</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;linear expects shape[1] to be provided for shape </span><span class="si">%s</span><span class="s2">, &quot;</span>
+                    <span class="s2">&quot;but saw </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_arg_size</span> <span class="o">+=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">scope</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable_scope</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span> <span class="k">as</span> <span class="n">outer_scope</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                <span class="n">_WEIGHTS_VARIABLE_NAME</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">total_arg_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">kernel_initializer</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">build_bias</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">vs</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">outer_scope</span><span class="p">)</span> <span class="k">as</span> <span class="n">inner_scope</span><span class="p">:</span>
+                    <span class="n">inner_scope</span><span class="o">.</span><span class="n">set_partitioner</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">bias_initializer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">bias_initializer</span> <span class="o">=</span> <span class="n">init_ops</span><span class="o">.</span><span class="n">constant_initializer</span><span class="p">(</span>
+                            <span class="mf">0.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                        <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_biases</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span>
+                        <span class="n">_BIAS_VARIABLE_NAME</span><span class="p">,</span>
+                        <span class="p">[</span><span class="n">output_size</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                        <span class="n">initializer</span><span class="o">=</span><span class="n">bias_initializer</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_sequence</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">array_ops</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_bias</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">nn_ops</span><span class="o">.</span><span class="n">bias_add</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_biases</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

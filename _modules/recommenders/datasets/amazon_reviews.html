@@ -1,0 +1,939 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.datasets.amazon_reviews &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/datasets/amazon_reviews';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/datasets/amazon_reviews.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/datasets/amazon_reviews.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.datasets.amazon_reviews</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">_pickle</span> <span class="k">as</span> <span class="nn">cPickle</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="n">SEED</span>
+<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span>
+
+
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_review_data"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.amazon_reviews.get_review_data">[docs]</a><span class="k">def</span> <span class="nf">get_review_data</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads amazon review data (only), prepares in the required format</span>
+<span class="sd">    and stores in the same location</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reviews_file (str): Filename for downloaded reviews dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reviews_name</span> <span class="o">=</span> <span class="n">reviews_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># *.json (for url)</span>
+    <span class="n">download_and_extract</span><span class="p">(</span><span class="n">reviews_name</span><span class="p">,</span> <span class="n">reviews_file</span><span class="p">)</span>
+    <span class="n">reviews_output</span> <span class="o">=</span> <span class="n">_reviews_preprocessing</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reviews_output</span></div>
+
+
+<div class="viewcode-block" id="data_preprocessing"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.amazon_reviews.data_preprocessing">[docs]</a><span class="k">def</span> <span class="nf">data_preprocessing</span><span class="p">(</span>
+    <span class="n">reviews_file</span><span class="p">,</span>
+    <span class="n">meta_file</span><span class="p">,</span>
+    <span class="n">train_file</span><span class="p">,</span>
+    <span class="n">valid_file</span><span class="p">,</span>
+    <span class="n">test_file</span><span class="p">,</span>
+    <span class="n">user_vocab</span><span class="p">,</span>
+    <span class="n">item_vocab</span><span class="p">,</span>
+    <span class="n">cate_vocab</span><span class="p">,</span>
+    <span class="n">sample_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">valid_num_ngs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">test_num_ngs</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">is_history_expanding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create data for training, validation and testing from original dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reviews_file (str): Reviews dataset downloaded from former operations.</span>
+<span class="sd">        meta_file (str): Meta dataset downloaded from former operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reviews_output</span> <span class="o">=</span> <span class="n">_reviews_preprocessing</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">)</span>
+    <span class="n">meta_output</span> <span class="o">=</span> <span class="n">_meta_preprocessing</span><span class="p">(</span><span class="n">meta_file</span><span class="p">)</span>
+    <span class="n">instance_output</span> <span class="o">=</span> <span class="n">_create_instance</span><span class="p">(</span><span class="n">reviews_output</span><span class="p">,</span> <span class="n">meta_output</span><span class="p">)</span>
+    <span class="n">_create_item2cate</span><span class="p">(</span><span class="n">instance_output</span><span class="p">)</span>
+    <span class="n">sampled_instance_file</span> <span class="o">=</span> <span class="n">_get_sampled_data</span><span class="p">(</span><span class="n">instance_output</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">)</span>
+    <span class="n">preprocessed_output</span> <span class="o">=</span> <span class="n">_data_processing</span><span class="p">(</span><span class="n">sampled_instance_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_history_expanding</span><span class="p">:</span>
+        <span class="n">_data_generating</span><span class="p">(</span><span class="n">preprocessed_output</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_data_generating_no_history_expanding</span><span class="p">(</span>
+            <span class="n">preprocessed_output</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span>
+        <span class="p">)</span>
+    <span class="n">_create_vocab</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="n">user_vocab</span><span class="p">,</span> <span class="n">item_vocab</span><span class="p">,</span> <span class="n">cate_vocab</span><span class="p">)</span>
+    <span class="n">_negative_sampling_offline</span><span class="p">(</span>
+        <span class="n">sampled_instance_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">valid_num_ngs</span><span class="p">,</span> <span class="n">test_num_ngs</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_create_vocab</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="n">user_vocab</span><span class="p">,</span> <span class="n">item_vocab</span><span class="p">,</span> <span class="n">cate_vocab</span><span class="p">):</span>
+
+    <span class="n">f_train</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+    <span class="n">user_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">item_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">cat_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;vocab generating...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_train</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">mid_list</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">cat_list</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">user_dict</span><span class="p">:</span>
+            <span class="n">user_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">user_dict</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">mid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">item_dict</span><span class="p">:</span>
+            <span class="n">item_dict</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">item_dict</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">cat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cat_dict</span><span class="p">:</span>
+            <span class="n">cat_dict</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">cat_dict</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mid_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mid_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">item_dict</span><span class="p">:</span>
+                <span class="n">item_dict</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">item_dict</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cat_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cat_dict</span><span class="p">:</span>
+                <span class="n">cat_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">cat_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">sorted_user_dict</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">user_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sorted_item_dict</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sorted_cat_dict</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cat_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">uid_voc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sorted_user_dict</span><span class="p">:</span>
+        <span class="n">uid_voc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">mid_voc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">mid_voc</span><span class="p">[</span><span class="s2">&quot;default_mid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sorted_item_dict</span><span class="p">:</span>
+        <span class="n">mid_voc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">cat_voc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">cat_voc</span><span class="p">[</span><span class="s2">&quot;default_cat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sorted_cat_dict</span><span class="p">:</span>
+        <span class="n">cat_voc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">uid_voc</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">user_vocab</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+    <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mid_voc</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">item_vocab</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+    <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cat_voc</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">cate_vocab</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_negative_sampling_offline</span><span class="p">(</span>
+    <span class="n">instance_input_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">valid_neg_nums</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">test_neg_nums</span><span class="o">=</span><span class="mi">49</span>
+<span class="p">):</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;item_id&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;cate_id&quot;</span><span class="p">]</span>
+    <span class="n">ns_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">instance_input_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">items_with_popular</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ns_df</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">item2cate</span>
+
+    <span class="c1"># valid negative sampling</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start valid negative sampling&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">valid_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">valid_lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">write_valid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">valid_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">valid_lines</span><span class="p">:</span>
+        <span class="n">write_valid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">positive_item</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">neg_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">valid_neg_nums</span><span class="p">:</span>
+            <span class="n">neg_item</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">items_with_popular</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">neg_item</span> <span class="o">==</span> <span class="n">positive_item</span> <span class="ow">or</span> <span class="n">neg_item</span> <span class="ow">in</span> <span class="n">neg_items</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">neg_items</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">neg_item</span><span class="p">)</span>
+            <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+            <span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_item</span>
+            <span class="n">words</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">item2cate</span><span class="p">[</span><span class="n">neg_item</span><span class="p">]</span>
+            <span class="n">write_valid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># test negative sampling</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start test negative sampling&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">test_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">test_lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">write_test</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">test_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">test_lines</span><span class="p">:</span>
+        <span class="n">write_test</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">positive_item</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">neg_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">test_neg_nums</span><span class="p">:</span>
+            <span class="n">neg_item</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">items_with_popular</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">neg_item</span> <span class="o">==</span> <span class="n">positive_item</span> <span class="ow">or</span> <span class="n">neg_item</span> <span class="ow">in</span> <span class="n">neg_items</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">neg_items</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">neg_item</span><span class="p">)</span>
+            <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+            <span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg_item</span>
+            <span class="n">words</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">item2cate</span><span class="p">[</span><span class="n">neg_item</span><span class="p">]</span>
+            <span class="n">write_test</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_data_generating</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">min_sequence</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;produce train, valid and test file from processed_output file</span>
+<span class="sd">    Each user&#39;s behavior sequence will be unfolded and produce multiple lines in trian file.</span>
+<span class="sd">    Like, user&#39;s behavior sequence: 12345, and this function will write into train file:</span>
+<span class="sd">    1, 12, 123, 1234, 12345</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f_input</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">f_train</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f_valid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">valid_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f_test</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">test_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;data generating...&quot;</span><span class="p">)</span>
+    <span class="n">last_user_id</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_input</span><span class="p">:</span>
+        <span class="n">line_split</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">tfile</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">movie_id</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">tfile</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
+            <span class="n">fo</span> <span class="o">=</span> <span class="n">f_train</span>
+        <span class="k">elif</span> <span class="n">tfile</span> <span class="o">==</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span>
+            <span class="n">fo</span> <span class="o">=</span> <span class="n">f_valid</span>
+        <span class="k">elif</span> <span class="n">tfile</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+            <span class="n">fo</span> <span class="o">=</span> <span class="n">f_test</span>
+        <span class="k">if</span> <span class="n">user_id</span> <span class="o">!=</span> <span class="n">last_user_id</span><span class="p">:</span>
+            <span class="n">movie_id_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">cate_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">dt_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">history_clk_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">movie_id_list</span><span class="p">)</span>
+            <span class="n">cat_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">mid_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">dt_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="n">cate_list</span><span class="p">:</span>
+                <span class="n">cat_str</span> <span class="o">+=</span> <span class="n">c1</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+            <span class="k">for</span> <span class="n">mid</span> <span class="ow">in</span> <span class="n">movie_id_list</span><span class="p">:</span>
+                <span class="n">mid_str</span> <span class="o">+=</span> <span class="n">mid</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+            <span class="k">for</span> <span class="n">dt_time</span> <span class="ow">in</span> <span class="n">dt_list</span><span class="p">:</span>
+                <span class="n">dt_str</span> <span class="o">+=</span> <span class="n">dt_time</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cat_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">cat_str</span> <span class="o">=</span> <span class="n">cat_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mid_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mid_str</span> <span class="o">=</span> <span class="n">mid_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">dt_str</span> <span class="o">=</span> <span class="n">dt_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">history_clk_num</span> <span class="o">&gt;=</span> <span class="n">min_sequence</span><span class="p">:</span>
+                <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="n">line_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">user_id</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">movie_id</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">category</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">date_time</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">mid_str</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">cat_str</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">dt_str</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="n">last_user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+        <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">movie_id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">movie_id</span><span class="p">)</span>
+            <span class="n">cate_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+            <span class="n">dt_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_data_generating_no_history_expanding</span><span class="p">(</span>
+    <span class="n">input_file</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">min_sequence</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce train, valid and test file from processed_output file</span>
+<span class="sd">    Each user&#39;s behavior sequence will only produce one line in train file.</span>
+<span class="sd">    Like, user&#39;s behavior sequence: 12345, and this function will write into train file: 12345</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f_input</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">f_train</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f_valid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">valid_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f_test</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">test_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;data generating...&quot;</span><span class="p">)</span>
+
+    <span class="n">last_user_id</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_movie_id</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_category</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_datetime</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_tfile</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_input</span><span class="p">:</span>
+        <span class="n">line_split</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">tfile</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">movie_id</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="n">line_split</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">last_tfile</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
+            <span class="n">fo</span> <span class="o">=</span> <span class="n">f_train</span>
+        <span class="k">elif</span> <span class="n">last_tfile</span> <span class="o">==</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span>
+            <span class="n">fo</span> <span class="o">=</span> <span class="n">f_valid</span>
+        <span class="k">elif</span> <span class="n">last_tfile</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+            <span class="n">fo</span> <span class="o">=</span> <span class="n">f_test</span>
+        <span class="k">if</span> <span class="n">user_id</span> <span class="o">!=</span> <span class="n">last_user_id</span> <span class="ow">or</span> <span class="n">tfile</span> <span class="o">==</span> <span class="s2">&quot;valid&quot;</span> <span class="ow">or</span> <span class="n">tfile</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">last_user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">history_clk_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="n">movie_id_list</span>  <span class="c1"># noqa: F821 undefined name &#39;movie_id_list&#39;</span>
+                <span class="p">)</span>
+                <span class="n">cat_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">mid_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">dt_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="n">cate_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># noqa: F821 undefined name &#39;cate_list&#39;</span>
+                    <span class="n">cat_str</span> <span class="o">+=</span> <span class="n">c1</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+                <span class="k">for</span> <span class="n">mid</span> <span class="ow">in</span> <span class="n">movie_id_list</span><span class="p">[</span>  <span class="c1"># noqa: F821 undefined name &#39;movie_id_list&#39;</span>
+                    <span class="p">:</span><span class="o">-</span><span class="mi">1</span>
+                <span class="p">]:</span>
+                    <span class="n">mid_str</span> <span class="o">+=</span> <span class="n">mid</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+                <span class="k">for</span> <span class="n">dt_time</span> <span class="ow">in</span> <span class="n">dt_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># noqa: F821 undefined name &#39;dt_list&#39;</span>
+                    <span class="n">dt_str</span> <span class="o">+=</span> <span class="n">dt_time</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cat_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cat_str</span> <span class="o">=</span> <span class="n">cat_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mid_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">mid_str</span> <span class="o">=</span> <span class="n">mid_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">dt_str</span> <span class="o">=</span> <span class="n">dt_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">history_clk_num</span> <span class="o">&gt;</span> <span class="n">min_sequence</span><span class="p">:</span>
+                    <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="n">line_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">last_user_id</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">last_movie_id</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">last_category</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">last_datetime</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">mid_str</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">cat_str</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="n">dt_str</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="n">tfile</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span> <span class="ow">or</span> <span class="n">last_user_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">movie_id_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">cate_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">dt_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">last_user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+        <span class="n">last_movie_id</span> <span class="o">=</span> <span class="n">movie_id</span>
+        <span class="n">last_category</span> <span class="o">=</span> <span class="n">category</span>
+        <span class="n">last_datetime</span> <span class="o">=</span> <span class="n">date_time</span>
+        <span class="n">last_tfile</span> <span class="o">=</span> <span class="n">tfile</span>
+        <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">movie_id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">movie_id</span><span class="p">)</span>
+            <span class="n">cate_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+            <span class="n">dt_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_create_item2cate</span><span class="p">(</span><span class="n">instance_file</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;creating item2cate dict&quot;</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">item2cate</span>
+    <span class="n">instance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">instance_file</span><span class="p">,</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;item_id&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;cate_id&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">item2cate</span> <span class="o">=</span> <span class="n">instance_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;item_id&quot;</span><span class="p">)[</span><span class="s2">&quot;cate_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_sampled_data</span><span class="p">(</span><span class="n">instance_file</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;getting sampled data...&quot;</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">item2cate</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">instance_file</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sample_rate</span><span class="p">)</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;item_id&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;cate_id&quot;</span><span class="p">]</span>
+    <span class="n">ns_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">instance_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">items_num</span> <span class="o">=</span> <span class="n">ns_df</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+    <span class="n">items_with_popular</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ns_df</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">])</span>
+    <span class="n">items_sample</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">items_num</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">):</span>
+        <span class="n">random_item</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">items_with_popular</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">random_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items_sample</span><span class="p">:</span>
+            <span class="n">items_sample</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">random_item</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">ns_df_sample</span> <span class="o">=</span> <span class="n">ns_df</span><span class="p">[</span><span class="n">ns_df</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">items_sample</span><span class="p">)]</span>
+    <span class="n">ns_df_sample</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_file</span>
+
+
+<span class="k">def</span> <span class="nf">_meta_preprocessing</span><span class="p">(</span><span class="n">meta_readfile</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start meta preprocessing...&quot;</span><span class="p">)</span>
+    <span class="n">meta_writefile</span> <span class="o">=</span> <span class="n">meta_readfile</span> <span class="o">+</span> <span class="s2">&quot;_output&quot;</span>
+    <span class="n">meta_r</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_readfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">meta_w</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_writefile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">meta_r</span><span class="p">:</span>
+        <span class="n">line_new</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">meta_w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line_new</span><span class="p">[</span><span class="s2">&quot;asin&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line_new</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">meta_r</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">meta_w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">meta_writefile</span>
+
+
+<span class="k">def</span> <span class="nf">_reviews_preprocessing</span><span class="p">(</span><span class="n">reviews_readfile</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start reviews preprocessing...&quot;</span><span class="p">)</span>
+    <span class="n">reviews_writefile</span> <span class="o">=</span> <span class="n">reviews_readfile</span> <span class="o">+</span> <span class="s2">&quot;_output&quot;</span>
+    <span class="n">reviews_r</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">reviews_readfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">reviews_w</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">reviews_writefile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reviews_r</span><span class="p">:</span>
+        <span class="n">line_new</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">reviews_w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">line_new</span><span class="p">[</span><span class="s2">&quot;reviewerID&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">line_new</span><span class="p">[</span><span class="s2">&quot;asin&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">line_new</span><span class="p">[</span><span class="s2">&quot;unixReviewTime&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">reviews_r</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">reviews_w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">reviews_writefile</span>
+
+
+<span class="k">def</span> <span class="nf">_create_instance</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">,</span> <span class="n">meta_file</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start create instances...&quot;</span><span class="p">)</span>
+    <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">)</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="s2">&quot;instance_output&quot;</span><span class="p">)</span>
+
+    <span class="n">f_reviews</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">user_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">item_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_reviews</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">reviews_things</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reviews_things</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">user_dict</span><span class="p">:</span>
+            <span class="n">user_dict</span><span class="p">[</span><span class="n">reviews_things</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">user_dict</span><span class="p">[</span><span class="n">reviews_things</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">line</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">reviews_things</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="n">item_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reviews_things</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">f_meta</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">meta_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_meta</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">meta_things</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">meta_things</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta_dict</span><span class="p">:</span>
+            <span class="n">meta_dict</span><span class="p">[</span><span class="n">meta_things</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">meta_things</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">f_output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">user_behavior</span> <span class="ow">in</span> <span class="n">user_dict</span><span class="p">:</span>
+        <span class="n">sorted_user_behavior</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">user_dict</span><span class="p">[</span><span class="n">user_behavior</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">line</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sorted_user_behavior</span><span class="p">:</span>
+            <span class="n">user_things</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">asin</span> <span class="o">=</span> <span class="n">user_things</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">asin</span> <span class="ow">in</span> <span class="n">meta_dict</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">meta_dict</span><span class="p">[</span><span class="n">asin</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;default_cat&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">f_reviews</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">f_meta</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">f_output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output_file</span>
+
+
+<span class="k">def</span> <span class="nf">_data_processing</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start data processing...&quot;</span><span class="p">)</span>
+    <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="s2">&quot;preprocessed_output&quot;</span><span class="p">)</span>
+
+    <span class="n">f_input</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">f_output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">user_count</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_input</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">user_count</span><span class="p">:</span>
+            <span class="n">user_count</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">user_count</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">f_input</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">last_user</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_input</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">last_user</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">user_count</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;train&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">user_count</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;valid&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">last_user</span> <span class="o">=</span> <span class="n">user</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">user_count</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;train&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">user_count</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;valid&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">output_file</span>
+
+
+<div class="viewcode-block" id="download_and_extract"><a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.amazon_reviews.download_and_extract">[docs]</a><span class="k">def</span> <span class="nf">download_and_extract</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads and extracts Amazon reviews and meta datafiles if they don’t already exist</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Category of reviews.</span>
+<span class="sd">        dest_path (str): File path for the downloaded file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: File path for the extracted file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirs</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirs</span><span class="p">)</span>
+
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="n">_download_reviews</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
+        <span class="n">_extract_reviews</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">file_path</span></div>
+
+
+<span class="k">def</span> <span class="nf">_download_reviews</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads Amazon reviews datafile.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Category of reviews</span>
+<span class="sd">        dest_path (str): File path for the downloaded file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/&quot;</span>
+        <span class="o">+</span> <span class="n">name</span>
+        <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">dirs</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
+    <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">dirs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_extract_reviews</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">zip_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Amazon reviews and meta datafiles from the raw zip files.</span>
+
+<span class="sd">    To extract all files,</span>
+<span class="sd">    use ZipFile&#39;s extractall(path) instead.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path (str): Destination path for datafile</span>
+<span class="sd">        zip_path (str): zipfile path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">zip_path</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">zf</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

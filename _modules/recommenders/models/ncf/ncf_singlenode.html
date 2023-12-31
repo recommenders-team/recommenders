@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.ncf.ncf_singlenode &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/ncf/ncf_singlenode';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/ncf/ncf_singlenode.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/ncf/ncf_singlenode.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.ncf.ncf_singlenode</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">tf_slim</span> <span class="k">as</span> <span class="nn">slim</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+
+<span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">disable_eager_execution</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">MODEL_CHECKPOINT</span> <span class="o">=</span> <span class="s2">&quot;model.ckpt&quot;</span>
+
+
+<div class="viewcode-block" id="NCF"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF">[docs]</a><span class="k">class</span> <span class="nc">NCF</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Neural Collaborative Filtering (NCF) implementation</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        He, Xiangnan, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua. &quot;Neural collaborative filtering.&quot;</span>
+<span class="sd">        In Proceedings of the 26th International Conference on World Wide Web, pp. 173-182. International World Wide Web</span>
+<span class="sd">        Conferences Steering Committee, 2017. Link: https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_users</span><span class="p">,</span>
+        <span class="n">n_items</span><span class="p">,</span>
+        <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;NeuMF&quot;</span><span class="p">,</span>
+        <span class="n">n_factors</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">layer_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+        <span class="n">n_epochs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_users (int): Number of users in the dataset.</span>
+<span class="sd">            n_items (int): Number of items in the dataset.</span>
+<span class="sd">            model_type (str): Model type.</span>
+<span class="sd">            n_factors (int): Dimension of latent space.</span>
+<span class="sd">            layer_sizes (list): Number of layers for MLP.</span>
+<span class="sd">            n_epochs (int): Number of epochs for training.</span>
+<span class="sd">            batch_size (int): Batch size.</span>
+<span class="sd">            learning_rate (float): Learning rate.</span>
+<span class="sd">            verbose (int): Whether to show the training output or not.</span>
+<span class="sd">            seed (int): Seed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># seed</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">=</span> <span class="n">n_users</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span> <span class="o">=</span> <span class="n">n_items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="n">model_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="n">n_factors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span> <span class="o">=</span> <span class="n">layer_sizes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">=</span> <span class="n">n_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+
+        <span class="c1"># check model type</span>
+        <span class="n">model_options</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gmf&quot;</span><span class="p">,</span> <span class="s2">&quot;mlp&quot;</span><span class="p">,</span> <span class="s2">&quot;neumf&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_options</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Wrong model type, please select one of this list: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">model_options</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ncf layer input size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ncf_layer_size</span> <span class="o">=</span> <span class="n">n_factors</span> <span class="o">+</span> <span class="n">layer_sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># create ncf model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_model</span><span class="p">()</span>
+        <span class="c1"># set GPU use with demand growth</span>
+        <span class="n">gpu_options</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">GPUOptions</span><span class="p">(</span><span class="n">allow_growth</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># set TF Session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">ConfigProto</span><span class="p">(</span><span class="n">gpu_options</span><span class="o">=</span><span class="n">gpu_options</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># parameters initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># reset graph</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">reset_default_graph</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;input_data&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="c1"># input: index of users, items and ground truth</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;embedding&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="c1"># set embedding table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_gmf_P</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_users</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="p">],</span>
+                    <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">stddev</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;embedding_gmf_P&quot;</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_gmf_Q</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_items</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="p">],</span>
+                    <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">stddev</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;embedding_gmf_Q&quot;</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># set embedding table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_mlp_P</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_users</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span>
+                    <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">stddev</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;embedding_mlp_P&quot;</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_mlp_Q</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_items</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)],</span>
+                    <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">stddev</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;embedding_mlp_Q&quot;</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;gmf&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="c1"># get user embedding p and item embedding q</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gmf_p</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                <span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup</span><span class="p">(</span>
+                    <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_gmf_P</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_input</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gmf_q</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                <span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup</span><span class="p">(</span>
+                    <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_gmf_Q</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">item_input</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># get gmf vector</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gmf_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gmf_p</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gmf_q</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;mlp&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="c1"># get user embedding p and item embedding q</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mlp_p</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                <span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup</span><span class="p">(</span>
+                    <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_mlp_P</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_input</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mlp_q</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+                <span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup</span><span class="p">(</span>
+                    <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_mlp_Q</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">item_input</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># concatenate user and item vector</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mlp_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp_q</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># MLP Layers</span>
+            <span class="k">for</span> <span class="n">layer_size</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">slim</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span>
+                    <span class="n">output</span><span class="p">,</span>
+                    <span class="n">num_outputs</span><span class="o">=</span><span class="n">layer_size</span><span class="p">,</span>
+                    <span class="n">activation_fn</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span>
+                    <span class="n">weights_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">VarianceScaling</span><span class="p">(</span>
+                        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fan_avg&quot;</span><span class="p">,</span>
+                        <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+                        <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mlp_vector</span> <span class="o">=</span> <span class="n">output</span>
+
+            <span class="c1"># self.output = tf.sigmoid(tf.reduce_sum(self.mlp_vector, axis=1, keepdims=True))</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;ncf&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;gmf&quot;</span><span class="p">:</span>
+                <span class="c1"># GMF only</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">slim</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gmf_vector</span><span class="p">,</span>
+                    <span class="n">num_outputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">activation_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">biases_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">weights_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">VarianceScaling</span><span class="p">(</span>
+                        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fan_avg&quot;</span><span class="p">,</span>
+                        <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+                        <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;mlp&quot;</span><span class="p">:</span>
+                <span class="c1"># MLP only</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">slim</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mlp_vector</span><span class="p">,</span>
+                    <span class="n">num_outputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">activation_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">biases_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">weights_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">VarianceScaling</span><span class="p">(</span>
+                        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fan_avg&quot;</span><span class="p">,</span>
+                        <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+                        <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;neumf&quot;</span><span class="p">:</span>
+                <span class="c1"># concatenate GMF and MLP vector</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ncf_vector</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">gmf_vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp_vector</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># get predicted rating score</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">slim</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ncf_vector</span><span class="p">,</span>
+                    <span class="n">num_outputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">activation_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">biases_initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">weights_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">VarianceScaling</span><span class="p">(</span>
+                        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fan_avg&quot;</span><span class="p">,</span>
+                        <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+                        <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="c1"># set loss function</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">log_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">reuse</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">AUTO_REUSE</span><span class="p">):</span>
+
+            <span class="c1"># set optimizer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span>
+                <span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NCF.save"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dir_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save model parameters in `dir_name`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dir_name (str): directory name, which should be a folder name instead of file name</span>
+<span class="sd">                we will create a new directory if not existing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># save trained model</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dir_name</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+        <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">()</span>
+        <span class="n">saver</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="n">MODEL_CHECKPOINT</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NCF.load"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmf_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neumf_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load model parameters for further use.</span>
+
+<span class="sd">        GMF model --&gt; load parameters in `gmf_dir`</span>
+
+<span class="sd">        MLP model --&gt; load parameters in `mlp_dir`</span>
+
+<span class="sd">        NeuMF model --&gt; load parameters in `neumf_dir` or in `gmf_dir` and `mlp_dir`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gmf_dir (str): Directory name for GMF model.</span>
+<span class="sd">            mlp_dir (str): Directory name for MLP model.</span>
+<span class="sd">            neumf_dir (str): Directory name for neumf model.</span>
+<span class="sd">            alpha (float): the concatenation hyper-parameter for gmf and mlp output layer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object: Load parameters in this model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># load pre-trained model</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;gmf&quot;</span> <span class="ow">and</span> <span class="n">gmf_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">()</span>
+            <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gmf_dir</span><span class="p">,</span> <span class="n">MODEL_CHECKPOINT</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;mlp&quot;</span> <span class="ow">and</span> <span class="n">mlp_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">()</span>
+            <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mlp_dir</span><span class="p">,</span> <span class="n">MODEL_CHECKPOINT</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;neumf&quot;</span> <span class="ow">and</span> <span class="n">neumf_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">()</span>
+            <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">neumf_dir</span><span class="p">,</span> <span class="n">MODEL_CHECKPOINT</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;neumf&quot;</span> <span class="ow">and</span> <span class="n">gmf_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mlp_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># load neumf using gmf and mlp</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_neumf</span><span class="p">(</span><span class="n">gmf_dir</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_load_neumf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmf_dir</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load gmf and mlp model parameters for further use in NeuMF.</span>
+<span class="sd">        NeuMF model --&gt; load parameters in `gmf_dir` and `mlp_dir`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># load gmf part</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">global_variables</span><span class="p">()</span>
+        <span class="c1"># get variables with &#39;gmf&#39;</span>
+        <span class="n">var_flow_restore</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">variables</span> <span class="k">if</span> <span class="s2">&quot;gmf&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="s2">&quot;ncf&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">]</span>
+        <span class="c1"># load &#39;gmf&#39; variable</span>
+        <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">(</span><span class="n">var_flow_restore</span><span class="p">)</span>
+        <span class="c1"># restore</span>
+        <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gmf_dir</span><span class="p">,</span> <span class="n">MODEL_CHECKPOINT</span><span class="p">))</span>
+
+        <span class="c1"># load mlp part</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">global_variables</span><span class="p">()</span>
+        <span class="c1"># get variables with &#39;gmf&#39;</span>
+        <span class="n">var_flow_restore</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">variables</span> <span class="k">if</span> <span class="s2">&quot;mlp&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="s2">&quot;ncf&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">]</span>
+        <span class="c1"># load &#39;gmf&#39; variable</span>
+        <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">(</span><span class="n">var_flow_restore</span><span class="p">)</span>
+        <span class="c1"># restore</span>
+        <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mlp_dir</span><span class="p">,</span> <span class="n">MODEL_CHECKPOINT</span><span class="p">))</span>
+
+        <span class="c1"># concat pretrain h_from_gmf and h_from_mlp</span>
+        <span class="n">vars_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">GraphKeys</span><span class="o">.</span><span class="n">GLOBAL_VARIABLES</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;ncf&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vars_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">ncf_fc</span> <span class="o">=</span> <span class="n">vars_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># get weight from gmf and mlp</span>
+        <span class="n">gmf_fc</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">load_variable</span><span class="p">(</span><span class="n">gmf_dir</span><span class="p">,</span> <span class="n">ncf_fc</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">mlp_fc</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">load_variable</span><span class="p">(</span><span class="n">mlp_dir</span><span class="p">,</span> <span class="n">ncf_fc</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># load fc layer by tf.concat</span>
+        <span class="n">assign_op</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+            <span class="n">ncf_fc</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">gmf_fc</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">mlp_fc</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">assign_op</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NCF.fit"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit model with training data</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (NCFDataset): initilized Dataset in ./dataset.py</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get user and item mapping dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">user2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">item2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2user</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">id2user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2item</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">id2item</span>
+
+        <span class="c1"># loop for n_epochs</span>
+        <span class="k">for</span> <span class="n">epoch_count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+            <span class="c1"># negative sampling for training</span>
+            <span class="n">train_begin</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+
+            <span class="c1"># initialize</span>
+            <span class="n">train_loss</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># calculate loss and update NCF parameters</span>
+            <span class="k">for</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">train_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+
+                <span class="n">user_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">user_input</span><span class="p">])</span>
+                <span class="n">item_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">item_input</span><span class="p">])</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+                <span class="n">feed_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">user_input</span><span class="p">:</span> <span class="n">user_input</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">item_input</span><span class="p">:</span> <span class="n">item_input</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span> <span class="n">labels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                <span class="p">}</span>
+
+                <span class="c1"># get loss and execute optimization</span>
+                <span class="n">loss</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">],</span> <span class="n">feed_dict</span><span class="p">)</span>
+                <span class="n">train_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+            <span class="n">train_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">train_begin</span>
+
+            <span class="c1"># output every self.verbose</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="ow">and</span> <span class="n">epoch_count</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Epoch </span><span class="si">%d</span><span class="s2"> [</span><span class="si">%.2f</span><span class="s2">s]: train_loss = </span><span class="si">%.6f</span><span class="s2"> &quot;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">epoch_count</span><span class="p">,</span> <span class="n">train_time</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">train_loss</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loss</span><span class="p">))</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="NCF.predict"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">,</span> <span class="n">is_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict function of this trained model</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_input (list or element of list): userID or userID list</span>
+<span class="sd">            item_input (list or element of list): itemID or itemID list</span>
+<span class="sd">            is_list (bool): if true, the input is list type</span>
+<span class="sd">                noting that list-wise type prediction is faster than element-wise&#39;s.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list or float: A list of predicted rating or predicted rating score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">is_list</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">user_input</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item_input</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">):</span>
+
+        <span class="c1"># index converting</span>
+        <span class="n">user_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">user_input</span><span class="p">])</span>
+        <span class="n">item_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">item_input</span><span class="p">])</span>
+
+        <span class="c1"># get feed dict</span>
+        <span class="n">feed_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_input</span><span class="p">:</span> <span class="n">user_input</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_input</span><span class="p">:</span> <span class="n">item_input</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="c1"># calculate predicted score</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">feed_dict</span><span class="p">)</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

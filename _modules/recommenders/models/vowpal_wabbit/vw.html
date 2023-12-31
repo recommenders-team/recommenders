@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.vowpal_wabbit.vw &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/vowpal_wabbit/vw';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/vowpal_wabbit/vw.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/vowpal_wabbit/vw.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.vowpal_wabbit.vw</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This file provides a wrapper to run Vowpal Wabbit from the command line through python.</span>
+<span class="sd">It is not recommended to use this approach in production, there are python bindings that can be installed from the</span>
+<span class="sd">repository or pip or the command line can be used. This is merely to demonstrate vw usage in the example notebooks.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">run</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+    <span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="VW"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW">[docs]</a><span class="k">class</span> <span class="nc">VW</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vowpal Wabbit Class&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+        <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
+        <span class="n">col_timestamp</span><span class="o">=</span><span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize model parameters</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col_user (str): user column name</span>
+<span class="sd">            col_item (str): item column name</span>
+<span class="sd">            col_rating (str): rating column name</span>
+<span class="sd">            col_timestamp (str): timestamp column name</span>
+<span class="sd">            col_prediction (str): prediction column name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create temporary files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span> <span class="o">=</span> <span class="n">TemporaryDirectory</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;train.dat&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;test.dat&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;vw.model&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prediction_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;prediction.dat&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set DataFrame columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span> <span class="o">=</span> <span class="n">col_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span> <span class="o">=</span> <span class="n">col_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span> <span class="o">=</span> <span class="n">col_rating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_timestamp</span> <span class="o">=</span> <span class="n">col_timestamp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span> <span class="o">=</span> <span class="n">col_prediction</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logistic</span> <span class="o">=</span> <span class="s2">&quot;logistic&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_train_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_test_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VW.to_vw_cmd"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.to_vw_cmd">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">to_vw_cmd</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert dictionary of parameters to vw command line.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params (dict): key = parameter, value = value (use True if parameter is just a flag)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: vw command line parameters as list of strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;vw&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="c1"># don&#39;t add parameters with a value == False</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># add the correct hyphen to the parameter</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;--</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1"># don&#39;t add an argument for parameters with value == True</span>
+                <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">cmd</span></div>
+
+<div class="viewcode-block" id="VW.parse_train_params"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.parse_train_params">[docs]</a>    <span class="k">def</span> <span class="nf">parse_train_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse input hyper-parameters to build vw train commands</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params (dict): key = parameter, value = value (use True if parameter is just a flag)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: vw command line parameters as list of strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make a copy of the original hyper parameters</span>
+        <span class="n">train_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># remove options that are handled internally, not supported, or test only parameters</span>
+        <span class="n">invalid</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;final_regressor&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;invert_hash&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;readable_model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;t&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;testonly&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;i&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;initial_regressor&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;link&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">invalid</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">train_params</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">train_params</span><span class="p">[</span><span class="n">option</span><span class="p">]</span>
+
+        <span class="n">train_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_file</span><span class="p">,</span>
+                <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">,</span>
+                <span class="s2">&quot;quiet&quot;</span><span class="p">:</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;quiet&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_vw_cmd</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">train_params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VW.parse_test_params"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.parse_test_params">[docs]</a>    <span class="k">def</span> <span class="nf">parse_test_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse input hyper-parameters to build vw test commands</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params (dict): key = parameter, value = value (use True if parameter is just a flag)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: vw command line parameters as list of strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make a copy of the original hyper parameters</span>
+        <span class="n">test_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># remove options that are handled internally, ot supported or train only parameters</span>
+        <span class="n">invalid</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;final_regressor&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;initial_regressor&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;test_only&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;invert_hash&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;readable_model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bit_precision&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;holdout_off&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cache&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kill_cache&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;l&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;l1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;l2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;initial_t&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;power_t&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;decay_learning_rate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;quadratic&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;i&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;interactions&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rank&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lrq&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lrqdropout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;oaa&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">invalid</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">test_params</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">test_params</span><span class="p">[</span><span class="n">option</span><span class="p">]</span>
+
+        <span class="n">test_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_file</span><span class="p">,</span>
+                <span class="s2">&quot;i&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">,</span>
+                <span class="s2">&quot;quiet&quot;</span><span class="p">:</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;quiet&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction_file</span><span class="p">,</span>
+                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_vw_cmd</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">test_params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VW.to_vw_file"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.to_vw_file">[docs]</a>    <span class="k">def</span> <span class="nf">to_vw_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert Pandas DataFrame to vw input format file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): input DataFrame</span>
+<span class="sd">            train (bool): flag for train mode (or test mode if False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_file</span> <span class="k">if</span> <span class="n">train</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># extract columns and create a new dataframe</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
+                <span class="c1"># we need to reset the rating type to an integer to simplify the vw formatting</span>
+                <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int64&quot;</span><span class="p">)</span>
+
+                <span class="c1"># convert rating to binary value</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logistic</span><span class="p">:</span>
+                    <span class="n">max_value</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+                    <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">max_value</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="c1"># convert each row to VW input format (https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Input-format)</span>
+            <span class="c1"># [label] [tag]|[user namespace] [user id feature] |[item namespace] [movie id feature]</span>
+            <span class="c1"># label is the true rating, tag is a unique id for the example just used to link predictions to truth</span>
+            <span class="c1"># user and item namespaces separate features to support interaction features through command line options</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">{rating}</span><span class="s2"> </span><span class="si">{index}</span><span class="s2">|user </span><span class="si">{userID}</span><span class="s2"> |item </span><span class="si">{itemID}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">rating</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">],</span>
+                        <span class="n">index</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">],</span>
+                        <span class="n">userID</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">],</span>
+                        <span class="n">itemID</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="VW.fit"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): input training data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># write dataframe to disk in vw format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_vw_file</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="c1"># train model</span>
+        <span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_cmd</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VW.predict"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict results</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): input test data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># write dataframe to disk in vw format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_vw_file</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># generate predictions</span>
+        <span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_cmd</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># read predictions</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prediction_file</span><span class="p">,</span>
+                <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_prediction</span><span class="p">],</span>
+                <span class="n">index_col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

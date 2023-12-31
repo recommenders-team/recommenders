@@ -1,0 +1,1231 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.sasrec.model &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/sasrec/model';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/sasrec/model.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/sasrec/model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.sasrec.model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.utils.timer</span> <span class="kn">import</span> <span class="n">Timer</span>
+
+
+<div class="viewcode-block" id="MultiHeadAttention"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.MultiHeadAttention">[docs]</a><span class="k">class</span> <span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    - Q (query), K (key) and V (value) are split into multiple heads (num_heads)</span>
+<span class="sd">    - each tuple (q, k, v) are fed to scaled_dot_product_attention</span>
+<span class="sd">    - all attention outputs are concatenated</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attention_dim</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attention_dim (int): Dimension of the attention embeddings.</span>
+<span class="sd">            num_heads (int): Number of heads in the multi-head self-attention module.</span>
+<span class="sd">            dropout_rate (float): Dropout probability.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MultiHeadAttention</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attention_dim</span> <span class="o">=</span> <span class="n">attention_dim</span>
+        <span class="k">assert</span> <span class="n">attention_dim</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span> <span class="o">=</span> <span class="n">dropout_rate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">attention_dim</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MultiHeadAttention.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.MultiHeadAttention.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queries</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            queries (tf.Tensor): Tensor of queries.</span>
+<span class="sd">            keys (tf.Tensor): Tensor of keys</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Linear projections</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">queries</span><span class="p">)</span>  <span class="c1"># (N, T_q, C)</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>  <span class="c1"># (N, T_k, C)</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>  <span class="c1"># (N, T_k, C)</span>
+
+        <span class="c1"># --- MULTI HEAD ---</span>
+        <span class="c1"># Split and concat, Q_, K_ and V_ are all (h*N, T_q, C/h)</span>
+        <span class="n">Q_</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">K_</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">V_</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># --- SCALED DOT PRODUCT ---</span>
+        <span class="c1"># Multiplication</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Q_</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">K_</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>  <span class="c1"># (h*N, T_q, T_k)</span>
+
+        <span class="c1"># Scale</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span> <span class="o">/</span> <span class="p">(</span><span class="n">K_</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">as_list</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="c1"># Key Masking</span>
+        <span class="n">key_masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))</span>  <span class="c1"># (N, T_k)</span>
+        <span class="n">key_masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">key_masks</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># (h*N, T_k)</span>
+        <span class="n">key_masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">key_masks</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">queries</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># (h*N, T_q, T_k)</span>
+
+        <span class="n">paddings</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># outputs, (h*N, T_q, T_k)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">key_masks</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">paddings</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+
+        <span class="c1"># Future blinding (Causality)</span>
+        <span class="n">diag_vals</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>  <span class="c1"># (T_q, T_k)</span>
+        <span class="n">tril</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinearOperatorLowerTriangular</span><span class="p">(</span>
+            <span class="n">diag_vals</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>  <span class="c1"># (T_q, T_k)</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tril</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">outputs</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># (h*N, T_q, T_k)</span>
+
+        <span class="n">paddings</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">masks</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># outputs, (h*N, T_q, T_k)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">masks</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">paddings</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+
+        <span class="c1"># Activation</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>  <span class="c1"># (h*N, T_q, T_k)</span>
+
+        <span class="c1"># Query Masking, query_masks (N, T_q)</span>
+        <span class="n">query_masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">query_masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">query_masks</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># (h*N, T_q)</span>
+        <span class="n">query_masks</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">query_masks</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">keys</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="p">)</span>  <span class="c1"># (h*N, T_q, T_k)</span>
+        <span class="n">outputs</span> <span class="o">*=</span> <span class="n">query_masks</span>  <span class="c1"># broadcasting. (N, T_q, C)</span>
+
+        <span class="c1"># Dropouts</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+
+        <span class="c1"># Weighted sum</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">V_</span><span class="p">)</span>  <span class="c1"># ( h*N, T_q, C/h)</span>
+
+        <span class="c1"># --- MULTI HEAD ---</span>
+        <span class="c1"># concat heads</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>  <span class="c1"># (N, T_q, C)</span>
+
+        <span class="c1"># Residual connection</span>
+        <span class="n">outputs</span> <span class="o">+=</span> <span class="n">queries</span>
+
+        <span class="k">return</span> <span class="n">outputs</span></div></div>
+
+
+<div class="viewcode-block" id="PointWiseFeedForward"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.PointWiseFeedForward">[docs]</a><span class="k">class</span> <span class="nc">PointWiseFeedForward</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convolution layers with residual connection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_dims</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            conv_dims (list): List of the dimensions of the Feedforward layer.</span>
+<span class="sd">            dropout_rate (float): Dropout probability.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PointWiseFeedForward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_dims</span> <span class="o">=</span> <span class="n">conv_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span> <span class="o">=</span> <span class="n">dropout_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv1D</span><span class="p">(</span>
+            <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conv_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv1D</span><span class="p">(</span>
+            <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conv_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PointWiseFeedForward.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.PointWiseFeedForward.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (tf.Tensor): Input tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_layer</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer2</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_layer</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="c1"># Residual connection</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<div class="viewcode-block" id="EncoderLayer"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer">[docs]</a><span class="k">class</span> <span class="nc">EncoderLayer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transformer based encoder layer</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_max_len</span><span class="p">,</span>
+        <span class="n">embedding_dim</span><span class="p">,</span>
+        <span class="n">attention_dim</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">,</span>
+        <span class="n">conv_dims</span><span class="p">,</span>
+        <span class="n">dropout_rate</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seq_max_len (int): Maximum sequence length.</span>
+<span class="sd">            embedding_dim (int): Embedding dimension.</span>
+<span class="sd">            attention_dim (int): Dimension of the attention embeddings.</span>
+<span class="sd">            num_heads (int): Number of heads in the multi-head self-attention module.</span>
+<span class="sd">            conv_dims (list): List of the dimensions of the Feedforward layer.</span>
+<span class="sd">            dropout_rate (float): Dropout probability.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EncoderLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span> <span class="o">=</span> <span class="n">seq_max_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="n">embedding_dim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mha</span> <span class="o">=</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">attention_dim</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span> <span class="o">=</span> <span class="n">PointWiseFeedForward</span><span class="p">(</span><span class="n">conv_dims</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernorm1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernorm2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_rate</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span> <span class="o">=</span> <span class="n">LayerNormalization</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="mf">1e-08</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="EncoderLayer.call_"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer.call_">[docs]</a>    <span class="k">def</span> <span class="nf">call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (tf.Tensor): Input tensor.</span>
+<span class="sd">            training (tf.Tensor): Training tensor.</span>
+<span class="sd">            mask (tf.Tensor): Mask tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">attn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mha</span><span class="p">(</span><span class="n">queries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">keys</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">attn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span><span class="p">(</span><span class="n">attn_output</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+        <span class="n">out1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm1</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">attn_output</span><span class="p">)</span>
+
+        <span class="c1"># feed forward network</span>
+        <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">out1</span><span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+        <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span><span class="p">(</span><span class="n">ffn_output</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+        <span class="n">out2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm2</span><span class="p">(</span>
+            <span class="n">out1</span> <span class="o">+</span> <span class="n">ffn_output</span>
+        <span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+
+        <span class="c1"># masking</span>
+        <span class="n">out2</span> <span class="o">*=</span> <span class="n">mask</span>
+
+        <span class="k">return</span> <span class="n">out2</span></div>
+
+<div class="viewcode-block" id="EncoderLayer.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (tf.Tensor): Input tensor.</span>
+<span class="sd">            training (tf.Tensor): Training tensor.</span>
+<span class="sd">            mask (tf.Tensor): Mask tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">attn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mha</span><span class="p">(</span><span class="n">queries</span><span class="o">=</span><span class="n">x_norm</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">attn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">attn_output</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">attn_output</span> <span class="o">*</span> <span class="n">mask</span>
+
+        <span class="k">return</span> <span class="n">out</span></div></div>
+
+
+<div class="viewcode-block" id="Encoder"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.Encoder">[docs]</a><span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invokes Transformer based encoder with user defined number of layers</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">,</span>
+        <span class="n">seq_max_len</span><span class="p">,</span>
+        <span class="n">embedding_dim</span><span class="p">,</span>
+        <span class="n">attention_dim</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">,</span>
+        <span class="n">conv_dims</span><span class="p">,</span>
+        <span class="n">dropout_rate</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_layers (int): Number of layers.</span>
+<span class="sd">            seq_max_len (int): Maximum sequence length.</span>
+<span class="sd">            embedding_dim (int): Embedding dimension.</span>
+<span class="sd">            attention_dim (int): Dimension of the attention embeddings.</span>
+<span class="sd">            num_heads (int): Number of heads in the multi-head self-attention module.</span>
+<span class="sd">            conv_dims (list): List of the dimensions of the Feedforward layer.</span>
+<span class="sd">            dropout_rate (float): Dropout probability.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Encoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">enc_layers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">EncoderLayer</span><span class="p">(</span>
+                <span class="n">seq_max_len</span><span class="p">,</span>
+                <span class="n">embedding_dim</span><span class="p">,</span>
+                <span class="n">attention_dim</span><span class="p">,</span>
+                <span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">conv_dims</span><span class="p">,</span>
+                <span class="n">dropout_rate</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_rate</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Encoder.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.Encoder.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (tf.Tensor): Input tensor.</span>
+<span class="sd">            training (tf.Tensor): Training tensor.</span>
+<span class="sd">            mask (tf.Tensor): Mask tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_layers</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span></div></div>
+
+
+<div class="viewcode-block" id="LayerNormalization"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.LayerNormalization">[docs]</a><span class="k">class</span> <span class="nc">LayerNormalization</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layer normalization using mean and variance</span>
+<span class="sd">    gamma and beta are the learnable parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_max_len</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seq_max_len (int): Maximum sequence length.</span>
+<span class="sd">            embedding_dim (int): Embedding dimension.</span>
+<span class="sd">            epsilon (float): Epsilon value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LayerNormalization</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span> <span class="o">=</span> <span class="n">seq_max_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="n">embedding_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params_shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="n">g_init</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">ones_initializer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span>
+            <span class="n">initial_value</span><span class="o">=</span><span class="n">g_init</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+            <span class="n">trainable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">b_init</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros_initializer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span>
+            <span class="n">initial_value</span><span class="o">=</span><span class="n">b_init</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+            <span class="n">trainable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="LayerNormalization.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.LayerNormalization.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (tf.Tensor): Input tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mean</span><span class="p">,</span> <span class="n">variance</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">normalized</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">variance</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">normalized</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<div class="viewcode-block" id="SASREC"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC">[docs]</a><span class="k">class</span> <span class="nc">SASREC</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SAS Rec model</span>
+<span class="sd">    Self-Attentive Sequential Recommendation Using Transformer</span>
+
+<span class="sd">    :Citation:</span>
+
+<span class="sd">        Wang-Cheng Kang, Julian McAuley (2018), Self-Attentive Sequential</span>
+<span class="sd">        Recommendation. Proceedings of IEEE International Conference on</span>
+<span class="sd">        Data Mining (ICDM&#39;18)</span>
+
+<span class="sd">        Original source code from nnkkmto/SASRec-tf2,</span>
+<span class="sd">        https://github.com/nnkkmto/SASRec-tf2</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model initialization.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item_num (int): Number of items in the dataset.</span>
+<span class="sd">            seq_max_len (int): Maximum number of items in user history.</span>
+<span class="sd">            num_blocks (int): Number of Transformer blocks to be used.</span>
+<span class="sd">            embedding_dim (int): Item embedding dimension.</span>
+<span class="sd">            attention_dim (int): Transformer attention dimension.</span>
+<span class="sd">            conv_dims (list): List of the dimensions of the Feedforward layer.</span>
+<span class="sd">            dropout_rate (float): Dropout rate.</span>
+<span class="sd">            l2_reg (float): Coefficient of the L2 regularization.</span>
+<span class="sd">            num_neg_test (int): Number of negative examples used in testing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SASREC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_num</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;item_num&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seq_max_len&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_blocks</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_blocks&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;embedding_dim&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attention_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attention_dim&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attention_num_heads</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attention_num_heads&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_dims</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;conv_dims&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dropout_rate&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l2_reg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;l2_reg&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_neg_test</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_neg_test&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_embedding_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;item_embeddings&quot;</span><span class="p">,</span>
+            <span class="n">mask_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">regularizers</span><span class="o">.</span><span class="n">L2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l2_reg</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">positional_embedding_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;positional_embeddings&quot;</span><span class="p">,</span>
+            <span class="n">mask_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">regularizers</span><span class="o">.</span><span class="n">L2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l2_reg</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_blocks</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attention_dim</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attention_num_heads</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conv_dims</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Masking</span><span class="p">(</span><span class="n">mask_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span> <span class="o">=</span> <span class="n">LayerNormalization</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="mf">1e-08</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SASREC.embedding"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.embedding">[docs]</a>    <span class="k">def</span> <span class="nf">embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sequence and positional embeddings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_seq (tf.Tensor): Input sequence</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor, tf.Tensor:</span>
+<span class="sd">            - Sequence embeddings.</span>
+<span class="sd">            - Positional embeddings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">seq_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_embedding_layer</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+        <span class="n">seq_embeddings</span> <span class="o">=</span> <span class="n">seq_embeddings</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="c1"># FIXME</span>
+        <span class="n">positional_seq</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">positional_seq</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">positional_seq</span><span class="p">,</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">positional_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">positional_embedding_layer</span><span class="p">(</span><span class="n">positional_seq</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">seq_embeddings</span><span class="p">,</span> <span class="n">positional_embeddings</span></div>
+
+<div class="viewcode-block" id="SASREC.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (tf.Tensor): Input tensor.</span>
+<span class="sd">            training (tf.Tensor): Training tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tf.Tensor, tf.Tensor, tf.Tensor:</span>
+<span class="sd">            - Logits of the positive examples.</span>
+<span class="sd">            - Logits of the negative examples.</span>
+<span class="sd">            - Mask for nonzero targets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;positive&quot;</span><span class="p">]</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;negative&quot;</span><span class="p">]</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">not_equal</span><span class="p">(</span><span class="n">input_seq</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">seq_embeddings</span><span class="p">,</span> <span class="n">positional_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+
+        <span class="c1"># add positional embeddings</span>
+        <span class="n">seq_embeddings</span> <span class="o">+=</span> <span class="n">positional_embeddings</span>
+
+        <span class="c1"># dropout</span>
+        <span class="n">seq_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_layer</span><span class="p">(</span><span class="n">seq_embeddings</span><span class="p">)</span>
+
+        <span class="c1"># masking</span>
+        <span class="n">seq_embeddings</span> <span class="o">*=</span> <span class="n">mask</span>
+
+        <span class="c1"># --- ATTENTION BLOCKS ---</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="n">seq_embeddings</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">)</span>  <span class="c1"># (b, s, d)</span>
+
+        <span class="c1"># --- PREDICTION LAYER ---</span>
+        <span class="c1"># user&#39;s sequence embedding</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_layer</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_layer</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">])</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">neg</span><span class="p">,</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">])</span>
+        <span class="n">pos_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_embedding_layer</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">neg_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_embedding_layer</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span>
+        <span class="n">seq_emb</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">seq_attention</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">],</span>
+        <span class="p">)</span>  <span class="c1"># (b*s, d)</span>
+
+        <span class="n">pos_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">pos_emb</span> <span class="o">*</span> <span class="n">seq_emb</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">neg_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">neg_emb</span> <span class="o">*</span> <span class="n">seq_emb</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">pos_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">pos_logits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (bs, 1)</span>
+        <span class="c1"># pos_prob = tf.keras.layers.Dense(1, activation=&#39;sigmoid&#39;)(pos_logits)  # (bs, 1)</span>
+
+        <span class="n">neg_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">neg_logits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (bs, 1)</span>
+        <span class="c1"># neg_prob = tf.keras.layers.Dense(1, activation=&#39;sigmoid&#39;)(neg_logits)  # (bs, 1)</span>
+
+        <span class="c1"># output = tf.concat([pos_logits, neg_logits], axis=0)</span>
+
+        <span class="c1"># masking for loss calculation</span>
+        <span class="n">istarget</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">not_equal</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">istarget</span></div>
+
+<div class="viewcode-block" id="SASREC.predict"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the logits for the test items.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs (tf.Tensor): Input tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             tf.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">training</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;candidate&quot;</span><span class="p">]</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">not_equal</span><span class="p">(</span><span class="n">input_seq</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">seq_embeddings</span><span class="p">,</span> <span class="n">positional_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+        <span class="n">seq_embeddings</span> <span class="o">+=</span> <span class="n">positional_embeddings</span>
+        <span class="c1"># seq_embeddings = self.dropout_layer(seq_embeddings)</span>
+        <span class="n">seq_embeddings</span> <span class="o">*=</span> <span class="n">mask</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="n">seq_embeddings</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">)</span>  <span class="c1"># (b, s, d)</span>
+        <span class="n">seq_emb</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">seq_attention</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">],</span>
+        <span class="p">)</span>  <span class="c1"># (b*s, d)</span>
+        <span class="n">candidate_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_embedding_layer</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>  <span class="c1"># (b, s, d)</span>
+        <span class="n">candidate_emb</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">candidate_emb</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># (b, d, s)</span>
+
+        <span class="n">test_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">seq_emb</span><span class="p">,</span> <span class="n">candidate_emb</span><span class="p">)</span>
+        <span class="c1"># (200, 100) * (1, 101, 100)&#39;</span>
+
+        <span class="n">test_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">test_logits</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_neg_test</span><span class="p">],</span>
+        <span class="p">)</span>  <span class="c1"># (1, 200, 101)</span>
+        <span class="n">test_logits</span> <span class="o">=</span> <span class="n">test_logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># (1, 101)</span>
+        <span class="k">return</span> <span class="n">test_logits</span></div>
+
+<div class="viewcode-block" id="SASREC.loss_function"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.loss_function">[docs]</a>    <span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">istarget</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Losses are calculated separately for the positive and negative</span>
+<span class="sd">        items based on the corresponding logits. A mask is included to</span>
+<span class="sd">        take care of the zero items (added for padding).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_logits (tf.Tensor): Logits of the positive examples.</span>
+<span class="sd">            neg_logits (tf.Tensor): Logits of the negative examples.</span>
+<span class="sd">            istarget (tf.Tensor): Mask for nonzero targets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pos_logits</span> <span class="o">=</span> <span class="n">pos_logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">neg_logits</span> <span class="o">=</span> <span class="n">neg_logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># ignore padding items (0)</span>
+        <span class="c1"># istarget = tf.reshape(</span>
+        <span class="c1">#     tf.cast(tf.not_equal(self.pos, 0), dtype=tf.float32),</span>
+        <span class="c1">#     [tf.shape(self.input_seq)[0] * self.seq_max_len],</span>
+        <span class="c1"># )</span>
+        <span class="c1"># for logits</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span>
+            <span class="o">-</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">pos_logits</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-24</span><span class="p">)</span> <span class="o">*</span> <span class="n">istarget</span>
+            <span class="o">-</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">neg_logits</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-24</span><span class="p">)</span> <span class="o">*</span> <span class="n">istarget</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">istarget</span><span class="p">)</span>
+
+        <span class="c1"># for probabilities</span>
+        <span class="c1"># loss = tf.reduce_sum(</span>
+        <span class="c1">#         - tf.math.log(pos_logits + 1e-24) * istarget -</span>
+        <span class="c1">#         tf.math.log(1 - neg_logits + 1e-24) * istarget</span>
+        <span class="c1"># ) / tf.reduce_sum(istarget)</span>
+        <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">get_regularization_loss</span><span class="p">()</span>
+        <span class="c1"># reg_losses = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.REGULARIZATION_LOSSES)</span>
+        <span class="c1"># loss += sum(reg_losses)</span>
+        <span class="n">loss</span> <span class="o">+=</span> <span class="n">reg_loss</span>
+
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+<div class="viewcode-block" id="SASREC.create_combined_dataset"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.create_combined_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">create_combined_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        function to create model inputs from sampled batch data.</span>
+<span class="sd">        This function is used only during training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">pad_sequences</span><span class="p">(</span>
+            <span class="n">seq</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">truncating</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span>
+        <span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">pad_sequences</span><span class="p">(</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">truncating</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span>
+        <span class="p">)</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">pad_sequences</span><span class="p">(</span>
+            <span class="n">neg</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">truncating</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span>
+        <span class="p">)</span>
+
+        <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;users&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seq</span>
+        <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;positive&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;negative&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">neg</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">target</span></div>
+
+<div class="viewcode-block" id="SASREC.train"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        High level function for model training as well as</span>
+<span class="sd">        evaluation on the validation and test dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_epochs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_epochs&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+        <span class="n">val_epoch</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;val_epoch&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">user_train</span><span class="p">)</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span>
+
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
+            <span class="n">learning_rate</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">beta_1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-7</span>
+        <span class="p">)</span>
+
+        <span class="n">loss_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span>
+
+        <span class="n">train_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Mean</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;train_loss&quot;</span><span class="p">)</span>
+
+        <span class="n">train_step_signature</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+                <span class="s2">&quot;input_seq&quot;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;positive&quot;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;negative&quot;</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span>
+                    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span>
+                <span class="p">),</span>
+            <span class="p">},</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">input_signature</span><span class="o">=</span><span class="n">train_step_signature</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+                <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">loss_mask</span><span class="p">)</span>
+
+            <span class="n">gradients</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">)</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gradients</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">))</span>
+
+            <span class="n">train_loss</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">loss</span>
+
+        <span class="n">T</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">()</span>
+        <span class="n">t0</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+            <span class="n">step_loss</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">train_loss</span><span class="o">.</span><span class="n">reset_states</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;b&quot;</span>
+            <span class="p">):</span>
+
+                <span class="n">u</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">next_batch</span><span class="p">()</span>
+
+                <span class="n">inputs</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_combined_dataset</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">)</span>
+
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">train_step</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+                <span class="n">step_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="n">val_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">t0</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="n">t0</span><span class="o">.</span><span class="n">interval</span>
+                <span class="n">T</span> <span class="o">+=</span> <span class="n">t1</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating...&quot;</span><span class="p">)</span>
+                <span class="n">t_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+                <span class="n">t_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_valid</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">, time: </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">, valid (NDCG@10: </span><span class="si">{</span><span class="n">t_valid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, HR@10: </span><span class="si">{</span><span class="n">t_valid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">, time: </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">,  test (NDCG@10: </span><span class="si">{</span><span class="n">t_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, HR@10: </span><span class="si">{</span><span class="n">t_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+                <span class="n">t0</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="n">t_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">, test (NDCG@10: </span><span class="si">{</span><span class="n">t_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, HR@10: </span><span class="si">{</span><span class="n">t_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">t_test</span></div>
+
+<div class="viewcode-block" id="SASREC.evaluate"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluation on the test users (users with at least 3 items)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">usernum</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">usernum</span>
+        <span class="n">itemnum</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">itemnum</span>
+        <span class="n">train</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">user_train</span>  <span class="c1"># removing deepcopy</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">user_valid</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">user_test</span>
+
+        <span class="n">NDCG</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">HT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">valid_user</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">usernum</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">:</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">usernum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">10000</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">usernum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">seq</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">idx</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">u</span><span class="p">]):</span>
+                <span class="n">seq</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">idx</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="n">rated</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+            <span class="n">rated</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">item_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">test</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_neg_test</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">itemnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">while</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">rated</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">itemnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">item_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">seq</span><span class="p">])</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;candidate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item_idx</span><span class="p">])</span>
+
+            <span class="c1"># inverse to get descending sort</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">rank</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">valid_user</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">rank</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">NDCG</span> <span class="o">+=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">HT</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">NDCG</span> <span class="o">/</span> <span class="n">valid_user</span><span class="p">,</span> <span class="n">HT</span> <span class="o">/</span> <span class="n">valid_user</span></div>
+
+<div class="viewcode-block" id="SASREC.evaluate_valid"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.evaluate_valid">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluation on the validation users</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">usernum</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">usernum</span>
+        <span class="n">itemnum</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">itemnum</span>
+        <span class="n">train</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">user_train</span>  <span class="c1"># removing deepcopy</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">user_valid</span>
+
+        <span class="n">NDCG</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">valid_user</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">HT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">usernum</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">:</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">usernum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">10000</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">usernum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid</span><span class="p">[</span><span class="n">u</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">u</span><span class="p">]):</span>
+                <span class="n">seq</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">idx</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+            <span class="n">rated</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+            <span class="n">rated</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">item_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">valid</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_neg_test</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">itemnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">while</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">rated</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">itemnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">item_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">seq</span><span class="p">])</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;candidate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item_idx</span><span class="p">])</span>
+
+            <span class="c1"># predictions = -model.predict(sess, [u], [seq], item_idx)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">rank</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">valid_user</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">rank</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">NDCG</span> <span class="o">+=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">HT</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">NDCG</span> <span class="o">/</span> <span class="n">valid_user</span><span class="p">,</span> <span class="n">HT</span> <span class="o">/</span> <span class="n">valid_user</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

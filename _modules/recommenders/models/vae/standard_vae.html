@@ -1,0 +1,880 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recommenders.models.vae.standard_vae &#8212; Recommenders documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/vae/standard_vae';</script>
+    <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/vae/standard_vae.html" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Dataset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../evaluation.html">Evaluation module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Recommender algorithms module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tuning.html">Hyperparameter tuning module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">Common utilities module</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/recommenders-team/recommenders/issues/new?title=Issue%20on%20page%20%2F_modules/recommenders/models/vae/standard_vae.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for recommenders.models.vae.standard_vae</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.losses</span> <span class="kn">import</span> <span class="n">binary_crossentropy</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.callbacks</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span><span class="p">,</span> <span class="n">Callback</span>
+
+<span class="kn">from</span> <span class="nn">recommenders.evaluation.python_evaluation</span> <span class="kn">import</span> <span class="n">ndcg_at_k</span>
+
+
+<div class="viewcode-block" id="LossHistory"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.LossHistory">[docs]</a><span class="k">class</span> <span class="nc">LossHistory</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is used for saving the validation loss and the training loss per epoch.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LossHistory.on_train_begin"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.LossHistory.on_train_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the lists where the loss of training and validation will be saved.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_losses</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="LossHistory.on_epoch_end"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.LossHistory.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the loss of training and validation set at the end of each epoch.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;val_loss&quot;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="Metrics"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.Metrics">[docs]</a><span class="k">class</span> <span class="nc">Metrics</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback function used to calculate the NDCG@k metric of validation set at the end of each epoch.</span>
+<span class="sd">    Weights of the model with the highest NDCG@k value is saved.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">val_tr</span><span class="p">,</span> <span class="n">val_te</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the class parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: trained model for validation.</span>
+<span class="sd">            val_tr (numpy.ndarray, float): the click matrix for the validation set training part.</span>
+<span class="sd">            val_te (numpy.ndarray, float): the click matrix for the validation set testing part.</span>
+<span class="sd">            mapper (AffinityMatrix): the mapper for converting click matrix to dataframe.</span>
+<span class="sd">            k (int): number of top k items per user (optional).</span>
+<span class="sd">            save_path (str): Default path to save weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="c1"># Initial value of NDCG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_ndcg</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Validation data: training and testing parts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_tr</span> <span class="o">=</span> <span class="n">val_tr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_te</span> <span class="o">=</span> <span class="n">val_te</span>
+
+        <span class="c1"># Mapper for converting from sparse matrix to dataframe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">mapper</span>
+
+        <span class="c1"># Top k items to recommend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="c1"># Options to save the weights of the model for future use</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+
+<div class="viewcode-block" id="Metrics.on_train_begin"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.Metrics.on_train_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the list for validation NDCG@k.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="Metrics.recommend_k_items"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.Metrics.recommend_k_items">[docs]</a>    <span class="k">def</span> <span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the top-k items ordered by a relevancy score.</span>
+<span class="sd">        Obtained probabilities are used as recommendation score.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (numpy.ndarray, int32): input click matrix.</span>
+<span class="sd">            k (scalar, int32): the number of items to recommend.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: A sparse matrix containing the top_k elements ordered by their score.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># obtain scores</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">remove_seen</span><span class="p">:</span>
+            <span class="c1"># if true, it removes items from the train set by setting them to zero</span>
+            <span class="n">seen_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">not_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">score</span><span class="p">[</span><span class="n">seen_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># get the top k items</span>
+        <span class="n">top_items</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="o">-</span><span class="n">score</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># get a copy of the score matrix</span>
+        <span class="n">score_c</span> <span class="o">=</span> <span class="n">score</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># set to zero the k elements</span>
+        <span class="n">score_c</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">score_c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">top_items</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># set to zeros all elements other then the k</span>
+        <span class="n">top_scores</span> <span class="o">=</span> <span class="n">score</span> <span class="o">-</span> <span class="n">score_c</span>
+
+        <span class="k">return</span> <span class="n">top_scores</span></div>
+
+<div class="viewcode-block" id="Metrics.on_epoch_end"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.Metrics.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;At the end of each epoch calculate NDCG@k of the validation set.</span>
+<span class="sd">        If the model performance is improved, the model weights are saved.</span>
+<span class="sd">        Update the list of validation NDCG@k by adding obtained value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># recommend top k items based on training part of validation set</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend_k_items</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_tr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># convert recommendations from sparse matrix to dataframe</span>
+        <span class="n">top_k_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">map_back_sparse</span><span class="p">(</span><span class="n">top_k</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">)</span>
+        <span class="n">test_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">map_back_sparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_te</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;ratings&quot;</span><span class="p">)</span>
+
+        <span class="c1"># calculate NDCG@k</span>
+        <span class="n">NDCG</span> <span class="o">=</span> <span class="n">ndcg_at_k</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="n">top_k_df</span><span class="p">,</span> <span class="n">col_prediction</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># check if there is an improvement in NDCG, if so, update the weights of the saved model</span>
+        <span class="k">if</span> <span class="n">NDCG</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_ndcg</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_ndcg</span> <span class="o">=</span> <span class="n">NDCG</span>
+
+            <span class="c1"># save the weights of the optimal model</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NDCG</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Metrics.get_data"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.Metrics.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the NDCG@k of the validation set metrics calculated</span>
+<span class="sd">        at the end of each epoch.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div></div>
+
+
+<div class="viewcode-block" id="AnnealingCallback"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.AnnealingCallback">[docs]</a><span class="k">class</span> <span class="nc">AnnealingCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is used for updating the value of β during the annealing process.</span>
+<span class="sd">    When β reaches the value of anneal_cap, it stops increasing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">anneal_cap</span><span class="p">,</span> <span class="n">total_anneal_steps</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            beta (float): current value of beta.</span>
+<span class="sd">            anneal_cap (float): maximum value that beta can reach.</span>
+<span class="sd">            total_anneal_steps (int): total number of annealing steps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># maximum value that beta can take</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anneal_cap</span> <span class="o">=</span> <span class="n">anneal_cap</span>
+
+        <span class="c1"># initial value of beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="c1"># update_count used for calculating the updated value of beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># total annealing steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_anneal_steps</span> <span class="o">=</span> <span class="n">total_anneal_steps</span>
+
+<div class="viewcode-block" id="AnnealingCallback.on_train_begin"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.AnnealingCallback.on_train_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise a list in which the beta value will be saved at the end of each epoch.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_beta</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="AnnealingCallback.on_batch_end"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.AnnealingCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;At the end of each batch the beta should is updated until it reaches the values of anneal cap.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">new_beta</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_anneal_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">anneal_cap</span>
+        <span class="p">)</span>
+
+        <span class="n">K</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">new_beta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnnealingCallback.on_epoch_end"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.AnnealingCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;At the end of each epoch save the value of beta in _beta list.&quot;&quot;&quot;</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_beta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnnealingCallback.get_data"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.AnnealingCallback.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of the beta values per epoch.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_beta</span></div></div>
+
+
+<div class="viewcode-block" id="StandardVAE"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE">[docs]</a><span class="k">class</span> <span class="nc">StandardVAE</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard Variational Autoencoders (VAE) for Collaborative Filtering implementation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_users</span><span class="p">,</span>
+        <span class="n">original_dim</span><span class="p">,</span>
+        <span class="n">intermediate_dim</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">latent_dim</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span>
+        <span class="n">n_epochs</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">drop_encoder</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">drop_decoder</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">annealing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">anneal_cap</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_users (int): Number of unique users in the train set.</span>
+<span class="sd">            original_dim (int): Number of unique items in the train set.</span>
+<span class="sd">            intermediate_dim (int): Dimension of intermediate space.</span>
+<span class="sd">            latent_dim (int): Dimension of latent space.</span>
+<span class="sd">            n_epochs (int): Number of epochs for training.</span>
+<span class="sd">            batch_size (int): Batch size.</span>
+<span class="sd">            k (int): number of top k items per user.</span>
+<span class="sd">            verbose (int): Whether to show the training output or not.</span>
+<span class="sd">            drop_encoder (float): Dropout percentage of the encoder.</span>
+<span class="sd">            drop_decoder (float): Dropout percentage of the decoder.</span>
+<span class="sd">            beta (float): a constant parameter β in the ELBO function,</span>
+<span class="sd">                  when you are not using annealing (annealing=False)</span>
+<span class="sd">            annealing (bool): option of using annealing method for training the model (True)</span>
+<span class="sd">                  or not using annealing, keeping a constant beta (False)</span>
+<span class="sd">            anneal_cap (float): maximum value that beta can take during annealing process.</span>
+<span class="sd">            seed (int): Seed.</span>
+<span class="sd">            save_path (str): Default path to save weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Seed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="c1"># Parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">=</span> <span class="n">n_users</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_dim</span> <span class="o">=</span> <span class="n">original_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_dim</span> <span class="o">=</span> <span class="n">intermediate_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span> <span class="o">=</span> <span class="n">latent_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">=</span> <span class="n">n_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="c1"># Compute samples per epoch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_users</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+
+        <span class="c1"># Annealing parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anneal_cap</span> <span class="o">=</span> <span class="n">anneal_cap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annealing</span> <span class="o">=</span> <span class="n">annealing</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annealing</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="c1"># Compute total annealing steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_anneal_steps</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_of_batches</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">anneal_cap</span>
+
+        <span class="c1"># Dropout parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_encoder</span> <span class="o">=</span> <span class="n">drop_encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_decoder</span> <span class="o">=</span> <span class="n">drop_decoder</span>
+
+        <span class="c1"># Path to save optimal model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+
+        <span class="c1"># Create StandardVAE model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_model</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and compile model.&quot;&quot;&quot;</span>
+        <span class="c1"># Encoding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_dim</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_encoder</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_encoder</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_encoder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_mean</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_log_var</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="c1"># Sampling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_take_sample</span><span class="p">,</span> <span class="n">output_shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">,))(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">z_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_log_var</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Decoding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_decoder</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_decoder</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_decoder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_bar</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;softmax&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_decoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_decoded_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_decoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_decoded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_bar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_decoded_</span><span class="p">)</span>
+
+        <span class="c1"># Training</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_decoded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">legacy</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
+            <span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_vae_loss</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_vae_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_bar</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate negative ELBO (NELBO).&quot;&quot;&quot;</span>
+        <span class="c1"># Reconstruction error: logistic log likelihood</span>
+        <span class="n">reconst_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_dim</span> <span class="o">*</span> <span class="n">binary_crossentropy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_bar</span><span class="p">)</span>
+
+        <span class="c1"># Kullback–Leibler divergence</span>
+        <span class="n">kl_loss</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_log_var</span> <span class="o">+</span> <span class="n">K</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_mean</span><span class="p">)</span> <span class="o">+</span> <span class="n">K</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_log_var</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">reconst_loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">kl_loss</span>
+
+    <span class="k">def</span> <span class="nf">_take_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample epsilon ∼ N (0,I) and compute z via reparametrization trick.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate latent vector using the reparametrization trick.</span>
+<span class="sd">           The idea is that sampling from N (_mean, _var) is s the same as sampling from _mean+ epsilon * _var</span>
+<span class="sd">           where epsilon ∼ N(0,I).&quot;&quot;&quot;</span>
+        <span class="c1"># sampling from latent dimension for decoder/generative part of network</span>
+        <span class="n">_mean</span><span class="p">,</span> <span class="n">_log_var</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">random_normal</span><span class="p">(</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">_mean</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">),</span>
+            <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">stddev</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_mean</span> <span class="o">+</span> <span class="n">K</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_var</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">epsilon</span>
+
+<div class="viewcode-block" id="StandardVAE.nn_batch_generator"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE.nn_batch_generator">[docs]</a>    <span class="k">def</span> <span class="nf">nn_batch_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Used for splitting dataset in batches.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_train (numpy.ndarray): The click matrix for the train set with float values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Shuffle the batch</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">shuffle_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x_train</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">shuffle_index</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[</span><span class="n">shuffle_index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[</span><span class="n">shuffle_index</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Iterate until making a full epoch</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">index_batch</span> <span class="o">=</span> <span class="n">shuffle_index</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="n">counter</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="p">(</span><span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="c1"># Decompress batch</span>
+            <span class="n">x_batch</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">index_batch</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">y_batch</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">index_batch</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_batch</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_batch</span><span class="p">))</span>
+
+            <span class="c1"># Stopping rule</span>
+            <span class="k">if</span> <span class="n">counter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_batches</span><span class="p">:</span>
+                <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="StandardVAE.fit"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">x_valid</span><span class="p">,</span> <span class="n">x_val_tr</span><span class="p">,</span> <span class="n">x_val_te</span><span class="p">,</span> <span class="n">mapper</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit model with the train sets and validate on the validation set.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_train (numpy.ndarray): The click matrix for the train set.</span>
+<span class="sd">            x_valid (numpy.ndarray): The click matrix for the validation set.</span>
+<span class="sd">            x_val_tr (numpy.ndarray): The click matrix for the validation set training part.</span>
+<span class="sd">            x_val_te (numpy.ndarray): The click matrix for the validation set testing part.</span>
+<span class="sd">            mapper (object): The mapper for converting click matrix to dataframe. It can be AffinityMatrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># initialise LossHistory used for saving loss of validation and train set per epoch</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="n">LossHistory</span><span class="p">()</span>
+
+        <span class="c1"># initialise Metrics  used for calculating NDCG@k per epoch</span>
+        <span class="c1"># and saving the model weights with the highest NDCG@k value</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">Metrics</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">val_tr</span><span class="o">=</span><span class="n">x_val_tr</span><span class="p">,</span>
+            <span class="n">val_te</span><span class="o">=</span><span class="n">x_val_te</span><span class="p">,</span>
+            <span class="n">mapper</span><span class="o">=</span><span class="n">mapper</span><span class="p">,</span>
+            <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+            <span class="n">save_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduce_lr</span> <span class="o">=</span> <span class="n">ReduceLROnPlateau</span><span class="p">(</span>
+            <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;val_loss&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_lr</span><span class="o">=</span><span class="mf">0.0001</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annealing</span><span class="p">:</span>
+            <span class="c1"># initialise AnnealingCallback for annealing process</span>
+            <span class="n">anneal</span> <span class="o">=</span> <span class="n">AnnealingCallback</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">anneal_cap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_anneal_steps</span>
+            <span class="p">)</span>
+
+            <span class="c1"># fit model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit_generator</span><span class="p">(</span>
+                <span class="n">generator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nn_batch_generator</span><span class="p">(</span><span class="n">x_train</span><span class="p">),</span>
+                <span class="n">steps_per_epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_batches</span><span class="p">,</span>
+                <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">metrics</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_lr</span><span class="p">,</span> <span class="n">anneal</span><span class="p">],</span>
+                <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_valid</span><span class="p">,</span> <span class="n">x_valid</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">ls_beta</span> <span class="o">=</span> <span class="n">anneal</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit_generator</span><span class="p">(</span>
+                <span class="n">generator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nn_batch_generator</span><span class="p">(</span><span class="n">x_train</span><span class="p">),</span>
+                <span class="n">steps_per_epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_batches</span><span class="p">,</span>
+                <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">metrics</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_lr</span><span class="p">],</span>
+                <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_valid</span><span class="p">,</span> <span class="n">x_valid</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="c1"># save lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_loss</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">losses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_loss</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">val_losses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_ndcg</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="StandardVAE.get_optimal_beta"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE.get_optimal_beta">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimal_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the value of the optimal beta.&quot;&quot;&quot;</span>
+        <span class="c1"># find the epoch/index that had the highest NDCG@k value</span>
+        <span class="n">index_max_ndcg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_ndcg</span><span class="p">)</span>
+
+        <span class="c1"># using this index find the value that beta had at this epoch</span>
+        <span class="n">optimal_beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls_beta</span><span class="p">[</span><span class="n">index_max_ndcg</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">optimal_beta</span></div>
+
+<div class="viewcode-block" id="StandardVAE.display_metrics"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE.display_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">display_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plots:</span>
+<span class="sd">        1) Loss per epoch both for validation and train sets</span>
+<span class="sd">        2) NDCG@k per epoch of the validation set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Plot setup</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot loss on the left graph</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loss</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_loss</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Val&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epochs&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot NDCG on the right graph</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_ndcg</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Val&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epochs&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;NDCG@k&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add title</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;TRAINING AND VALIDATION METRICS HISTORY&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">pad</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StandardVAE.recommend_k_items"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE.recommend_k_items">[docs]</a>    <span class="k">def</span> <span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the top-k items ordered by a relevancy score.</span>
+
+<span class="sd">        Obtained probabilities are used as recommendation score.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (numpy.ndarray): Input click matrix, with `int32` values.</span>
+<span class="sd">            k (scalar): The number of items to recommend.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: A sparse matrix containing the top_k elements ordered by their score.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># return optimal model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">)</span>
+
+        <span class="c1"># obtain scores</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">remove_seen</span><span class="p">:</span>
+            <span class="c1"># if true, it removes items from the train set by setting them to zero</span>
+            <span class="n">seen_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">not_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">score</span><span class="p">[</span><span class="n">seen_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># get the top k items</span>
+        <span class="n">top_items</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="o">-</span><span class="n">score</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+        <span class="c1"># get a copy of the score matrix</span>
+        <span class="n">score_c</span> <span class="o">=</span> <span class="n">score</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># set to zero the k elements</span>
+        <span class="n">score_c</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">score_c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">top_items</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># set to zeros all elements other then the k</span>
+        <span class="n">top_scores</span> <span class="o">=</span> <span class="n">score</span> <span class="o">-</span> <span class="n">score_c</span>
+        <span class="k">return</span> <span class="n">top_scores</span></div>
+
+<div class="viewcode-block" id="StandardVAE.ndcg_per_epoch"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.standard_vae.StandardVAE.ndcg_per_epoch">[docs]</a>    <span class="k">def</span> <span class="nf">ndcg_per_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of NDCG@k at each epoch.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_ndcg</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Recommenders contributors
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
