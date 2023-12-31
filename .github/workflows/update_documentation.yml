@@ -32,6 +32,6 @@ jobs:
       - name: Build and deploy documentation
         run: |
           cd docs/_build/html
-          git add .
+          git add * -rf
           git commit -m "Update documentation"
           git push origin gh-pages
