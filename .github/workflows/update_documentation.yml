@@ -58,3 +58,5 @@ jobs:
           git add * -f
           git commit -m "Update documentation"
           git push origin HEAD:gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
