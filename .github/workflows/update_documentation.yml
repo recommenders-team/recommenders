@@ -1,3 +1,8 @@
+# ---------------------------------------------------------
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
 name: Update Documentation
 
 on:
@@ -22,7 +27,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install --no-use-pep517 lightfm
-          pip install .
+          pip install .[all]
           pip install -r docs/requirements-doc.txt
 
       - name: Build documentation
@@ -55,13 +60,3 @@ jobs:
 
       - name: Push changes to gh-pages
         run: git push origin gh-pages
-
-      # - name: Deploy documentation
-      #   run: |
-      #     git config user.email "actions@github.com"
-      #     git config user.name "GitHub Actions"
-      #     git add * -f
-      #     git commit -m "Update documentation"
-      #     git push origin HEAD:gh-pages
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
