@@ -1,0 +1,269 @@
+Metadata-Version: 2.1
+Name: recommenders
+Version: 1.1.1
+Summary: Recommenders - Python utilities for building recommendation systems
+Home-page: https://github.com/recommenders-team/recommenders
+Author: Recommenders contributors
+Author-email: recommenders-technical-discuss@lists.lfaidata.foundation
+Project-URL: Documentation, https://microsoft-recommenders.readthedocs.io/en/stable/
+Project-URL: Wiki, https://github.com/recommenders-team/recommenders/wiki
+Keywords: recommendations recommendation recommenders recommender system engine machine learning python spark gpu
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: AUTHORS.md
+Requires-Dist: numpy>=1.19
+Requires-Dist: pandas<2,>1.0.3
+Requires-Dist: scipy<1.11.0,>=1.0.0
+Requires-Dist: tqdm<5,>=4.31.1
+Requires-Dist: matplotlib<4,>=2.2.2
+Requires-Dist: scikit-learn<1.0.3,>=0.22.1
+Requires-Dist: numba<1,>=0.38.1
+Requires-Dist: lightfm<2,>=1.15
+Requires-Dist: lightgbm>=2.2.1
+Requires-Dist: memory_profiler<1,>=0.54.0
+Requires-Dist: nltk<4,>=3.4
+Requires-Dist: seaborn<1,>=0.8.1
+Requires-Dist: transformers<5,>=2.5.0
+Requires-Dist: category_encoders<2,>=1.3.0
+Requires-Dist: jinja2<3.1,>=2
+Requires-Dist: requests<3,>=2.31.0
+Requires-Dist: cornac<1.15.2,>=1.1.2; python_version <= "3.7"
+Requires-Dist: cornac<2,>=1.15.2; python_version >= "3.8"
+Requires-Dist: retrying>=1.3.3
+Requires-Dist: pandera[strategies]>=0.6.5
+Requires-Dist: scikit-surprise>=1.0.6
+Requires-Dist: hyperopt<1,>=0.1.2
+Requires-Dist: ipykernel<7,>=4.6.1
+Requires-Dist: jupyter<2,>=1
+Requires-Dist: locust<2,>=1
+Provides-Extra: gpu
+Requires-Dist: nvidia-ml-py3>=7.352.0; extra == "gpu"
+Requires-Dist: tensorflow==2.8.4; extra == "gpu"
+Requires-Dist: tf-slim>=1.1.0; extra == "gpu"
+Requires-Dist: torch>=1.13.1; extra == "gpu"
+Requires-Dist: fastai<2,>=1.0.46; extra == "gpu"
+Provides-Extra: spark
+Requires-Dist: pyarrow<7.0.0,>=0.12.1; extra == "spark"
+Requires-Dist: pyspark<3.3.0,>=2.4.5; extra == "spark"
+Provides-Extra: dev
+Requires-Dist: black<21,>=18.6b4; extra == "dev"
+Requires-Dist: pytest>=3.6.4; extra == "dev"
+Requires-Dist: pytest-cov>=2.12.1; extra == "dev"
+Requires-Dist: pytest-mock>=3.6.1; extra == "dev"
+Provides-Extra: all
+Requires-Dist: fastai<2,>=1.0.46; extra == "all"
+Requires-Dist: tf-slim>=1.1.0; extra == "all"
+Requires-Dist: nvidia-ml-py3>=7.352.0; extra == "all"
+Requires-Dist: torch>=1.13.1; extra == "all"
+Requires-Dist: pyspark<3.3.0,>=2.4.5; extra == "all"
+Requires-Dist: pytest-mock>=3.6.1; extra == "all"
+Requires-Dist: tensorflow==2.8.4; extra == "all"
+Requires-Dist: black<21,>=18.6b4; extra == "all"
+Requires-Dist: pyarrow<7.0.0,>=0.12.1; extra == "all"
+Requires-Dist: pytest>=3.6.4; extra == "all"
+Requires-Dist: pytest-cov>=2.12.1; extra == "all"
+Provides-Extra: experimental
+Requires-Dist: xlearn==0.40a1; extra == "experimental"
+Requires-Dist: vowpalwabbit<9,>=8.9.0; extra == "experimental"
+Requires-Dist: nni==1.5; extra == "experimental"
+Requires-Dist: pymanopt>=0.2.5; extra == "experimental"
+
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommender Utilities
+
+This package contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the submodules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code or the [online documentation](https://readthedocs.org/projects/microsoft-recommenders/).
+
+# Installation
+
+## Pre-requisites
+Some dependencies require compilation during pip installation. On Linux this can be supported by adding build-essential dependencies:
+```bash
+sudo apt-get install -y build-essential libpython<version>
+``` 
+where `<version>` should be the Python version (e.g. `3.8`).
+
+On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+
+For more details about the software requirements that must be pre-installed on each supported platform, see the [setup guide](https://github.com/microsoft/recommenders/blob/main/SETUP.md).   
+
+## Basic installation
+
+To install core utilities, CPU-based algorithms, and dependencies
+```bash
+pip install --upgrade pip setuptools
+pip install recommenders
+```
+
+## Optional Dependencies
+
+By default `recommenders` does not install all dependencies used throughout the code and the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `recommenders` package (excluding Spark, GPU and Jupyter functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+
+- examples: dependencies related to Jupyter needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
+- gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
+- spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation and certain algorithms
+- dev: dependencies such as `black` and `pytest` required only for development or testing
+- all: all of the above dependencies
+- experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
+- nni: dependencies for NNI tuning framework.
+
+Note that, currently, xLearn and Vowpal Wabbit are in the experimental group.
+
+These groups can be installed alone or in combination:
+```bash
+# install recommenders with core requirements and support for CPU-based recommender algorithms and notebooks
+pip install recommenders[examples]
+
+# add support for running example notebooks and GPU functionality
+pip install recommenders[examples,gpu]
+```
+
+## GPU Support
+
+You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda environment, this can be installed with
+```bash
+conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1
+```
+For a virtual environment, you may use a [docker container by Nvidia](../SETUP.md#using-a-virtual-environment). 
+
+For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.
+
+When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
+
+`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu111/torch_stable.html`
+
+## Experimental dependencies
+
+We are currently evaluating inclusion of the following dependencies:
+
+ - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
+ - xlearn: on some platforms, xLearn requires pre-installation of cmake.
+
+## Other dependencies
+
+Some dependencies are not available via the recommenders PyPI package, but can be installed in the following ways: 
+ - pymanopt: this dependency is required for the RLRMC and GeoIMC algorithms; a version of this code compatible with TensorFlow 2 can be
+ installed with `pip install "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"`. 
+
+## NNI dependencies
+
+For NNI a more recent version can be installed but is untested.
+
+
+## Installing the utilities from a local copy
+
+In case you want to use a version of the source code that is not published on PyPI, one alternative is to install from a clone of the source code on your machine. To this end, 
+a [setup.py](../setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory.
+
+This still requires an environment to be installed as described in the [setup guide](../SETUP.md). Once the necessary dependencies are installed, you can use the following command to install `recommenders` as a python package.
+
+    pip install -e .
+
+It is also possible to install directly from GitHub. Or from a specific branch as well.
+
+    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg
+    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
+
+**NOTE** - The pip installation does not install all of the pre-requisites; it is assumed that the environment has already been set up according to the [setup guide](../SETUP.md), for the utilities to be used.
+
+
+# Contents
+
+## [Datasets](datasets)
+
+Datasets module includes helper functions for pulling different datasets and formatting them appropriately as well as utilities for splitting data for training / testing.
+
+### Data Loading
+
+There are dataloaders for several datasets. For example, the movielens module will allow you to load a dataframe in pandas or spark formats from the MovieLens dataset, with sizes of 100k, 1M, 10M, or 20M to test algorithms and evaluate performance benchmarks.
+
+```python
+df = movielens.load_pandas_df(size="100k")
+```
+
+### Splitting Techniques
+
+Currently three methods are available for splitting datasets. All of them support splitting by user or item and filtering out minimal samples (for instance users that have not rated enough items, or items that have not been rated by enough users).
+
+- Random: this is the basic approach where entries are randomly assigned to each group based on the ratio desired
+- Chronological: this uses provided timestamps to order the data and selects a cut-off time that will split the desired ratio of data to train before that time and test after that time
+- Stratified: this is similar to random sampling, but the splits are stratified, for example if the datasets are split by user, the splitting approach will attempt to maintain the same ratio of items used in both training and test splits. The converse is true if splitting by item.
+
+## [Evaluation](evaluation)
+
+The evaluation submodule includes functionality for calculating common recommendation metrics directly in Python or in a Spark environment using PySpark.
+
+Currently available metrics include:
+
+- Root Mean Squared Error
+- Mean Absolute Error
+- R<sup>2</sup>
+- Explained Variance
+- Precision at K
+- Recall at K
+- Normalized Discounted Cumulative Gain at K
+- Mean Average Precision at K
+- Area Under Curve
+- Logistic Loss
+
+## [Models](models)
+
+The models submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). The following is a list of the algorithm utilities:
+
+* Cornac
+* DeepRec
+  *  Convolutional Sequence Embedding Recommendation (CASER)
+  *  Deep Knowledge-Aware Network (DKN)
+  *  Extreme Deep Factorization Machine (xDeepFM)
+  *  GRU
+  *  LightGCN
+  *  Next Item Recommendation (NextItNet)
+  *  Short-term and Long-term Preference Integrated Recommender (SLi-Rec)
+  *  Multi-Interest-Aware Sequential User Modeling (SUM)
+* FastAI
+* GeoIMC
+* LightFM
+* LightGBM
+* NCF
+* NewsRec
+  * Neural Recommendation with Long- and Short-term User Representations (LSTUR)
+  * Neural Recommendation with Attentive Multi-View Learning (NAML)
+  * Neural Recommendation with Personalized Attention (NPA)
+  * Neural Recommendation with Multi-Head Self-Attention (NRMS)
+* Restricted Boltzmann Machines (RBM)
+* Riemannian Low-rank Matrix Completion (RLRMC)
+* Simple Algorithm for Recommendation (SAR)
+* Self-Attentive Sequential Recommendation (SASRec)
+* Sequential Recommendation Via Personalized Transformer (SSEPT)
+* Surprise
+* Term Frequency - Inverse Document Frequency (TF-IDF)
+* Variational Autoencoders (VAE)
+  * Multinomial
+  * Standard
+* Vowpal Wabbit (VW)
+* Wide and Deep
+* xLearn
+  * Factorization Machine (FM)
+  * Field-Aware FM (FFM)
+
+## [Tuning](tuning)
+
+This submodule contains utilities for performing hyperparameter tuning.
+
+## [Utils](utils)
+
+This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: GPU, Spark, Jupyter notebook.

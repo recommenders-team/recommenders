@@ -1,0 +1,39 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+
+import matplotlib
+import matplotlib.pyplot as plt
+from recommenders.utils.plot import line_graph
+
+matplotlib.use("Agg")
+
+
+def test_line_graph():
+    """Naive test to run the function without errors"""
+    # Multiple graphs
+    line_graph(
+        values=[[1, 2, 3], [3, 2, 1]],
+        labels=["Train", "Valid"],
+        x_guides=[0, 1],
+        x_name="Epoch",
+        y_name="Accuracy",
+        legend_loc="best",
+    )
+    assert plt.gca().get_xlabel() == "Epoch"
+    assert plt.gca().get_ylabel() == "Accuracy"
+    plt.close()
+
+    # Single graph as a subplot
+    line_graph(values=[1, 2, 3], labels="Train", subplot=(1, 1, 1))
+    plt.close()
+
+    # Single graph with x values
+    line_graph(
+        values=[(1, 1), (2, 2), (3, 3)],
+        labels="Train",
+        x_min_max=(0, 5),
+        y_min_max=(0, 5),
+        plot_size=(5, 5),
+    )
+    plt.close()
