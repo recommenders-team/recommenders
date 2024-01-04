@@ -8,7 +8,7 @@ name: Update Documentation
 on:
   push:
     branches:
-      - main
+      - miguel/jupyter_book
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install --no-use-pep517 lightfm
-          pip install .
+          pip install .[all]
           pip install -r docs/requirements-doc.txt
 
       - name: Build documentation
