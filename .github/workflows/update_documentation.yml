@@ -51,7 +51,7 @@ jobs:
         run: git config pull.rebase true
 
       - name: Pull latest changes from remote gh-pages branch
-        run: git pull origin gh-pages
+        run: git pull -Xtheirs origin gh-pages
 
       - name: Push changes to gh-pages
         run: git push origin gh-pages
