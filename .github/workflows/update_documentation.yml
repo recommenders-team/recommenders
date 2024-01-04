@@ -33,7 +33,6 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git config user.signingkey "${{ secrets.GPG_KEY_ID }}"
 
       - name: Create and switch to gh-pages branch
         run: |
@@ -47,7 +46,10 @@ jobs:
         run: |
           git add * -f
           git commit -m "Update documentation"
-  
+      
+      - name: Pull latest changes from remote gh-pages branch
+        run: git pull origin gh-pages
+
       - name: Push changes to gh-pages
         run: git push origin gh-pages
 
