@@ -25,11 +25,11 @@ jobs:
           pip install .
           pip install -r docs/requirements-doc.txt
 
-      - name: Build and deploy documentation
+      - name: Build documentation
         run: |
           jupyter-book build docs
 
-      - name: Build and deploy documentation
+      - name: Deploy documentation
         run: |
           cd docs/_build/html
           git config user.email "actions@github.com"
