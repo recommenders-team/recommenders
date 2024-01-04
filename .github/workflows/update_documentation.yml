@@ -43,10 +43,18 @@ jobs:
       - name: Copy built documentation
         run: cp -r docs/_build/html/* .
   
-      - name: Add and commit changes
+      # - name: Add and commit changes
+      #   run: |
+      #     git add * -f
+      #     git commit -m "Update documentation"
+  
+      # - name: Push changes to gh-pages
+      #   run: git push origin gh-pages
+
+      - name: Deploy documentation
         run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
           git add * -f
           git commit -m "Update documentation"
-  
-      - name: Push changes to gh-pages
-        run: git push origin gh-pages
+          git push origin HEAD:gh-pages
