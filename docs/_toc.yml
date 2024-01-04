@@ -1,0 +1,18 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+defaults:
+  numbered: false
+parts:
+  - caption: Recommenders API Documentation
+    chapters:
+      - file: datasets
+      - file: evaluation
+      - file: models
+      - file: tuning
+      - file: utils

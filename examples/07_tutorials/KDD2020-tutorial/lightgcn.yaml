@@ -1,0 +1,22 @@
+#model
+model:
+    model_type : "lightgcn"
+    embed_size : 64 # the embedding dimension of users and items
+    n_layers : 3 # number of layers of the model
+    
+#train
+train:
+    batch_size : 1024
+    decay : 0.0001 # l2 regularization for embedding parameters
+    epochs : 1000 # number of epochs for training
+    learning_rate : 0.001
+    eval_epoch : -1 # if it is not -1, evaluate the model every eval_epoch; -1 means that evaluation will not be performed during training
+    top_k : 20 # number of items to recommend when calculating evaluation metrics
+
+#show info
+#metric : "recall", "ndcg", "precision", "map"
+info:
+    save_model : True # whether to save model
+    save_epoch : 1 # if save_model is set to True, save the model every save_epoch
+    metrics : ["recall", "ndcg", "precision", "map"] # metrics for evaluation
+    MODEL_DIR : ./tests/resources/deeprec/lightgcn/model/lightgcn_model/ # directory of saved models

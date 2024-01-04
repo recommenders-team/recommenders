@@ -1,0 +1,20 @@
+[build-system]
+requires = [
+    "setuptools>=52",
+    "wheel>=0.36",
+    "numpy>=1.15",
+]
+dependencies = [
+    "setuptools>=52",
+    "wheel>=0.36",
+    "numpy>=1.15",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+markers = [
+    "experimental: tests that will not be executed and may need extra dependencies",
+    "gpu: tests running on GPU",
+    "notebooks: tests for notebooks",
+    "spark: tests that requires Spark",
+]

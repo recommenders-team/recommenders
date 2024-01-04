@@ -1,0 +1,124 @@
+# ---------------------------------------------------------
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+name: azureml-tests
+description: "Submit experiment to AzureML cluster"
+inputs:
+  # azureml experiment name
+  EXP_NAME:
+    required: true
+    type: string
+  # type of test - unit or nightly
+  TEST_KIND:
+    required: true
+    type: string
+  # test environment - cpu, gpu or spark
+  TEST_ENV:
+    required: false
+    type: string
+  # azureml compute credentials
+  AZUREML_TEST_CREDENTIALS:
+    required: true
+    type: string
+  # azureml compute subid
+  AZUREML_TEST_SUBID:
+    required: true
+    type: string
+  # python version
+  PYTHON_VERSION:
+    required: true
+    type: string
+  # test group name
+  TEST_GROUP:
+    required: true
+    type: string
+  # cpu cluster name
+  CPU_CLUSTER_NAME:
+    required: false
+    type: string
+    default: "cpu-cluster"
+  # gpu cluster name
+  GPU_CLUSTER_NAME:
+    required: false
+    type: string
+    default: "gpu-cluster"
+  # AzureML resource group name
+  RG:
+    required: false
+    type: string
+    default: "recommenders_project_resources"
+  # AzureML workspace name
+  WS:
+    required: false
+    type: string
+    default: "azureml-test-workspace"
+  # test logs path
+  TEST_LOGS_PATH:
+    required: false
+    type: string
+    default: '"test_logs.log"'
+  # pytest exit code
+  PYTEST_EXIT_CODE:
+    required: false
+    type: string
+    default: "pytest_exit_code.log"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.8"
+    - name: Install azureml-core and azure-cli on a GitHub hosted server
+      shell: bash
+      run: pip install --quiet "azureml-core>1,<2" "azure-cli>2,<3"
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{inputs.AZUREML_TEST_CREDENTIALS}}
+    - name: Install wheel package
+      shell: bash
+      run: pip install --quiet wheel
+    - name: Submit CPU tests to AzureML
+      shell: bash
+      if: contains(inputs.TEST_GROUP, 'cpu')
+      run: >-
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          --disable-warnings --sha "${GITHUB_SHA}"
+    - name: Submit GPU tests to AzureML
+      shell: bash
+      if: contains(inputs.TEST_GROUP, 'gpu')
+      run: >-
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          --disable-warnings --sha "${GITHUB_SHA}"
+    - name: Submit PySpark tests to AzureML
+      shell: bash
+      if: contains(inputs.TEST_GROUP, 'spark')
+      run: >-
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          --disable-warnings --sha "${GITHUB_SHA}"
+    - name: Get exit status
+      shell: bash
+      id: exit_status
+      run: echo "code=$(cat ${{inputs.PYTEST_EXIT_CODE}})" >> $GITHUB_OUTPUT
+    - name: Check Success/Failure
+      if: ${{ steps.exit_status.outputs.code != 0 }}
+      uses: actions/github-script@v3
+      with:
+        script: |
+            core.setFailed('All tests did not pass!')
