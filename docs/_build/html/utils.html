@@ -379,7 +379,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.notebook_utils">Notebook utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.python_utils">Python utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.spark_utils">Spark utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tensorflow-utilities">Tensorflow utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.tf_utils">Tensorflow utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.timer">Timer</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.plot">Plot utilities</a></li>
 </ul>
@@ -948,8 +948,177 @@ the min/max of the old scale.</p>
 </dd></dl>
 
 </section>
-<section id="tensorflow-utilities">
-<h2>Tensorflow utilities<a class="headerlink" href="#tensorflow-utilities" title="Permalink to this heading">#</a></h2>
+<section id="module-recommenders.utils.tf_utils">
+<span id="tensorflow-utilities"></span><h2>Tensorflow utilities<a class="headerlink" href="#module-recommenders.utils.tf_utils" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">MetricsLogger</span></span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger" title="Permalink to this definition">#</a></dt>
+<dd><p>Metrics logger</p>
+<p>Initializer</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger.get_log">
+<span class="sig-name descname"><span class="pre">get_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.get_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.get_log" title="Permalink to this definition">#</a></dt>
+<dd><p>Getter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Log metrics.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.log" title="Permalink to this definition">#</a></dt>
+<dd><p>Log metrics. Each metric’s log will be stored in the corresponding list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<em>str</em>) – Metric name.</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – Value.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.build_optimizer">
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">build_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#build_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.build_optimizer" title="Permalink to this definition">#</a></dt>
+<dd><p>Get an optimizer for TensorFlow high-level API Estimator.</p>
+<p>Available options are: <cite>adadelta</cite>, <cite>adagrad</cite>, <cite>adam</cite>, <cite>ftrl</cite>, <cite>momentum</cite>, <cite>rmsprop</cite> or <cite>sgd</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Optimizer name.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – Learning rate</p></li>
+<li><p><strong>kwargs</strong> – Optimizer arguments as key-value pairs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensorflow optimizer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.train.Optimizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.evaluation_log_hook">
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">evaluation_log_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">every_n_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_fns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">eval_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#evaluation_log_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.evaluation_log_hook" title="Permalink to this definition">#</a></dt>
+<dd><p>Evaluation log hook for TensorFlow high-level API Estimator.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
+In order to get the most up-to-date evaluation results while training,
+set model’s <cite>save_checkpoints_steps</cite> to be equal or greater than hook’s <cite>every_n_iter</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>estimator</strong> (<em>tf.estimator.Estimator</em>) – Model to evaluate.</p></li>
+<li><p><strong>logger</strong> (<em>Logger</em>) – Custom logger to log the results.
+E.g., define a subclass of Logger for AzureML logging.</p></li>
+<li><p><strong>true_df</strong> (<em>pd.DataFrame</em>) – Ground-truth data.</p></li>
+<li><p><strong>y_col</strong> (<em>str</em>) – Label column name in true_df</p></li>
+<li><p><strong>eval_df</strong> (<em>pd.DataFrame</em>) – Evaluation data without label column.</p></li>
+<li><p><strong>every_n_iter</strong> (<em>int</em>) – Evaluation frequency (steps).</p></li>
+<li><p><strong>model_dir</strong> (<em>str</em>) – Model directory to save the summaries to. If None, does not record.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of samples fed into the model at a time.
+Note, the batch size doesn’t affect on evaluation results.</p></li>
+<li><p><strong>eval_fns</strong> (<em>iterable of functions</em>) – List of evaluation functions that have signature of
+<cite>(true_df, prediction_df, **eval_kwargs)</cite>-&gt;`float`. If None, loss is calculated on <cite>true_df</cite>.</p></li>
+<li><p><strong>eval_kwargs</strong> – Evaluation function’s keyword arguments.
+Note, prediction column name should be ‘prediction’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Session run hook to evaluate the model while training.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.train.SessionRunHook</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.export_model">
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_input_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_input_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_feat_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#export_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.export_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Export TensorFlow estimator (model).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>tf.estimator.Estimator</em>) – Model to export.</p></li>
+<li><p><strong>train_input_fn</strong> (<em>function</em>) – Training input function to create data receiver spec.</p></li>
+<li><p><strong>eval_input_fn</strong> (<em>function</em>) – Evaluation input function to create data receiver spec.</p></li>
+<li><p><strong>tf_feat_cols</strong> (<em>list</em><em>(</em><em>tf.feature_column</em><em>)</em>) – Feature columns.</p></li>
+<li><p><strong>base_dir</strong> (<em>str</em>) – Base directory to export the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Exported model path</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.pandas_input_fn">
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_input_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#pandas_input_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.pandas_input_fn" title="Permalink to this definition">#</a></dt>
+<dd><p>Pandas input function for TensorFlow high-level API Estimator.
+This function returns a <cite>tf.data.Dataset</cite> function.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>tf.estimator.inputs.pandas_input_fn</cite> cannot handle array/list column properly.
+For more information, see <a class="reference external" href="https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn">https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Data containing features.</p></li>
+<li><p><strong>y_col</strong> (<em>str</em>) – Label column name if df has it.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Batch size for the input function.</p></li>
+<li><p><strong>num_epochs</strong> (<em>int</em>) – Number of epochs to iterate over data. If <cite>None</cite>, it will run forever.</p></li>
+<li><p><strong>shuffle</strong> (<em>bool</em>) – If True, shuffles the data queue.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Random seed for shuffle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.data.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="recommenders.utils.tf_utils.pandas_input_fn_for_saved_model">
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_input_fn_for_saved_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_name_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#pandas_input_fn_for_saved_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Pandas input function for TensorFlow SavedModel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Data containing features.</p></li>
+<li><p><strong>feat_name_type</strong> (<em>dict</em>) – Feature name and type spec. E.g.
+<cite>{‘userID’: int, ‘itemID’: int, ‘rating’: float}</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>func</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-recommenders.utils.timer">
 <span id="timer"></span><h2>Timer<a class="headerlink" href="#module-recommenders.utils.timer" title="Permalink to this heading">#</a></h2>
@@ -1094,7 +1263,7 @@ pass <cite>(1,2,1)</cite> for the first subplot and <cite>(1,2,2)</cite> for the
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.notebook_utils">Notebook utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.python_utils">Python utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.spark_utils">Spark utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tensorflow-utilities">Tensorflow utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.tf_utils">Tensorflow utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.timer">Timer</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.plot">Plot utilities</a></li>
 </ul>

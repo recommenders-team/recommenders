@@ -375,7 +375,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.evaluation.python_evaluation">Python evaluation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pyspark-evaluation">PySpark evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.evaluation.spark_evaluation">PySpark evaluation</a></li>
 </ul>
             </nav>
         </div>
@@ -1133,8 +1133,435 @@ relevant to the user or not.</p></li>
 </dd></dl>
 
 </section>
-<section id="pyspark-evaluation">
-<h2>PySpark evaluation<a class="headerlink" href="#pyspark-evaluation" title="Permalink to this heading">#</a></h2>
+<section id="module-recommenders.evaluation.spark_evaluation">
+<span id="pyspark-evaluation"></span><h2>PySpark evaluation<a class="headerlink" href="#module-recommenders.evaluation.spark_evaluation" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.evaluation.spark_evaluation.</span></span><span class="sig-name descname"><span class="pre">SparkDiversityEvaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reco_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_feature_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_sim_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'item_cooccurrence_count'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_relevance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation" title="Permalink to this definition">#</a></dt>
+<dd><p>Spark Evaluator for diversity, coverage, novelty, serendipity</p>
+<p>Initializer.</p>
+<p>This is the Spark version of diversity metrics evaluator.
+The methods of this class calculate the following diversity metrics:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Coverage - it includes two metrics:</dt><dd><ol class="arabic simple">
+<li><p>catalog_coverage, which measures the proportion of items that get recommended from the item catalog;</p></li>
+<li><p>distributional_coverage, which measures how unequally different items are recommended in the
+recommendations to all users.</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p>Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.</p></li>
+<li><p>Diversity - The dissimilarity of items being recommended.</p></li>
+<li><dl class="simple">
+<dt>Serendipity - The “unusualness” or “surprise” of recommendations to a user. When ‘col_relevance’ is used,</dt><dd><p>it indicates how “pleasant surprise” of recommendations is to a user.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The metric definitions/formulations are based on the following references with modification:</p>
+<dl class="field-list">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+Recommender Systems Handbook pp. 257-297, 2010.</p>
+<p>Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing
+serendipity into music recommendation, WSDM 2012</p>
+<p>P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+choice, discovery and relevance, ECIR 2011</p>
+<p>Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+eugeneyan.com, April 2020</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>train_df</strong> (<em>pyspark.sql.DataFrame</em>) – Data set with historical data for users and items they
+have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+Interaction here follows the <em>item choice model</em> from Castells et al.</p></li>
+<li><p><strong>reco_df</strong> (<em>pyspark.sql.DataFrame</em>) – Recommender’s prediction output, containing col_user, col_item,
+col_relevance (optional). Assumed to not contain any duplicate user-item pairs.</p></li>
+<li><p><strong>item_feature_df</strong> (<em>pyspark.sql.DataFrame</em>) – (Optional) It is required only when item_sim_measure=’item_feature_vector’.
+It contains two columns: col_item and features (a feature vector).</p></li>
+<li><p><strong>item_sim_measure</strong> (<em>str</em>) – (Optional) This column indicates which item similarity measure to be used.
+Available measures include item_cooccurrence_count (default choice) and item_feature_vector.</p></li>
+<li><p><strong>col_user</strong> (<em>str</em>) – User id column name.</p></li>
+<li><p><strong>col_item</strong> (<em>str</em>) – Item id column name.</p></li>
+<li><p><strong>col_relevance</strong> (<em>str</em>) – Optional. This column indicates whether the recommended item is actually
+relevant to the user or not.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.catalog_coverage">
+<span class="sig-name descname"><span class="pre">catalog_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.catalog_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.catalog_coverage" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate catalog coverage for recommendations across all users.
+The metric definition is based on the “catalog coverage” definition in the following reference:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+Recommender Systems Handbook pp. 257-297, 2010.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>catalog coverage</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.distributional_coverage">
+<span class="sig-name descname"><span class="pre">distributional_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.distributional_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.distributional_coverage" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate distributional coverage for recommendations across all users.
+The metric definition is based on formula (21) in the following reference:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+Recommender Systems Handbook pp. 257-297, 2010.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>distributional coverage</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.diversity">
+<span class="sig-name descname"><span class="pre">diversity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.diversity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.diversity" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate average diversity of recommendations across all users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>diversity.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.historical_item_novelty">
+<span class="sig-name descname"><span class="pre">historical_item_novelty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.historical_item_novelty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.historical_item_novelty" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate novelty for each item. Novelty is computed as the minus logarithm of
+(number of interactions with item / total number of interactions). The definition of the metric
+is based on the following reference using the choice model (eqs. 1 and 6):</p>
+<dl class="field-list simple">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+choice, discovery and relevance, ECIR 2011</p>
+</dd>
+</dl>
+<p>The novelty of an item can be defined relative to a set of observed events on the set of all items.
+These can be events of user choice (item “is picked” by a random user) or user discovery
+(item “is known” to a random user). The above definition of novelty reflects a factor of item popularity.
+High novelty values correspond to long-tail items in the density function, that few users have interacted
+with and low novelty values correspond to popular head items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dataframe with the following columns: col_item, item_novelty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pyspark.sql.dataframe.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.novelty">
+<span class="sig-name descname"><span class="pre">novelty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.novelty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.novelty" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the average novelty in a list of recommended items (this assumes that the recommendation list
+is already computed). Follows section 5 from</p>
+<dl class="field-list simple">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+choice, discovery and relevance, ECIR 2011</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dataframe with following columns: novelty.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyspark.sql.dataframe.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.serendipity">
+<span class="sig-name descname"><span class="pre">serendipity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.serendipity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.serendipity" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate average serendipity for recommendations across all users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>serendipity.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_diversity">
+<span class="sig-name descname"><span class="pre">user_diversity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.user_diversity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_diversity" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate average diversity of recommendations for each user.
+The metric definition is based on formula (3) in the following reference:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
+introducing serendipity into music recommendation, WSDM 2012</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dataframe with the following columns: col_user, user_diversity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyspark.sql.dataframe.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_item_serendipity">
+<span class="sig-name descname"><span class="pre">user_item_serendipity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.user_item_serendipity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_item_serendipity" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate serendipity of each item in the recommendations for each user.
+The metric definition is based on the following references:</p>
+<dl class="field-list">
+<dt class="field-odd">Citation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
+introducing serendipity into music recommendation, WSDM 2012</p>
+<p>Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+eugeneyan.com, April 2020</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dataframe with columns: col_user, col_item, user_item_serendipity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyspark.sql.dataframe.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_serendipity">
+<span class="sig-name descname"><span class="pre">user_serendipity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkDiversityEvaluation.user_serendipity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_serendipity" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate average serendipity for each user’s recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dataframe with following columns: col_user, user_serendipity.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pyspark.sql.dataframe.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRankingEvaluation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.evaluation.spark_evaluation.</span></span><span class="sig-name descname"><span class="pre">SparkRankingEvaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rating_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rating_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevancy_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'top_k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_rating</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rating'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_prediction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prediction'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRankingEvaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation" title="Permalink to this definition">#</a></dt>
+<dd><p>Spark Ranking Evaluator</p>
+<p>Initialization.
+This is the Spark version of ranking metrics evaluator.
+The methods of this class, calculate ranking metrics such as precision&#64;k, recall&#64;k, ndcg&#64;k, and mean average
+precision.</p>
+<p>The implementations of precision&#64;k, ndcg&#64;k, and mean average precision are referenced from Spark MLlib, which
+can be found at <a class="reference external" href="https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems">the link</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rating_true</strong> (<em>pyspark.sql.DataFrame</em>) – DataFrame of true rating data (in the
+format of customerID-itemID-rating tuple).</p></li>
+<li><p><strong>rating_pred</strong> (<em>pyspark.sql.DataFrame</em>) – DataFrame of predicted rating data (in
+the format of customerID-itemID-rating tuple).</p></li>
+<li><p><strong>col_user</strong> (<em>str</em>) – column name for user.</p></li>
+<li><p><strong>col_item</strong> (<em>str</em>) – column name for item.</p></li>
+<li><p><strong>col_rating</strong> (<em>str</em>) – column name for rating.</p></li>
+<li><p><strong>col_prediction</strong> (<em>str</em>) – column name for prediction.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – number of items to recommend to each user.</p></li>
+<li><p><strong>relevancy_method</strong> (<em>str</em>) – method for determining relevant items. Possible
+values are “top_k”, “by_time_stamp”, and “by_threshold”.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for determining the relevant recommended items.
+This is used for the case that predicted ratings follow a known
+distribution. NOTE: this option is only activated if <cite>relevancy_method</cite> is
+set to “by_threshold”.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map">
+<span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRankingEvaluation.map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map" title="Permalink to this definition">#</a></dt>
+<dd><p>Get mean average precision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MAP (min=0, max=1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map_at_k">
+<span class="sig-name descname"><span class="pre">map_at_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRankingEvaluation.map_at_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map_at_k" title="Permalink to this definition">#</a></dt>
+<dd><p>Get mean average precision at k.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>More details <a class="reference external" href="http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision">on the meanAveragePrecision PySpark documentation</a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MAP at k (min=0, max=1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.ndcg_at_k">
+<span class="sig-name descname"><span class="pre">ndcg_at_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRankingEvaluation.ndcg_at_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.ndcg_at_k" title="Permalink to this definition">#</a></dt>
+<dd><p>Get Normalized Discounted Cumulative Gain (NDCG)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>More details can be found
+<a class="reference external" href="http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt">on the ndcgAt PySpark documentation</a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nDCG at k (min=0, max=1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.precision_at_k">
+<span class="sig-name descname"><span class="pre">precision_at_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRankingEvaluation.precision_at_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.precision_at_k" title="Permalink to this definition">#</a></dt>
+<dd><p>Get precision&#64;k.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>More details can be found
+<a class="reference external" href="http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt">on the precisionAt PySpark documentation</a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>precision at k (min=0, max=1)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.recall_at_k">
+<span class="sig-name descname"><span class="pre">recall_at_k</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRankingEvaluation.recall_at_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.recall_at_k" title="Permalink to this definition">#</a></dt>
+<dd><p>Get recall&#64;K.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>More details can be found
+<a class="reference external" href="http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.recallAt">on the recallAt PySpark documentation</a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>recall at k (min=0, max=1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRatingEvaluation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.evaluation.spark_evaluation.</span></span><span class="sig-name descname"><span class="pre">SparkRatingEvaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rating_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rating_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_rating</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rating'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_prediction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prediction'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRatingEvaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation" title="Permalink to this definition">#</a></dt>
+<dd><p>Spark Rating Evaluator</p>
+<p>Initializer.</p>
+<p>This is the Spark version of rating metrics evaluator.
+The methods of this class, calculate rating metrics such as root mean squared error, mean absolute error,
+R squared, and explained variance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rating_true</strong> (<em>pyspark.sql.DataFrame</em>) – True labels.</p></li>
+<li><p><strong>rating_pred</strong> (<em>pyspark.sql.DataFrame</em>) – Predicted labels.</p></li>
+<li><p><strong>col_user</strong> (<em>str</em>) – column name for user.</p></li>
+<li><p><strong>col_item</strong> (<em>str</em>) – column name for item.</p></li>
+<li><p><strong>col_rating</strong> (<em>str</em>) – column name for rating.</p></li>
+<li><p><strong>col_prediction</strong> (<em>str</em>) – column name for prediction.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.exp_var">
+<span class="sig-name descname"><span class="pre">exp_var</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRatingEvaluation.exp_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.exp_var" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate explained variance.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Spark MLLib’s implementation is buggy (can lead to values &gt; 1), hence we use var().</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Explained variance (min=0, max=1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.mae">
+<span class="sig-name descname"><span class="pre">mae</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRatingEvaluation.mae"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.mae" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate Mean Absolute Error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mean Absolute Error.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rmse">
+<span class="sig-name descname"><span class="pre">rmse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRatingEvaluation.rmse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rmse" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate Root Mean Squared Error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Root mean squared error.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rsquared">
+<span class="sig-name descname"><span class="pre">rsquared</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/spark_evaluation.html#SparkRatingEvaluation.rsquared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rsquared" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate R squared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>R squared.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -1203,7 +1630,7 @@ relevant to the user or not.</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.evaluation.python_evaluation">Python evaluation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pyspark-evaluation">PySpark evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.evaluation.spark_evaluation">PySpark evaluation</a></li>
 </ul>
   </nav></div>
 
