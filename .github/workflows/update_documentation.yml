@@ -47,6 +47,9 @@ jobs:
           git add * -f
           git commit -m "Update documentation"
       
+      - name: Configure pull strategy (rebase)
+        run: git config pull.rebase true
+
       - name: Pull latest changes from remote gh-pages branch
         run: git pull origin gh-pages
 
