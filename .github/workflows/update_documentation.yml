@@ -29,12 +29,24 @@ jobs:
         run: |
           jupyter-book build docs
 
-      - name: Deploy documentation
+      - name: Configure Git
         run: |
-          cd docs/_build/html
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
           git config user.signingkey "${{ secrets.GPG_KEY_ID }}"
+
+      - name: Create and switch to gh-pages branch
+        run: |
+          git checkout gh-pages
+          git pull origin gh-pages || true
+      
+      - name: Copy built documentation
+        run: cp -r docs/_build/html/* .
+  
+      - name: Add and commit changes
+        run: |
           git add * -f
           git commit -m "Update documentation"
-          git push origin gh-pages
+  
+      - name: Push changes to gh-pages
+        run: git push origin gh-pages
