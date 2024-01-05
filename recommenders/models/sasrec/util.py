@@ -35,7 +35,7 @@ class SASRecDataSet:
         if self.filename:
             with open(self.filename, "r") as fr:
                 sample = fr.readline()
-            ncols = sample.strip().split(self.col_sep)
+            ncols = len(sample.strip().split(self.col_sep))
             if ncols == 3:
                 self.with_time = True
             else:
