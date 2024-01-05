@@ -121,18 +121,6 @@ FastAI utilities
     :members:
 
 
-GeoIMC
-******************************
-.. automodule:: recommenders.models.geoimc.geoimc_algorithm
-    :members:
-.. automodule:: recommenders.models.geoimc.geoimc_data
-    :members:
-.. automodule:: recommenders.models.geoimc.geoimc_predict
-    :members:
-.. automodule:: recommenders.models.geoimc.geoimc_utils
-    :members:
-
-
 LightFM utilities
 ******************************
 .. automodule:: recommenders.models.lightfm.lightfm_utils
@@ -204,15 +192,28 @@ RBM
 .. automodule:: recommenders.models.rbm.rbm
     :members:
 
+.. FIXME: Fix Pymanopt dependency. Issue #2038
+.. GeoIMC
+.. ******************************
+.. .. automodule:: recommenders.models.geoimc.geoimc_algorithm
+..     :members:
+.. .. automodule:: recommenders.models.geoimc.geoimc_data
+..     :members:
+.. .. automodule:: recommenders.models.geoimc.geoimc_predict
+..     :members:
+.. .. automodule:: recommenders.models.geoimc.geoimc_utils
+..     :members:
 
-RLRMC
-******************************
-.. automodule:: recommenders.models.rlrmc.RLRMCdataset
-    :members:
-.. automodule:: recommenders.models.rlrmc.RLRMCalgorithm
-    :members:
-.. automodule:: recommenders.models.rlrmc.conjugate_gradient_ms
-    :members:
+
+.. FIXME: Fix Pymanopt dependency. Issue #2038
+.. RLRMC
+.. ******************************
+.. .. automodule:: recommenders.models.rlrmc.RLRMCdataset
+..     :members:
+.. .. automodule:: recommenders.models.rlrmc.RLRMCalgorithm
+..     :members:
+.. .. automodule:: recommenders.models.rlrmc.conjugate_gradient_ms
+..     :members:
 
 
 SAR
