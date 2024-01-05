@@ -17,34 +17,43 @@ Base model
 ==============================
 .. automodule:: recommenders.models.deeprec.models.base_model
     :members:
+    :special-members: __init__
 
 Sequential base model
 ==============================
 .. automodule:: recommenders.models.deeprec.models.sequential.sequential_base_model
     :members:
+    :special-members: __init__
 
 Iterators
 ==============================
 .. automodule:: recommenders.models.deeprec.io.iterator
     :members:
+    :special-members: __init__
 .. automodule:: recommenders.models.deeprec.io.dkn_iterator
     :members:
+    :special-members: __init__
 .. automodule:: recommenders.models.deeprec.io.dkn_item2item_iterator
     :members:
+    :special-members: __init__
 .. automodule:: recommenders.models.deeprec.io.nextitnet_iterator
     :members:
+    :special-members: __init__
 .. automodule:: recommenders.models.deeprec.io.sequential_iterator
     :members:
+    :special-members: __init__
 
 Data processing utilities
 ==============================
 .. automodule:: recommenders.models.deeprec.DataModel.ImplicitCF
     :members:
+    :special-members: __init__
 
 Utilities
 ==============================
 .. automodule:: recommenders.models.deeprec.deeprec_utils
     :members:
+    :special-members: __init__, __repr__
 
 
 DKN
