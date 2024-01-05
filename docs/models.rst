@@ -14,17 +14,17 @@ Cornac utilities
 DeepRec utilities
 ******************************
 Base model
-===========
+==============================
 .. automodule:: recommenders.models.deeprec.models.base_model
     :members:
 
 Sequential base model
-==================
+==============================
 .. automodule:: recommenders.models.deeprec.models.sequential.sequential_base_model
     :members:
 
 Iterators
-===========
+==============================
 .. automodule:: recommenders.models.deeprec.io.iterator
     :members:
 .. automodule:: recommenders.models.deeprec.io.dkn_iterator
@@ -37,12 +37,12 @@ Iterators
     :members:
 
 Data processing utilities
-===========================
+==============================
 .. automodule:: recommenders.models.deeprec.DataModel.ImplicitCF
     :members:
 
 Utilities
-============
+==============================
 .. automodule:: recommenders.models.deeprec.deeprec_utils
     :members:
 
@@ -144,19 +144,19 @@ NCF
 NewsRec utilities
 ******************************
 Base model
-===========
+==============================
 .. automodule:: recommenders.models.newsrec.models.base_model
     :members:
 
 Iterators
-===========
+==============================
 .. automodule:: recommenders.models.newsrec.io.mind_all_iterator
     :members:
 .. automodule:: recommenders.models.newsrec.io.mind_iterator
     :members:
 
 Utilities
-============
+==============================
 .. automodule:: recommenders.models.newsrec.models.layers
     :members:
 .. automodule:: recommenders.models.newsrec.newsrec_utils
