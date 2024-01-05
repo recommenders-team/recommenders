@@ -50,9 +50,6 @@ sphinx:
   - sphinx.ext.ifconfig
   - sphinx.ext.napoleon       # To render Google format docstrings
   - sphinx.ext.viewcode       # Add links to highlighted source code
-  config:
-    napoleon_google_docstring: True
-    autodoc_member_order: groupwise
-    autoclass_content: both
+
 
 
