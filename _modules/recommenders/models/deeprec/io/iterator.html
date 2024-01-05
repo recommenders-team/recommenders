@@ -375,7 +375,7 @@ document.write(`
 <span class="sd">    per mini-batch, so that large files can be used as input data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="FFMTextIterator.__init__"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an iterator. Create the necessary placeholders for the model.</span>
 
 <span class="sd">        Args:</span>
@@ -413,7 +413,7 @@ document.write(`
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dnn_feat_shape</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span>
                 <span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dnn_feat_shape&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="FFMTextIterator.parser_one_line"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator.parser_one_line">[docs]</a>    <span class="k">def</span> <span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse one string line into feature values.</span>

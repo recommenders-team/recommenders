@@ -348,7 +348,7 @@ document.write(`
 <span class="sd">    output predictions of every item in a sequence except only of the last item.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="NextItNetIterator.__init__"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.nextitnet_iterator.NextItNetIterator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an iterator. Create necessary placeholders for the model.</span>
 <span class="sd">        Different from sequential iterator</span>
 
@@ -395,7 +395,7 @@ document.write(`
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">time_to_now</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span>
                 <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_seq_length</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;time_to_now&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

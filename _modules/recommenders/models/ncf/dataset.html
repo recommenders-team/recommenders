@@ -371,7 +371,7 @@ document.write(`
 <span class="sd">    file, formatting it and returning a Pandas dataframe.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="DataFile.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.DataFile.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">,</span> <span class="n">col_test_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
@@ -395,7 +395,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_data</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id2user</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id2item</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2item</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">}</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -542,7 +542,7 @@ document.write(`
 <div class="viewcode-block" id="NegativeSampler"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler">[docs]</a><span class="k">class</span> <span class="nc">NegativeSampler</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;NegativeSampler class for NCF. Samples a subset of negative items from a given population of items.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="NegativeSampler.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user</span><span class="p">,</span>
         <span class="n">n_samples</span><span class="p">,</span>
@@ -581,7 +581,7 @@ document.write(`
             <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_negatives_without_replacement</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_with_replacement</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_check_sample_size</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_sample_size</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="NegativeSampler.sample"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Method for sampling uniformly from a population of negative items</span>
@@ -629,7 +629,7 @@ document.write(`
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset class for NCF&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train_file</span><span class="p">,</span>
         <span class="n">test_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -716,7 +716,7 @@ document.write(`
                 <span class="n">binary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="c1"># set random seed</span>
-        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_create_negative_examples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">user_negative_samples</span><span class="p">):</span>
         <span class="c1"># create dataframe containing negative examples for user assigned zero rating</span>

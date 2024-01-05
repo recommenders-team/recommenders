@@ -357,7 +357,7 @@ document.write(`
 <span class="sd">        npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MINDIterator.__init__"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hparams</span><span class="p">,</span>
         <span class="n">npratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
@@ -380,7 +380,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">npratio</span> <span class="o">=</span> <span class="n">npratio</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">word_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">wordDict_file</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">uid2index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">userDict_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid2index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">userDict_file</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MINDIterator.load_dict"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;load pickle file</span>

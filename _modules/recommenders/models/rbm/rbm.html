@@ -342,7 +342,7 @@ document.write(`
 <div class="viewcode-block" id="RBM"><a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM">[docs]</a><span class="k">class</span> <span class="nc">RBM</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Restricted  Boltzmann Machine&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="RBM.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">possible_ratings</span><span class="p">,</span>
         <span class="n">visible_units</span><span class="p">,</span>
@@ -458,7 +458,7 @@ document.write(`
 
         <span class="c1"># Start TF training session on default graph</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_gpu</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">init_graph</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">init_graph</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RBM.binomial_sampling"><a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.binomial_sampling">[docs]</a>    <span class="k">def</span> <span class="nf">binomial_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Binomial sampling of hidden units activations using a rejection method.</span>

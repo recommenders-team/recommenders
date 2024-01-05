@@ -349,7 +349,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="ImplicitCF.__init__"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train</span><span class="p">,</span>
         <span class="n">test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -384,7 +384,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_processing</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_train_data</span><span class="p">()</span>
 
-        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_data_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.</span>

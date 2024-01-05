@@ -368,7 +368,7 @@ document.write(`
 <span class="sd">    similarity across items, and then 3) combining the estimates to generate a set of recommendations for a given user.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SARSingleNode.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">col_user</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
         <span class="n">col_item</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -459,7 +459,7 @@ document.write(`
 
         <span class="c1"># the opposite of the above maps - map array index to actual string ID</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index2item</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index2user</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index2user</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="SARSingleNode.compute_affinity_matrix"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_affinity_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">compute_affinity_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">rating_col</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Affinity matrix.</span>

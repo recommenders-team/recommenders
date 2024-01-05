@@ -384,7 +384,12 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.download_utils">Download utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.pandas_df_utils">Pandas dataframe utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.python_splitters">Splitter utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splitter-utilities">Splitter utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.python_splitters">Python splitters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.spark_splitters">PySpark splitters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.split_utils">Other splitters utilities</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.sparse">Sparse utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.wikidata">Knowledge graph utilities</a></li>
 </ul>
@@ -990,67 +995,6 @@ This schema is configured to mimic the Movielens dataset</p>
 <p>Dataset schema and generation is configured using pandera.
 Please see <a class="reference external" href="https://pandera.readthedocs.io/en/latest/schema_models.html">https://pandera.readthedocs.io/en/latest/schema_models.html</a>
 for more information.</p>
-<p>Check if all columns in a dataframe have a column in the Schema.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>check_obj</strong> (<em>pd.DataFrame</em>) – the dataframe to be validated.</p></li>
-<li><p><strong>head</strong> – validate the first n rows. Rows overlapping with <cite>tail</cite> or
-<cite>sample</cite> are de-duplicated.</p></li>
-<li><p><strong>tail</strong> – validate the last n rows. Rows overlapping with <cite>head</cite> or
-<cite>sample</cite> are de-duplicated.</p></li>
-<li><p><strong>sample</strong> – validate a random sample of n rows. Rows overlapping
-with <cite>head</cite> or <cite>tail</cite> are de-duplicated.</p></li>
-<li><p><strong>random_state</strong> – random seed for the <code class="docutils literal notranslate"><span class="pre">sample</span></code> argument.</p></li>
-<li><p><strong>lazy</strong> – if True, lazily evaluates dataframe against all validation
-checks and raises a <code class="docutils literal notranslate"><span class="pre">SchemaErrors</span></code>. Otherwise, raise
-<code class="docutils literal notranslate"><span class="pre">SchemaError</span></code> as soon as one occurs.</p></li>
-<li><p><strong>inplace</strong> – if True, applies coercion to the object of validation,
-otherwise creates a copy of the data.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>validated <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SchemaError</strong> – when <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> violates built-in or custom
-checks.</p>
-</dd>
-<dt class="field-even">Example<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
-</dl>
-<p>Calling <code class="docutils literal notranslate"><span class="pre">schema.validate</span></code> returns the dataframe.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandera</span> <span class="k">as</span> <span class="nn">pa</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-<span class="gp">... </span>    <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">],</span>
-<span class="gp">... </span>    <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dog&quot;</span><span class="p">,</span> <span class="s2">&quot;dog&quot;</span><span class="p">,</span> <span class="s2">&quot;cat&quot;</span><span class="p">,</span> <span class="s2">&quot;duck&quot;</span><span class="p">,</span> <span class="s2">&quot;dog&quot;</span><span class="p">,</span> <span class="s2">&quot;dog&quot;</span><span class="p">]</span>
-<span class="gp">... </span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">schema_withchecks</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrameSchema</span><span class="p">({</span>
-<span class="gp">... </span>    <span class="s2">&quot;probability&quot;</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="nb">float</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">))),</span>
-<span class="gp">...</span>
-<span class="gp">... </span>    <span class="c1"># check that the &quot;category&quot; column contains a few discrete</span>
-<span class="gp">... </span>    <span class="c1"># values, and the majority of the entries are dogs.</span>
-<span class="gp">... </span>    <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="nb">str</span><span class="p">,</span> <span class="p">[</span>
-<span class="gp">... </span>            <span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;dog&quot;</span><span class="p">,</span> <span class="s2">&quot;cat&quot;</span><span class="p">,</span> <span class="s2">&quot;duck&quot;</span><span class="p">])),</span>
-<span class="gp">... </span>            <span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;dog&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">),</span>
-<span class="gp">... </span>        <span class="p">]),</span>
-<span class="gp">... </span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">schema_withchecks</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">df</span><span class="p">)[[</span><span class="s2">&quot;probability&quot;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">]]</span>
-<span class="go">   probability category</span>
-<span class="go">0         0.10      dog</span>
-<span class="go">1         0.40      dog</span>
-<span class="go">2         0.52      cat</span>
-<span class="go">3         0.23     duck</span>
-<span class="go">4         0.80      dog</span>
-<span class="go">5         0.76      dog</span>
-</pre></div>
-</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="recommenders.datasets.movielens.MockMovielensSchema.Config">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#recommenders.datasets.movielens.MockMovielensSchema.Config" title="Permalink to this definition">#</a></dt>
@@ -1509,12 +1453,6 @@ by using the fitted converter.</p>
 <dt class="sig sig-object py" id="recommenders.datasets.pandas_df_utils.PandasHash">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.datasets.pandas_df_utils.</span></span><span class="sig-name descname"><span class="pre">PandasHash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/datasets/pandas_df_utils.html#PandasHash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.datasets.pandas_df_utils.PandasHash" title="Permalink to this definition">#</a></dt>
 <dd><p>Wrapper class to allow pandas objects (DataFrames or Series) to be hashable</p>
-<p>Initialize class</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pandas_object</strong> (<em>pandas.DataFrame</em><em>|</em><em>pandas.Series</em>) – pandas object</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1680,8 +1618,10 @@ number of all the possible samples.</p></li>
 </dd></dl>
 
 </section>
+<section id="splitter-utilities">
+<h2>Splitter utilities<a class="headerlink" href="#splitter-utilities" title="Permalink to this heading">#</a></h2>
 <section id="module-recommenders.datasets.python_splitters">
-<span id="splitter-utilities"></span><h2>Splitter utilities<a class="headerlink" href="#module-recommenders.datasets.python_splitters" title="Permalink to this heading">#</a></h2>
+<span id="python-splitters"></span><h3>Python splitters<a class="headerlink" href="#module-recommenders.datasets.python_splitters" title="Permalink to this heading">#</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.datasets.python_splitters.numpy_stratified_split">
 <span class="sig-prename descclassname"><span class="pre">recommenders.datasets.python_splitters.</span></span><span class="sig-name descname"><span class="pre">numpy_stratified_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/datasets/python_splitters.html#numpy_stratified_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.datasets.python_splitters.numpy_stratified_split" title="Permalink to this definition">#</a></dt>
@@ -1822,7 +1762,10 @@ filter with min_rating.</p></li>
 </dl>
 </dd></dl>
 
-<span class="target" id="module-recommenders.datasets.spark_splitters"></span><dl class="py function">
+</section>
+<section id="module-recommenders.datasets.spark_splitters">
+<span id="pyspark-splitters"></span><h3>PySpark splitters<a class="headerlink" href="#module-recommenders.datasets.spark_splitters" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
 <dt class="sig sig-object py" id="recommenders.datasets.spark_splitters.spark_chrono_split">
 <span class="sig-prename descclassname"><span class="pre">recommenders.datasets.spark_splitters.</span></span><span class="sig-name descname"><span class="pre">spark_chrono_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rating</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'user'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timestamp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_partition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/datasets/spark_splitters.html#spark_chrono_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.datasets.spark_splitters.spark_chrono_split" title="Permalink to this definition">#</a></dt>
 <dd><p>Spark chronological splitter.</p>
@@ -1948,7 +1891,10 @@ Earlier indexed splits will have earlier times
 </dl>
 </dd></dl>
 
-<span class="target" id="module-recommenders.datasets.split_utils"></span><dl class="py function">
+</section>
+<section id="module-recommenders.datasets.split_utils">
+<span id="other-splitters-utilities"></span><h3>Other splitters utilities<a class="headerlink" href="#module-recommenders.datasets.split_utils" title="Permalink to this heading">#</a></h3>
+<dl class="py function">
 <dt class="sig sig-object py" id="recommenders.datasets.split_utils.filter_k_core">
 <span class="sig-prename descclassname"><span class="pre">recommenders.datasets.split_utils.</span></span><span class="sig-name descname"><span class="pre">filter_k_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/datasets/split_utils.html#filter_k_core"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.datasets.split_utils.filter_k_core" title="Permalink to this definition">#</a></dt>
 <dd><p>Filter rating dataframe for minimum number of users and items by
@@ -2064,25 +2010,13 @@ filter with min_rating.</p></li>
 </dd></dl>
 
 </section>
+</section>
 <section id="module-recommenders.datasets.sparse">
 <span id="sparse-utilities"></span><h2>Sparse utilities<a class="headerlink" href="#module-recommenders.datasets.sparse" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="recommenders.datasets.sparse.AffinityMatrix">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.datasets.sparse.</span></span><span class="sig-name descname"><span class="pre">AffinityMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_rating</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rating'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prediction'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/datasets/sparse.html#AffinityMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.datasets.sparse.AffinityMatrix" title="Permalink to this definition">#</a></dt>
 <dd><p>Generate the user/item affinity matrix from a pandas dataframe and vice versa</p>
-<p>Initialize class parameters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – a dataframe containing the data</p></li>
-<li><p><strong>items_list</strong> (<em>numpy.ndarray</em>) – a list of unique items to use (if provided)</p></li>
-<li><p><strong>col_user</strong> (<em>str</em>) – default name for user column</p></li>
-<li><p><strong>col_item</strong> (<em>str</em>) – default name for item column</p></li>
-<li><p><strong>col_rating</strong> (<em>str</em>) – default name for rating columns</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – default path to save item/user maps</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.datasets.sparse.AffinityMatrix.gen_affinity_matrix">
 <span class="sig-name descname"><span class="pre">gen_affinity_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/datasets/sparse.html#AffinityMatrix.gen_affinity_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.datasets.sparse.AffinityMatrix.gen_affinity_matrix" title="Permalink to this definition">#</a></dt>
@@ -2328,7 +2262,12 @@ descriptionNotFound’ will be returned if no description is found</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.download_utils">Download utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.pandas_df_utils">Pandas dataframe utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.python_splitters">Splitter utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splitter-utilities">Splitter utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.python_splitters">Python splitters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.spark_splitters">PySpark splitters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.split_utils">Other splitters utilities</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.sparse">Sparse utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.datasets.wikidata">Knowledge graph utilities</a></li>
 </ul>

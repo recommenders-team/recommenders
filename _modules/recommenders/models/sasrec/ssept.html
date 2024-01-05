@@ -345,7 +345,7 @@ document.write(`
 <span class="sd">    TF 2.x codebase (SASREc): https://github.com/nnkkmto/SASRec-tf2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SSEPT.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model initialization.</span>
 
 <span class="sd">        Args:</span>
@@ -401,7 +401,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">mask_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Masking</span><span class="p">(</span><span class="n">mask_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span> <span class="o">=</span> <span class="n">LayerNormalization</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">seq_max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_units</span><span class="p">,</span> <span class="mf">1e-08</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SSEPT.call"><a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>

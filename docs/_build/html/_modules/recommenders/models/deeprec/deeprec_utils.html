@@ -633,7 +633,7 @@ document.write(`
 <div class="viewcode-block" id="HParams"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.HParams">[docs]</a><span class="k">class</span> <span class="nc">HParams</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for holding hyperparameters for DeepRec algorithms.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="HParams.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.HParams.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an HParams object from a dictionary of hyperparameter values.</span>
 
 <span class="sd">        Args:</span>
@@ -653,10 +653,10 @@ document.write(`
                 <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">hparams_dict</span>
         <span class="k">for</span> <span class="n">hparam</span> <span class="ow">in</span> <span class="n">hparams_dict</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparam</span><span class="p">,</span> <span class="n">hparams_dict</span><span class="p">[</span><span class="n">hparam</span><span class="p">])</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparam</span><span class="p">,</span> <span class="n">hparams_dict</span><span class="p">[</span><span class="n">hparam</span><span class="p">])</span></div>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;HParams object with values </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+<div class="viewcode-block" id="HParams.__repr__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.HParams.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;HParams object with values </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="HParams.values"><a class="viewcode-back" href="../../../../models.html#recommenders.models.deeprec.deeprec_utils.HParams.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the hyperparameter values as a dictionary.</span>

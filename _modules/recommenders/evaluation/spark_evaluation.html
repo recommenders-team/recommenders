@@ -360,7 +360,7 @@ document.write(`
 <div class="viewcode-block" id="SparkRatingEvaluation"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation">[docs]</a><span class="k">class</span> <span class="nc">SparkRatingEvaluation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Rating Evaluator&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SparkRatingEvaluation.__init__"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rating_true</span><span class="p">,</span>
         <span class="n">rating_pred</span><span class="p">,</span>
@@ -449,7 +449,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">RegressionMetrics</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">y_pred_true</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">prediction</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SparkRatingEvaluation.rmse"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rmse">[docs]</a>    <span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Root Mean Squared Error.</span>
@@ -497,7 +497,7 @@ document.write(`
 <div class="viewcode-block" id="SparkRankingEvaluation"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation">[docs]</a><span class="k">class</span> <span class="nc">SparkRankingEvaluation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Ranking Evaluator&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SparkRankingEvaluation.__init__"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rating_true</span><span class="p">,</span>
         <span class="n">rating_pred</span><span class="p">,</span>
@@ -611,7 +611,7 @@ document.write(`
             <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate ranking metrics.&quot;&quot;&quot;</span>
@@ -816,7 +816,7 @@ document.write(`
 <div class="viewcode-block" id="SparkDiversityEvaluation"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation">[docs]</a><span class="k">class</span> <span class="nc">SparkDiversityEvaluation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Evaluator for diversity, coverage, novelty, serendipity&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SparkDiversityEvaluation.__init__"><a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train_df</span><span class="p">,</span>
         <span class="n">reco_df</span><span class="p">,</span>
@@ -931,7 +931,7 @@ document.write(`
         <span class="k">if</span> <span class="n">count_intersection</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;reco_df should not contain any user_item pairs that are already shown in train_df&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_pairwise_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])&quot;&quot;&quot;</span>

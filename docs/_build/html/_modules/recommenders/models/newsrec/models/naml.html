@@ -351,7 +351,7 @@ document.write(`
 <span class="sd">        hparam (object): Global hyper-parameters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="NAMLModel.__init__"><a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.naml.NAMLModel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization steps for NAML.</span>
 <span class="sd">        Compared with the BaseModel, NAML need word embedding.</span>
 <span class="sd">        After creating word embedding matrix, BaseModel&#39;s __init__ method will be called.</span>
@@ -365,7 +365,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">word2vec_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_embedding</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">wordEmb_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hparam</span> <span class="o">=</span> <span class="n">hparams</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_input_label_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
         <span class="n">input_feat</span> <span class="o">=</span> <span class="p">[</span>

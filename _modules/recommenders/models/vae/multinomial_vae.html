@@ -359,7 +359,7 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback function used to calculate the NDCG@k metric of validation set at the end of each epoch.</span>
 <span class="sd">    Weights of the model with the highest NDCG@k value is saved.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">val_tr</span><span class="p">,</span> <span class="n">val_te</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Metrics.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.multinomial_vae.Metrics.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">val_tr</span><span class="p">,</span> <span class="n">val_te</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the class parameters.</span>
 
@@ -388,7 +388,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
 
         <span class="c1"># Options to save the weights of the model for future use</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span></div>
 
 <div class="viewcode-block" id="Metrics.on_train_begin"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.multinomial_vae.Metrics.on_train_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the list for validation NDCG@k.&quot;&quot;&quot;</span>
@@ -465,7 +465,7 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is used for updating the value of β during the annealing process.</span>
 <span class="sd">    When β reaches the value of anneal_cap, it stops increasing.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">anneal_cap</span><span class="p">,</span> <span class="n">total_anneal_steps</span><span class="p">):</span>
+<div class="viewcode-block" id="AnnealingCallback.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.multinomial_vae.AnnealingCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">anneal_cap</span><span class="p">,</span> <span class="n">total_anneal_steps</span><span class="p">):</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
 
@@ -484,7 +484,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">update_count</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># total annealing steps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">total_anneal_steps</span> <span class="o">=</span> <span class="n">total_anneal_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_anneal_steps</span> <span class="o">=</span> <span class="n">total_anneal_steps</span></div>
 
 <div class="viewcode-block" id="AnnealingCallback.on_train_begin"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.multinomial_vae.AnnealingCallback.on_train_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="p">{}):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise a list in which the beta value will be saved at the end of each epoch.&quot;&quot;&quot;</span>
@@ -520,7 +520,7 @@ document.write(`
 <span class="sd">        https://arxiv.org/pdf/1802.05814.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Mult_VAE.__init__"><a class="viewcode-back" href="../../../../models.html#recommenders.models.vae.multinomial_vae.Mult_VAE.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_users</span><span class="p">,</span>
         <span class="n">original_dim</span><span class="p">,</span>
@@ -601,7 +601,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
 
         <span class="c1"># Create StandardVAE model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_model</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and compile model.&quot;&quot;&quot;</span>
