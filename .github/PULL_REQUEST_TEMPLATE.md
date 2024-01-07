@@ -18,5 +18,5 @@
 - [ ] I have followed the [contribution guidelines](CONTRIBUTING.md) and code style for this project.
 - [ ] I have added tests covering my contributions.
 - [ ] I have updated the documentation accordingly.
-- [ ] I have [signed the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits), i.e. `git commit -s -m "your commit message"`. 
+- [ ] I have [signed the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits), e.g. `git commit -s -m "your commit message"`. 
 - [ ] This PR is being made to `staging branch` AND NOT TO `main branch`.
