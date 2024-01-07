@@ -15,7 +15,8 @@
 ### Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [ ] I have followed the [contribution guidelines](../CONTRIBUTING.md) and code style for this project.
+- [ ] I have followed the [contribution guidelines](CONTRIBUTING.md) and code style for this project.
 - [ ] I have added tests covering my contributions.
 - [ ] I have updated the documentation accordingly.
-- [ ] This PR is being made to `staging branch` and not to `main branch`.
+- [ ] I have [signed the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits), i.e. `git commit -s -m "your commit message"`. 
+- [ ] This PR is being made to `staging branch` AND NOT TO `main branch`.
