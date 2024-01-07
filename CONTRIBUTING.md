@@ -31,7 +31,7 @@ Here are the basic steps to get started with your first contribution. Please rea
 1. When adding code to the repo, make sure you sign the commits, otherwise the tests will fail (see [how to sign the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits)).
 1. Create a pull request against **staging** branch.
 
-See the wiki for more details about our [merging strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
+See the wiki for more details about our [merge strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
 
 ## Coding Guidelines
 
