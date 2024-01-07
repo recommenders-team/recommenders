@@ -15,7 +15,7 @@
 ### Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [ ] I have followed the [contribution guidelines](https://github.com/recommenders-team/recommenders/blob/main/CONTRIBUTING.md) and code style for this project.
+- [ ] I have followed the [contribution guidelines](CONTRIBUTING.md) and code style for this project.
 - [ ] I have added tests covering my contributions.
 - [ ] I have updated the documentation accordingly.
 - [ ] I have [signed the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits), e.g. `git commit -s -m "your commit message"`. 
