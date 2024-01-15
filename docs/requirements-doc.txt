@@ -1,4 +1,4 @@
 jupyter-book
-sphinx
+sphinx>=5.1.0
 sphinx_inline_tabs
 ghp-import
