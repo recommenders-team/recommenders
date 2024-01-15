@@ -25,10 +25,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip setuptools wheel
-          pip install --no-use-pep517 lightfm
-          pip install .[all]
-          pip install -r docs/requirements-doc.txt
+          pip install -q --upgrade pip setuptools wheel
+          pip install -q --no-use-pep517 lightfm
+          pip install -q .[all]
+          pip install -q -r docs/requirements-doc.txt
+      
+      - name: List dependencies
+        run: |
+          pip list
 
       - name: Build documentation
         run: |
