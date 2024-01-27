@@ -8,20 +8,14 @@ msgstr ""
 "Language: lt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Atsisiųsti šaltinio failą"
+
 msgid "suggest edit"
 msgstr "pasiūlyti redaguoti"
 
-msgid "Last updated on"
-msgstr "Paskutinį kartą atnaujinta"
-
-msgid "Edit this page"
-msgstr "Redaguoti šį puslapį"
-
-msgid "Launch"
-msgstr "Paleiskite"
-
-msgid "Print to PDF"
-msgstr "Spausdinti į PDF"
+msgid "Toggle navigation"
+msgstr "Perjungti naršymą"
 
 msgid "open issue"
 msgstr "atviras klausimas"
@@ -29,47 +23,53 @@ msgstr "atviras klausimas"
 msgid "Download notebook file"
 msgstr "Atsisiųsti nešiojamojo kompiuterio failą"
 
-msgid "Toggle navigation"
-msgstr "Perjungti naršymą"
-
-msgid "Source repository"
-msgstr "Šaltinio saugykla"
-
-msgid "By the"
-msgstr "Prie"
-
-msgid "next page"
-msgstr "Kitas puslapis"
-
 msgid "repository"
 msgstr "saugykla"
 
-msgid "Sphinx Book Theme"
-msgstr "Sfinkso knygos tema"
+msgid "Theme by the"
+msgstr "Tema"
 
-msgid "Download source file"
-msgstr "Atsisiųsti šaltinio failą"
-
-msgid "Contents"
-msgstr "Turinys"
-
-msgid "By"
-msgstr "Iki"
-
-msgid "Copyright"
-msgstr "Autorių teisės"
-
-msgid "Fullscreen mode"
-msgstr "Pilno ekrano režimas"
-
-msgid "Open an issue"
-msgstr "Atidarykite problemą"
-
-msgid "previous page"
-msgstr "Ankstesnis puslapis"
+msgid "Print to PDF"
+msgstr "Spausdinti į PDF"
 
 msgid "Download this page"
 msgstr "Atsisiųskite šį puslapį"
 
-msgid "Theme by the"
-msgstr "Tema"
+msgid "Copyright"
+msgstr "Autorių teisės"
+
+msgid "Last updated on"
+msgstr "Paskutinį kartą atnaujinta"
+
+msgid "Launch"
+msgstr "Paleiskite"
+
+msgid "Open an issue"
+msgstr "Atidarykite problemą"
+
+msgid "Fullscreen mode"
+msgstr "Pilno ekrano režimas"
+
+msgid "Sphinx Book Theme"
+msgstr "Sfinkso knygos tema"
+
+msgid "Contents"
+msgstr "Turinys"
+
+msgid "Edit this page"
+msgstr "Redaguoti šį puslapį"
+
+msgid "next page"
+msgstr "Kitas puslapis"
+
+msgid "Source repository"
+msgstr "Šaltinio saugykla"
+
+msgid "By"
+msgstr "Iki"
+
+msgid "By the"
+msgstr "Prie"
+
+msgid "previous page"
+msgstr "Ankstesnis puslapis"

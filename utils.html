@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="./" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Common utilities module &#8212; Recommenders documentation</title>
   
@@ -19,54 +18,58 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
-  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
-    <script src="_static/tabs.js"></script>
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js"></script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script async="async" src="_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'utils';</script>
     <link rel="canonical" href="https://recommenders-team.github.io/recommenders/utils.html" />
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
+    <link rel="icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Hyperparameter tuning module" href="tuning.html" />
@@ -82,7 +85,6 @@ const thebe_selector_output = ".output, .cell_output"
   <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -122,20 +124,15 @@ const thebe_selector_output = ".output, .cell_output"
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-
-  <header>
   
-    <div class="bd-header navbar navbar-expand-lg bd-navbar">
-    </div>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
   
-  </header>
 
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
       
       
-      
-        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -169,7 +166,18 @@ const thebe_selector_output = ".output, .cell_output"
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
 <ul class="current nav bd-sidenav">
@@ -373,15 +381,83 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.general_utils">General utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.gpu_utils">GPU utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.k8s_utils">Kubernetes utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.notebook_utils">Notebook utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.python_utils">Python utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.spark_utils">Spark utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.tf_utils">Tensorflow utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.timer">Timer</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.plot">Plot utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.general_utils">General utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.general_utils.get_number_processors"><code class="docutils literal notranslate"><span class="pre">get_number_processors()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.general_utils.get_physical_memory"><code class="docutils literal notranslate"><span class="pre">get_physical_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.general_utils.invert_dictionary"><code class="docutils literal notranslate"><span class="pre">invert_dictionary()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.gpu_utils">GPU utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.clear_memory_all_gpus"><code class="docutils literal notranslate"><span class="pre">clear_memory_all_gpus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_cuda_version"><code class="docutils literal notranslate"><span class="pre">get_cuda_version()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_cudnn_version"><code class="docutils literal notranslate"><span class="pre">get_cudnn_version()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_gpu_info"><code class="docutils literal notranslate"><span class="pre">get_gpu_info()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_number_gpus"><code class="docutils literal notranslate"><span class="pre">get_number_gpus()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.k8s_utils">Kubernetes utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.k8s_utils.nodes_to_replicas"><code class="docutils literal notranslate"><span class="pre">nodes_to_replicas()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.k8s_utils.qps_to_replicas"><code class="docutils literal notranslate"><span class="pre">qps_to_replicas()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.k8s_utils.replicas_to_qps"><code class="docutils literal notranslate"><span class="pre">replicas_to_qps()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.notebook_utils">Notebook utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.execute_notebook"><code class="docutils literal notranslate"><span class="pre">execute_notebook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.is_databricks"><code class="docutils literal notranslate"><span class="pre">is_databricks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.is_jupyter"><code class="docutils literal notranslate"><span class="pre">is_jupyter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.read_notebook"><code class="docutils literal notranslate"><span class="pre">read_notebook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.store_metadata"><code class="docutils literal notranslate"><span class="pre">store_metadata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.pre_run_cell"><code class="docutils literal notranslate"><span class="pre">pre_run_cell()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.start_watching_memory"><code class="docutils literal notranslate"><span class="pre">start_watching_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.stop_watching_memory"><code class="docutils literal notranslate"><span class="pre">stop_watching_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.watch_memory"><code class="docutils literal notranslate"><span class="pre">watch_memory()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.python_utils">Python utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.binarize"><code class="docutils literal notranslate"><span class="pre">binarize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.exponential_decay"><code class="docutils literal notranslate"><span class="pre">exponential_decay()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.get_top_k_scored_items"><code class="docutils literal notranslate"><span class="pre">get_top_k_scored_items()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.inclusion_index"><code class="docutils literal notranslate"><span class="pre">inclusion_index()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.jaccard"><code class="docutils literal notranslate"><span class="pre">jaccard()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.lexicographers_mutual_information"><code class="docutils literal notranslate"><span class="pre">lexicographers_mutual_information()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.lift"><code class="docutils literal notranslate"><span class="pre">lift()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.mutual_information"><code class="docutils literal notranslate"><span class="pre">mutual_information()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.rescale"><code class="docutils literal notranslate"><span class="pre">rescale()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.spark_utils">Spark utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.spark_utils.start_or_get_spark"><code class="docutils literal notranslate"><span class="pre">start_or_get_spark()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.tf_utils">Tensorflow utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger"><code class="docutils literal notranslate"><span class="pre">MetricsLogger</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger.__init__"><code class="docutils literal notranslate"><span class="pre">MetricsLogger.__init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger.get_log"><code class="docutils literal notranslate"><span class="pre">MetricsLogger.get_log()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger.log"><code class="docutils literal notranslate"><span class="pre">MetricsLogger.log()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.build_optimizer"><code class="docutils literal notranslate"><span class="pre">build_optimizer()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.evaluation_log_hook"><code class="docutils literal notranslate"><span class="pre">evaluation_log_hook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.export_model"><code class="docutils literal notranslate"><span class="pre">export_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.pandas_input_fn"><code class="docutils literal notranslate"><span class="pre">pandas_input_fn()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model"><code class="docutils literal notranslate"><span class="pre">pandas_input_fn_for_saved_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.timer">Timer</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer"><code class="docutils literal notranslate"><span class="pre">Timer</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.__init__"><code class="docutils literal notranslate"><span class="pre">Timer.__init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.interval"><code class="docutils literal notranslate"><span class="pre">Timer.interval</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.start"><code class="docutils literal notranslate"><span class="pre">Timer.start()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.stop"><code class="docutils literal notranslate"><span class="pre">Timer.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.plot">Plot utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.plot.line_graph"><code class="docutils literal notranslate"><span class="pre">line_graph()</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -394,12 +470,12 @@ document.write(`
                 <article class="bd-article">
                   
   <section id="common-utilities-module">
-<span id="common"></span><h1>Common utilities module<a class="headerlink" href="#common-utilities-module" title="Permalink to this heading">#</a></h1>
+<span id="common"></span><h1>Common utilities module<a class="headerlink" href="#common-utilities-module" title="Link to this heading">#</a></h1>
 <section id="module-recommenders.utils.general_utils">
-<span id="general-utilities"></span><h2>General utilities<a class="headerlink" href="#module-recommenders.utils.general_utils" title="Permalink to this heading">#</a></h2>
+<span id="general-utilities"></span><h2>General utilities<a class="headerlink" href="#module-recommenders.utils.general_utils" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.general_utils.get_number_processors">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.general_utils.</span></span><span class="sig-name descname"><span class="pre">get_number_processors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/general_utils.html#get_number_processors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.general_utils.get_number_processors" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.general_utils.</span></span><span class="sig-name descname"><span class="pre">get_number_processors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/general_utils.html#get_number_processors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.general_utils.get_number_processors" title="Link to this definition">#</a></dt>
 <dd><p>Get the number of processors in a CPU.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -413,7 +489,7 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.general_utils.get_physical_memory">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.general_utils.</span></span><span class="sig-name descname"><span class="pre">get_physical_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/general_utils.html#get_physical_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.general_utils.get_physical_memory" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.general_utils.</span></span><span class="sig-name descname"><span class="pre">get_physical_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/general_utils.html#get_physical_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.general_utils.get_physical_memory" title="Link to this definition">#</a></dt>
 <dd><p>Get the physical memory in GBs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -427,7 +503,7 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.general_utils.invert_dictionary">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.general_utils.</span></span><span class="sig-name descname"><span class="pre">invert_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/general_utils.html#invert_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.general_utils.invert_dictionary" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.general_utils.</span></span><span class="sig-name descname"><span class="pre">invert_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/general_utils.html#invert_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.general_utils.invert_dictionary" title="Link to this definition">#</a></dt>
 <dd><p>Invert a dictionary</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -449,16 +525,16 @@ repeated values, the inversion can take different keys</p>
 
 </section>
 <section id="module-recommenders.utils.gpu_utils">
-<span id="gpu-utilities"></span><h2>GPU utilities<a class="headerlink" href="#module-recommenders.utils.gpu_utils" title="Permalink to this heading">#</a></h2>
+<span id="gpu-utilities"></span><h2>GPU utilities<a class="headerlink" href="#module-recommenders.utils.gpu_utils" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.gpu_utils.clear_memory_all_gpus">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">clear_memory_all_gpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#clear_memory_all_gpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.clear_memory_all_gpus" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">clear_memory_all_gpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#clear_memory_all_gpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.clear_memory_all_gpus" title="Link to this definition">#</a></dt>
 <dd><p>Clear memory of all GPUs.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.gpu_utils.get_cuda_version">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_cuda_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_cuda_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_cuda_version" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_cuda_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_cuda_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_cuda_version" title="Link to this definition">#</a></dt>
 <dd><p>Get CUDA version</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -472,7 +548,7 @@ repeated values, the inversion can take different keys</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.gpu_utils.get_cudnn_version">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_cudnn_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_cudnn_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_cudnn_version" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_cudnn_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_cudnn_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_cudnn_version" title="Link to this definition">#</a></dt>
 <dd><p>Get the CuDNN version</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -486,7 +562,7 @@ repeated values, the inversion can take different keys</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.gpu_utils.get_gpu_info">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_gpu_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_gpu_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_gpu_info" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_gpu_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_gpu_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_gpu_info" title="Link to this definition">#</a></dt>
 <dd><p>Get information of GPUs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -501,7 +577,7 @@ Returns an empty list if there is no cuda device available.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.gpu_utils.get_number_gpus">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_number_gpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_number_gpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_number_gpus" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.gpu_utils.</span></span><span class="sig-name descname"><span class="pre">get_number_gpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/gpu_utils.html#get_number_gpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.gpu_utils.get_number_gpus" title="Link to this definition">#</a></dt>
 <dd><p>Get the number of GPUs in the system.
 :returns: Number of GPUs.
 :rtype: int</p>
@@ -509,10 +585,10 @@ Returns an empty list if there is no cuda device available.</p>
 
 </section>
 <section id="module-recommenders.utils.k8s_utils">
-<span id="kubernetes-utilities"></span><h2>Kubernetes utilities<a class="headerlink" href="#module-recommenders.utils.k8s_utils" title="Permalink to this heading">#</a></h2>
+<span id="kubernetes-utilities"></span><h2>Kubernetes utilities<a class="headerlink" href="#module-recommenders.utils.k8s_utils" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.k8s_utils.nodes_to_replicas">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.k8s_utils.</span></span><span class="sig-name descname"><span class="pre">nodes_to_replicas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_cores_per_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_cores_per_replica</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/k8s_utils.html#nodes_to_replicas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.k8s_utils.nodes_to_replicas" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.k8s_utils.</span></span><span class="sig-name descname"><span class="pre">nodes_to_replicas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_cores_per_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_cores_per_replica</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/k8s_utils.html#nodes_to_replicas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.k8s_utils.nodes_to_replicas" title="Link to this definition">#</a></dt>
 <dd><p>Provide a rough estimate of the number of replicas supported by a
 given number of nodes with n_cores_per_node cores each</p>
 <dl class="field-list simple">
@@ -537,7 +613,7 @@ cpu_cores argument passed to AksWebservice.deploy_configuration()</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.k8s_utils.qps_to_replicas">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.k8s_utils.</span></span><span class="sig-name descname"><span class="pre">qps_to_replicas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_qps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_qp_replica</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_utilization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/k8s_utils.html#qps_to_replicas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.k8s_utils.qps_to_replicas" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.k8s_utils.</span></span><span class="sig-name descname"><span class="pre">qps_to_replicas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_qps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_qp_replica</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_utilization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/k8s_utils.html#qps_to_replicas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.k8s_utils.qps_to_replicas" title="Link to this definition">#</a></dt>
 <dd><p>Provide a rough estimate of the number of replicas to support a given
 load (queries per second)</p>
 <dl class="field-list simple">
@@ -561,7 +637,7 @@ your service call takes</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.k8s_utils.replicas_to_qps">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.k8s_utils.</span></span><span class="sig-name descname"><span class="pre">replicas_to_qps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_replicas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_qp_replica</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_utilization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/k8s_utils.html#replicas_to_qps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.k8s_utils.replicas_to_qps" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.k8s_utils.</span></span><span class="sig-name descname"><span class="pre">replicas_to_qps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_replicas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_qp_replica</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_utilization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/k8s_utils.html#replicas_to_qps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.k8s_utils.replicas_to_qps" title="Link to this definition">#</a></dt>
 <dd><p>Provide a rough estimate of the queries per second supported by a number of replicas</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -583,10 +659,10 @@ your service call takes</p></li>
 
 </section>
 <section id="module-recommenders.utils.notebook_utils">
-<span id="notebook-utilities"></span><h2>Notebook utilities<a class="headerlink" href="#module-recommenders.utils.notebook_utils" title="Permalink to this heading">#</a></h2>
+<span id="notebook-utilities"></span><h2>Notebook utilities<a class="headerlink" href="#module-recommenders.utils.notebook_utils" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_utils.execute_notebook">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">execute_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_notebook</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_notebook</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'python3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#execute_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.execute_notebook" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">execute_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_notebook</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_notebook</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'python3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#execute_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.execute_notebook" title="Link to this definition">#</a></dt>
 <dd><p>Execute a notebook while passing parameters to it.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -609,7 +685,7 @@ modification and code cells to set parameters that need to be read.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_utils.is_databricks">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">is_databricks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#is_databricks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.is_databricks" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">is_databricks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#is_databricks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.is_databricks" title="Link to this definition">#</a></dt>
 <dd><p>Check if the module is running on Databricks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -624,7 +700,7 @@ False otherwise.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_utils.is_jupyter">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">is_jupyter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#is_jupyter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.is_jupyter" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">is_jupyter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#is_jupyter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.is_jupyter" title="Link to this definition">#</a></dt>
 <dd><p>Check if the module is running on Jupyter notebook/console.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -639,7 +715,7 @@ False otherwise.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_utils.read_notebook">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">read_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#read_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.read_notebook" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">read_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#read_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.read_notebook" title="Link to this definition">#</a></dt>
 <dd><p>Read the metadata stored in the notebook’s output source code.
 This function is similar to snapbook.read_notebook().</p>
 <dl class="field-list simple">
@@ -657,7 +733,7 @@ This function is similar to snapbook.read_notebook().</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_utils.store_metadata">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">store_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#store_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.store_metadata" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_utils.</span></span><span class="sig-name descname"><span class="pre">store_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_utils.html#store_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_utils.store_metadata" title="Link to this definition">#</a></dt>
 <dd><p>Store data in the notebook’s output source code.
 This function is similar to snapbook.glue().</p>
 <dl class="field-list simple">
@@ -670,36 +746,36 @@ This function is similar to snapbook.glue().</p>
 </dl>
 </dd></dl>
 
-<span class="target" id="module-recommenders.utils.notebook_memory_management"></span><dl class="py function">
+<dl class="py function" id="module-recommenders.utils.notebook_memory_management">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_memory_management.pre_run_cell">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">pre_run_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#pre_run_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.pre_run_cell" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">pre_run_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#pre_run_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.pre_run_cell" title="Link to this definition">#</a></dt>
 <dd><p>Capture current time before we execute the current command</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_memory_management.start_watching_memory">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">start_watching_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#start_watching_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.start_watching_memory" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">start_watching_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#start_watching_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.start_watching_memory" title="Link to this definition">#</a></dt>
 <dd><p>Register memory profiling tools to IPython instance.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_memory_management.stop_watching_memory">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">stop_watching_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#stop_watching_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.stop_watching_memory" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">stop_watching_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#stop_watching_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.stop_watching_memory" title="Link to this definition">#</a></dt>
 <dd><p>Unregister memory profiling tools from IPython instance.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.notebook_memory_management.watch_memory">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">watch_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#watch_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.watch_memory" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.notebook_memory_management.</span></span><span class="sig-name descname"><span class="pre">watch_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/notebook_memory_management.html#watch_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.notebook_memory_management.watch_memory" title="Link to this definition">#</a></dt>
 <dd><p>Bring in the global memory usage value from the previous iteration</p>
 </dd></dl>
 
 </section>
 <section id="module-recommenders.utils.python_utils">
-<span id="python-utilities"></span><h2>Python utilities<a class="headerlink" href="#module-recommenders.utils.python_utils" title="Permalink to this heading">#</a></h2>
+<span id="python-utilities"></span><h2>Python utilities<a class="headerlink" href="#module-recommenders.utils.python_utils" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.binarize">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">binarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#binarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.binarize" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">binarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#binarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.binarize" title="Link to this definition">#</a></dt>
 <dd><p>Binarize the values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -719,7 +795,7 @@ This function is similar to snapbook.glue().</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.cosine_similarity">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">cosine_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#cosine_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.cosine_similarity" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">cosine_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#cosine_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.cosine_similarity" title="Link to this definition">#</a></dt>
 <dd><p>Helper method to calculate the Cosine similarity of a matrix of
 co-occurrences.</p>
 <p>Cosine similarity can be interpreted as the angle between the i-th
@@ -739,7 +815,7 @@ and j-th item.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.exponential_decay">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">exponential_decay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#exponential_decay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.exponential_decay" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">exponential_decay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#exponential_decay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.exponential_decay" title="Link to this definition">#</a></dt>
 <dd><p>Compute decay factor for a given value based on an exponential decay.</p>
 <p>Values greater than <cite>max_val</cite> will be set to 1.</p>
 <dl class="field-list simple">
@@ -761,7 +837,7 @@ and j-th item.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.get_top_k_scored_items">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">get_top_k_scored_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#get_top_k_scored_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.get_top_k_scored_items" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">get_top_k_scored_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#get_top_k_scored_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.get_top_k_scored_items" title="Link to this definition">#</a></dt>
 <dd><p>Extract top K items from a matrix of scores for each user-item pair, optionally sort results per user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -786,7 +862,7 @@ and j-th item.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.inclusion_index">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">inclusion_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#inclusion_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.inclusion_index" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">inclusion_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#inclusion_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.inclusion_index" title="Link to this definition">#</a></dt>
 <dd><p>Helper method to calculate the Inclusion Index of a matrix of
 co-occurrences.</p>
 <p>Inclusion index measures the overlap between items.</p>
@@ -805,7 +881,7 @@ co-occurrences.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.jaccard">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">jaccard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#jaccard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.jaccard" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">jaccard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#jaccard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.jaccard" title="Link to this definition">#</a></dt>
 <dd><p>Helper method to calculate the Jaccard similarity of a matrix of
 co-occurrences.  When comparing Jaccard with count co-occurrence
 and lift similarity, count favours predictability, meaning that
@@ -829,7 +905,7 @@ compromise between the two.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.lexicographers_mutual_information">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">lexicographers_mutual_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#lexicographers_mutual_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.lexicographers_mutual_information" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">lexicographers_mutual_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#lexicographers_mutual_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.lexicographers_mutual_information" title="Link to this definition">#</a></dt>
 <dd><p>Helper method to calculate the Lexicographers Mutual Information of
 a matrix of co-occurrences.</p>
 <p>Due to the bias of mutual information for low frequency items,
@@ -850,7 +926,7 @@ multiplying it by the co-occurrence frequency.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.lift">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#lift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.lift" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#lift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.lift" title="Link to this definition">#</a></dt>
 <dd><p>Helper method to calculate the Lift of a matrix of
 co-occurrences. In comparison with basic co-occurrence and Jaccard
 similarity, lift favours discoverability and serendipity, as
@@ -871,7 +947,7 @@ Jaccard that is a compromise between the two.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.mutual_information">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">mutual_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#mutual_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.mutual_information" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">mutual_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooccurrence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#mutual_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.mutual_information" title="Link to this definition">#</a></dt>
 <dd><p>Helper method to calculate the Mutual Information of a matrix of
 co-occurrences.</p>
 <p>Mutual information is a measurement of the amount of information
@@ -891,7 +967,7 @@ explained by the i-th j-th item column vector.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.python_utils.rescale">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">rescale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#rescale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.rescale" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.python_utils.</span></span><span class="sig-name descname"><span class="pre">rescale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/python_utils.html#rescale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.python_utils.rescale" title="Link to this definition">#</a></dt>
 <dd><p>Rescale/normalize the data to be within the range <cite>[new_min, new_max]</cite>
 If data_min and data_max are explicitly provided, they will be used
 as the old min/max values instead of taken from the data.</p>
@@ -921,10 +997,10 @@ the min/max of the old scale.</p>
 
 </section>
 <section id="module-recommenders.utils.spark_utils">
-<span id="spark-utilities"></span><h2>Spark utilities<a class="headerlink" href="#module-recommenders.utils.spark_utils" title="Permalink to this heading">#</a></h2>
+<span id="spark-utilities"></span><h2>Spark utilities<a class="headerlink" href="#module-recommenders.utils.spark_utils" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.spark_utils.start_or_get_spark">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.spark_utils.</span></span><span class="sig-name descname"><span class="pre">start_or_get_spark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sample'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local[*]'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'10g'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repositories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/spark_utils.html#start_or_get_spark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.spark_utils.start_or_get_spark" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.spark_utils.</span></span><span class="sig-name descname"><span class="pre">start_or_get_spark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sample'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local[*]'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'10g'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repositories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/spark_utils.html#start_or_get_spark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.spark_utils.start_or_get_spark" title="Link to this definition">#</a></dt>
 <dd><p>Start Spark if not started</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -949,20 +1025,20 @@ the min/max of the old scale.</p>
 
 </section>
 <section id="module-recommenders.utils.tf_utils">
-<span id="tensorflow-utilities"></span><h2>Tensorflow utilities<a class="headerlink" href="#module-recommenders.utils.tf_utils" title="Permalink to this heading">#</a></h2>
+<span id="tensorflow-utilities"></span><h2>Tensorflow utilities<a class="headerlink" href="#module-recommenders.utils.tf_utils" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">MetricsLogger</span></span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">MetricsLogger</span></span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger" title="Link to this definition">#</a></dt>
 <dd><p>Metrics logger</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.__init__" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.__init__" title="Link to this definition">#</a></dt>
 <dd><p>Initializer</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger.get_log">
-<span class="sig-name descname"><span class="pre">get_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.get_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.get_log" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.get_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.get_log" title="Link to this definition">#</a></dt>
 <dd><p>Getter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -976,7 +1052,7 @@ the min/max of the old scale.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.MetricsLogger.log">
-<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.log" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#MetricsLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.MetricsLogger.log" title="Link to this definition">#</a></dt>
 <dd><p>Log metrics. Each metric’s log will be stored in the corresponding list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -992,7 +1068,7 @@ the min/max of the old scale.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.build_optimizer">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">build_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#build_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.build_optimizer" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">build_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#build_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.build_optimizer" title="Link to this definition">#</a></dt>
 <dd><p>Get an optimizer for TensorFlow high-level API Estimator.</p>
 <p>Available options are: <cite>adadelta</cite>, <cite>adagrad</cite>, <cite>adam</cite>, <cite>ftrl</cite>, <cite>momentum</cite>, <cite>rmsprop</cite> or <cite>sgd</cite>.</p>
 <dl class="field-list simple">
@@ -1014,7 +1090,7 @@ the min/max of the old scale.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.evaluation_log_hook">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">evaluation_log_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">every_n_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_fns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">eval_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#evaluation_log_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.evaluation_log_hook" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">evaluation_log_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">every_n_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_fns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">eval_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#evaluation_log_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.evaluation_log_hook" title="Link to this definition">#</a></dt>
 <dd><p>Evaluation log hook for TensorFlow high-level API Estimator.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1035,7 +1111,7 @@ E.g., define a subclass of Logger for AzureML logging.</p></li>
 <li><p><strong>model_dir</strong> (<em>str</em>) – Model directory to save the summaries to. If None, does not record.</p></li>
 <li><p><strong>batch_size</strong> (<em>int</em>) – Number of samples fed into the model at a time.
 Note, the batch size doesn’t affect on evaluation results.</p></li>
-<li><p><strong>eval_fns</strong> (<em>iterable of functions</em>) – List of evaluation functions that have signature of
+<li><p><strong>eval_fns</strong> (<em>iterable</em><em> of </em><em>functions</em>) – List of evaluation functions that have signature of
 <cite>(true_df, prediction_df, **eval_kwargs)</cite>-&gt;`float`. If None, loss is calculated on <cite>true_df</cite>.</p></li>
 <li><p><strong>eval_kwargs</strong> – Evaluation function’s keyword arguments.
 Note, prediction column name should be ‘prediction’</p></li>
@@ -1052,7 +1128,7 @@ Note, prediction column name should be ‘prediction’</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.export_model">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_input_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_input_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_feat_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#export_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.export_model" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_input_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_input_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_feat_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#export_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.export_model" title="Link to this definition">#</a></dt>
 <dd><p>Export TensorFlow estimator (model).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1075,7 +1151,7 @@ Note, prediction column name should be ‘prediction’</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.pandas_input_fn">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_input_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#pandas_input_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.pandas_input_fn" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_input_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#pandas_input_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.pandas_input_fn" title="Link to this definition">#</a></dt>
 <dd><p>Pandas input function for TensorFlow high-level API Estimator.
 This function returns a <cite>tf.data.Dataset</cite> function.</p>
 <div class="admonition note">
@@ -1105,7 +1181,7 @@ For more information, see <a class="reference external" href="https://www.tensor
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.tf_utils.pandas_input_fn_for_saved_model">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_input_fn_for_saved_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_name_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#pandas_input_fn_for_saved_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.tf_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_input_fn_for_saved_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_name_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/tf_utils.html#pandas_input_fn_for_saved_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model" title="Link to this definition">#</a></dt>
 <dd><p>Pandas input function for TensorFlow SavedModel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1126,10 +1202,10 @@ For more information, see <a class="reference external" href="https://www.tensor
 
 </section>
 <section id="module-recommenders.utils.timer">
-<span id="timer"></span><h2>Timer<a class="headerlink" href="#module-recommenders.utils.timer" title="Permalink to this heading">#</a></h2>
+<span id="timer"></span><h2>Timer<a class="headerlink" href="#module-recommenders.utils.timer" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="recommenders.utils.timer.Timer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.utils.timer.</span></span><span class="sig-name descname"><span class="pre">Timer</span></span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.utils.timer.</span></span><span class="sig-name descname"><span class="pre">Timer</span></span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer" title="Link to this definition">#</a></dt>
 <dd><p>Timer class.</p>
 <p><a class="reference external" href="https://github.com/miguelgfierro/pybase/blob/2298172a13fb4a243754acbc6029a4a2dcf72c20/log_base/timer.py">Original code</a>.</p>
 <p class="rubric">Examples</p>
@@ -1150,12 +1226,12 @@ For more information, see <a class="reference external" href="https://www.tensor
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.utils.timer.Timer.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer.__init__" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer.__init__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="recommenders.utils.timer.Timer.interval">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">interval</span></span><a class="headerlink" href="#recommenders.utils.timer.Timer.interval" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">interval</span></span><a class="headerlink" href="#recommenders.utils.timer.Timer.interval" title="Link to this definition">#</a></dt>
 <dd><p>Get time interval in seconds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1169,13 +1245,13 @@ For more information, see <a class="reference external" href="https://www.tensor
 
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.utils.timer.Timer.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer.start" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer.start" title="Link to this definition">#</a></dt>
 <dd><p>Start the timer.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.utils.timer.Timer.stop">
-<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer.stop" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/timer.html#Timer.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.timer.Timer.stop" title="Link to this definition">#</a></dt>
 <dd><p>Stop the timer. Calculate the interval in seconds.</p>
 </dd></dl>
 
@@ -1183,10 +1259,10 @@ For more information, see <a class="reference external" href="https://www.tensor
 
 </section>
 <section id="module-recommenders.utils.plot">
-<span id="plot-utilities"></span><h2>Plot utilities<a class="headerlink" href="#module-recommenders.utils.plot" title="Permalink to this heading">#</a></h2>
+<span id="plot-utilities"></span><h2>Plot utilities<a class="headerlink" href="#module-recommenders.utils.plot" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="recommenders.utils.plot.line_graph">
-<span class="sig-prename descclassname"><span class="pre">recommenders.utils.plot.</span></span><span class="sig-name descname"><span class="pre">line_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_guides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/plot.html#line_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.plot.line_graph" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recommenders.utils.plot.</span></span><span class="sig-name descname"><span class="pre">line_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_guides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(5,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/utils/plot.html#line_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.utils.plot.line_graph" title="Link to this definition">#</a></dt>
 <dd><p>Plot line graph(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1267,15 +1343,83 @@ pass <cite>(1,2,1)</cite> for the first subplot and <cite>(1,2,2)</cite> for the
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.general_utils">General utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.gpu_utils">GPU utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.k8s_utils">Kubernetes utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.notebook_utils">Notebook utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.python_utils">Python utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.spark_utils">Spark utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.tf_utils">Tensorflow utilities</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.timer">Timer</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.plot">Plot utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.general_utils">General utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.general_utils.get_number_processors"><code class="docutils literal notranslate"><span class="pre">get_number_processors()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.general_utils.get_physical_memory"><code class="docutils literal notranslate"><span class="pre">get_physical_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.general_utils.invert_dictionary"><code class="docutils literal notranslate"><span class="pre">invert_dictionary()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.gpu_utils">GPU utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.clear_memory_all_gpus"><code class="docutils literal notranslate"><span class="pre">clear_memory_all_gpus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_cuda_version"><code class="docutils literal notranslate"><span class="pre">get_cuda_version()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_cudnn_version"><code class="docutils literal notranslate"><span class="pre">get_cudnn_version()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_gpu_info"><code class="docutils literal notranslate"><span class="pre">get_gpu_info()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.gpu_utils.get_number_gpus"><code class="docutils literal notranslate"><span class="pre">get_number_gpus()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.k8s_utils">Kubernetes utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.k8s_utils.nodes_to_replicas"><code class="docutils literal notranslate"><span class="pre">nodes_to_replicas()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.k8s_utils.qps_to_replicas"><code class="docutils literal notranslate"><span class="pre">qps_to_replicas()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.k8s_utils.replicas_to_qps"><code class="docutils literal notranslate"><span class="pre">replicas_to_qps()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.notebook_utils">Notebook utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.execute_notebook"><code class="docutils literal notranslate"><span class="pre">execute_notebook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.is_databricks"><code class="docutils literal notranslate"><span class="pre">is_databricks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.is_jupyter"><code class="docutils literal notranslate"><span class="pre">is_jupyter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.read_notebook"><code class="docutils literal notranslate"><span class="pre">read_notebook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_utils.store_metadata"><code class="docutils literal notranslate"><span class="pre">store_metadata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.pre_run_cell"><code class="docutils literal notranslate"><span class="pre">pre_run_cell()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.start_watching_memory"><code class="docutils literal notranslate"><span class="pre">start_watching_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.stop_watching_memory"><code class="docutils literal notranslate"><span class="pre">stop_watching_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.notebook_memory_management.watch_memory"><code class="docutils literal notranslate"><span class="pre">watch_memory()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.python_utils">Python utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.binarize"><code class="docutils literal notranslate"><span class="pre">binarize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.exponential_decay"><code class="docutils literal notranslate"><span class="pre">exponential_decay()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.get_top_k_scored_items"><code class="docutils literal notranslate"><span class="pre">get_top_k_scored_items()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.inclusion_index"><code class="docutils literal notranslate"><span class="pre">inclusion_index()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.jaccard"><code class="docutils literal notranslate"><span class="pre">jaccard()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.lexicographers_mutual_information"><code class="docutils literal notranslate"><span class="pre">lexicographers_mutual_information()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.lift"><code class="docutils literal notranslate"><span class="pre">lift()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.mutual_information"><code class="docutils literal notranslate"><span class="pre">mutual_information()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.python_utils.rescale"><code class="docutils literal notranslate"><span class="pre">rescale()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.spark_utils">Spark utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.spark_utils.start_or_get_spark"><code class="docutils literal notranslate"><span class="pre">start_or_get_spark()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.tf_utils">Tensorflow utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger"><code class="docutils literal notranslate"><span class="pre">MetricsLogger</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger.__init__"><code class="docutils literal notranslate"><span class="pre">MetricsLogger.__init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger.get_log"><code class="docutils literal notranslate"><span class="pre">MetricsLogger.get_log()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.MetricsLogger.log"><code class="docutils literal notranslate"><span class="pre">MetricsLogger.log()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.build_optimizer"><code class="docutils literal notranslate"><span class="pre">build_optimizer()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.evaluation_log_hook"><code class="docutils literal notranslate"><span class="pre">evaluation_log_hook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.export_model"><code class="docutils literal notranslate"><span class="pre">export_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.pandas_input_fn"><code class="docutils literal notranslate"><span class="pre">pandas_input_fn()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model"><code class="docutils literal notranslate"><span class="pre">pandas_input_fn_for_saved_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.timer">Timer</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer"><code class="docutils literal notranslate"><span class="pre">Timer</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.__init__"><code class="docutils literal notranslate"><span class="pre">Timer.__init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.interval"><code class="docutils literal notranslate"><span class="pre">Timer.interval</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.start"><code class="docutils literal notranslate"><span class="pre">Timer.start()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.timer.Timer.stop"><code class="docutils literal notranslate"><span class="pre">Timer.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.utils.plot">Plot utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.utils.plot.line_graph"><code class="docutils literal notranslate"><span class="pre">line_graph()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -1300,7 +1444,7 @@ By Recommenders contributors
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>
@@ -1324,8 +1468,8 @@ By Recommenders contributors
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>

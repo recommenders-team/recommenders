@@ -8,20 +8,14 @@ msgstr ""
 "Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Baixar arquivo fonte"
+
 msgid "suggest edit"
 msgstr "sugerir edição"
 
-msgid "Last updated on"
-msgstr "Última atualização em"
-
-msgid "Edit this page"
-msgstr "Edite essa página"
-
-msgid "Launch"
-msgstr "Lançamento"
-
-msgid "Print to PDF"
-msgstr "Imprimir em PDF"
+msgid "Toggle navigation"
+msgstr "Alternar de navegação"
 
 msgid "open issue"
 msgstr "questão aberta"
@@ -29,47 +23,53 @@ msgstr "questão aberta"
 msgid "Download notebook file"
 msgstr "Baixar arquivo de notebook"
 
-msgid "Toggle navigation"
-msgstr "Alternar de navegação"
-
-msgid "Source repository"
-msgstr "Repositório fonte"
-
-msgid "By the"
-msgstr "Pelo"
-
-msgid "next page"
-msgstr "próxima página"
-
 msgid "repository"
 msgstr "repositório"
 
-msgid "Sphinx Book Theme"
-msgstr "Tema do livro Sphinx"
+msgid "Theme by the"
+msgstr "Tema por"
 
-msgid "Download source file"
-msgstr "Baixar arquivo fonte"
-
-msgid "Contents"
-msgstr "Conteúdo"
-
-msgid "By"
-msgstr "De"
-
-msgid "Copyright"
-msgstr "direito autoral"
-
-msgid "Fullscreen mode"
-msgstr "Modo tela cheia"
-
-msgid "Open an issue"
-msgstr "Abra um problema"
-
-msgid "previous page"
-msgstr "página anterior"
+msgid "Print to PDF"
+msgstr "Imprimir em PDF"
 
 msgid "Download this page"
 msgstr "Baixe esta página"
 
-msgid "Theme by the"
-msgstr "Tema por"
+msgid "Copyright"
+msgstr "direito autoral"
+
+msgid "Last updated on"
+msgstr "Última atualização em"
+
+msgid "Launch"
+msgstr "Lançamento"
+
+msgid "Open an issue"
+msgstr "Abra um problema"
+
+msgid "Fullscreen mode"
+msgstr "Modo tela cheia"
+
+msgid "Sphinx Book Theme"
+msgstr "Tema do livro Sphinx"
+
+msgid "Contents"
+msgstr "Conteúdo"
+
+msgid "Edit this page"
+msgstr "Edite essa página"
+
+msgid "next page"
+msgstr "próxima página"
+
+msgid "Source repository"
+msgstr "Repositório fonte"
+
+msgid "By"
+msgstr "De"
+
+msgid "By the"
+msgstr "Pelo"
+
+msgid "previous page"
+msgstr "página anterior"

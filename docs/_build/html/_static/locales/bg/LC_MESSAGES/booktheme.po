@@ -8,20 +8,14 @@ msgstr ""
 "Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Изтеглете изходния файл"
+
 msgid "suggest edit"
 msgstr "предложи редактиране"
 
-msgid "Last updated on"
-msgstr "Последна актуализация на"
-
-msgid "Edit this page"
-msgstr "Редактирайте тази страница"
-
-msgid "Launch"
-msgstr "Стартиране"
-
-msgid "Print to PDF"
-msgstr "Печат в PDF"
+msgid "Toggle navigation"
+msgstr "Превключване на навигацията"
 
 msgid "open issue"
 msgstr "отворен брой"
@@ -29,47 +23,53 @@ msgstr "отворен брой"
 msgid "Download notebook file"
 msgstr "Изтеглете файла на бележника"
 
-msgid "Toggle navigation"
-msgstr "Превключване на навигацията"
-
-msgid "Source repository"
-msgstr "Хранилище на източника"
-
-msgid "By the"
-msgstr "По"
-
-msgid "next page"
-msgstr "Следваща страница"
-
 msgid "repository"
 msgstr "хранилище"
 
-msgid "Sphinx Book Theme"
-msgstr "Тема на книгата Sphinx"
+msgid "Theme by the"
+msgstr "Тема от"
 
-msgid "Download source file"
-msgstr "Изтеглете изходния файл"
-
-msgid "Contents"
-msgstr "Съдържание"
-
-msgid "By"
-msgstr "От"
-
-msgid "Copyright"
-msgstr "Авторско право"
-
-msgid "Fullscreen mode"
-msgstr "Режим на цял екран"
-
-msgid "Open an issue"
-msgstr "Отворете проблем"
-
-msgid "previous page"
-msgstr "предишна страница"
+msgid "Print to PDF"
+msgstr "Печат в PDF"
 
 msgid "Download this page"
 msgstr "Изтеглете тази страница"
 
-msgid "Theme by the"
-msgstr "Тема от"
+msgid "Copyright"
+msgstr "Авторско право"
+
+msgid "Last updated on"
+msgstr "Последна актуализация на"
+
+msgid "Launch"
+msgstr "Стартиране"
+
+msgid "Open an issue"
+msgstr "Отворете проблем"
+
+msgid "Fullscreen mode"
+msgstr "Режим на цял екран"
+
+msgid "Sphinx Book Theme"
+msgstr "Тема на книгата Sphinx"
+
+msgid "Contents"
+msgstr "Съдържание"
+
+msgid "Edit this page"
+msgstr "Редактирайте тази страница"
+
+msgid "next page"
+msgstr "Следваща страница"
+
+msgid "Source repository"
+msgstr "Хранилище на източника"
+
+msgid "By"
+msgstr "От"
+
+msgid "By the"
+msgstr "По"
+
+msgid "previous page"
+msgstr "предишна страница"

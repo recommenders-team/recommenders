@@ -8,20 +8,14 @@ msgstr ""
 "Language: sl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Prenesite izvorno datoteko"
+
 msgid "suggest edit"
 msgstr "predlagajte urejanje"
 
-msgid "Last updated on"
-msgstr "Nazadnje posodobljeno dne"
-
-msgid "Edit this page"
-msgstr "Uredite to stran"
-
-msgid "Launch"
-msgstr "Kosilo"
-
-msgid "Print to PDF"
-msgstr "Natisni v PDF"
+msgid "Toggle navigation"
+msgstr "Preklopi navigacijo"
 
 msgid "open issue"
 msgstr "odprto vprašanje"
@@ -29,47 +23,53 @@ msgstr "odprto vprašanje"
 msgid "Download notebook file"
 msgstr "Prenesite datoteko zvezka"
 
-msgid "Toggle navigation"
-msgstr "Preklopi navigacijo"
-
-msgid "Source repository"
-msgstr "Izvorno skladišče"
-
-msgid "By the"
-msgstr "Avtor"
-
-msgid "next page"
-msgstr "Naslednja stran"
-
 msgid "repository"
 msgstr "odlagališče"
 
-msgid "Sphinx Book Theme"
-msgstr "Tema knjige Sphinx"
+msgid "Theme by the"
+msgstr "Tema avtorja"
 
-msgid "Download source file"
-msgstr "Prenesite izvorno datoteko"
-
-msgid "Contents"
-msgstr "Vsebina"
-
-msgid "By"
-msgstr "Avtor"
-
-msgid "Copyright"
-msgstr "avtorske pravice"
-
-msgid "Fullscreen mode"
-msgstr "Celozaslonski način"
-
-msgid "Open an issue"
-msgstr "Odprite številko"
-
-msgid "previous page"
-msgstr "Prejšnja stran"
+msgid "Print to PDF"
+msgstr "Natisni v PDF"
 
 msgid "Download this page"
 msgstr "Prenesite to stran"
 
-msgid "Theme by the"
-msgstr "Tema avtorja"
+msgid "Copyright"
+msgstr "avtorske pravice"
+
+msgid "Last updated on"
+msgstr "Nazadnje posodobljeno dne"
+
+msgid "Launch"
+msgstr "Kosilo"
+
+msgid "Open an issue"
+msgstr "Odprite številko"
+
+msgid "Fullscreen mode"
+msgstr "Celozaslonski način"
+
+msgid "Sphinx Book Theme"
+msgstr "Tema knjige Sphinx"
+
+msgid "Contents"
+msgstr "Vsebina"
+
+msgid "Edit this page"
+msgstr "Uredite to stran"
+
+msgid "next page"
+msgstr "Naslednja stran"
+
+msgid "Source repository"
+msgstr "Izvorno skladišče"
+
+msgid "By"
+msgstr "Avtor"
+
+msgid "By the"
+msgstr "Avtor"
+
+msgid "previous page"
+msgstr "Prejšnja stran"

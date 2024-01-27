@@ -8,20 +8,14 @@ msgstr ""
 "Language: cs\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Stáhněte si zdrojový soubor"
+
 msgid "suggest edit"
 msgstr "navrhnout úpravy"
 
-msgid "Last updated on"
-msgstr "Naposledy aktualizováno"
-
-msgid "Edit this page"
-msgstr "Upravit tuto stránku"
-
-msgid "Launch"
-msgstr "Zahájení"
-
-msgid "Print to PDF"
-msgstr "Tisk do PDF"
+msgid "Toggle navigation"
+msgstr "Přepnout navigaci"
 
 msgid "open issue"
 msgstr "otevřené číslo"
@@ -29,47 +23,53 @@ msgstr "otevřené číslo"
 msgid "Download notebook file"
 msgstr "Stáhnout soubor poznámkového bloku"
 
-msgid "Toggle navigation"
-msgstr "Přepnout navigaci"
-
-msgid "Source repository"
-msgstr "Zdrojové úložiště"
-
-msgid "By the"
-msgstr "Podle"
-
-msgid "next page"
-msgstr "další strana"
-
 msgid "repository"
 msgstr "úložiště"
 
-msgid "Sphinx Book Theme"
-msgstr "Téma knihy Sfinga"
+msgid "Theme by the"
+msgstr "Téma od"
 
-msgid "Download source file"
-msgstr "Stáhněte si zdrojový soubor"
-
-msgid "Contents"
-msgstr "Obsah"
-
-msgid "By"
-msgstr "Podle"
-
-msgid "Copyright"
-msgstr "autorská práva"
-
-msgid "Fullscreen mode"
-msgstr "Režim celé obrazovky"
-
-msgid "Open an issue"
-msgstr "Otevřete problém"
-
-msgid "previous page"
-msgstr "předchozí stránka"
+msgid "Print to PDF"
+msgstr "Tisk do PDF"
 
 msgid "Download this page"
 msgstr "Stáhněte si tuto stránku"
 
-msgid "Theme by the"
-msgstr "Téma od"
+msgid "Copyright"
+msgstr "autorská práva"
+
+msgid "Last updated on"
+msgstr "Naposledy aktualizováno"
+
+msgid "Launch"
+msgstr "Zahájení"
+
+msgid "Open an issue"
+msgstr "Otevřete problém"
+
+msgid "Fullscreen mode"
+msgstr "Režim celé obrazovky"
+
+msgid "Sphinx Book Theme"
+msgstr "Téma knihy Sfinga"
+
+msgid "Contents"
+msgstr "Obsah"
+
+msgid "Edit this page"
+msgstr "Upravit tuto stránku"
+
+msgid "next page"
+msgstr "další strana"
+
+msgid "Source repository"
+msgstr "Zdrojové úložiště"
+
+msgid "By"
+msgstr "Podle"
+
+msgid "By the"
+msgstr "Podle"
+
+msgid "previous page"
+msgstr "předchozí stránka"

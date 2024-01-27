@@ -8,20 +8,14 @@ msgstr ""
 "Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Lataa lähdetiedosto"
+
 msgid "suggest edit"
 msgstr "ehdottaa muokkausta"
 
-msgid "Last updated on"
-msgstr "Viimeksi päivitetty"
-
-msgid "Edit this page"
-msgstr "Muokkaa tätä sivua"
-
-msgid "Launch"
-msgstr "Tuoda markkinoille"
-
-msgid "Print to PDF"
-msgstr "Tulosta PDF-tiedostoon"
+msgid "Toggle navigation"
+msgstr "Vaihda navigointia"
 
 msgid "open issue"
 msgstr "avoin ongelma"
@@ -29,47 +23,53 @@ msgstr "avoin ongelma"
 msgid "Download notebook file"
 msgstr "Lataa muistikirjatiedosto"
 
-msgid "Toggle navigation"
-msgstr "Vaihda navigointia"
-
-msgid "Source repository"
-msgstr "Lähteen arkisto"
-
-msgid "By the"
-msgstr "Mukaan"
-
-msgid "next page"
-msgstr "seuraava sivu"
-
 msgid "repository"
 msgstr "arkisto"
 
-msgid "Sphinx Book Theme"
-msgstr "Sphinx-kirjan teema"
+msgid "Theme by the"
+msgstr "Teeman tekijä"
 
-msgid "Download source file"
-msgstr "Lataa lähdetiedosto"
-
-msgid "Contents"
-msgstr "Sisällys"
-
-msgid "By"
-msgstr "Tekijä"
-
-msgid "Copyright"
-msgstr "Tekijänoikeus"
-
-msgid "Fullscreen mode"
-msgstr "Koko näytön tila"
-
-msgid "Open an issue"
-msgstr "Avaa ongelma"
-
-msgid "previous page"
-msgstr "Edellinen sivu"
+msgid "Print to PDF"
+msgstr "Tulosta PDF-tiedostoon"
 
 msgid "Download this page"
 msgstr "Lataa tämä sivu"
 
-msgid "Theme by the"
-msgstr "Teeman tekijä"
+msgid "Copyright"
+msgstr "Tekijänoikeus"
+
+msgid "Last updated on"
+msgstr "Viimeksi päivitetty"
+
+msgid "Launch"
+msgstr "Tuoda markkinoille"
+
+msgid "Open an issue"
+msgstr "Avaa ongelma"
+
+msgid "Fullscreen mode"
+msgstr "Koko näytön tila"
+
+msgid "Sphinx Book Theme"
+msgstr "Sphinx-kirjan teema"
+
+msgid "Contents"
+msgstr "Sisällys"
+
+msgid "Edit this page"
+msgstr "Muokkaa tätä sivua"
+
+msgid "next page"
+msgstr "seuraava sivu"
+
+msgid "Source repository"
+msgstr "Lähteen arkisto"
+
+msgid "By"
+msgstr "Tekijä"
+
+msgid "By the"
+msgstr "Mukaan"
+
+msgid "previous page"
+msgstr "Edellinen sivu"

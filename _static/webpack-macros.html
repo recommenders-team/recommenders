@@ -4,7 +4,7 @@
 -->
 {# Load FontAwesome icons #}
 {% macro head_pre_icons() %}
-  <link href="{{ pathto('_static/vendor/fontawesome/6.5.1/css/all.min.css', 1) }}?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="{{ pathto('_static/vendor/fontawesome/6.5.1/css/all.min.css', 1) }}?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ pathto('_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2', 1) }}" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ pathto('_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2', 1) }}" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ pathto('_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2', 1) }}" />
@@ -12,20 +12,20 @@
 
 {% macro head_pre_assets() %}
   <!-- Loaded before other Sphinx assets -->
-  <link href="{{ pathto('_static/styles/theme.css', 1) }}?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="{{ pathto('_static/styles/bootstrap.css', 1) }}?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="{{ pathto('_static/styles/pydata-sphinx-theme.css', 1) }}?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="{{ pathto('_static/styles/theme.css', 1) }}?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="{{ pathto('_static/styles/bootstrap.css', 1) }}?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="{{ pathto('_static/styles/pydata-sphinx-theme.css', 1) }}?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 {% endmacro %}
 
 {% macro head_js_preload() %}
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="{{ pathto('_static/scripts/bootstrap.js', 1) }}?digest=bd9e20870c6007c4c509" />
-<link rel="preload" as="script" href="{{ pathto('_static/scripts/pydata-sphinx-theme.js', 1) }}?digest=bd9e20870c6007c4c509" />
-  <script src="{{ pathto('_static/vendor/fontawesome/6.5.1/js/all.min.js', 1) }}?digest=bd9e20870c6007c4c509"></script>
+  <link rel="preload" as="script" href="{{ pathto('_static/scripts/bootstrap.js', 1) }}?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="{{ pathto('_static/scripts/pydata-sphinx-theme.js', 1) }}?digest=8d27b9dea8ad943066ae" />
+  <script src="{{ pathto('_static/vendor/fontawesome/6.5.1/js/all.min.js', 1) }}?digest=8d27b9dea8ad943066ae"></script>
 {% endmacro %}
 
 {% macro body_post() %}
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="{{ pathto('_static/scripts/bootstrap.js', 1) }}?digest=bd9e20870c6007c4c509"></script>
-<script src="{{ pathto('_static/scripts/pydata-sphinx-theme.js', 1) }}?digest=bd9e20870c6007c4c509"></script>
+  <script src="{{ pathto('_static/scripts/bootstrap.js', 1) }}?digest=8d27b9dea8ad943066ae"></script>
+<script src="{{ pathto('_static/scripts/pydata-sphinx-theme.js', 1) }}?digest=8d27b9dea8ad943066ae"></script>
 {% endmacro %}

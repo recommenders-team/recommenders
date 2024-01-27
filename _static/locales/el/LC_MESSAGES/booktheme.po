@@ -8,20 +8,14 @@ msgstr ""
 "Language: el\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Λήψη αρχείου προέλευσης"
+
 msgid "suggest edit"
 msgstr "προτείνω επεξεργασία"
 
-msgid "Last updated on"
-msgstr "Τελευταία ενημέρωση στις"
-
-msgid "Edit this page"
-msgstr "Επεξεργαστείτε αυτήν τη σελίδα"
-
-msgid "Launch"
-msgstr "Εκτόξευση"
-
-msgid "Print to PDF"
-msgstr "Εκτύπωση σε PDF"
+msgid "Toggle navigation"
+msgstr "Εναλλαγή πλοήγησης"
 
 msgid "open issue"
 msgstr "ανοιχτό ζήτημα"
@@ -29,47 +23,53 @@ msgstr "ανοιχτό ζήτημα"
 msgid "Download notebook file"
 msgstr "Λήψη αρχείου σημειωματάριου"
 
-msgid "Toggle navigation"
-msgstr "Εναλλαγή πλοήγησης"
-
-msgid "Source repository"
-msgstr "Αποθήκη πηγής"
-
-msgid "By the"
-msgstr "Από το"
-
-msgid "next page"
-msgstr "επόμενη σελίδα"
-
 msgid "repository"
 msgstr "αποθήκη"
 
-msgid "Sphinx Book Theme"
-msgstr "Θέμα βιβλίου Sphinx"
+msgid "Theme by the"
+msgstr "Θέμα από το"
 
-msgid "Download source file"
-msgstr "Λήψη αρχείου προέλευσης"
-
-msgid "Contents"
-msgstr "Περιεχόμενα"
-
-msgid "By"
-msgstr "Με"
-
-msgid "Copyright"
-msgstr "Πνευματική ιδιοκτησία"
-
-msgid "Fullscreen mode"
-msgstr "ΛΕΙΤΟΥΡΓΙΑ ΠΛΗΡΟΥΣ ΟΘΟΝΗΣ"
-
-msgid "Open an issue"
-msgstr "Ανοίξτε ένα ζήτημα"
-
-msgid "previous page"
-msgstr "προηγούμενη σελίδα"
+msgid "Print to PDF"
+msgstr "Εκτύπωση σε PDF"
 
 msgid "Download this page"
 msgstr "Λήψη αυτής της σελίδας"
 
-msgid "Theme by the"
-msgstr "Θέμα από το"
+msgid "Copyright"
+msgstr "Πνευματική ιδιοκτησία"
+
+msgid "Last updated on"
+msgstr "Τελευταία ενημέρωση στις"
+
+msgid "Launch"
+msgstr "Εκτόξευση"
+
+msgid "Open an issue"
+msgstr "Ανοίξτε ένα ζήτημα"
+
+msgid "Fullscreen mode"
+msgstr "ΛΕΙΤΟΥΡΓΙΑ ΠΛΗΡΟΥΣ ΟΘΟΝΗΣ"
+
+msgid "Sphinx Book Theme"
+msgstr "Θέμα βιβλίου Sphinx"
+
+msgid "Contents"
+msgstr "Περιεχόμενα"
+
+msgid "Edit this page"
+msgstr "Επεξεργαστείτε αυτήν τη σελίδα"
+
+msgid "next page"
+msgstr "επόμενη σελίδα"
+
+msgid "Source repository"
+msgstr "Αποθήκη πηγής"
+
+msgid "By"
+msgstr "Με"
+
+msgid "By the"
+msgstr "Από το"
+
+msgid "previous page"
+msgstr "προηγούμενη σελίδα"

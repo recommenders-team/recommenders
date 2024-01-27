@@ -29,17 +29,17 @@ cornac<1.15.2,>=1.1.2
 cornac<2,>=1.15.2
 
 [all]
-pytest-mock>=3.6.1
 black<21,>=18.6b4
-torch>=1.13.1
-tf-slim>=1.1.0
-pytest>=3.6.4
-fastai<2,>=1.0.46
 pyspark<3.3.0,>=2.4.5
-pytest-cov>=2.12.1
 tensorflow==2.8.4
 nvidia-ml-py3>=7.352.0
+fastai<2,>=1.0.46
+torch>=1.13.1
+pytest>=3.6.4
 pyarrow<7.0.0,>=0.12.1
+tf-slim>=1.1.0
+pytest-cov>=2.12.1
+pytest-mock>=3.6.1
 
 [dev]
 black<21,>=18.6b4

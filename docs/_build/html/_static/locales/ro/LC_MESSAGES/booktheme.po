@@ -8,20 +8,14 @@ msgstr ""
 "Language: ro\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Download source file"
+msgstr "Descărcați fișierul sursă"
+
 msgid "suggest edit"
 msgstr "sugerează editare"
 
-msgid "Last updated on"
-msgstr "Ultima actualizare la"
-
-msgid "Edit this page"
-msgstr "Editați această pagină"
-
-msgid "Launch"
-msgstr "Lansa"
-
-msgid "Print to PDF"
-msgstr "Imprimați în PDF"
+msgid "Toggle navigation"
+msgstr "Comutare navigare"
 
 msgid "open issue"
 msgstr "problema deschisă"
@@ -29,47 +23,53 @@ msgstr "problema deschisă"
 msgid "Download notebook file"
 msgstr "Descărcați fișierul notebook"
 
-msgid "Toggle navigation"
-msgstr "Comutare navigare"
-
-msgid "Source repository"
-msgstr "Depozit sursă"
-
-msgid "By the"
-msgstr "Langa"
-
-msgid "next page"
-msgstr "pagina următoare"
-
 msgid "repository"
 msgstr "repertoriu"
 
-msgid "Sphinx Book Theme"
-msgstr "Tema Sphinx Book"
+msgid "Theme by the"
+msgstr "Tema de"
 
-msgid "Download source file"
-msgstr "Descărcați fișierul sursă"
-
-msgid "Contents"
-msgstr "Cuprins"
-
-msgid "By"
-msgstr "De"
-
-msgid "Copyright"
-msgstr "Drepturi de autor"
-
-msgid "Fullscreen mode"
-msgstr "Modul ecran întreg"
-
-msgid "Open an issue"
-msgstr "Deschideți o problemă"
-
-msgid "previous page"
-msgstr "pagina anterioară"
+msgid "Print to PDF"
+msgstr "Imprimați în PDF"
 
 msgid "Download this page"
 msgstr "Descarcă această pagină"
 
-msgid "Theme by the"
-msgstr "Tema de"
+msgid "Copyright"
+msgstr "Drepturi de autor"
+
+msgid "Last updated on"
+msgstr "Ultima actualizare la"
+
+msgid "Launch"
+msgstr "Lansa"
+
+msgid "Open an issue"
+msgstr "Deschideți o problemă"
+
+msgid "Fullscreen mode"
+msgstr "Modul ecran întreg"
+
+msgid "Sphinx Book Theme"
+msgstr "Tema Sphinx Book"
+
+msgid "Contents"
+msgstr "Cuprins"
+
+msgid "Edit this page"
+msgstr "Editați această pagină"
+
+msgid "next page"
+msgstr "pagina următoare"
+
+msgid "Source repository"
+msgstr "Depozit sursă"
+
+msgid "By"
+msgstr "De"
+
+msgid "By the"
+msgstr "Langa"
+
+msgid "previous page"
+msgstr "pagina anterioară"
