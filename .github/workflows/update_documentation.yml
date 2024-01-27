@@ -8,7 +8,7 @@ name: Update Documentation
 on:
   push:
     branches:
-      - miguel/jupyter_book
+      - main
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: Install dependencies
         run: |
