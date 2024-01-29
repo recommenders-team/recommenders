@@ -226,9 +226,8 @@ class SARSingleNode:
     def fit(self, df):
         """Main fit method for SAR.
 
-        .. note::
-
-        Please make sure that `df` has no duplicates.
+        Note:
+            Please make sure that `df` has no duplicates.
 
         Args:
             df (pandas.DataFrame): User item rating dataframe (without duplicates).
