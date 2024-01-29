@@ -43,7 +43,6 @@ html:
 
 sphinx:
   extra_extensions:
-  - sphinx_inline_tabs
   - sphinx.ext.autodoc
   - sphinx.ext.doctest
   - sphinx.ext.intersphinx
