@@ -3,10 +3,7 @@
 
 import numpy as np
 import tensorflow as tf
-try:
-    from keras.layers.legacy_rnn.rnn_cell_impl import LayerRNNCell
-except:
-    from keras.layers.rnn import AbstractRNNCell as LayerRNNCell
+from keras.layers.legacy_rnn.rnn_cell_impl import LayerRNNCell
 from tensorflow.python.eager import context
 from tensorflow.python.keras import activations
 from tensorflow.python.keras import initializers

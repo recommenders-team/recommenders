@@ -12,30 +12,30 @@ from recommenders.datasets.amazon_reviews import (
 )
 from recommenders.datasets.python_splitters import python_stratified_split
 
-# try:
-from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-from recommenders.models.deeprec.deeprec_utils import (
-    prepare_hparams,
-    download_deeprec_resources,
-)
-from recommenders.models.deeprec.io.iterator import FFMTextIterator
-from recommenders.models.deeprec.io.dkn_item2item_iterator import (
-    DKNItem2itemTextIterator,
-)
-from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
-from recommenders.models.deeprec.io.nextitnet_iterator import NextItNetIterator
-from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
-from recommenders.models.deeprec.models.dkn import DKN
-from recommenders.models.deeprec.models.dkn_item2item import DKNItem2Item
-from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
-from recommenders.models.deeprec.models.sequential.nextitnet import (
-    NextItNetModel,
-)
-from recommenders.models.deeprec.models.sequential.sli_rec import SLI_RECModel
-from recommenders.models.deeprec.models.sequential.sum import SUMModel
-from recommenders.models.deeprec.models.xDeepFM import XDeepFMModel
-# except ImportError:
-#     pass  # skip this import if we are in cpu environment
+try:
+    from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+    from recommenders.models.deeprec.deeprec_utils import (
+        prepare_hparams,
+        download_deeprec_resources,
+    )
+    from recommenders.models.deeprec.io.iterator import FFMTextIterator
+    from recommenders.models.deeprec.io.dkn_item2item_iterator import (
+        DKNItem2itemTextIterator,
+    )
+    from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from recommenders.models.deeprec.io.nextitnet_iterator import NextItNetIterator
+    from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
+    from recommenders.models.deeprec.models.dkn import DKN
+    from recommenders.models.deeprec.models.dkn_item2item import DKNItem2Item
+    from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+    from recommenders.models.deeprec.models.sequential.nextitnet import (
+        NextItNetModel,
+    )
+    from recommenders.models.deeprec.models.sequential.sli_rec import SLI_RECModel
+    from recommenders.models.deeprec.models.sequential.sum import SUMModel
+    from recommenders.models.deeprec.models.xDeepFM import XDeepFMModel
+except ImportError:
+    pass  # skip this import if we are in cpu environment
 
 
 @pytest.mark.gpu
