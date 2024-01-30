@@ -69,7 +69,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "3.8"
     - name: Install azureml-core and azure-cli on a GitHub hosted server
@@ -118,7 +118,7 @@ runs:
       run: echo "code=$(cat ${{inputs.PYTEST_EXIT_CODE}})" >> $GITHUB_OUTPUT
     - name: Check Success/Failure
       if: ${{ steps.exit_status.outputs.code != 0 }}
-      uses: actions/github-script@v3
+      uses: actions/github-script@v7
       with:
         script: |
             core.setFailed('All tests did not pass!')
