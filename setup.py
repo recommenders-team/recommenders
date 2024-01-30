@@ -100,7 +100,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/recommenders-team/recommenders",
     project_urls={
-        "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
+        "Documentation": "https://recommenders-team.github.io/recommenders/intro.html",
         "Wiki": "https://github.com/recommenders-team/recommenders/wiki",
     },
     author="Recommenders contributors",
