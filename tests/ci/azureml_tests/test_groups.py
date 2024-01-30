@@ -66,26 +66,26 @@ nightly_test_groups = {
     "group_gpu_001": [  # Total group time: 1937.01s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/recommenders/recommender/test_deeprec_utils.py",  # 2.91
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator",  # 0.74s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator",  # 0.74s
         "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_news_iterator",  # 3.04s
         #
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_lightgcn",  # 6.03s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional",  # 19.45s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_lightgcn",  # 6.03s
+        "tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional",  # 19.45s
         #
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_sum",  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
         #
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s
         "tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional",  # 1167.93s
         #
-        # "tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional",  # 175.00s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional",  # 175.00s
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
     ],
     "group_gpu_002": [  # Total group time: 1896.76s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s
         # FIXME: https://github.com/microsoft/recommenders/issues/1883
         # "tests/smoke/examples/test_notebooks_gpu.py::test_xdeepfm_smoke",  # 77.93s
-        # "tests/functional/examples/test_notebooks_gpu.py::test_xdeepfm_functional",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/functional/examples/test_notebooks_gpu.py::test_xdeepfm_functional",
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_cornac_bivae_smoke",  # 67.84s
         "tests/functional/examples/test_notebooks_gpu.py::test_cornac_bivae_functional",  # 453.21s
@@ -426,13 +426,13 @@ pr_gate_test_groups = {
     ],
     "group_gpu_002": [  # Total group time:
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
         # "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
         "tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams",
         "tests/unit/recommenders/models/test_deeprec_utils.py::test_load_yaml_file",
         "tests/security/test_dependency_security.py::test_tensorflow",
@@ -449,7 +449,7 @@ pr_gate_test_groups = {
     "group_notebooks_gpu_002": [  # Total group time: 241.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/unit/examples/test_notebooks_gpu.py::test_wide_deep",
-        # "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
     ],
 }
