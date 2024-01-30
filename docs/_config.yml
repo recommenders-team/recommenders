@@ -1,0 +1,55 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+# Book settings
+# Learn more at https://jupyterbook.org/customize/config.html
+
+# To build the Jupyter Book:
+# $ jupyter-book clean docs 
+# $ jupyter-book build docs
+
+
+title: Recommenders documentation
+author: Recommenders contributors
+copyright: "2018-2024"
+logo: https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg
+
+
+# Short description about the book
+description: >-
+  Recommenders - Python utilities for building recommendation systems
+
+execute:
+  execute_notebooks           : off
+
+# Interact link settings
+notebook_interface            : "notebook"
+
+# Launch button settings
+repository:
+  url                         : https://github.com/recommenders-team/recommenders 
+  path_to_book                : /docs
+  branch                      : main
+
+launch_buttons:
+  notebook_interface          : classic
+
+# HTML-specific settings
+html:
+  favicon                     : https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg
+  home_page_in_navbar         : false
+  use_repository_button       : true
+  use_issues_button           : true
+  baseurl                     : https://recommenders-team.github.io/recommenders/
+
+sphinx:
+  extra_extensions:
+  - sphinx.ext.autodoc
+  - sphinx.ext.doctest
+  - sphinx.ext.intersphinx
+  - sphinx.ext.ifconfig
+  - sphinx.ext.napoleon       # To render Google format docstrings
+  - sphinx.ext.viewcode       # Add links to highlighted source code
+
+
+

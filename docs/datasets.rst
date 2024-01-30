@@ -75,7 +75,6 @@ this impression. To protect user privacy, each user was de-linked from the produ
     and Ming Zhou, "MIND: A Large-scale Dataset for News Recommendation", ACL, 2020.
 
 
-
 .. automodule:: recommenders.datasets.mind
     :members:  
 
@@ -106,47 +105,41 @@ It comes with several sizes:
 
 Download utilities 
 ******************
-
 .. automodule:: recommenders.datasets.download_utils
-    :members:
-
-
-Cosmos CLI utilities
-*********************
-
-.. automodule:: recommenders.datasets.cosmos_cli
     :members:
 
 
 Pandas dataframe utilities
 ***************************
-
 .. automodule:: recommenders.datasets.pandas_df_utils
     :members:
 
 
 Splitter utilities
 ******************
-
+Python splitters
+================
 .. automodule:: recommenders.datasets.python_splitters
     :members:
 
+PySpark splitters
+=================
 .. automodule:: recommenders.datasets.spark_splitters
     :members:
 
+Other splitters utilities
+=========================
 .. automodule:: recommenders.datasets.split_utils
     :members:
 
 
 Sparse utilities
 ****************
-
 .. automodule:: recommenders.datasets.sparse
     :members:
   
 
 Knowledge graph utilities
 *************************
-
 .. automodule:: recommenders.datasets.wikidata
     :members:

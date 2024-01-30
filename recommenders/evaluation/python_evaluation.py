@@ -33,10 +33,28 @@ from recommenders.datasets.pandas_df_utils import (
 
 
 class ColumnMismatchError(Exception):
+    """Exception raised when there is a mismatch in columns.
+
+    This exception is raised when an operation involving columns
+    encounters a mismatch or inconsistency.
+
+    Attributes:
+        message (str): Explanation of the error.
+    """
+
     pass
 
 
 class ColumnTypeMismatchError(Exception):
+    """Exception raised when there is a mismatch in column types.
+
+    This exception is raised when an operation involving column types
+    encounters a mismatch or inconsistency.
+
+    Attributes:
+        message (str): Explanation of the error.
+    """
+
     pass
 
 
@@ -63,7 +81,7 @@ def _check_column_dtypes(func):
         col_item=DEFAULT_ITEM_COL,
         col_prediction=DEFAULT_PREDICTION_COL,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Check columns of DataFrame inputs
 
@@ -81,12 +99,16 @@ def _check_column_dtypes(func):
             expected_true_columns.add(kwargs["col_rating"])
         if not has_columns(rating_true, expected_true_columns):
             raise ColumnMismatchError("Missing columns in true rating DataFrame")
-        
+
         if not has_columns(rating_pred, {col_user, col_item, col_prediction}):
             raise ColumnMismatchError("Missing columns in predicted rating DataFrame")
-        
-        if not has_same_base_dtype(rating_true, rating_pred, columns=[col_user, col_item]):
-            raise ColumnTypeMismatchError("Columns in provided DataFrames are not the same datatype")
+
+        if not has_same_base_dtype(
+            rating_true, rating_pred, columns=[col_user, col_item]
+        ):
+            raise ColumnTypeMismatchError(
+                "Columns in provided DataFrames are not the same datatype"
+            )
 
         return func(
             rating_true=rating_true,
@@ -95,7 +117,7 @@ def _check_column_dtypes(func):
             col_item=col_item,
             col_prediction=col_prediction,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     return check_column_dtypes_wrapper
@@ -750,7 +772,9 @@ def map_at_k(
     if df_merge is None:
         return 0.0
     else:
-        return (df_merge["rr"] / df_merge["actual"].apply(lambda x: min(x, k))).sum() / n_users
+        return (
+            df_merge["rr"] / df_merge["actual"].apply(lambda x: min(x, k))
+        ).sum() / n_users
 
 
 def get_top_k_items(
@@ -837,7 +861,7 @@ def _check_column_dtypes_diversity_serendipity(func):
         col_sim=DEFAULT_SIMILARITY_COL,
         col_relevance=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Check columns of DataFrame inputs
 
@@ -904,7 +928,7 @@ def _check_column_dtypes_diversity_serendipity(func):
             col_sim=col_sim,
             col_relevance=col_relevance,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     return check_column_dtypes_diversity_serendipity_wrapper
@@ -933,7 +957,7 @@ def _check_column_dtypes_novelty_coverage(func):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Check columns of DataFrame inputs
 
@@ -969,7 +993,7 @@ def _check_column_dtypes_novelty_coverage(func):
             col_user=col_user,
             col_item=col_item,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     return check_column_dtypes_novelty_coverage_wrapper
@@ -1006,7 +1030,6 @@ def _get_cosine_similarity(
     col_item=DEFAULT_ITEM_COL,
     col_sim=DEFAULT_SIMILARITY_COL,
 ):
-
     if item_sim_measure == "item_cooccurrence_count":
         # calculate item-item similarity based on item co-occurrence count
         df_cosine_similarity = _get_cooccurrence_similarity(

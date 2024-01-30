@@ -95,7 +95,7 @@ extras_require["experimental"] = [
 setup(
     name="recommenders",
     version=version,
-    description="Recommenders - Python utilities for building recommender systems",
+    description="Recommenders - Python utilities for building recommendation systems",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/recommenders-team/recommenders",

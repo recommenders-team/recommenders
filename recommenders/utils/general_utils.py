@@ -8,7 +8,7 @@ import psutil
 def invert_dictionary(dictionary):
     """Invert a dictionary
 
-    .. note::
+    Note:
 
         If the dictionary has unique keys and unique values, the inversion would be perfect. However, if there are
         repeated values, the inversion can take different keys
