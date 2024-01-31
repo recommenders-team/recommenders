@@ -423,10 +423,10 @@ if __name__ == "__main__":
 
     if args.dockerproc == "cpu":
         # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
-        docker_image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
+        docker_proc_type = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
     else:
         # https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
-        docker_image = "mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04"
+        docker_proc_type = "mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04"
 
     cli_auth = AzureCliAuthentication()
 
