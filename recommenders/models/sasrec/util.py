@@ -41,7 +41,7 @@ class SASRecDataSet:
             elif ncols == 2:
                 self.with_time = False
             else:
-                raise ValueError(f'3 or 2 columns must be in dataset. Given {ncols} columns')
+                raise ValueError(f"3 or 2 columns must be in dataset. Given {ncols} columns")
 
     def split(self, **kwargs):
         self.filename = kwargs.get("filename", self.filename)
