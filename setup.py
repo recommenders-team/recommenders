@@ -31,6 +31,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
+<<<<<<< HEAD
     # requires numpy and pandas>1.6 removes DataFrame.append() which is used in scrapbook.models
     "pandas>1.5.2,<1.6",
     "scikit-learn>=1.1.3,<2",  # requires scipy
@@ -69,6 +70,34 @@ install_requires = [
     # https://github.com/HypothesisWorks/hypothesis/commit/5ea8e0c3e6da1cd9fb3f302124dc74791c14db11
     "hypothesis<6.83.1",
 >>>>>>> 9364c9b7 (Add hypothesis<6.83.1)
+=======
+    "numpy>=1.19",  # 1.19 required by tensorflow 2.6
+    "pandas>1.0.3,<2",
+    "scipy>=1.0.0,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
+    "tqdm>=4.31.1,<5",
+    "matplotlib>=2.2.2,<4",
+    "scikit-learn>=0.22.1,<1.0.3",
+    "numba>=0.38.1,<1",
+    "lightfm>=1.15,<2",
+    "lightgbm>=2.2.1",
+    "memory_profiler>=0.54.0,<1",
+    "nltk>=3.4,<4",
+    "seaborn>=0.8.1,<1",
+    "transformers>=2.5.0,<5",
+    "category_encoders>=1.3.0,<2",
+    "jinja2>=2,<3.1",
+    "requests>=2.31.0,<3",
+    "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
+    "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
+    "retrying>=1.3.3",
+    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.7'",  # For generating fake datasets
+    "pandera[strategies]>=0.6.5;python_version>='3.8'",
+    "scikit-surprise>=1.0.6",
+    "hyperopt>=0.1.2,<1",
+    "ipykernel>=4.6.1,<7",
+    "jupyter>=1,<2",
+    "locust>=1,<2",
+>>>>>>> f5a15c83 (Fix pandera in Python 3.7)
 ]
 
 # shared dependencies
