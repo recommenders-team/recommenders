@@ -194,6 +194,7 @@ def create_run_config(
 
     # install recommenders
     reco_extras = "dev"
+    conda_dep.add_conda_package("anaconda::git")
     if add_gpu_dependencies and add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
