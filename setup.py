@@ -46,8 +46,8 @@ install_requires = [
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
     "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
     "retrying>=1.3.3",
-    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.7'",  # For generating fake datasets
-    "pandera[strategies]>=0.6.5;python_version>='3.8'",
+    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
+    "pandera[strategies]>=0.6.5;python_version>='3.9'",
     "scikit-surprise>=1.0.6",
     "hyperopt>=0.1.2,<1",
     "ipykernel>=4.6.1,<7",
