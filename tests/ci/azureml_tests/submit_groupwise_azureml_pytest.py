@@ -192,6 +192,10 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+    apt-get install -y wget git-all && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
 # Conda Environment
 ENV MINICONDA_VERSION py38_23.3.1-0
 ENV PATH /opt/miniconda/bin:$PATH
