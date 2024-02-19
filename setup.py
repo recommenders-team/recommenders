@@ -59,7 +59,7 @@ install_requires = [
 extras_require = {
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow==2.8.4",  # FIXME: Temporarily pinned due to issue with TF version > 2.10.1 See #2018
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
         "tf-slim>=1.1.0",
         "torch>=1.13.1",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
@@ -73,6 +73,7 @@ extras_require = {
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
+        "packaging>=20.9",     # for version comparison in test_dependency_security.py
     ],
 }
 # For the brave of heart
