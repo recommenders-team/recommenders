@@ -109,9 +109,14 @@ extras_require = {
         "locust>=2.15.1,<3",
     ],
     "gpu": [
+<<<<<<< HEAD
         "nvidia-ml-py>=11.510.69",
         # TensorFlow compiled with CUDA 11.8, cudnn 8.6.0.163
         "tensorflow~=2.12.0",
+=======
+        "nvidia-ml-py3>=7.352.0",
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
+>>>>>>> c736241b (Resolve issue #2018 (#2022))
         "tf-slim>=1.1.0",
         "torch>=2.0.1",
         "fastai>=2.7.11,<3",
@@ -122,11 +127,19 @@ extras_require = {
         "pyspark>=3.0.1,<=3.4.0",
     ],
     "dev": [
+<<<<<<< HEAD
         "black>=23.3.0,<24",
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
         "pytest-rerunfailures>=11.1.2",  # to mark flaky tests
+=======
+        "black>=18.6b4,<21",
+        "pytest>=3.6.4",
+        "pytest-cov>=2.12.1",
+        "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
+        "packaging>=20.9",     # for version comparison in test_dependency_security.py
+>>>>>>> c736241b (Resolve issue #2018 (#2022))
     ],
 }
 # For the brave of heart

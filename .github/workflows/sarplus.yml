@@ -60,10 +60,10 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
 >>>>>>> c3a70302 (Remove python 3.11)
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -115,7 +115,7 @@ jobs:
       - name: Upload Python wheel as GitHub artifact when merged into main
         # Upload the whl file of the specific python version
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: pysarplus-${{ env.sarplus_version }}-cp${{ matrix.python-version }}-wheel
           path: ${{ env.PYTHON_ROOT }}/dist/*.whl
@@ -123,7 +123,7 @@ jobs:
       - name: Upload Python source as GitHub artifact when merged into main
         # Only one pysarplus source tar file is needed
         if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: pysarplus-${{ env.sarplus_version }}-source
           path: ${{ env.PYTHON_ROOT }}/dist/*.tar.gz
@@ -150,7 +150,7 @@ jobs:
             hadoop-version: "3.3.1"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Test
         run: |
@@ -199,7 +199,7 @@ jobs:
 
       - name: Upload Scala bundle as GitHub artifact when merged into main
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sarplus-${{ env.sarplus_version }}-bundle_2.12-spark-${{ matrix.spark-version }}-jar
           path: ${{ env.SCALA_ROOT }}/target/scala-2.12/*bundle*.jar
