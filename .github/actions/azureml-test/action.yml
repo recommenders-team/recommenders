@@ -82,12 +82,10 @@ runs:
     - name: Install wheel package
       shell: bash
       run: pip install --quiet wheel
-    - name: Submit CPU tests to AzureML
+    - name: Submit tests to AzureML
       shell: bash
-      if: contains(inputs.TEST_GROUP, 'cpu')
       run: >-
         python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
-          --clustername ${{inputs.CPU_CLUSTER_NAME}} \
           --subid ${{inputs.AZUREML_TEST_SUBID}} \
           --reponame "recommenders" \
           --branch ${{ github.ref }} \
@@ -99,45 +97,10 @@ runs:
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} \
           --testgroup ${{inputs.TEST_GROUP}} \
           --disable-warnings \
-          --sha "${GITHUB_SHA}"
-    - name: Submit GPU tests to AzureML
-      shell: bash
-      if: contains(inputs.TEST_GROUP, 'gpu')
-      run: >-
-        python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
-          --clustername ${{inputs.GPU_CLUSTER_NAME}} \
-          --subid ${{inputs.AZUREML_TEST_SUBID}} \
-          --reponame "recommenders" \
-          --branch ${{ github.ref }} \
-          --rg ${{inputs.RG}} \
-          --wsname ${{inputs.WS}} \
-          --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}} \
-          --testlogs ${{inputs.TEST_LOGS_PATH}} \
-          --add_gpu_dependencies \
-          --testkind ${{inputs.TEST_KIND}} \
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} \
-          --testgroup ${{inputs.TEST_GROUP}} \
-          --disable-warnings \
-          --sha "${GITHUB_SHA}"
-    - name: Submit PySpark tests to AzureML
-      shell: bash
-      if: contains(inputs.TEST_GROUP, 'spark')
-      run: >-
-          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
-            --clustername ${{inputs.CPU_CLUSTER_NAME}} \
-            --subid ${{inputs.AZUREML_TEST_SUBID}} \
-            --reponame "recommenders" \
-            --branch ${{ github.ref }} \
-            --rg ${{inputs.RG}} \
-            --wsname ${{inputs.WS}} \
-            --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}} \
-            --testlogs ${{inputs.TEST_LOGS_PATH}} \
-            --add_spark_dependencies \
-            --testkind ${{inputs.TEST_KIND}} \
-            --conda_pkg_python ${{inputs.PYTHON_VERSION}} \
-            --testgroup ${{inputs.TEST_GROUP}} \
-            --disable-warnings \
-            --sha "${GITHUB_SHA}"
+          --sha "${GITHUB_SHA}" \
+          --clustername $(if [[ ${{inputs.TEST_GROUP}} =~ "gpu" ]]; then echo "${{inputs.GPU_CLUSTER_NAME}}"; else echo "${{inputs.CPU_CLUSTER_NAME}}"; fi) \
+          $(if [[ ${{inputs.TEST_GROUP}} =~ "gpu" ]]; then echo "--add_gpu_dependencies"; fi) \
+          $(if [[ ${{inputs.TEST_GROUP}} =~ "spark" ]]; then echo "--add_spark_dependencies"; fi)
     - name: Get exit status
       shell: bash
       id: exit_status
