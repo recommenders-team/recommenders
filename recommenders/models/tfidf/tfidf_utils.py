@@ -115,7 +115,7 @@ class TfidfRecommender:
         return df
 
     def tokenize_text(
-        self, df_clean, text_col="cleaned_text", ngram_range=(1, 3), min_df=0
+        self, df_clean, text_col="cleaned_text", ngram_range=(1, 3), min_df=0.0
     ):
         """Tokenize the input text.
         For more details on the TfidfVectorizer, see https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
@@ -124,7 +124,7 @@ class TfidfRecommender:
             df_clean (pandas.DataFrame): Dataframe with cleaned text in the new column.
             text_col (str): Name of column containing the cleaned text.
             ngram_range (tuple of int): The lower and upper boundary of the range of n-values for different n-grams to be extracted.
-            min_df (int): When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.
+            min_df (float): When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.
 
         Returns:
             TfidfVectorizer, pandas.Series:

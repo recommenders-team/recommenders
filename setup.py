@@ -42,7 +42,7 @@ install_requires = [
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "retrying>=1.3.4,<2",
-    "scikit-learn>=1.1.3,<2",  # requires scipy
+    "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
     "scipy>=1.7.2,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
     "seaborn>=0.13.0,<1",  # requires matplotlib
