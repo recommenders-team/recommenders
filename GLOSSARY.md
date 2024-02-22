@@ -1,10 +1,15 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Glossary
 
 * **A/B testing**: Methodology to evaluate the performance of a system in production. In the context of Recommendation Systems it is used to measure a machine learning model performance in real-time. It works by randomizing an environment response into two groups A and B, typically half of the traffic goes to the machine learning model output and the other half is left without model. By comparing the metrics from A and B branches, it is possible to evaluate whether it is beneficial the use of the model or not. A test with more than two groups it is named Multi-Variate Test.
 
 * **Click-through rate (CTR)**: Ratio of the number of users who click on a link over the total number of users that visited the page. CTR is a measure of the user engagement.
 
-* **Cold-start problem**: The cold start problem concerns the recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for collaborative filtering models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using content-based filtering models or hybrid models. These models use auxiliary information like user or item metadata to overcome the cold start problem.
+* **Cold-start problem**: The cold start problem concerns the recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for collaborative filtering models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using content-based filtering models. These models use auxiliary information like user or item metadata to overcome the cold start problem.
 
 * **Collaborative filtering algorithms (CF)**: CF algorithms make prediction of what is the likelihood of a user selecting an item based on the behavior of other users [1]. It assumes that if user A likes item X and Y, and user B likes item X, user B would probably like item Y. See the [list of CF examples in Recommenders repository](examples/02_model_collaborative_filtering).
 
@@ -15,8 +20,6 @@
 * **Diversity metrics**: In the context of Recommendation Systems,  diversity applies to a set of items, and is related to how different the items are with respect to each other [4].
 
 * **Explicit interaction data**: When a user explicitly rate an item, typically between 1-5, the user is giving a value on the likeliness of the item. 
-
-* **Hybrid filtering algorithms**: This type of recommendation system can implement a combination of collaborative and content-based filtering models. See the [list of examples in Recommenders repository](examples/02_model_hybrid).
 
 * **Implicit interaction data**: Implicit interactions are views or clicks that show a certain interest of the user about a specific items. These kind of data is more common but it doesn't define the intention of the user as clearly as the explicit data.
 

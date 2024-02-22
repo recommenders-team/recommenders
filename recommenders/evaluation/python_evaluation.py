@@ -32,6 +32,32 @@ from recommenders.datasets.pandas_df_utils import (
 )
 
 
+class ColumnMismatchError(Exception):
+    """Exception raised when there is a mismatch in columns.
+
+    This exception is raised when an operation involving columns
+    encounters a mismatch or inconsistency.
+
+    Attributes:
+        message (str): Explanation of the error.
+    """
+
+    pass
+
+
+class ColumnTypeMismatchError(Exception):
+    """Exception raised when there is a mismatch in column types.
+
+    This exception is raised when an operation involving column types
+    encounters a mismatch or inconsistency.
+
+    Attributes:
+        message (str): Explanation of the error.
+    """
+
+    pass
+
+
 def _check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
@@ -53,10 +79,9 @@ def _check_column_dtypes(func):
         rating_pred,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
         col_prediction=DEFAULT_PREDICTION_COL,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Check columns of DataFrame inputs
 
@@ -68,25 +93,31 @@ def _check_column_dtypes(func):
             col_rating (str): column name for rating
             col_prediction (str): column name for prediction
         """
+        # Some ranking metrics don't have the rating column, so we don't need to check.
+        expected_true_columns = {col_user, col_item}
+        if "col_rating" in kwargs:
+            expected_true_columns.add(kwargs["col_rating"])
+        if not has_columns(rating_true, expected_true_columns):
+            raise ColumnMismatchError("Missing columns in true rating DataFrame")
 
-        if not has_columns(rating_true, [col_user, col_item, col_rating]):
-            raise ValueError("Missing columns in true rating DataFrame")
-        if not has_columns(rating_pred, [col_user, col_item, col_prediction]):
-            raise ValueError("Missing columns in predicted rating DataFrame")
+        if not has_columns(rating_pred, {col_user, col_item, col_prediction}):
+            raise ColumnMismatchError("Missing columns in predicted rating DataFrame")
+
         if not has_same_base_dtype(
             rating_true, rating_pred, columns=[col_user, col_item]
         ):
-            raise ValueError("Columns in provided DataFrames are not the same datatype")
+            raise ColumnTypeMismatchError(
+                "Columns in provided DataFrames are not the same datatype"
+            )
 
         return func(
             rating_true=rating_true,
             rating_pred=rating_pred,
             col_user=col_user,
             col_item=col_item,
-            col_rating=col_rating,
             col_prediction=col_prediction,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     return check_column_dtypes_wrapper
@@ -350,11 +381,11 @@ def merge_ranking_true_pred(
     rating_pred,
     col_user,
     col_item,
-    col_rating,
     col_prediction,
     relevancy_method,
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
+    **_,
 ):
     """Filter truth and prediction data frames on common users
 
@@ -363,7 +394,6 @@ def merge_ranking_true_pred(
         rating_pred (pandas.DataFrame): Predicted DataFrame
         col_user (str): column name for user
         col_item (str): column name for item
-        col_rating (str): column name for rating
         col_prediction (str): column name for prediction
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
@@ -424,7 +454,7 @@ def precision_at_k(
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
-    **kwargs
+    **_,
 ):
     """Precision at K.
 
@@ -440,7 +470,6 @@ def precision_at_k(
         rating_pred (pandas.DataFrame): Predicted DataFrame
         col_user (str): column name for user
         col_item (str): column name for item
-        col_rating (str): column name for rating
         col_prediction (str): column name for prediction
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
@@ -450,13 +479,11 @@ def precision_at_k(
     Returns:
         float: precision at k (min=0, max=1)
     """
-    col_rating = _get_rating_column(relevancy_method, **kwargs)
     df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
         col_item=col_item,
-        col_rating=col_rating,
         col_prediction=col_prediction,
         relevancy_method=relevancy_method,
         k=k,
@@ -478,7 +505,7 @@ def recall_at_k(
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
-    **kwargs
+    **_,
 ):
     """Recall at K.
 
@@ -487,7 +514,6 @@ def recall_at_k(
         rating_pred (pandas.DataFrame): Predicted DataFrame
         col_user (str): column name for user
         col_item (str): column name for item
-        col_rating (str): column name for rating
         col_prediction (str): column name for prediction
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
@@ -498,13 +524,11 @@ def recall_at_k(
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than
         k items exist for a user in rating_true.
     """
-    col_rating = _get_rating_column(relevancy_method, **kwargs)
     df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
         col_item=col_item,
-        col_rating=col_rating,
         col_prediction=col_prediction,
         relevancy_method=relevancy_method,
         k=k,
@@ -522,13 +546,14 @@ def ndcg_at_k(
     rating_pred,
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
     col_prediction=DEFAULT_PREDICTION_COL,
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
     score_type="binary",
     discfun_type="loge",
-    **kwargs
+    **_,
 ):
     """Normalized Discounted Cumulative Gain (nDCG).
 
@@ -553,13 +578,11 @@ def ndcg_at_k(
     Returns:
         float: nDCG at k (min=0, max=1).
     """
-    col_rating = _get_rating_column(relevancy_method, **kwargs)
     df_hit, _, _ = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
         col_item=col_item,
-        col_rating=col_rating,
         col_prediction=col_prediction,
         relevancy_method=relevancy_method,
         k=k,
@@ -616,6 +639,95 @@ def ndcg_at_k(
     return df_user["ndcg"].mean()
 
 
+@lru_cache_df(maxsize=1)
+def _get_reciprocal_rank(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
+    relevancy_method="top_k",
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+):
+    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
+        rating_true=rating_true,
+        rating_pred=rating_pred,
+        col_user=col_user,
+        col_item=col_item,
+        col_prediction=col_prediction,
+        relevancy_method=relevancy_method,
+        k=k,
+        threshold=threshold,
+    )
+
+    if df_hit.shape[0] == 0:
+        return None, n_users
+
+    # calculate reciprocal rank of items for each user and sum them up
+    df_hit_sorted = df_hit.copy()
+    df_hit_sorted["rr"] = (
+        df_hit_sorted.groupby(col_user).cumcount() + 1
+    ) / df_hit_sorted["rank"]
+    df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
+
+    return pd.merge(df_hit_sorted, df_hit_count, on=col_user), n_users
+
+
+def map(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
+    relevancy_method="top_k",
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+    **_,
+):
+    """Mean Average Precision for top k prediction items
+
+    The implementation of MAP is referenced from Spark MLlib evaluation metrics.
+    https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
+
+    A good reference can be found at:
+    http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
+
+    Note:
+        The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
+        relevant items in the ground truth data, instead of k.
+
+    Args:
+        rating_true (pandas.DataFrame): True DataFrame
+        rating_pred (pandas.DataFrame): Predicted DataFrame
+        col_user (str): column name for user
+        col_item (str): column name for item
+        col_prediction (str): column name for prediction
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
+            top k items are directly provided, so there is no need to compute the relevancy operation.
+        k (int): number of top k items per user
+        threshold (float): threshold of top items per user (optional)
+
+    Returns:
+        float: MAP (min=0, max=1)
+    """
+    df_merge, n_users = _get_reciprocal_rank(
+        rating_true=rating_true,
+        rating_pred=rating_pred,
+        col_user=col_user,
+        col_item=col_item,
+        col_prediction=col_prediction,
+        relevancy_method=relevancy_method,
+        k=k,
+        threshold=threshold,
+    )
+
+    if df_merge is None:
+        return 0.0
+    else:
+        return (df_merge["rr"] / df_merge["actual"]).sum() / n_users
+
+
 def map_at_k(
     rating_true,
     rating_pred,
@@ -625,29 +737,18 @@ def map_at_k(
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
-    **kwargs
+    **_,
 ):
     """Mean Average Precision at k
 
-    The implementation of MAP is referenced from Spark MLlib evaluation metrics.
-    https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
-
-    A good reference can be found at:
-    http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
-
-    Note:
-        1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
-        the prediction items. The naming is different from Spark.
-
-        2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
-        relevant items in the ground truth data, instead of k.
+    The implementation of MAP@k is referenced from Spark MLlib evaluation metrics.
+    https://github.com/apache/spark/blob/b938ff9f520fd4e4997938284ffa0aba9ea271fc/mllib/src/main/scala/org/apache/spark/mllib/evaluation/RankingMetrics.scala#L99
 
     Args:
         rating_true (pandas.DataFrame): True DataFrame
         rating_pred (pandas.DataFrame): Predicted DataFrame
         col_user (str): column name for user
         col_item (str): column name for item
-        col_rating (str): column name for rating
         col_prediction (str): column name for prediction
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
@@ -655,33 +756,25 @@ def map_at_k(
         threshold (float): threshold of top items per user (optional)
 
     Returns:
-        float: MAP at k (min=0, max=1).
+        float: MAP@k (min=0, max=1)
     """
-    col_rating = _get_rating_column(relevancy_method, **kwargs)
-    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
+    df_merge, n_users = _get_reciprocal_rank(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
         col_item=col_item,
-        col_rating=col_rating,
         col_prediction=col_prediction,
         relevancy_method=relevancy_method,
         k=k,
         threshold=threshold,
     )
 
-    if df_hit.shape[0] == 0:
+    if df_merge is None:
         return 0.0
-
-    # calculate reciprocal rank of items for each user and sum them up
-    df_hit_sorted = df_hit.copy()
-    df_hit_sorted["rr"] = (
-        df_hit_sorted.groupby(col_user).cumcount() + 1
-    ) / df_hit_sorted["rank"]
-    df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
-
-    df_merge = pd.merge(df_hit_sorted, df_hit_count, on=col_user)
-    return (df_merge["rr"] / df_merge["actual"]).sum() / n_users
+    else:
+        return (
+            df_merge["rr"] / df_merge["actual"].apply(lambda x: min(x, k))
+        ).sum() / n_users
 
 
 def get_top_k_items(
@@ -733,27 +826,8 @@ metrics = {
     recall_at_k.__name__: recall_at_k,
     ndcg_at_k.__name__: ndcg_at_k,
     map_at_k.__name__: map_at_k,
+    map.__name__: map,
 }
-
-
-def _get_rating_column(relevancy_method: str, **kwargs) -> str:
-    r"""Helper utility to simplify the arguments of eval metrics
-    Attemtps to address https://github.com/microsoft/recommenders/issues/1737.
-
-    Args:
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
-            top k items are directly provided, so there is no need to compute the relevancy operation.
-
-    Returns:
-        str: rating column name.
-    """
-    if relevancy_method != "top_k":
-        if "col_rating" not in kwargs:
-            raise ValueError("Expected an argument `col_rating` but wasn't found.")
-        col_rating = kwargs.get("col_rating")
-    else:
-        col_rating = kwargs.get("col_rating", DEFAULT_RATING_COL)
-    return col_rating
 
 
 # diversity metrics
@@ -787,7 +861,7 @@ def _check_column_dtypes_diversity_serendipity(func):
         col_sim=DEFAULT_SIMILARITY_COL,
         col_relevance=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Check columns of DataFrame inputs
 
@@ -854,7 +928,7 @@ def _check_column_dtypes_diversity_serendipity(func):
             col_sim=col_sim,
             col_relevance=col_relevance,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     return check_column_dtypes_diversity_serendipity_wrapper
@@ -883,7 +957,7 @@ def _check_column_dtypes_novelty_coverage(func):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Check columns of DataFrame inputs
 
@@ -919,7 +993,7 @@ def _check_column_dtypes_novelty_coverage(func):
             col_user=col_user,
             col_item=col_item,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     return check_column_dtypes_novelty_coverage_wrapper
@@ -956,7 +1030,6 @@ def _get_cosine_similarity(
     col_item=DEFAULT_ITEM_COL,
     col_sim=DEFAULT_SIMILARITY_COL,
 ):
-
     if item_sim_measure == "item_cooccurrence_count":
         # calculate item-item similarity based on item co-occurrence count
         df_cosine_similarity = _get_cooccurrence_similarity(

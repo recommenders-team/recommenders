@@ -4,6 +4,9 @@
 import os
 import pytest
 
+from recommenders.datasets import movielens
+from recommenders.datasets.python_splitters import python_stratified_split
+
 try:
     import tensorflow as tf
     from recommenders.models.deeprec.deeprec_utils import (
@@ -24,15 +27,12 @@ try:
     )
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from recommenders.datasets import movielens
-    from recommenders.datasets.python_splitters import python_stratified_split
+
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_FFM_iterator(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -52,9 +52,7 @@ def test_FFM_iterator(deeprec_resource_path):
         assert isinstance(res, tuple)
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_model_xdeepfm(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -79,9 +77,7 @@ def test_model_xdeepfm(deeprec_resource_path):
     assert model.predict(data_file, output_file) is not None
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_model_dkn(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(data_path, r"dkn.yaml")
@@ -116,10 +112,7 @@ def test_model_dkn(deeprec_resource_path):
     assert model.run_eval(valid_file) is not None
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
-@pytest.mark.sequential
 def test_model_slirec(deeprec_resource_path, deeprec_config_path):
     data_path = os.path.join(deeprec_resource_path, "slirec")
     yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
@@ -182,10 +175,7 @@ def test_model_slirec(deeprec_resource_path, deeprec_config_path):
     assert model.predict(test_file, output_file) is not None
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
-@pytest.mark.sequential
 def test_model_sum(deeprec_resource_path, deeprec_config_path):
     data_path = os.path.join(deeprec_resource_path, "slirec")
     yaml_file = os.path.join(deeprec_config_path, "sum.yaml")
@@ -248,9 +238,7 @@ def test_model_sum(deeprec_resource_path, deeprec_config_path):
     assert model.predict(valid_file, output_file) is not None
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_model_lightgcn(deeprec_resource_path, deeprec_config_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(deeprec_config_path, "lightgcn.yaml")

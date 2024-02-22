@@ -1,9 +1,10 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import itertools
+
 import json
 import pytest
+import itertools
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -250,7 +251,6 @@ def test_recommend_k_items(
 
 
 def test_get_item_based_topk(header, pandas_dummy):
-
     sar = SAR(**header)
     sar.fit(pandas_dummy)
 
@@ -299,7 +299,6 @@ def test_get_item_based_topk(header, pandas_dummy):
 
 
 def test_get_popularity_based_topk(header):
-
     train_df = pd.DataFrame(
         {
             header["col_user"]: [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],

@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Azure Machine Learning service testing pipeline
 
 The Python files to enable the AzureML tests are located in [azureml_tests](azureml_tests).

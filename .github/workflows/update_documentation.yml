@@ -1,0 +1,67 @@
+# ---------------------------------------------------------
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+name: Update Documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install -q --upgrade pip setuptools wheel
+          pip install -q --no-use-pep517 lightfm
+          pip install -q .[all]
+          pip install -q -r docs/requirements-doc.txt
+      
+      - name: List dependencies
+        run: |
+          pip list
+
+      - name: Build documentation
+        run: |
+          jupyter-book config sphinx docs/
+          sphinx-build docs docs/_build/html -b html
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Create and switch to gh-pages branch
+        run: |
+          git checkout -b gh-pages
+          git pull origin gh-pages || true
+      
+      - name: Copy built documentation
+        run: cp -r docs/_build/html/* .
+  
+      - name: Add and commit changes
+        run: |
+          git add * -f
+          git commit -m "Update documentation"
+      
+      - name: Configure pull strategy (rebase)
+        run: git config pull.rebase true
+
+      - name: Pull latest changes from remote gh-pages branch
+        run: git pull -Xtheirs origin gh-pages
+
+      - name: Push changes to gh-pages
+        run: git push origin gh-pages

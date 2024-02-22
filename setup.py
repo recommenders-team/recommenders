@@ -27,8 +27,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    # requires numpy and pandas>1.6 removes DataFrame.append() which is used in scrapbook.models
-    "pandas>1.5.2,<1.6",
+    "pandas>1.5.2,<1.6",  # requires numpy
     "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
     "lightfm>=1.17,<2",
@@ -41,23 +40,19 @@ install_requires = [
     "jinja2>=3.1.0,<3.2",
     "cornac>=1.15.2,<2",  # requires tqdm
     "retrying>=1.3.4",
-    "pandera[strategies]>=0.15.0",  # For generating fake datasets
+    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
+    "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "scikit-surprise>=1.1.3",
-    "scrapbook>=0.5.0,<1.0.0",  # requires tqdm, papermill
     "hyperopt>=0.2.7,<1",
     "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
     "locust>=2.12.2,<3",
-    # hypothesis 6.83.1 introduced a non-existent attribute '_deferred_pprinters' of IPython.lib.pretty in
-    # https://github.com/HypothesisWorks/hypothesis/commit/5ea8e0c3e6da1cd9fb3f302124dc74791c14db11
-    "hypothesis<6.83.1",
 ]
 
 # shared dependencies
 extras_require = {
     "gpu": [
         "nvidia-ml-py>=11.510.69",
-        # TensorFlow compiled with CUDA 11.8, cudnn 8.6.0.163
-        "tensorflow~=2.12.0",
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
         "tf-slim>=1.1.0",
         "torch>=2.0.1",
         "fastai>=2.7.11,<3",
@@ -71,6 +66,7 @@ extras_require = {
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
+        "packaging>=20.9",     # for version comparison in test_dependency_security.py
     ],
 }
 # For the brave of heart
@@ -84,6 +80,7 @@ extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
     # nni needs to be upgraded
     "nni==1.5",
+    "pymanopt>=0.2.5",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
@@ -93,16 +90,16 @@ extras_require["experimental"] = [
 setup(
     name="recommenders",
     version=version,
-    description="Recommenders - Python utilities for building recommender systems",
+    description="Recommenders - Python utilities for building recommendation systems",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/recommenders-team/recommenders",
     project_urls={
-        "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
-        "Wiki": "https://github.com/microsoft/recommenders/wiki",
+        "Documentation": "https://recommenders-team.github.io/recommenders/intro.html",
+        "Wiki": "https://github.com/recommenders-team/recommenders/wiki",
     },
-    author="RecoDev Team at Microsoft",
-    author_email="RecoDevTeam@service.microsoft.com",
+    author="Recommenders contributors",
+    author_email="recommenders-technical-discuss@lists.lfaidata.foundation",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
@@ -121,7 +118,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.8, <=3.10",
+    python_requires=">=3.6",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],

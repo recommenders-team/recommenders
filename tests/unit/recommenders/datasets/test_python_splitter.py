@@ -1,27 +1,26 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
+import pytest
 import pandas as pd
 import numpy as np
-import pytest
-
-from recommenders.datasets.split_utils import (
-    min_rating_filter_pandas,
-    split_pandas_data_with_ratios,
-)
-
-from recommenders.datasets.python_splitters import (
-    python_chrono_split,
-    python_random_split,
-    python_stratified_split,
-    numpy_stratified_split,
-)
 
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
+)
+from recommenders.datasets.split_utils import (
+    min_rating_filter_pandas,
+    split_pandas_data_with_ratios,
+)
+from recommenders.datasets.python_splitters import (
+    python_chrono_split,
+    python_random_split,
+    python_stratified_split,
+    numpy_stratified_split,
 )
 
 

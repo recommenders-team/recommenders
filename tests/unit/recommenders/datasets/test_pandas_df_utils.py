@@ -1,11 +1,11 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+import os
 import numpy as np
 import pandas as pd
 import pytest
 from tempfile import TemporaryDirectory
-import os
 
 from recommenders.datasets.pandas_df_utils import (
     filter_by,

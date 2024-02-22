@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 
 
-import pandas as pd
 import pytest
+import pandas as pd
 import cornac
 
 from recommenders.utils.constants import (
@@ -13,6 +13,7 @@ from recommenders.utils.constants import (
 )
 from recommenders.models.cornac.cornac_utils import predict, predict_ranking
 from recommenders.evaluation.python_evaluation import mae, rmse, ndcg_at_k, recall_at_k
+
 
 TOL = 0.001
 

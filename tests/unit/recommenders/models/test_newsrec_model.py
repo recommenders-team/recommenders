@@ -22,11 +22,11 @@ def test_nrms_component_definition(mind_resource_path):
     wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
     userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
     wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", r"nrms.yaml")
+    yaml_file = os.path.join(mind_resource_path, "utils", "nrms.yaml")
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -54,11 +54,11 @@ def test_naml_component_definition(mind_resource_path):
     wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict_all.pkl")
     vertDict_file = os.path.join(mind_resource_path, "utils", "vert_dict.pkl")
     subvertDict_file = os.path.join(mind_resource_path, "utils", "subvert_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", r"naml.yaml")
+    yaml_file = os.path.join(mind_resource_path, "utils", "naml.yaml")
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -86,11 +86,11 @@ def test_npa_component_definition(mind_resource_path):
     wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
     userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
     wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", r"npa.yaml")
+    yaml_file = os.path.join(mind_resource_path, "utils", "npa.yaml")
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -116,11 +116,11 @@ def test_lstur_component_definition(mind_resource_path):
     wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
     userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
     wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", r"lstur.yaml")
+    yaml_file = os.path.join(mind_resource_path, "utils", "lstur.yaml")
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "mind", "utils"),
             "MINDdemo_utils.zip",
         )

@@ -1,11 +1,13 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import itertools
+
 import os
+import pytest
 import numpy as np
 import pandas as pd
-import pytest
+import itertools
+
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,

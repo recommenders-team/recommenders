@@ -1,6 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import os
 import pytest
 
@@ -13,33 +14,32 @@ except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_news_iterator(mind_resource_path):
-    train_news_file = os.path.join(mind_resource_path, "train", r"news.tsv")
-    train_behaviors_file = os.path.join(mind_resource_path, "train", r"behaviors.tsv")
-    valid_news_file = os.path.join(mind_resource_path, "valid", r"news.tsv")
-    valid_behaviors_file = os.path.join(mind_resource_path, "valid", r"behaviors.tsv")
+    train_news_file = os.path.join(mind_resource_path, "train", "news.tsv")
+    train_behaviors_file = os.path.join(mind_resource_path, "train", "behaviors.tsv")
+    valid_news_file = os.path.join(mind_resource_path, "valid", "news.tsv")
+    valid_behaviors_file = os.path.join(mind_resource_path, "valid", "behaviors.tsv")
     wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
     userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
     wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", r"nrms.yaml")
+    yaml_file = os.path.join(mind_resource_path, "utils", "nrms.yaml")
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -69,35 +69,34 @@ def test_news_iterator(mind_resource_path):
         break
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_naml_iterator(mind_resource_path):
-    train_news_file = os.path.join(mind_resource_path, "train", r"news.tsv")
-    train_behaviors_file = os.path.join(mind_resource_path, "train", r"behaviors.tsv")
-    valid_news_file = os.path.join(mind_resource_path, "valid", r"news.tsv")
-    valid_behaviors_file = os.path.join(mind_resource_path, "valid", r"behaviors.tsv")
+    train_news_file = os.path.join(mind_resource_path, "train", "news.tsv")
+    train_behaviors_file = os.path.join(mind_resource_path, "train", "behaviors.tsv")
+    valid_news_file = os.path.join(mind_resource_path, "valid", "news.tsv")
+    valid_behaviors_file = os.path.join(mind_resource_path, "valid", "behaviors.tsv")
     wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding_all.npy")
     userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
     wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict_all.pkl")
     vertDict_file = os.path.join(mind_resource_path, "utils", "vert_dict.pkl")
     subvertDict_file = os.path.join(mind_resource_path, "utils", "subvert_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", r"naml.yaml")
+    yaml_file = os.path.join(mind_resource_path, "utils", "naml.yaml")
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )

@@ -1,9 +1,13 @@
-import pytest
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
 
+
+import pytest
 from unittest.mock import Mock
 
 from recommenders.tuning.nni.ncf_utils import compute_test_results
 from recommenders.datasets.movielens import MockMovielensSchema
+
 
 DATA_SIZE = 1  # setting to 1 so all IDs are unique
 
@@ -11,7 +15,7 @@ DATA_SIZE = 1  # setting to 1 so all IDs are unique
 @pytest.fixture(scope="module")
 def mock_model():
     def mock_predict(*args, is_list=False):
-        """ Mock model predict method"""
+        """Mock model predict method"""
         if is_list:
             return [0] * DATA_SIZE
         else:

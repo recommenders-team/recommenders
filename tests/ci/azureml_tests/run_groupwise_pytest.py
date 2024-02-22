@@ -12,8 +12,9 @@ import logging
 import pytest
 import argparse
 import glob
+import pkg_resources
 from azureml.core import Run
-from test_groups import nightly_test_groups, unit_test_groups
+from test_groups import nightly_test_groups, pr_gate_test_groups
 
 if __name__ == "__main__":
 
@@ -46,7 +47,13 @@ if __name__ == "__main__":
     if args.testkind == "nightly":
         test_group = nightly_test_groups[args.testgroup]
     else:
-        test_group = unit_test_groups[args.testgroup]
+        test_group = pr_gate_test_groups[args.testgroup]
+
+    logger.info(f"Python version: {sys.version}")
+
+    logger.info("Installed packages:")
+    for p in pkg_resources.working_set:
+        logger.info(f" {p.project_name}:{p.version}")
 
     logger.info("Tests to be executed")
     logger.info(str(test_group))
@@ -55,8 +62,6 @@ if __name__ == "__main__":
     # of env vars
     run = Run.get_context()
 
-    logger.info("Python version ")
-    logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
     # Add options to pytest command (Duration and disable warnings)

@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 
 
-import numpy as np
 import pytest
+import numpy as np
 
 from recommenders.utils.python_utils import (
     exponential_decay,
@@ -13,6 +13,7 @@ from recommenders.utils.python_utils import (
     binarize,
     rescale,
 )
+
 
 TOL = 0.0001
 

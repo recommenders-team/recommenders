@@ -1,11 +1,12 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import os
 import shutil
+import pytest
 import numpy as np
 import pandas as pd
-import pytest
 
 try:
     from recommenders.models.ncf.ncf_singlenode import NCF

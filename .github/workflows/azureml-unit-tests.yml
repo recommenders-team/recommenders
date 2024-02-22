@@ -19,6 +19,7 @@ on:
       - tests/**
       - '!tests/**/*.md'
       - setup.py
+    types: [opened, synchronize, reopened, ready_for_review]
 
   # Enable manual trigger
   workflow_dispatch:
@@ -35,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get test group names
         id: get_test_groups
         uses: ./.github/actions/get-test-groups
@@ -46,6 +47,7 @@ jobs:
         shell: bash
     outputs:
       test_groups: ${{ steps.get_test_groups.outputs.test_groups }}
+    if: github.event.pull_request.draft == false
 
   execute-tests:
     needs: get-test-groups
@@ -58,7 +60,7 @@ jobs:
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Execute tests
         uses: ./.github/actions/azureml-test
         id: execute_tests
@@ -69,3 +71,4 @@ jobs:
           AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           TEST_GROUP: ${{ matrix.test-group }}
+    if: github.event.pull_request.draft == false
