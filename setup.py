@@ -27,35 +27,36 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "pandas>2.0.0,<3.0.0",  # requires numpy
-    "scikit-learn>=1.1.3,<2",  # requires scipy
-    "numba>=0.57.0,<1",
+    "category-encoders>=2.6.0,<3",
+    "cornac>=1.15.2,<2",  # requires tqdm
+    "hyperopt>=0.2.7,<1",
+    "jinja2>=3.1.0,<3.2",
     "lightfm>=1.17,<2",
     "lightgbm>=4.0.0,<5",
+    "locust>=2.12.2,<3",
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
-    "seaborn>=0.13.0,<1",  # requires matplotlib
-    "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
-    "category-encoders>=2.6.0,<3",
-    "jinja2>=3.1.0,<3.2",
-    "cornac>=1.15.2,<2",  # requires tqdm
-    "retrying>=1.3.4,<2",
+    "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
+    "numba>=0.57.0,<1",
+    "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
+    "retrying>=1.3.4,<2",
+    "scikit-learn>=1.1.3,<2",  # requires scipy
     "scikit-surprise>=1.1.3",
-    "hyperopt>=0.2.7,<1",
-    "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
-    "locust>=2.12.2,<3",
+    "scipy>=1.7.2,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
+    "seaborn>=0.13.0,<1",  # requires matplotlib
+    "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
 ]
 
 # shared dependencies
 extras_require = {
     "gpu": [
+        "fastai>=2.7.11,<3",
         "nvidia-ml-py>=11.525.84",
         "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
-        "fastai>=2.7.11,<3",
     ],
     "spark": [
         "pyarrow>=10.0.1",
@@ -63,10 +64,10 @@ extras_require = {
     ],
     "dev": [
         "black>=23.3.0",
+        "packaging>=22.0",     # for version comparison in test_dependency_security.py
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
-        "packaging>=22.0",     # for version comparison in test_dependency_security.py
     ],
 }
 # For the brave of heart
