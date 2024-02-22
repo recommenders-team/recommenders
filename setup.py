@@ -33,11 +33,15 @@ if HASH is not None:
 install_requires = [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     # requires numpy and pandas>1.6 removes DataFrame.append() which is used in scrapbook.models
     "pandas>1.5.2,<1.6",
 =======
     "pandas>1.5.3,<3.0.0",  # requires numpy
 >>>>>>> a7f8346b (Update dep versions)
+=======
+    "pandas>2.0.0,<3.0.0",  # requires numpy
+>>>>>>> 9f9c8153 (Fix pandas import)
     "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
     "lightfm>=1.17,<2",
