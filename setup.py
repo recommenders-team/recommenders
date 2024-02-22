@@ -27,19 +27,19 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "pandas>1.5.2,<1.6",  # requires numpy
+    "pandas>1.5.3,<3.0.0",  # requires numpy
     "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
     "lightfm>=1.17,<2",
-    "lightgbm>=3.3.2,<5",
+    "lightgbm>=4.0.0,<5",
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
-    "seaborn>=0.12.0,<1",  # requires matplotlib
+    "seaborn>=0.13.0,<1",  # requires matplotlib
     "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
     "category-encoders>=2.6.0,<3",
     "jinja2>=3.1.0,<3.2",
     "cornac>=1.15.2,<2",  # requires tqdm
-    "retrying>=1.3.4",
+    "retrying>=1.3.4,<2",
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "scikit-surprise>=1.1.3",
@@ -51,22 +51,22 @@ install_requires = [
 # shared dependencies
 extras_require = {
     "gpu": [
-        "nvidia-ml-py>=11.510.69",
+        "nvidia-ml-py>=11.525.84",
         "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
-        "tf-slim>=1.1.0",
-        "torch>=2.0.1",
+        "tf-slim>=1.1.0",  # No python_requires in its setup.py
+        "torch>=2.0.1,<3",
         "fastai>=2.7.11,<3",
     ],
     "spark": [
         "pyarrow>=10.0.1",
-        "pyspark>=3.0.1,<=3.4.0",
+        "pyspark>=3.3.0,<=4",
     ],
     "dev": [
-        "black>=23.3.0,<24",
+        "black>=23.3.0",
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
-        "packaging>=20.9",     # for version comparison in test_dependency_security.py
+        "packaging>=22.0",     # for version comparison in test_dependency_security.py
     ],
 }
 # For the brave of heart
