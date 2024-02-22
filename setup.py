@@ -34,6 +34,7 @@ install_requires = [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     # requires numpy and pandas>1.6 removes DataFrame.append() which is used in scrapbook.models
     "pandas>1.5.2,<1.6",
 =======
@@ -44,10 +45,18 @@ install_requires = [
 >>>>>>> 9f9c8153 (Fix pandas import)
     "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
+=======
+    "category-encoders>=2.6.0,<3",
+    "cornac>=1.15.2,<2",  # requires tqdm
+    "hyperopt>=0.2.7,<1",
+    "jinja2>=3.1.0,<3.2",
+>>>>>>> 2fdf5901 (Set scipy <1.11.0 and sort dependencies alphabetically)
     "lightfm>=1.17,<2",
     "lightgbm>=4.0.0,<5",
+    "locust>=2.12.2,<3",
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
+<<<<<<< HEAD
 <<<<<<< HEAD
     "seaborn>=0.12.0,<1",  # requires matplotlib
 <<<<<<< HEAD
@@ -116,6 +125,19 @@ install_requires = [
     "jupyter>=1,<2",
     "locust>=1,<2",
 >>>>>>> f5a15c83 (Fix pandera in Python 3.7)
+=======
+    "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
+    "numba>=0.57.0,<1",
+    "pandas>2.0.0,<3.0.0",  # requires numpy
+    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
+    "pandera[strategies]>=0.15.0;python_version>='3.9'",
+    "retrying>=1.3.4,<2",
+    "scikit-learn>=1.1.3,<2",  # requires scipy
+    "scikit-surprise>=1.1.3",
+    "scipy>=1.7.2,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
+    "seaborn>=0.13.0,<1",  # requires matplotlib
+    "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
+>>>>>>> 2fdf5901 (Set scipy <1.11.0 and sort dependencies alphabetically)
 ]
 
 # shared dependencies
@@ -129,6 +151,7 @@ extras_require = {
     "gpu": [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "nvidia-ml-py>=11.510.69",
         # TensorFlow compiled with CUDA 11.8, cudnn 8.6.0.163
         "tensorflow~=2.12.0",
@@ -139,12 +162,18 @@ extras_require = {
         "tf-slim>=1.1.0",
         "torch>=2.0.1",
 =======
+=======
+        "fastai>=2.7.11,<3",
+>>>>>>> 2fdf5901 (Set scipy <1.11.0 and sort dependencies alphabetically)
         "nvidia-ml-py>=11.525.84",
         "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
+<<<<<<< HEAD
 >>>>>>> a7f8346b (Update dep versions)
         "fastai>=2.7.11,<3",
+=======
+>>>>>>> 2fdf5901 (Set scipy <1.11.0 and sort dependencies alphabetically)
     ],
     "spark": [
         "databricks-cli>=0.17.7,<1",
@@ -168,11 +197,15 @@ extras_require = {
 >>>>>>> c736241b (Resolve issue #2018 (#2022))
 =======
         "black>=23.3.0",
+        "packaging>=22.0",     # for version comparison in test_dependency_security.py
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
+<<<<<<< HEAD
         "packaging>=22.0",     # for version comparison in test_dependency_security.py
 >>>>>>> a7f8346b (Update dep versions)
+=======
+>>>>>>> 2fdf5901 (Set scipy <1.11.0 and sort dependencies alphabetically)
     ],
 }
 # For the brave of heart
