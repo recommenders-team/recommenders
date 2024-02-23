@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import fastai
 import fastprogress
+import torch
 from fastprogress.fastprogress import force_console_behavior
 
 from recommenders.utils import constants as cc
@@ -56,11 +57,11 @@ def score(
     test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 
     # map ids to embedding ids
-    u = learner.get_idx(test_df[user_col], is_item=False)
-    m = learner.get_idx(test_df[item_col], is_item=True)
+    u = learner._get_idx(test_df[user_col], is_item=False)
+    m = learner._get_idx(test_df[item_col], is_item=True)
 
     # score the pytorch model
-    pred = learner.model.forward(u, m)
+    pred = learner.model.forward(torch.column_stack(u, m))
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
