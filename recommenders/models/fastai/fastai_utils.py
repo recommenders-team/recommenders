@@ -51,7 +51,7 @@ def score(
         pandas.DataFrame: Result of recommendation
     """
     # replace values not known to the model with NaN
-    total_users, total_items = learner.data.train_ds.x.classes.values()
+    total_users, total_items = learner.dls.classes.values()
     test_df.loc[~test_df[user_col].isin(total_users), user_col] = np.nan
     test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 
