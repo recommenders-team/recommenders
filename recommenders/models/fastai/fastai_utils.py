@@ -61,7 +61,7 @@ def score(
     m = learner._get_idx(test_df[item_col], is_item=True)
 
     # score the pytorch model
-    pred = learner.model.forward(torch.column_stack(u, m))
+    pred = learner.model.forward(torch.column_stack((u, m)))
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
