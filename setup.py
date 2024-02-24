@@ -27,16 +27,15 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "category-encoders>=2.6.0,<3",
-    "cornac>=1.15.2,<2",  # requires tqdm
+    "category-encoders>=2.6.0,<3",  # requires packaging
+    "cornac>=1.15.2,<2",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
-    "jinja2>=3.1.0,<3.2",
-    "lightfm>=1.17,<2",
+    "lightfm>=1.17,<2",  # requires requests
     "lightgbm>=4.0.0,<5",
-    "locust>=2.12.2,<3",
+    "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
-    "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
+    "notebook>=7.0.0,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
@@ -44,9 +43,9 @@ install_requires = [
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
-    "scipy>=1.7.2,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
-    "seaborn>=0.13.0,<1",  # requires matplotlib
-    "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
+    "scipy>=1.10.1,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
+    "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
+    "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
 
 # shared dependencies
@@ -64,7 +63,6 @@ extras_require = {
     ],
     "dev": [
         "black>=23.3.0",
-        "packaging>=22.0",     # for version comparison in test_dependency_security.py
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
