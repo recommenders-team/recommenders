@@ -269,6 +269,7 @@ setup(
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "Programming Language :: Python :: 3.11",
 =======
 >>>>>>> b71c4ed6 (Use docker images for ubuntu 22.04)
@@ -278,6 +279,9 @@ setup(
 >>>>>>> 22ac9e25 (Add python 3.11)
 =======
 >>>>>>> c3a70302 (Remove python 3.11)
+=======
+        "Programming Language :: Python :: 3.11",
+>>>>>>> 547ab666 (Try Python 3.11)
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,

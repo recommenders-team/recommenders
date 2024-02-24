@@ -43,6 +43,7 @@ jobs:
       matrix:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         python-version: ["3.8", "3.9"]
 =======
     runs-on: ubuntu-latest
@@ -59,6 +60,9 @@ jobs:
 =======
         python-version: ["3.8", "3.9", "3.10"]
 >>>>>>> c3a70302 (Remove python 3.11)
+=======
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+>>>>>>> 547ab666 (Try Python 3.11)
     steps:
       - uses: actions/checkout@v4
 
