@@ -78,7 +78,7 @@ def hide_fastai_progress_bar():
     fastprogress.fastprogress.NO_BAR = True
     fastprogress.fastprogress.WRITER_FN = str
     master_bar, progress_bar = force_console_behavior()
-    fastai.basic_train.master_bar, fastai.basic_train.progress_bar = (
+    fastai.callback.progress.master_bar, fastai.callback.progress.progress_bar = (
         master_bar,
         progress_bar,
     )
