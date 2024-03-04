@@ -15,7 +15,7 @@ try:
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
-    from fastai.collab import collab_learner, CollabDataBunch
+    from fastai.collab import collab_learner, CollabDataLoaders
 except ImportError:
     pass  # skip this import if we are not in a GPU environment
 
@@ -181,7 +181,7 @@ def prepare_training_fastai(train, test):
     data = train.copy()
     data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
     data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
-    data = CollabDataBunch.from_df(
+    data = CollabDataLoaders.from_df(
         data,
         user_name=DEFAULT_USER_COL,
         item_name=DEFAULT_ITEM_COL,
@@ -196,7 +196,7 @@ def train_fastai(params, data):
         data, n_factors=params["n_factors"], y_range=params["y_range"], wd=params["wd"]
     )
     with Timer() as t:
-        model.fit_one_cycle(cyc_len=params["epochs"], max_lr=params["max_lr"])
+        model.fit_one_cycle(params["epochs"], lr_max=params["lr_max"])
     return model, t
 
 
