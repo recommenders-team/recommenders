@@ -29,11 +29,12 @@ Args:
 Example:
     Usually, this script is run by a DevOps pipeline. It can also be
     run from cmd line.
-    >>> python tests/ci/refac.py --clustername 'cluster-d3-v2'
-                                 --subid '12345678-9012-3456-abcd-123456789012'
-                                 --pr '666'
-                                 --reponame 'Recommenders'
-                                 --branch 'staging'
+    >>> python tests/ci/submit_groupwise_azureml_pytest.py \
+            --clustername 'cluster-d3-v2' \
+            --subid '12345678-9012-3456-abcd-123456789012' \
+            --pr '666' \
+            --reponame 'Recommenders' \
+            --branch 'staging'
 """
 import argparse
 import logging
@@ -41,7 +42,7 @@ import logging
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
 from azureml.core import Experiment
-from azureml.core.runconfig import RunConfiguration
+from azureml.core.runconfig import RunConfiguration, DockerConfiguration
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.script_run_config import ScriptRunConfig
 from azureml.core.compute import ComputeTarget, AmlCompute
@@ -175,7 +176,6 @@ def create_run_config(
 
     run_azuremlcompute = RunConfiguration()
     run_azuremlcompute.target = cpu_cluster
-    run_azuremlcompute.environment.docker.enabled = True
     if not add_gpu_dependencies:
         # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
         run_azuremlcompute.environment.docker.base_image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
@@ -292,8 +292,10 @@ def submit_experiment_to_azureml(
         source_directory=".",
         script=test,
         run_config=run_config,
+        docker_runtime_config=DockerConfiguration(use_docker=True),
         arguments=arguments,
     )
+
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete
     run.wait_for_completion(show_output=True, wait_post_processing=True)
