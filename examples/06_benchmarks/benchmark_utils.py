@@ -221,9 +221,9 @@ def predict_fastai(model, test):
 
 def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
-        total_users, total_items = model.data.train_ds.x.classes.values()
-        total_items = total_items[1:]
-        total_users = total_users[1:]
+        total_users, total_items = model.dls.classes.values()
+        total_items = np.array(total_items[1:])
+        total_users = np.array(total_users[1:])
         test_users = test[DEFAULT_USER_COL].unique()
         test_users = np.intersect1d(test_users, total_users)
         users_items = cartesian_product(test_users, total_items)
