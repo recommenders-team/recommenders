@@ -183,7 +183,7 @@ extras_require = {
         "fastai>=2.7.11,<3",
 >>>>>>> 2fdf5901 (Set scipy <1.11.0 and sort dependencies alphabetically)
         "nvidia-ml-py>=11.525.84",
-        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<3",
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
 <<<<<<< HEAD
