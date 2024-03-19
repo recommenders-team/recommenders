@@ -70,8 +70,13 @@ def score(
 
 =======
     if torch.cuda.is_available():
+<<<<<<< HEAD
         x = x.to('cuda')
 >>>>>>> 47281c8a (Add missing colon)
+=======
+        x = x.to("cuda")
+        learner.model = learner.model.to("cuda")
+>>>>>>> d8e8ac30 (Move learner.model to cuda if cuda is available)
     pred = learner.model.forward(x).detach().cpu().numpy()
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
