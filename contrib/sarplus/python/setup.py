@@ -42,6 +42,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Mathematics",
@@ -49,7 +50,7 @@ setup(
     setup_requires=["pytest-runner"],
     install_requires=DEPENDENCIES,
     tests_require=["pytest"],
-    python_requires=">=3.6,<3.11",
+    python_requires=">=3.6,<3.12",
     packages=["pysarplus"],
     package_data={"": ["VERSION"]},
     ext_modules=[
