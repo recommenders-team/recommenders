@@ -247,7 +247,9 @@ def test_wide_deep_functional(
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
             400,
-            {"auc": 0.7183},  # Don't do logloss check as SLi-Rec uses ranking loss, not a point-wise loss
+            {
+                "auc": 0.7183
+            },  # Don't do logloss check as SLi-Rec uses ranking loss, not a point-wise loss
             42,
         )
     ],
@@ -278,7 +280,7 @@ def test_slirec_quickstart_functional(
     results = read_notebook(output_notebook)
 
     assert results["auc"] == pytest.approx(expected_values["auc"], rel=TOL, abs=ABS_TOL)
-    
+
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -567,7 +569,7 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(EPOCHS=5, BATCH_SIZE=500),
+        parameters=dict(EPOCHS=5, BATCH_SIZE=200),
     )
     results = read_notebook(output_notebook)
 

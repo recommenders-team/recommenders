@@ -62,18 +62,22 @@ def score(
 
     # score the pytorch model
     x = torch.column_stack((u, m))
+
     if torch.cuda.is_available():
         x = x.to("cuda")
         learner.model = learner.model.to("cuda")
+
     pred = learner.model.forward(x).detach().cpu().numpy()
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
     scores = scores.sort_values([user_col, prediction_col], ascending=[True, False])
+
     if top_k is not None:
         top_scores = scores.groupby(user_col).head(top_k).reset_index(drop=True)
     else:
         top_scores = scores
+
     return top_scores
 
 
