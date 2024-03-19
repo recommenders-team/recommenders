@@ -62,7 +62,7 @@ def score(
 
     # score the pytorch model
     x = torch.column_stack((u, m))
-    if torch.cuda.is_available()
+    if torch.cuda.is_available():
         x = x.to('cuda')
     pred = learner.model.forward(x).detach().cpu().numpy()
     scores = pd.DataFrame(
