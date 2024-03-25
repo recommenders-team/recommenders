@@ -69,8 +69,8 @@ nightly_test_groups = {
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator",  # 0.74s
         # "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_news_iterator",  # 3.04s
         # #
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_lightgcn",  # 6.03s
-        # "tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional",  # 19.45s
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_lightgcn",  # 6.03s
+        "tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional",  # 19.45s
         #
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_sum",  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
         #
