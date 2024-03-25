@@ -75,7 +75,7 @@ nightly_test_groups = {
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_sum",  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
         #
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s
-        # "tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional",  # 1167.93s
+        "tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional",  # 1167.93s
         #
         "tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional",  # 175.00s
         # "tests/smoke/s/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
