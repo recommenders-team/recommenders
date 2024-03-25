@@ -8,15 +8,14 @@
 # it automatically gets discovered by pytest, and thus you can simply receive fixture objects by naming them as
 # an input argument in the test."
 
+import os
+import pytest
 import calendar
 import datetime
-import os
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
 import numpy as np
 import pandas as pd
-import pytest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from sklearn.model_selection import train_test_split
 
 from recommenders.utils.constants import (
@@ -322,7 +321,9 @@ def notebooks():
             folder_notebooks, "02_model_collaborative_filtering", "fm_deep_dive.ipynb"
         ),
         "lightfm_deep_dive": os.path.join(
-            folder_notebooks, "02_model_collaborative_filtering", "lightfm_deep_dive.ipynb"
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "lightfm_deep_dive.ipynb",
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "evaluation_diversity": os.path.join(
