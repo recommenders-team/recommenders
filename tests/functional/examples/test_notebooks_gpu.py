@@ -3,6 +3,7 @@
 
 import os
 import pytest
+import tensorflow as tf
 
 from recommenders.utils.gpu_utils import get_number_gpus
 from recommenders.utils.notebook_utils import execute_notebook, read_notebook
@@ -52,6 +53,8 @@ def test_ncf_functional(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
 
 
 @pytest.mark.gpu
@@ -104,6 +107,8 @@ def test_ncf_deep_dive_functional(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
 
 
 @pytest.mark.gpu
@@ -180,6 +185,8 @@ def test_xdeepfm_functional(
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
+
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -236,6 +243,8 @@ def test_wide_deep_functional(
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
+
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -280,6 +289,8 @@ def test_slirec_quickstart_functional(
     results = read_notebook(output_notebook)
 
     assert results["auc"] == pytest.approx(expected_values["auc"], rel=TOL, abs=ABS_TOL)
+
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
 
 
 @pytest.mark.gpu
@@ -337,6 +348,8 @@ def test_nrms_quickstart_functional(
         expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
     )
 
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
+
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -392,6 +405,8 @@ def test_naml_quickstart_functional(
     assert results["ndcg@10"] == pytest.approx(
         expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
     )
+
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
 
 
 @pytest.mark.gpu
@@ -449,6 +464,8 @@ def test_lstur_quickstart_functional(
         expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
     )
 
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
+
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -505,6 +522,8 @@ def test_npa_quickstart_functional(
         expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
     )
 
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
+
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -559,6 +578,8 @@ def test_lightgcn_deep_dive_functional(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
 
 
 @pytest.mark.gpu
@@ -683,3 +704,5 @@ def test_benchmark_movielens_gpu(
         assert results[value] == pytest.approx(
             expected_values_ndcg[i], rel=TOL, abs=ABS_TOL
         )
+
+    tf.keras.backend.clear_session()  # Clear the session and free up memory
