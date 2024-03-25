@@ -246,7 +246,7 @@ def test_wide_deep_functional(
             "recommenders/models/deeprec/config/sli_rec.yaml",
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
-            400,
+            300,
             {
                 "auc": 0.7183
             },  # Don't do logloss check as SLi-Rec uses ranking loss, not a point-wise loss
