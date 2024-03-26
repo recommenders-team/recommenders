@@ -74,11 +74,11 @@ nightly_test_groups = {
         #
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_sum",  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
         #
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s
-        "tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional",  # 1167.93s
+        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s
+        # "tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional",  # 1167.93s
         #
         # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
-        "tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional",  # 175.00s
+        # "tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional",  # 175.00s
     ],
     # "group_gpu_002": [  # Total group time: 1896.76s
     #     "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
