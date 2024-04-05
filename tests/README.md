@@ -213,11 +213,26 @@ Then, follow the steps below to create the AzureML infrastructure:
 2. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
     - Select the CPU VM base. Anything above 64GB of RAM, and 8 cores should be fine.
     - Select the GPU VM base. Anything above 56GB of RAM, and 6 cores, and an NVIDIA K80 should be fine.
-3. Add the subscription ID to GitHub action secrets [here](https://github.com/microsoft/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
+3. Add the subscription ID to GitHub action secrets [here](https://github.com/recommenders-team/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
 4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
 5. Select your subscription: `az account set -s $AZURE_SUBSCRIPTION_ID`.
-5. Create a Service Principal: `az ad sp create-for-rbac --name "recommenders-cicd" --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --sdk-auth`.
-6. Add the output from the Service Principal (should be a JSON blob) as an action secret `AZUREML_TEST_CREDENTIALS`.
+6. Create a Service Principal: `az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --json-auth`. This will output a JSON blob with the credentials of the Service Principal:
+    ```
+    {
+        "clientId": "XXXXXXXXXXXXXXXXXXXXX",
+        "clientSecret": "XXXXXXXXXXXXXXXXXXXXX",
+        "subscriptionId": "XXXXXXXXXXXXXXXXXXXXX",
+        "tenantId": "XXXXXXXXXXXXXXXXXXXXX",
+        "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+        "resourceManagerEndpointUrl": "https://management.azure.com/",
+        "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+        "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+        "galleryEndpointUrl": "https://gallery.azure.com/",
+        "managementEndpointUrl": "https://management.core.windows.net/"
+    }
+    ```
+7. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
+
 
 ## How to execute tests in your local environment
 

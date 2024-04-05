@@ -5,7 +5,7 @@
 import pytest
 import numpy as np
 import pandas as pd
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 
 from recommenders.evaluation.python_evaluation import (
     precision_at_k,

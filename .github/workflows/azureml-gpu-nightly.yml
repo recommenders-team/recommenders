@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get test group names
         id: get_test_groups
         uses: ./.github/actions/get-test-groups
@@ -67,11 +67,11 @@ jobs:
     strategy:
       max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
-        python-version: ['"python=3.8"', '"python=3.9"']
+        python-version: ['"python=3.8"', '"python=3.9"', '"python=3.10"', '"python=3.11"']
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Execute tests
         uses: ./.github/actions/azureml-test
         id: execute_tests

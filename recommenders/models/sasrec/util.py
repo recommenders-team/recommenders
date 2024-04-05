@@ -35,11 +35,13 @@ class SASRecDataSet:
         if self.filename:
             with open(self.filename, "r") as fr:
                 sample = fr.readline()
-            ncols = sample.strip().split(self.col_sep)
+            ncols = len(sample.strip().split(self.col_sep))
             if ncols == 3:
                 self.with_time = True
-            else:
+            elif ncols == 2:
                 self.with_time = False
+            else:
+                raise ValueError(f"3 or 2 columns must be in dataset. Given {ncols} columns")
 
     def split(self, **kwargs):
         self.filename = kwargs.get("filename", self.filename)
