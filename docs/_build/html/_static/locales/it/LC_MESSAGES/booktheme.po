@@ -8,68 +8,68 @@ msgstr ""
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Download source file"
-msgstr "Scarica il file sorgente"
-
-msgid "suggest edit"
-msgstr "suggerisci modifica"
-
-msgid "Toggle navigation"
-msgstr "Attiva / disattiva la navigazione"
-
-msgid "open issue"
-msgstr "questione aperta"
-
-msgid "Download notebook file"
-msgstr "Scarica il file del taccuino"
-
-msgid "repository"
-msgstr "repository"
-
 msgid "Theme by the"
 msgstr "Tema di"
-
-msgid "Print to PDF"
-msgstr "Stampa in PDF"
-
-msgid "Download this page"
-msgstr "Scarica questa pagina"
-
-msgid "Copyright"
-msgstr "Diritto d'autore"
-
-msgid "Last updated on"
-msgstr "Ultimo aggiornamento il"
-
-msgid "Launch"
-msgstr "Lanciare"
 
 msgid "Open an issue"
 msgstr "Apri un problema"
 
-msgid "Fullscreen mode"
-msgstr "Modalità schermo intero"
+msgid "Contents"
+msgstr "Contenuti"
+
+msgid "Download notebook file"
+msgstr "Scarica il file del taccuino"
 
 msgid "Sphinx Book Theme"
 msgstr "Tema del libro della Sfinge"
 
-msgid "Contents"
-msgstr "Contenuti"
+msgid "Fullscreen mode"
+msgstr "Modalità schermo intero"
 
 msgid "Edit this page"
 msgstr "Modifica questa pagina"
 
-msgid "next page"
-msgstr "pagina successiva"
+msgid "By"
+msgstr "Di"
+
+msgid "Copyright"
+msgstr "Diritto d'autore"
 
 msgid "Source repository"
 msgstr "Repository di origine"
 
-msgid "By"
-msgstr "Di"
+msgid "previous page"
+msgstr "pagina precedente"
+
+msgid "next page"
+msgstr "pagina successiva"
+
+msgid "Toggle navigation"
+msgstr "Attiva / disattiva la navigazione"
+
+msgid "repository"
+msgstr "repository"
+
+msgid "suggest edit"
+msgstr "suggerisci modifica"
+
+msgid "open issue"
+msgstr "questione aperta"
+
+msgid "Launch"
+msgstr "Lanciare"
+
+msgid "Print to PDF"
+msgstr "Stampa in PDF"
 
 msgid "By the"
 msgstr "Dal"
 
-msgid "previous page"
-msgstr "pagina precedente"
+msgid "Last updated on"
+msgstr "Ultimo aggiornamento il"
+
+msgid "Download source file"
+msgstr "Scarica il file sorgente"
+
+msgid "Download this page"
+msgstr "Scarica questa pagina"

@@ -33,7 +33,6 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -47,25 +46,16 @@
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
-    <script src="../../../../_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="../../../../_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
-    <script async="async" src="../../../../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/fastai/fastai_utils';</script>
     <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/fastai/fastai_utils.html" />
     <link rel="icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
@@ -344,6 +334,7 @@ document.write(`
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">fastai</span>
 <span class="kn">import</span> <span class="nn">fastprogress</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">fastprogress.fastprogress</span> <span class="kn">import</span> <span class="n">force_console_behavior</span>
 
 <span class="kn">from</span> <span class="nn">recommenders.utils</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">cc</span>
@@ -394,24 +385,32 @@ document.write(`
 <span class="sd">        pandas.DataFrame: Result of recommendation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># replace values not known to the model with NaN</span>
-    <span class="n">total_users</span><span class="p">,</span> <span class="n">total_items</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">total_users</span><span class="p">,</span> <span class="n">total_items</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
     <span class="n">test_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">test_df</span><span class="p">[</span><span class="n">user_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">total_users</span><span class="p">),</span> <span class="n">user_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">test_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">test_df</span><span class="p">[</span><span class="n">item_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">total_items</span><span class="p">),</span> <span class="n">item_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="c1"># map ids to embedding ids</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">get_idx</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="n">user_col</span><span class="p">],</span> <span class="n">is_item</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">get_idx</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="n">item_col</span><span class="p">],</span> <span class="n">is_item</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">_get_idx</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="n">user_col</span><span class="p">],</span> <span class="n">is_item</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">_get_idx</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="n">item_col</span><span class="p">],</span> <span class="n">is_item</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># score the pytorch model</span>
-    <span class="n">pred</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+        <span class="n">learner</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
     <span class="n">scores</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span><span class="n">user_col</span><span class="p">:</span> <span class="n">test_df</span><span class="p">[</span><span class="n">user_col</span><span class="p">],</span> <span class="n">item_col</span><span class="p">:</span> <span class="n">test_df</span><span class="p">[</span><span class="n">item_col</span><span class="p">],</span> <span class="n">prediction_col</span><span class="p">:</span> <span class="n">pred</span><span class="p">}</span>
     <span class="p">)</span>
     <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">user_col</span><span class="p">,</span> <span class="n">prediction_col</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+
     <span class="k">if</span> <span class="n">top_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">top_scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">user_col</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_k</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">top_scores</span> <span class="o">=</span> <span class="n">scores</span>
+
     <span class="k">return</span> <span class="n">top_scores</span></div>
 
 
@@ -423,7 +422,7 @@ document.write(`
     <span class="n">fastprogress</span><span class="o">.</span><span class="n">fastprogress</span><span class="o">.</span><span class="n">NO_BAR</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">fastprogress</span><span class="o">.</span><span class="n">fastprogress</span><span class="o">.</span><span class="n">WRITER_FN</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="n">master_bar</span><span class="p">,</span> <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">force_console_behavior</span><span class="p">()</span>
-    <span class="n">fastai</span><span class="o">.</span><span class="n">basic_train</span><span class="o">.</span><span class="n">master_bar</span><span class="p">,</span> <span class="n">fastai</span><span class="o">.</span><span class="n">basic_train</span><span class="o">.</span><span class="n">progress_bar</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">fastai</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">master_bar</span><span class="p">,</span> <span class="n">fastai</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">progress_bar</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">master_bar</span><span class="p">,</span>
         <span class="n">progress_bar</span><span class="p">,</span>
     <span class="p">)</span></div>
@@ -468,7 +467,7 @@ By Recommenders contributors
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2018-2024.
       <br/>
     
   </p>

@@ -8,68 +8,68 @@ msgstr ""
 "Language: eo\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Download source file"
-msgstr "Elŝutu fontodosieron"
-
-msgid "suggest edit"
-msgstr "sugesti redaktadon"
-
-msgid "Toggle navigation"
-msgstr "Ŝalti navigadon"
-
-msgid "open issue"
-msgstr "malferma numero"
-
-msgid "Download notebook file"
-msgstr "Elŝutu kajeran dosieron"
-
-msgid "repository"
-msgstr "deponejo"
-
 msgid "Theme by the"
 msgstr "Temo de la"
-
-msgid "Print to PDF"
-msgstr "Presi al PDF"
-
-msgid "Download this page"
-msgstr "Elŝutu ĉi tiun paĝon"
-
-msgid "Copyright"
-msgstr "Kopirajto"
-
-msgid "Last updated on"
-msgstr "Laste ĝisdatigita la"
-
-msgid "Launch"
-msgstr "Lanĉo"
 
 msgid "Open an issue"
 msgstr "Malfermu numeron"
 
-msgid "Fullscreen mode"
-msgstr "Plenekrana reĝimo"
+msgid "Contents"
+msgstr "Enhavo"
+
+msgid "Download notebook file"
+msgstr "Elŝutu kajeran dosieron"
 
 msgid "Sphinx Book Theme"
 msgstr "Sfinksa Libro-Temo"
 
-msgid "Contents"
-msgstr "Enhavo"
+msgid "Fullscreen mode"
+msgstr "Plenekrana reĝimo"
 
 msgid "Edit this page"
 msgstr "Redaktu ĉi tiun paĝon"
 
-msgid "next page"
-msgstr "sekva paĝo"
+msgid "By"
+msgstr "De"
+
+msgid "Copyright"
+msgstr "Kopirajto"
 
 msgid "Source repository"
 msgstr "Fonto-deponejo"
 
-msgid "By"
-msgstr "De"
+msgid "previous page"
+msgstr "antaŭa paĝo"
+
+msgid "next page"
+msgstr "sekva paĝo"
+
+msgid "Toggle navigation"
+msgstr "Ŝalti navigadon"
+
+msgid "repository"
+msgstr "deponejo"
+
+msgid "suggest edit"
+msgstr "sugesti redaktadon"
+
+msgid "open issue"
+msgstr "malferma numero"
+
+msgid "Launch"
+msgstr "Lanĉo"
+
+msgid "Print to PDF"
+msgstr "Presi al PDF"
 
 msgid "By the"
 msgstr "Per la"
 
-msgid "previous page"
-msgstr "antaŭa paĝo"
+msgid "Last updated on"
+msgstr "Laste ĝisdatigita la"
+
+msgid "Download source file"
+msgstr "Elŝutu fontodosieron"
+
+msgid "Download this page"
+msgstr "Elŝutu ĉi tiun paĝon"

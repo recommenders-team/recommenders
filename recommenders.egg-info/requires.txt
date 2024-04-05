@@ -1,51 +1,45 @@
-numpy>=1.19
-pandas<2,>1.0.3
-scipy<1.11.0,>=1.0.0
-tqdm<5,>=4.31.1
-matplotlib<4,>=2.2.2
-scikit-learn<1.0.3,>=0.22.1
-numba<1,>=0.38.1
-lightfm<2,>=1.15
-lightgbm>=2.2.1
-memory_profiler<1,>=0.54.0
-nltk<4,>=3.4
-seaborn<1,>=0.8.1
-transformers<5,>=2.5.0
-category_encoders<2,>=1.3.0
-jinja2<3.1,>=2
-requests<3,>=2.31.0
-retrying>=1.3.3
-pandera[strategies]>=0.6.5
-scikit-surprise>=1.0.6
-hyperopt<1,>=0.1.2
-ipykernel<7,>=4.6.1
-jupyter<2,>=1
-locust<2,>=1
-
-[:python_version <= "3.7"]
-cornac<1.15.2,>=1.1.2
-
-[:python_version >= "3.8"]
+category-encoders<3,>=2.6.0
 cornac<2,>=1.15.2
+hyperopt<1,>=0.2.7
+lightfm<2,>=1.17
+lightgbm<5,>=4.0.0
+locust<3,>=2.12.2
+memory-profiler<1,>=0.61.0
+nltk<4,>=3.8.1
+notebook<8,>=7.0.0
+numba<1,>=0.57.0
+pandas<3.0.0,>2.0.0
+retrying<2,>=1.3.4
+scikit-learn<2,>=1.2.0
+scikit-surprise>=1.1.3
+scipy<1.11.0,>=1.10.1
+seaborn<1,>=0.13.0
+transformers<5,>=4.27.0
+
+[:python_version <= "3.8"]
+pandera[strategies]<0.18,>=0.6.5
+
+[:python_version >= "3.9"]
+pandera[strategies]>=0.15.0
 
 [all]
-black<21,>=18.6b4
-pyspark<3.3.0,>=2.4.5
-tensorflow==2.8.4
-nvidia-ml-py3>=7.352.0
-fastai<2,>=1.0.46
-torch>=1.13.1
-pytest>=3.6.4
-pyarrow<7.0.0,>=0.12.1
 tf-slim>=1.1.0
-pytest-cov>=2.12.1
-pytest-mock>=3.6.1
+pytest-mock>=3.10.0
+pytest-cov>=4.1.0
+tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
+nvidia-ml-py>=11.525.84
+pyspark<=4,>=3.3.0
+pyarrow>=10.0.1
+black>=23.3.0
+pytest>=7.2.1
+fastai<3,>=2.7.11
+torch<3,>=2.0.1
 
 [dev]
-black<21,>=18.6b4
-pytest>=3.6.4
-pytest-cov>=2.12.1
-pytest-mock>=3.6.1
+black>=23.3.0
+pytest>=7.2.1
+pytest-cov>=4.1.0
+pytest-mock>=3.10.0
 
 [experimental]
 xlearn==0.40a1
@@ -54,12 +48,12 @@ nni==1.5
 pymanopt>=0.2.5
 
 [gpu]
-nvidia-ml-py3>=7.352.0
-tensorflow==2.8.4
+fastai<3,>=2.7.11
+nvidia-ml-py>=11.525.84
+tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
 tf-slim>=1.1.0
-torch>=1.13.1
-fastai<2,>=1.0.46
+torch<3,>=2.0.1
 
 [spark]
-pyarrow<7.0.0,>=0.12.1
-pyspark<3.3.0,>=2.4.5
+pyarrow>=10.0.1
+pyspark<=4,>=3.3.0

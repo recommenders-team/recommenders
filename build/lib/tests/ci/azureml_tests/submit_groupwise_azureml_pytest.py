@@ -29,20 +29,20 @@ Args:
 Example:
     Usually, this script is run by a DevOps pipeline. It can also be
     run from cmd line.
-    >>> python tests/ci/refac.py --clustername 'cluster-d3-v2'
-                                 --subid '12345678-9012-3456-abcd-123456789012'
-                                 --pr '666'
-                                 --reponame 'Recommenders'
-                                 --branch 'staging'
+    >>> python tests/ci/submit_groupwise_azureml_pytest.py \
+            --clustername 'cluster-d3-v2' \
+            --subid '12345678-9012-3456-abcd-123456789012' \
+            --pr '666' \
+            --reponame 'Recommenders' \
+            --branch 'staging'
 """
 import argparse
 import logging
-import glob
 
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
 from azureml.core import Experiment
-from azureml.core.runconfig import RunConfiguration
+from azureml.core.runconfig import RunConfiguration, DockerConfiguration
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.script_run_config import ScriptRunConfig
 from azureml.core.compute import ComputeTarget, AmlCompute
@@ -146,7 +146,6 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
 
 def create_run_config(
     cpu_cluster,
-    docker_proc_type,
     add_gpu_dependencies,
     add_spark_dependencies,
     conda_pkg_jdk,
@@ -165,7 +164,6 @@ def create_run_config(
                                                 the following:
                                                 - Reco_cpu_test
                                                 - Reco_gpu_test
-            docker_proc_type (str)          : processor type, cpu or gpu
             add_gpu_dependencies (bool)     : True if gpu packages should be
                                         added to the conda environment, else False
             add_spark_dependencies (bool)   : True if PySpark packages should be
@@ -178,8 +176,41 @@ def create_run_config(
 
     run_azuremlcompute = RunConfiguration()
     run_azuremlcompute.target = cpu_cluster
-    run_azuremlcompute.environment.docker.enabled = True
-    run_azuremlcompute.environment.docker.base_image = docker_proc_type
+    if not add_gpu_dependencies:
+        # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
+        run_azuremlcompute.environment.docker.base_image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
+    else:
+        run_azuremlcompute.environment.docker.base_image = None
+        # Use the latest CUDA
+        # See
+        # * https://learn.microsoft.com/en-us/azure/machine-learning/how-to-train-with-custom-image?view=azureml-api-1#use-a-custom-dockerfile-optional
+        # * https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+        run_azuremlcompute.environment.docker.base_dockerfile = r"""
+FROM nvcr.io/nvidia/cuda:12.3.1-devel-ubuntu22.04
+USER root:root
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+    apt-get install -y wget git-all && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
+# Conda Environment
+# Pin pip=20.1.1 due to the issue: No module named 'ruamel'
+# See https://learn.microsoft.com/en-us/python/api/overview/azure/ml/install?view=azure-ml-py#troubleshooting
+ENV MINICONDA_VERSION py38_23.3.1-0
+ENV PATH /opt/miniconda/bin:$PATH
+ENV CONDA_PACKAGE 23.5.0
+RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh && \
+    bash /tmp/miniconda.sh -bf -p /opt/miniconda && \
+    conda install -y conda=${CONDA_PACKAGE} python=3.8 pip=20.1.1 && \
+    conda update --all -c conda-forge -y && \
+    conda clean -ay && \
+    rm -rf /opt/miniconda/pkgs && \
+    rm /tmp/miniconda.sh && \
+    find / -type d -name __pycache__ | xargs rm -rf
+"""
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
@@ -195,6 +226,7 @@ def create_run_config(
 
     # install recommenders
     reco_extras = "dev"
+    conda_dep.add_conda_package("anaconda::git")
     if add_gpu_dependencies and add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
@@ -260,8 +292,10 @@ def submit_experiment_to_azureml(
         source_directory=".",
         script=test,
         run_config=run_config,
+        docker_runtime_config=DockerConfiguration(use_docker=True),
         arguments=arguments,
     )
+
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete
     run.wait_for_completion(show_output=True, wait_post_processing=True)
@@ -325,13 +359,6 @@ def create_arg_parser():
         action="store",
         default="STANDARD_D3_V2",
         help="Set the size of the VM either STANDARD_D3_V2",
-    )
-    # cpu or gpu
-    parser.add_argument(
-        "--dockerproc",
-        action="store",
-        default="cpu",
-        help="Base image used in docker container",
     )
     # Azure subscription id, when used in a pipeline, it is stored in keyvault
     parser.add_argument(
@@ -421,16 +448,6 @@ if __name__ == "__main__":
 
     logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
     args = create_arg_parser()
-
-    if args.dockerproc == "cpu":
-        from azureml.core.runconfig import DEFAULT_CPU_IMAGE
-
-        docker_proc_type = DEFAULT_CPU_IMAGE
-    else:
-        from azureml.core.runconfig import DEFAULT_GPU_IMAGE
-
-        docker_proc_type = DEFAULT_GPU_IMAGE
-
     cli_auth = AzureCliAuthentication()
 
     workspace = setup_workspace(
@@ -450,7 +467,6 @@ if __name__ == "__main__":
 
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
-        docker_proc_type=docker_proc_type,
         add_gpu_dependencies=args.add_gpu_dependencies,
         add_spark_dependencies=args.add_spark_dependencies,
         conda_pkg_jdk=args.conda_pkg_jdk,

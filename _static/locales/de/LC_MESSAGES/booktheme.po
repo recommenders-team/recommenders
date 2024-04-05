@@ -8,68 +8,68 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Download source file"
-msgstr "Quelldatei herunterladen"
-
-msgid "suggest edit"
-msgstr "vorschlagen zu bearbeiten"
-
-msgid "Toggle navigation"
-msgstr "Navigation umschalten"
-
-msgid "open issue"
-msgstr "offenes Thema"
-
-msgid "Download notebook file"
-msgstr "Notebook-Datei herunterladen"
-
-msgid "repository"
-msgstr "Repository"
-
 msgid "Theme by the"
 msgstr "Thema von der"
-
-msgid "Print to PDF"
-msgstr "In PDF drucken"
-
-msgid "Download this page"
-msgstr "Laden Sie diese Seite herunter"
-
-msgid "Copyright"
-msgstr "Urheberrechte ©"
-
-msgid "Last updated on"
-msgstr "Zuletzt aktualisiert am"
-
-msgid "Launch"
-msgstr "Starten"
 
 msgid "Open an issue"
 msgstr "Öffnen Sie ein Problem"
 
-msgid "Fullscreen mode"
-msgstr "Vollbildmodus"
+msgid "Contents"
+msgstr "Inhalt"
+
+msgid "Download notebook file"
+msgstr "Notebook-Datei herunterladen"
 
 msgid "Sphinx Book Theme"
 msgstr "Sphinx-Buch-Thema"
 
-msgid "Contents"
-msgstr "Inhalt"
+msgid "Fullscreen mode"
+msgstr "Vollbildmodus"
 
 msgid "Edit this page"
 msgstr "Bearbeite diese Seite"
 
-msgid "next page"
-msgstr "Nächste Seite"
+msgid "By"
+msgstr "Durch"
+
+msgid "Copyright"
+msgstr "Urheberrechte ©"
 
 msgid "Source repository"
 msgstr "Quell-Repository"
 
-msgid "By"
-msgstr "Durch"
+msgid "previous page"
+msgstr "vorherige Seite"
+
+msgid "next page"
+msgstr "Nächste Seite"
+
+msgid "Toggle navigation"
+msgstr "Navigation umschalten"
+
+msgid "repository"
+msgstr "Repository"
+
+msgid "suggest edit"
+msgstr "vorschlagen zu bearbeiten"
+
+msgid "open issue"
+msgstr "offenes Thema"
+
+msgid "Launch"
+msgstr "Starten"
+
+msgid "Print to PDF"
+msgstr "In PDF drucken"
 
 msgid "By the"
 msgstr "Bis zum"
 
-msgid "previous page"
-msgstr "vorherige Seite"
+msgid "Last updated on"
+msgstr "Zuletzt aktualisiert am"
+
+msgid "Download source file"
+msgstr "Quelldatei herunterladen"
+
+msgid "Download this page"
+msgstr "Laden Sie diese Seite herunter"

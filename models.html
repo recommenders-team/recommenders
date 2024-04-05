@@ -34,7 +34,6 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -48,25 +47,16 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
-    <script src="_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
-    <script async="async" src="_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'models';</script>
@@ -536,10 +526,7 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.gru">GRU</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.gru.GRUModel"><code class="docutils literal notranslate"><span class="pre">GRUModel</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gru">GRU</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.nextitnet">NextItNet</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.nextitnet.NextItNetModel"><code class="docutils literal notranslate"><span class="pre">NextItNetModel</span></code></a></li>
 </ul>
@@ -559,23 +546,7 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.sum">SUM</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum.SUMModel"><code class="docutils literal notranslate"><span class="pre">SUMModel</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell"><code class="docutils literal notranslate"><span class="pre">SUMCell</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.build"><code class="docutils literal notranslate"><span class="pre">SUMCell.build()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.call"><code class="docutils literal notranslate"><span class="pre">SUMCell.call()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.get_config"><code class="docutils literal notranslate"><span class="pre">SUMCell.get_config()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.output_size"><code class="docutils literal notranslate"><span class="pre">SUMCell.output_size</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.state_size"><code class="docutils literal notranslate"><span class="pre">SUMCell.state_size</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell"><code class="docutils literal notranslate"><span class="pre">SUMV2Cell</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.build"><code class="docutils literal notranslate"><span class="pre">SUMV2Cell.build()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.call"><code class="docutils literal notranslate"><span class="pre">SUMV2Cell.call()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sum">SUM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.sli_rec">SLIRec</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sli_rec.SLI_RECModel"><code class="docutils literal notranslate"><span class="pre">SLI_RECModel</span></code></a></li>
 </ul>
@@ -2404,22 +2375,8 @@ Web Search and Data Mining, ACM, 2018.</p>
 </dd></dl>
 
 </section>
-<section id="module-recommenders.models.deeprec.models.sequential.gru">
-<span id="gru"></span><h2>GRU<a class="headerlink" href="#module-recommenders.models.deeprec.models.sequential.gru" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.gru.GRUModel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.models.deeprec.models.sequential.gru.</span></span><span class="sig-name descname"><span class="pre">GRUModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterator_creator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/gru.html#GRUModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.gru.GRUModel" title="Link to this definition">#</a></dt>
-<dd><p>GRU Model</p>
-<dl class="field-list simple">
-<dt class="field-odd">Citation<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau,
-Fethi Bougares, Holger Schwenk, and Yoshua Bengio. Learning Phrase
-Representations using RNN Encoder-Decoder for Statistical Machine Translation.
-arXiv preprint arXiv:1406.1078. 2014.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="gru">
+<h2>GRU<a class="headerlink" href="#gru" title="Link to this heading">#</a></h2>
 </section>
 <section id="module-recommenders.models.deeprec.models.sequential.nextitnet">
 <span id="nextitnet"></span><h2>NextItNet<a class="headerlink" href="#module-recommenders.models.deeprec.models.sequential.nextitnet" title="Link to this heading">#</a></h2>
@@ -2545,154 +2502,8 @@ or TensorShapes.</p>
 </dd></dl>
 
 </section>
-<section id="module-recommenders.models.deeprec.models.sequential.sum">
-<span id="sum"></span><h2>SUM<a class="headerlink" href="#module-recommenders.models.deeprec.models.sequential.sum" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum.SUMModel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.models.deeprec.models.sequential.sum.</span></span><span class="sig-name descname"><span class="pre">SUMModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterator_creator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/sum.html#SUMModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum.SUMModel" title="Link to this definition">#</a></dt>
-<dd><p>Sequential User Matrix Model</p>
-<dl class="field-list simple">
-<dt class="field-odd">Citation<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Lian, J., Batal, I., Liu, Z., Soni, A., Kang, E. Y., Wang, Y., &amp; Xie, X.,
-“Multi-Interest-Aware User Modeling for Large-Scale Sequential Recommendations”, arXiv preprint arXiv:2102.09211, 2021.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class" id="module-recommenders.models.deeprec.models.sequential.sum_cells">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMCell">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.models.deeprec.models.sequential.sum_cells.</span></span><span class="sig-name descname"><span class="pre">SUMCell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/sum_cells.html#SUMCell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell" title="Link to this definition">#</a></dt>
-<dd><p>Cell for Sequential User Matrix</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.build" title="Link to this definition">#</a></dt>
-<dd><p>Creates the variables of the layer (optional, for subclass implementers).</p>
-<p>This is a method that implementers of subclasses of <cite>Layer</cite> or <cite>Model</cite>
-can override if they need a state-creation step in-between
-layer instantiation and layer call. It is invoked automatically before
-the first execution of <cite>call()</cite>.</p>
-<p>This is typically used to create the weights of <cite>Layer</cite> subclasses
-(at the discretion of the subclass implementer).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_shape</strong> – Instance of <cite>TensorShape</cite>, or list of instances of
-<cite>TensorShape</cite> if the layer expects a list of inputs
-(one instance per input).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.call">
-<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/sum_cells.html#SUMCell.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.call" title="Link to this definition">#</a></dt>
-<dd><p>The real operations for SUM cell to process user behaviors.</p>
-<dl class="simple">
-<dt>params:</dt><dd><p>inputs: (a batch of) user behaviors at time T
-state:  (a batch of) user states at time T-1</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>after process the user behavior at time T, returns (a batch of) new user states at time T</p></li>
-<li><p>after process the user behavior at time T, returns (a batch of) new user states at time T</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>state, state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.get_config">
-<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/sum_cells.html#SUMCell.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.get_config" title="Link to this definition">#</a></dt>
-<dd><p>Returns the config of the layer.</p>
-<p>A layer config is a Python dictionary (serializable)
-containing the configuration of a layer.
-The same layer can be reinstantiated later
-(without its trained weights) from this configuration.</p>
-<p>The config of a layer does not include connectivity
-information, nor the layer class name. These are handled
-by <cite>Network</cite> (one layer of abstraction above).</p>
-<p>Note that <cite>get_config()</cite> does not guarantee to return a fresh copy of dict
-every time it is called. The callers should make a copy of the returned dict
-if they want to modify it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Python dictionary.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.output_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_size</span></span><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.output_size" title="Link to this definition">#</a></dt>
-<dd><p>size of outputs produced by this cell.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Integer or TensorShape</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.state_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_size</span></span><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.state_size" title="Link to this definition">#</a></dt>
-<dd><p>size(s) of state(s) used by this cell.</p>
-<p>It can be represented by an Integer, a TensorShape or a tuple of Integers
-or TensorShapes.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.models.deeprec.models.sequential.sum_cells.</span></span><span class="sig-name descname"><span class="pre">SUMV2Cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/sum_cells.html#SUMV2Cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell" title="Link to this definition">#</a></dt>
-<dd><p>A variant of SUM cell, which upgrades the writing attention</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.build" title="Link to this definition">#</a></dt>
-<dd><p>Creates the variables of the layer (optional, for subclass implementers).</p>
-<p>This is a method that implementers of subclasses of <cite>Layer</cite> or <cite>Model</cite>
-can override if they need a state-creation step in-between
-layer instantiation and layer call. It is invoked automatically before
-the first execution of <cite>call()</cite>.</p>
-<p>This is typically used to create the weights of <cite>Layer</cite> subclasses
-(at the discretion of the subclass implementer).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_shape</strong> – Instance of <cite>TensorShape</cite>, or list of instances of
-<cite>TensorShape</cite> if the layer expects a list of inputs
-(one instance per input).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.call">
-<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/deeprec/models/sequential/sum_cells.html#SUMV2Cell.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.call" title="Link to this definition">#</a></dt>
-<dd><p>The real operations for SUMV2 cell to process user behaviors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inputs</strong> – (a batch of) user behaviors at time T</p></li>
-<li><p><strong>state</strong> – (a batch of) user states at time T-1</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>after process the user behavior at time T, returns (a batch of) new user states at time T
-state: after process the user behavior at time T, returns (a batch of) new user states at time T</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>state</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="sum">
+<h2>SUM<a class="headerlink" href="#sum" title="Link to this heading">#</a></h2>
 </section>
 <section id="module-recommenders.models.deeprec.models.sequential.sli_rec">
 <span id="slirec"></span><h2>SLIRec<a class="headerlink" href="#module-recommenders.models.deeprec.models.sequential.sli_rec" title="Link to this heading">#</a></h2>
@@ -4020,13 +3831,15 @@ happened before. This requires that the layer will later be used with
 inputs that match the input shape provided here.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_shape</strong> – Shape tuple (tuple of integers)
-or list of shape tuples (one per output tensor of the layer).
+<dd class="field-odd"><p><strong>input_shape</strong> – Shape tuple (tuple of integers) or <cite>tf.TensorShape</cite>,
+or structure of shape tuples / <cite>tf.TensorShape</cite> instances
+(one per output tensor of the layer).
 Shape tuples can include None for free dimensions,
 instead of an integer.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An input shape tuple.</p>
+<dd class="field-even"><p>A <cite>tf.TensorShape</cite> instance
+or structure of <cite>tf.TensorShape</cite> instances.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4051,7 +3864,7 @@ instead of an integer.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.models.newsrec.models.layers.OverwriteMasking.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/newsrec/models/layers.html#OverwriteMasking.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.newsrec.models.layers.OverwriteMasking.build" title="Link to this definition">#</a></dt>
-<dd><p>Creates the variables of the layer (optional, for subclass implementers).</p>
+<dd><p>Creates the variables of the layer (for subclass implementers).</p>
 <p>This is a method that implementers of subclasses of <cite>Layer</cite> or <cite>Model</cite>
 can override if they need a state-creation step in-between
 layer instantiation and layer call. It is invoked automatically before
@@ -4093,13 +3906,15 @@ happened before. This requires that the layer will later be used with
 inputs that match the input shape provided here.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_shape</strong> – Shape tuple (tuple of integers)
-or list of shape tuples (one per output tensor of the layer).
+<dd class="field-odd"><p><strong>input_shape</strong> – Shape tuple (tuple of integers) or <cite>tf.TensorShape</cite>,
+or structure of shape tuples / <cite>tf.TensorShape</cite> instances
+(one per output tensor of the layer).
 Shape tuples can include None for free dimensions,
 instead of an integer.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An input shape tuple.</p>
+<dd class="field-even"><p>A <cite>tf.TensorShape</cite> instance
+or structure of <cite>tf.TensorShape</cite> instances.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -6120,7 +5935,7 @@ By default, all columns are kept.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="recommenders.models.tfidf.tfidf_utils.TfidfRecommender.tokenize_text">
-<span class="sig-name descname"><span class="pre">tokenize_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cleaned_text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngram_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/tfidf/tfidf_utils.html#TfidfRecommender.tokenize_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.tfidf.tfidf_utils.TfidfRecommender.tokenize_text" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">tokenize_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cleaned_text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngram_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/tfidf/tfidf_utils.html#TfidfRecommender.tokenize_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.tfidf.tfidf_utils.TfidfRecommender.tokenize_text" title="Link to this definition">#</a></dt>
 <dd><p>Tokenize the input text.
 For more details on the TfidfVectorizer, see <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html">https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html</a></p>
 <dl class="field-list simple">
@@ -6129,7 +5944,7 @@ For more details on the TfidfVectorizer, see <a class="reference external" href=
 <li><p><strong>df_clean</strong> (<em>pandas.DataFrame</em>) – Dataframe with cleaned text in the new column.</p></li>
 <li><p><strong>text_col</strong> (<em>str</em>) – Name of column containing the cleaned text.</p></li>
 <li><p><strong>ngram_range</strong> (<em>tuple</em><em> of </em><em>int</em>) – The lower and upper boundary of the range of n-values for different n-grams to be extracted.</p></li>
-<li><p><strong>min_df</strong> (<em>int</em>) – When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.</p></li>
+<li><p><strong>min_df</strong> (<em>float</em>) – When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -7018,10 +6833,7 @@ To generate wide_deep model, pass both wide_columns and deep_columns.</p>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.gru">GRU</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.gru.GRUModel"><code class="docutils literal notranslate"><span class="pre">GRUModel</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gru">GRU</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.nextitnet">NextItNet</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.nextitnet.NextItNetModel"><code class="docutils literal notranslate"><span class="pre">NextItNetModel</span></code></a></li>
 </ul>
@@ -7041,23 +6853,7 @@ To generate wide_deep model, pass both wide_columns and deep_columns.</p>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.sum">SUM</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum.SUMModel"><code class="docutils literal notranslate"><span class="pre">SUMModel</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell"><code class="docutils literal notranslate"><span class="pre">SUMCell</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.build"><code class="docutils literal notranslate"><span class="pre">SUMCell.build()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.call"><code class="docutils literal notranslate"><span class="pre">SUMCell.call()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.get_config"><code class="docutils literal notranslate"><span class="pre">SUMCell.get_config()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.output_size"><code class="docutils literal notranslate"><span class="pre">SUMCell.output_size</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.state_size"><code class="docutils literal notranslate"><span class="pre">SUMCell.state_size</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell"><code class="docutils literal notranslate"><span class="pre">SUMV2Cell</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.build"><code class="docutils literal notranslate"><span class="pre">SUMV2Cell.build()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.call"><code class="docutils literal notranslate"><span class="pre">SUMV2Cell.call()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sum">SUM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.deeprec.models.sequential.sli_rec">SLIRec</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sli_rec.SLI_RECModel"><code class="docutils literal notranslate"><span class="pre">SLI_RECModel</span></code></a></li>
 </ul>
@@ -7507,7 +7303,7 @@ By Recommenders contributors
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2018-2024.
       <br/>
     
   </p>

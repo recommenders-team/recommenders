@@ -33,7 +33,6 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -47,25 +46,16 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
-    <script src="_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
-    <script async="async" src="_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
     <link rel="canonical" href="https://recommenders-team.github.io/recommenders/genindex.html" />
     <link rel="icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
@@ -514,19 +504,15 @@ document.write(`
 </li>
       <li><a href="utils.html#recommenders.utils.python_utils.binarize">binarize() (in module recommenders.utils.python_utils)</a>
 </li>
-      <li><a href="models.html#recommenders.models.rbm.rbm.RBM.binomial_sampling">binomial_sampling() (recommenders.models.rbm.rbm.RBM method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#recommenders.models.rbm.rbm.RBM.binomial_sampling">binomial_sampling() (recommenders.models.rbm.rbm.RBM method)</a>
+</li>
       <li><a href="models.html#recommenders.models.newsrec.io.mind_all_iterator.MINDAllIterator.body_size">body_size (recommenders.models.newsrec.io.mind_all_iterator.MINDAllIterator attribute)</a>
 </li>
-      <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.build">build() (recommenders.models.deeprec.models.sequential.sum_cells.SUMCell method)</a>
+      <li><a href="models.html#recommenders.models.newsrec.models.layers.AttLayer2.build">build() (recommenders.models.newsrec.models.layers.AttLayer2 method)</a>
 
       <ul>
-        <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.build">(recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell method)</a>
-</li>
-        <li><a href="models.html#recommenders.models.newsrec.models.layers.AttLayer2.build">(recommenders.models.newsrec.models.layers.AttLayer2 method)</a>
-</li>
         <li><a href="models.html#recommenders.models.newsrec.models.layers.OverwriteMasking.build">(recommenders.models.newsrec.models.layers.OverwriteMasking method)</a>
 </li>
         <li><a href="models.html#recommenders.models.newsrec.models.layers.SelfAttention.build">(recommenders.models.newsrec.models.layers.SelfAttention method)</a>
@@ -550,10 +536,6 @@ document.write(`
 
       <ul>
         <li><a href="models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell.call">(recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell method)</a>
-</li>
-        <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.call">(recommenders.models.deeprec.models.sequential.sum_cells.SUMCell method)</a>
-</li>
-        <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell.call">(recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell method)</a>
 </li>
         <li><a href="models.html#recommenders.models.newsrec.models.layers.AttLayer2.call">(recommenders.models.newsrec.models.layers.AttLayer2 method)</a>
 </li>
@@ -864,12 +846,8 @@ document.write(`
 </li>
       <li><a href="tuning.html#recommenders.tuning.parameter_sweep.generate_param_grid">generate_param_grid() (in module recommenders.tuning.parameter_sweep)</a>
 </li>
-      <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.get_config">get_config() (recommenders.models.deeprec.models.sequential.sum_cells.SUMCell method)</a>
-
-      <ul>
-        <li><a href="models.html#recommenders.models.newsrec.models.layers.SelfAttention.get_config">(recommenders.models.newsrec.models.layers.SelfAttention method)</a>
+      <li><a href="models.html#recommenders.models.newsrec.models.layers.SelfAttention.get_config">get_config() (recommenders.models.newsrec.models.layers.SelfAttention method)</a>
 </li>
-      </ul></li>
       <li><a href="utils.html#recommenders.utils.gpu_utils.get_cuda_version">get_cuda_version() (in module recommenders.utils.gpu_utils)</a>
 </li>
       <li><a href="utils.html#recommenders.utils.gpu_utils.get_cudnn_version">get_cudnn_version() (in module recommenders.utils.gpu_utils)</a>
@@ -956,8 +934,6 @@ document.write(`
         <li><a href="models.html#recommenders.models.newsrec.models.base_model.BaseModel.group_labels">(recommenders.models.newsrec.models.base_model.BaseModel method)</a>
 </li>
       </ul></li>
-      <li><a href="models.html#recommenders.models.deeprec.models.sequential.gru.GRUModel">GRUModel (class in recommenders.models.deeprec.models.sequential.gru)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -1316,8 +1292,6 @@ document.write(`
 </li>
         <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.caser">recommenders.models.deeprec.models.sequential.caser</a>
 </li>
-        <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.gru">recommenders.models.deeprec.models.sequential.gru</a>
-</li>
         <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.nextitnet">recommenders.models.deeprec.models.sequential.nextitnet</a>
 </li>
         <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.rnn_cell_implement">recommenders.models.deeprec.models.sequential.rnn_cell_implement</a>
@@ -1325,10 +1299,6 @@ document.write(`
         <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sequential_base_model">recommenders.models.deeprec.models.sequential.sequential_base_model</a>
 </li>
         <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sli_rec">recommenders.models.deeprec.models.sequential.sli_rec</a>
-</li>
-        <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sum">recommenders.models.deeprec.models.sequential.sum</a>
-</li>
-        <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sum_cells">recommenders.models.deeprec.models.sequential.sum_cells</a>
 </li>
         <li><a href="models.html#module-recommenders.models.deeprec.models.xDeepFM">recommenders.models.deeprec.models.xDeepFM</a>
 </li>
@@ -1515,6 +1485,8 @@ document.write(`
         <li><a href="models.html#recommenders.models.vae.standard_vae.Metrics.on_epoch_end">(recommenders.models.vae.standard_vae.Metrics method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#recommenders.models.vae.multinomial_vae.AnnealingCallback.on_train_begin">on_train_begin() (recommenders.models.vae.multinomial_vae.AnnealingCallback method)</a>
 
       <ul>
@@ -1529,14 +1501,10 @@ document.write(`
         <li><a href="models.html#recommenders.models.vae.standard_vae.Metrics.on_train_begin">(recommenders.models.vae.standard_vae.Metrics method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4ALSTMCell.output_size">output_size (recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4ALSTMCell property)</a>
 
       <ul>
         <li><a href="models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell.output_size">(recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell property)</a>
-</li>
-        <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.output_size">(recommenders.models.deeprec.models.sequential.sum_cells.SUMCell property)</a>
 </li>
       </ul></li>
       <li><a href="models.html#recommenders.models.newsrec.models.layers.OverwriteMasking">OverwriteMasking (class in recommenders.models.newsrec.models.layers)</a>
@@ -1880,13 +1848,6 @@ document.write(`
 </li>
       </ul></li>
       <li>
-    recommenders.models.deeprec.models.sequential.gru
-
-      <ul>
-        <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.gru">module</a>
-</li>
-      </ul></li>
-      <li>
     recommenders.models.deeprec.models.sequential.nextitnet
 
       <ul>
@@ -1915,20 +1876,6 @@ document.write(`
 </li>
       </ul></li>
       <li>
-    recommenders.models.deeprec.models.sequential.sum
-
-      <ul>
-        <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sum">module</a>
-</li>
-      </ul></li>
-      <li>
-    recommenders.models.deeprec.models.sequential.sum_cells
-
-      <ul>
-        <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sum_cells">module</a>
-</li>
-      </ul></li>
-      <li>
     recommenders.models.deeprec.models.xDeepFM
 
       <ul>
@@ -1942,8 +1889,6 @@ document.write(`
         <li><a href="models.html#module-recommenders.models.fastai.fastai_utils">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     recommenders.models.lightfm.lightfm_utils
 
@@ -1951,6 +1896,8 @@ document.write(`
         <li><a href="models.html#module-recommenders.models.lightfm.lightfm_utils">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     recommenders.models.lightgbm.lightgbm_utils
 
@@ -2286,12 +2233,12 @@ document.write(`
 </li>
       <li><a href="models.html#recommenders.models.lightfm.lightfm_utils.similar_items">similar_items() (in module recommenders.models.lightfm.lightfm_utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#recommenders.models.lightfm.lightfm_utils.similar_users">similar_users() (in module recommenders.models.lightfm.lightfm_utils)</a>
 </li>
       <li><a href="models.html#recommenders.models.deeprec.models.sequential.sli_rec.SLI_RECModel">SLI_RECModel (class in recommenders.models.deeprec.models.sequential.sli_rec)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="datasets.html#recommenders.datasets.spark_splitters.spark_chrono_split">spark_chrono_split() (in module recommenders.datasets.spark_splitters)</a>
 </li>
       <li><a href="datasets.html#recommenders.datasets.spark_splitters.spark_random_split">spark_random_split() (in module recommenders.datasets.spark_splitters)</a>
@@ -2323,20 +2270,12 @@ document.write(`
       <ul>
         <li><a href="models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell.state_size">(recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell property)</a>
 </li>
-        <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell.state_size">(recommenders.models.deeprec.models.sequential.sum_cells.SUMCell property)</a>
-</li>
       </ul></li>
       <li><a href="utils.html#recommenders.utils.timer.Timer.stop">stop() (recommenders.utils.timer.Timer method)</a>
 </li>
       <li><a href="utils.html#recommenders.utils.notebook_memory_management.stop_watching_memory">stop_watching_memory() (in module recommenders.utils.notebook_memory_management)</a>
 </li>
       <li><a href="utils.html#recommenders.utils.notebook_utils.store_metadata">store_metadata() (in module recommenders.utils.notebook_utils)</a>
-</li>
-      <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMCell">SUMCell (class in recommenders.models.deeprec.models.sequential.sum_cells)</a>
-</li>
-      <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum.SUMModel">SUMModel (class in recommenders.models.deeprec.models.sequential.sum)</a>
-</li>
-      <li><a href="models.html#recommenders.models.deeprec.models.sequential.sum_cells.SUMV2Cell">SUMV2Cell (class in recommenders.models.deeprec.models.sequential.sum_cells)</a>
 </li>
       <li><a href="models.html#recommenders.models.surprise.surprise_utils.surprise_trainset_to_df">surprise_trainset_to_df() (in module recommenders.models.surprise.surprise_utils)</a>
 </li>
@@ -2537,7 +2476,7 @@ By Recommenders contributors
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2018-2024.
       <br/>
     
   </p>

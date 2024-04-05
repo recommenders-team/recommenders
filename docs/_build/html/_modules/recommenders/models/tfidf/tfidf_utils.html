@@ -33,7 +33,6 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -47,25 +46,16 @@
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
-    <script src="../../../../_static/tabs.js?v=3ee01567"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="../../../../_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
-    <script async="async" src="../../../../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/recommenders/models/tfidf/tfidf_utils';</script>
     <link rel="canonical" href="https://recommenders-team.github.io/recommenders/_modules/recommenders/models/tfidf/tfidf_utils.html" />
     <link rel="icon" href="https://raw.githubusercontent.com/recommenders-team/artwork/main/icon/recommenders_color_icon.svg"/>
@@ -460,7 +450,7 @@ document.write(`
 <div class="viewcode-block" id="TfidfRecommender.tokenize_text">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.tfidf.tfidf_utils.TfidfRecommender.tokenize_text">[docs]</a>
     <span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">df_clean</span><span class="p">,</span> <span class="n">text_col</span><span class="o">=</span><span class="s2">&quot;cleaned_text&quot;</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">min_df</span><span class="o">=</span><span class="mi">0</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">df_clean</span><span class="p">,</span> <span class="n">text_col</span><span class="o">=</span><span class="s2">&quot;cleaned_text&quot;</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">min_df</span><span class="o">=</span><span class="mf">0.0</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Tokenize the input text.</span>
 <span class="sd">        For more details on the TfidfVectorizer, see https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html</span>
@@ -469,7 +459,7 @@ document.write(`
 <span class="sd">            df_clean (pandas.DataFrame): Dataframe with cleaned text in the new column.</span>
 <span class="sd">            text_col (str): Name of column containing the cleaned text.</span>
 <span class="sd">            ngram_range (tuple of int): The lower and upper boundary of the range of n-values for different n-grams to be extracted.</span>
-<span class="sd">            min_df (int): When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.</span>
+<span class="sd">            min_df (float): When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            TfidfVectorizer, pandas.Series:</span>
@@ -797,7 +787,7 @@ By Recommenders contributors
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2018-2024.
       <br/>
     
   </p>

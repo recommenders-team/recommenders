@@ -8,68 +8,68 @@ msgstr ""
 "Language: cs\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Download source file"
-msgstr "Stáhněte si zdrojový soubor"
-
-msgid "suggest edit"
-msgstr "navrhnout úpravy"
-
-msgid "Toggle navigation"
-msgstr "Přepnout navigaci"
-
-msgid "open issue"
-msgstr "otevřené číslo"
-
-msgid "Download notebook file"
-msgstr "Stáhnout soubor poznámkového bloku"
-
-msgid "repository"
-msgstr "úložiště"
-
 msgid "Theme by the"
 msgstr "Téma od"
-
-msgid "Print to PDF"
-msgstr "Tisk do PDF"
-
-msgid "Download this page"
-msgstr "Stáhněte si tuto stránku"
-
-msgid "Copyright"
-msgstr "autorská práva"
-
-msgid "Last updated on"
-msgstr "Naposledy aktualizováno"
-
-msgid "Launch"
-msgstr "Zahájení"
 
 msgid "Open an issue"
 msgstr "Otevřete problém"
 
-msgid "Fullscreen mode"
-msgstr "Režim celé obrazovky"
+msgid "Contents"
+msgstr "Obsah"
+
+msgid "Download notebook file"
+msgstr "Stáhnout soubor poznámkového bloku"
 
 msgid "Sphinx Book Theme"
 msgstr "Téma knihy Sfinga"
 
-msgid "Contents"
-msgstr "Obsah"
+msgid "Fullscreen mode"
+msgstr "Režim celé obrazovky"
 
 msgid "Edit this page"
 msgstr "Upravit tuto stránku"
 
-msgid "next page"
-msgstr "další strana"
+msgid "By"
+msgstr "Podle"
+
+msgid "Copyright"
+msgstr "autorská práva"
 
 msgid "Source repository"
 msgstr "Zdrojové úložiště"
 
-msgid "By"
-msgstr "Podle"
+msgid "previous page"
+msgstr "předchozí stránka"
+
+msgid "next page"
+msgstr "další strana"
+
+msgid "Toggle navigation"
+msgstr "Přepnout navigaci"
+
+msgid "repository"
+msgstr "úložiště"
+
+msgid "suggest edit"
+msgstr "navrhnout úpravy"
+
+msgid "open issue"
+msgstr "otevřené číslo"
+
+msgid "Launch"
+msgstr "Zahájení"
+
+msgid "Print to PDF"
+msgstr "Tisk do PDF"
 
 msgid "By the"
 msgstr "Podle"
 
-msgid "previous page"
-msgstr "předchozí stránka"
+msgid "Last updated on"
+msgstr "Naposledy aktualizováno"
+
+msgid "Download source file"
+msgstr "Stáhněte si zdrojový soubor"
+
+msgid "Download this page"
+msgstr "Stáhněte si tuto stránku"

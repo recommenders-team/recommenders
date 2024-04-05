@@ -4,7 +4,7 @@
 var configureThebe = () => {
   // Load thebe config in case we want to update it as some point
   console.log("[sphinx-thebe]: Loading thebe config...");
-  thebe_config = $('script[type="text/x-thebe-config"]')[0];
+  thebe_config = document.querySelector("script[type=\"text/x-thebe-config\"]");
 
   // If we already detect a Thebe cell, don't re-run
   if (document.querySelectorAll("div.thebe-cell").length > 0) {
@@ -12,7 +12,7 @@ var configureThebe = () => {
   }
 
   // Update thebe buttons with loading message
-  $(".thebe-launch-button").each((ii, button) => {
+  document.querySelectorAll(".thebe-launch-button").forEach((button) => {
     button.innerHTML = `
         <div class="spinner">
             <div class="rect1"></div>
@@ -28,14 +28,15 @@ var configureThebe = () => {
   thebelab.on("status", function (evt, data) {
     console.log("Status changed:", data.status, data.message);
 
-    $(".thebe-launch-button ")
-      .removeClass("thebe-status-" + thebeStatus)
-      .addClass("thebe-status-" + data.status)
-      .find(".loading-text")
-      .html(
-        "<span class='launch_msg'>Launching from mybinder.org: </span><span class='status'>" +
-          data.status +
-          "</span>"
+    const button = document.querySelector(".thebe-launch-button ");
+    button.classList.replace(
+	    `thebe-status-${thebeStatus}`, 
+	    `thebe-status-${data.status}`
+    )
+    button.querySelector(".loading-text")
+      .innerHTML = (
+        `<span class='launch_msg'>Launching from mybinder.org: </span>
+	 <span class='status'>${data.status}</span>`
       );
 
     // Now update our thebe status
@@ -76,8 +77,8 @@ var modifyDOMForThebe = () => {
 
       // If we had an output, insert it just after the `pre` cell
       if (codeCellOutput) {
-        $(codeCellOutput).attr("data-output", "");
-        $(codeCellOutput).insertAfter(codeCellText);
+        codeCellOutput.setAttribute("data-output", "");
+        codeCellText.insertAdjacentElement('afterend', codeCellOutput);
       }
     }
 
@@ -92,7 +93,7 @@ var initThebe = () => {
   // Load thebe dynamically if it's not already loaded
   if (typeof thebelab === "undefined") {
     console.log("[sphinx-thebe]: Loading thebe from CDN...");
-    $(".thebe-launch-button ").text("Loading thebe from CDN...");
+    document.querySelector(".thebe-launch-button ").innerText = "Loading thebe from CDN...";
 
     const script = document.createElement("script");
     script.src = `${THEBE_JS_URL}`;

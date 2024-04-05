@@ -5,7 +5,7 @@ Summary: Recommenders - Python utilities for building recommendation systems
 Home-page: https://github.com/recommenders-team/recommenders
 Author: Recommenders contributors
 Author-email: recommenders-technical-discuss@lists.lfaidata.foundation
-Project-URL: Documentation, https://microsoft-recommenders.readthedocs.io/en/stable/
+Project-URL: Documentation, https://recommenders-team.github.io/recommenders/intro.html
 Project-URL: Wiki, https://github.com/recommenders-team/recommenders/wiki
 Keywords: recommendations recommendation recommenders recommender system engine machine learning python spark gpu
 Classifier: Development Status :: 5 - Production/Stable
@@ -17,62 +17,58 @@ Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
 Classifier: Operating System :: POSIX :: Linux
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE
 License-File: AUTHORS.md
-Requires-Dist: numpy>=1.19
-Requires-Dist: pandas<2,>1.0.3
-Requires-Dist: scipy<1.11.0,>=1.0.0
-Requires-Dist: tqdm<5,>=4.31.1
-Requires-Dist: matplotlib<4,>=2.2.2
-Requires-Dist: scikit-learn<1.0.3,>=0.22.1
-Requires-Dist: numba<1,>=0.38.1
-Requires-Dist: lightfm<2,>=1.15
-Requires-Dist: lightgbm>=2.2.1
-Requires-Dist: memory_profiler<1,>=0.54.0
-Requires-Dist: nltk<4,>=3.4
-Requires-Dist: seaborn<1,>=0.8.1
-Requires-Dist: transformers<5,>=2.5.0
-Requires-Dist: category_encoders<2,>=1.3.0
-Requires-Dist: jinja2<3.1,>=2
-Requires-Dist: requests<3,>=2.31.0
-Requires-Dist: cornac<1.15.2,>=1.1.2; python_version <= "3.7"
-Requires-Dist: cornac<2,>=1.15.2; python_version >= "3.8"
-Requires-Dist: retrying>=1.3.3
-Requires-Dist: pandera[strategies]>=0.6.5
-Requires-Dist: scikit-surprise>=1.0.6
-Requires-Dist: hyperopt<1,>=0.1.2
-Requires-Dist: ipykernel<7,>=4.6.1
-Requires-Dist: jupyter<2,>=1
-Requires-Dist: locust<2,>=1
+Requires-Dist: category-encoders<3,>=2.6.0
+Requires-Dist: cornac<2,>=1.15.2
+Requires-Dist: hyperopt<1,>=0.2.7
+Requires-Dist: lightfm<2,>=1.17
+Requires-Dist: lightgbm<5,>=4.0.0
+Requires-Dist: locust<3,>=2.12.2
+Requires-Dist: memory-profiler<1,>=0.61.0
+Requires-Dist: nltk<4,>=3.8.1
+Requires-Dist: notebook<8,>=7.0.0
+Requires-Dist: numba<1,>=0.57.0
+Requires-Dist: pandas<3.0.0,>2.0.0
+Requires-Dist: pandera[strategies]<0.18,>=0.6.5; python_version <= "3.8"
+Requires-Dist: pandera[strategies]>=0.15.0; python_version >= "3.9"
+Requires-Dist: retrying<2,>=1.3.4
+Requires-Dist: scikit-learn<2,>=1.2.0
+Requires-Dist: scikit-surprise>=1.1.3
+Requires-Dist: scipy<1.11.0,>=1.10.1
+Requires-Dist: seaborn<1,>=0.13.0
+Requires-Dist: transformers<5,>=4.27.0
 Provides-Extra: gpu
-Requires-Dist: nvidia-ml-py3>=7.352.0; extra == "gpu"
-Requires-Dist: tensorflow==2.8.4; extra == "gpu"
+Requires-Dist: fastai<3,>=2.7.11; extra == "gpu"
+Requires-Dist: nvidia-ml-py>=11.525.84; extra == "gpu"
+Requires-Dist: tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4; extra == "gpu"
 Requires-Dist: tf-slim>=1.1.0; extra == "gpu"
-Requires-Dist: torch>=1.13.1; extra == "gpu"
-Requires-Dist: fastai<2,>=1.0.46; extra == "gpu"
+Requires-Dist: torch<3,>=2.0.1; extra == "gpu"
 Provides-Extra: spark
-Requires-Dist: pyarrow<7.0.0,>=0.12.1; extra == "spark"
-Requires-Dist: pyspark<3.3.0,>=2.4.5; extra == "spark"
+Requires-Dist: pyarrow>=10.0.1; extra == "spark"
+Requires-Dist: pyspark<=4,>=3.3.0; extra == "spark"
 Provides-Extra: dev
-Requires-Dist: black<21,>=18.6b4; extra == "dev"
-Requires-Dist: pytest>=3.6.4; extra == "dev"
-Requires-Dist: pytest-cov>=2.12.1; extra == "dev"
-Requires-Dist: pytest-mock>=3.6.1; extra == "dev"
+Requires-Dist: black>=23.3.0; extra == "dev"
+Requires-Dist: pytest>=7.2.1; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Requires-Dist: pytest-mock>=3.10.0; extra == "dev"
 Provides-Extra: all
-Requires-Dist: black<21,>=18.6b4; extra == "all"
-Requires-Dist: pyspark<3.3.0,>=2.4.5; extra == "all"
-Requires-Dist: tensorflow==2.8.4; extra == "all"
-Requires-Dist: nvidia-ml-py3>=7.352.0; extra == "all"
-Requires-Dist: fastai<2,>=1.0.46; extra == "all"
-Requires-Dist: torch>=1.13.1; extra == "all"
-Requires-Dist: pytest>=3.6.4; extra == "all"
-Requires-Dist: pyarrow<7.0.0,>=0.12.1; extra == "all"
 Requires-Dist: tf-slim>=1.1.0; extra == "all"
-Requires-Dist: pytest-cov>=2.12.1; extra == "all"
-Requires-Dist: pytest-mock>=3.6.1; extra == "all"
+Requires-Dist: pytest-mock>=3.10.0; extra == "all"
+Requires-Dist: pytest-cov>=4.1.0; extra == "all"
+Requires-Dist: tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4; extra == "all"
+Requires-Dist: nvidia-ml-py>=11.525.84; extra == "all"
+Requires-Dist: pyspark<=4,>=3.3.0; extra == "all"
+Requires-Dist: pyarrow>=10.0.1; extra == "all"
+Requires-Dist: black>=23.3.0; extra == "all"
+Requires-Dist: pytest>=7.2.1; extra == "all"
+Requires-Dist: fastai<3,>=2.7.11; extra == "all"
+Requires-Dist: torch<3,>=2.0.1; extra == "all"
 Provides-Extra: experimental
 Requires-Dist: xlearn==0.40a1; extra == "experimental"
 Requires-Dist: vowpalwabbit<9,>=8.9.0; extra == "experimental"
