@@ -15,7 +15,7 @@ try:
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
-    from fastai.collab import collab_learner, CollabDataBunch
+    from fastai.collab import collab_learner, CollabDataLoaders
 except ImportError:
     pass  # skip this import if we are not in a GPU environment
 
@@ -181,7 +181,7 @@ def prepare_training_fastai(train, test):
     data = train.copy()
     data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
     data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
-    data = CollabDataBunch.from_df(
+    data = CollabDataLoaders.from_df(
         data,
         user_name=DEFAULT_USER_COL,
         item_name=DEFAULT_ITEM_COL,
@@ -196,7 +196,7 @@ def train_fastai(params, data):
         data, n_factors=params["n_factors"], y_range=params["y_range"], wd=params["wd"]
     )
     with Timer() as t:
-        model.fit_one_cycle(cyc_len=params["epochs"], max_lr=params["max_lr"])
+        model.fit_one_cycle(params["epochs"], lr_max=params["lr_max"])
     return model, t
 
 
@@ -221,9 +221,9 @@ def predict_fastai(model, test):
 
 def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
-        total_users, total_items = model.data.train_ds.x.classes.values()
-        total_items = total_items[1:]
-        total_users = total_users[1:]
+        total_users, total_items = model.dls.classes.values()
+        total_items = np.array(total_items[1:])
+        total_users = np.array(total_users[1:])
         test_users = test[DEFAULT_USER_COL].unique()
         test_users = np.intersect1d(test_users, total_users)
         users_items = cartesian_product(test_users, total_items)

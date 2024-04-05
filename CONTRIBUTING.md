@@ -23,7 +23,7 @@ Contributions are welcomed! Here's a few things to know:
 Here are the basic steps to get started with your first contribution. Please reach out with any questions.
 1. Use [open issues](https://github.com/Microsoft/Recommenders/issues) to discuss the proposed changes. Create an issue describing changes if necessary to collect feedback. Also, please use provided labels to tag issues so everyone can easily sort issues of interest.
 1. [Fork the repo](https://help.github.com/articles/fork-a-repo/) so you can make and test local changes.
-1. Create a new branch **from staging branch** for the issue (please do not create a branch from main). We suggest prefixing the branch with your username and then a descriptive title: (e.g. gramhagen/update_contributing_docs)
+1. Create a new branch **from staging branch** for the issue (please do not create a branch from main). We suggest prefixing the branch with your username and then a descriptive title: (e.g. `gramhagen/update_contributing_docs`)
 1. Install recommenders package locally using the right optional dependency for your test and the dev option. (e.g. gpu test: `pip install -e .[gpu,dev]`)
 1. Create a test that replicates the issue.
 1. Make code changes.
@@ -31,7 +31,7 @@ Here are the basic steps to get started with your first contribution. Please rea
 1. When adding code to the repo, make sure you sign the commits, otherwise the tests will fail (see [how to sign the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits)).
 1. Create a pull request against **staging** branch.
 
-Once the features included in a [milestone](https://github.com/microsoft/recommenders/milestones) are completed, we will merge staging into main. See the wiki for more detail about our [merge strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
+See the wiki for more details about our [merging strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
 
 ## Coding Guidelines
 
