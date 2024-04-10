@@ -72,7 +72,4 @@ def combine_metrics_dicts(*metrics):
     Returns:
         pandas.DataFrame: Dataframe with metrics combined.
     """
-    df = pd.DataFrame(metrics[0], index=[0])
-    for metric in metrics[1:]:
-        df = df.append(pd.DataFrame(metric, index=[0]), sort=False)
-    return df
+    return pd.concat((pd.DataFrame(metric, index=[0]) for metric in metrics))
