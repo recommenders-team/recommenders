@@ -593,7 +593,7 @@ class SARSingleNode:
             {
                 self.col_user: test[self.col_user].values,
                 self.col_item: test[self.col_item].values,
-                self.col_prediction: test_scores[user_ids, item_ids].getA1(),
+                self.col_prediction: test_scores[user_ids, item_ids].ravel(),
             }
         )
         return df
