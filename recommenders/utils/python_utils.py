@@ -60,9 +60,9 @@ def jaccard(cooccurrence):
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
 
     with np.errstate(invalid="ignore", divide="ignore"):
-        result = cooccurrence / (diag_rows + diag_cols - cooccurrence)
+        result = cooccurrence.toarray() / (diag_rows + diag_cols - cooccurrence)
 
-    return result.toarray()
+    return result
 
 
 def lift(cooccurrence):
@@ -83,9 +83,9 @@ def lift(cooccurrence):
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
 
     with np.errstate(invalid="ignore", divide="ignore"):
-        result = cooccurrence / (diag_rows * diag_cols)
+        result = cooccurrence.toarray() / (diag_rows * diag_cols)
 
-    return result.toarray()
+    return result
 
 
 def mutual_information(cooccurrence):
@@ -106,7 +106,7 @@ def mutual_information(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = np.log2(cooccurrence.shape[0] * lift(cooccurrence))
 
-    return result.toarray()
+    return result
 
 
 def lexicographers_mutual_information(cooccurrence):
@@ -126,9 +126,9 @@ def lexicographers_mutual_information(cooccurrence):
     """
 
     with np.errstate(invalid="ignore", divide="ignore"):
-        result = cooccurrence * mutual_information(cooccurrence)
+        result = cooccurrence.toarray() * mutual_information(cooccurrence)
 
-    return result.toarray()
+    return result
 
 
 def cosine_similarity(cooccurrence):
@@ -149,9 +149,9 @@ def cosine_similarity(cooccurrence):
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
 
     with np.errstate(invalid="ignore", divide="ignore"):
-        result = cooccurrence / np.sqrt(diag_rows * diag_cols)
+        result = cooccurrence.toarray() / np.sqrt(diag_rows * diag_cols)
 
-    return result.toarray()
+    return result
 
 
 def inclusion_index(cooccurrence):
@@ -171,9 +171,9 @@ def inclusion_index(cooccurrence):
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
 
     with np.errstate(invalid="ignore", divide="ignore"):
-        result = cooccurrence / np.minimum(diag_rows, diag_cols)
+        result = cooccurrence.toarray() / np.minimum(diag_rows, diag_cols)
 
-    return result.toarray()
+    return result
 
 
 def get_top_k_scored_items(scores, top_k, sort_top_k=False):
