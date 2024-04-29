@@ -62,7 +62,7 @@ def jaccard(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / (diag_rows + diag_cols - cooccurrence)
 
-    return result if isinstance(result, np.ndarray) else result.toarray()
+    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
 
 
 def lift(cooccurrence):
@@ -85,7 +85,7 @@ def lift(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / (diag_rows * diag_cols)
 
-    return result if isinstance(result, np.ndarray) else result.toarray()
+    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
 
 
 def mutual_information(cooccurrence):
@@ -106,7 +106,7 @@ def mutual_information(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = np.log2(cooccurrence.shape[0] * lift(cooccurrence))
 
-    return result if isinstance(result, np.ndarray) else result.toarray()
+    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
 
 
 def lexicographers_mutual_information(cooccurrence):
@@ -128,7 +128,7 @@ def lexicographers_mutual_information(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence * mutual_information(cooccurrence)
 
-    return result if isinstance(result, np.ndarray) else result.toarray()
+    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
 
 
 def cosine_similarity(cooccurrence):
@@ -151,7 +151,7 @@ def cosine_similarity(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / np.sqrt(diag_rows * diag_cols)
 
-    return result if isinstance(result, np.ndarray) else result.toarray()
+    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
 
 
 def inclusion_index(cooccurrence):
@@ -173,7 +173,7 @@ def inclusion_index(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / np.minimum(diag_rows, diag_cols)
 
-    return result if isinstance(result, np.ndarray) else result.toarray()
+    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
 
 
 def get_top_k_scored_items(scores, top_k, sort_top_k=False):
