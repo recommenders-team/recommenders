@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 __title__ = "Recommenders"
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 __author__ = "Recommenders contributors"
 __license__ = "MIT"
 __copyright__ = "Copyright 2018-present Recommenders contributors."
