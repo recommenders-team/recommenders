@@ -33,6 +33,8 @@ Several utilities are provided in [recommenders](recommenders) to support common
 
 For a more detailed overview of the repository, please see the documents on the [wiki page](https://github.com/microsoft/recommenders/wiki/Documents-and-Presentations).
 
+For some of the practical scenarios where recommendation systems have been applied, see [scenarios](scenarios). 
+
 ## Getting Started
 
 We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [VS Code](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook on Linux/WSL:
