@@ -42,7 +42,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -397,6 +397,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.ndcg_at_k"><code class="docutils literal notranslate"><span class="pre">ndcg_at_k()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.novelty"><code class="docutils literal notranslate"><span class="pre">novelty()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.precision_at_k"><code class="docutils literal notranslate"><span class="pre">precision_at_k()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.r_precision_at_k"><code class="docutils literal notranslate"><span class="pre">r_precision_at_k()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.recall_at_k"><code class="docutils literal notranslate"><span class="pre">recall_at_k()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.rmse"><code class="docutils literal notranslate"><span class="pre">rmse()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.rsquared"><code class="docutils literal notranslate"><span class="pre">rsquared()</span></code></a></li>
@@ -656,11 +657,11 @@ ratings.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataframe</strong> (<em>pandas.DataFrame</em>) – DataFrame of rating data (in the format</p></li>
-<li><p><strong>customerID-itemID-rating</strong><strong>)</strong> – </p></li>
+<li><p><strong>customerID-itemID-rating</strong><strong>)</strong></p></li>
 <li><p><strong>col_user</strong> (<em>str</em>) – column name for user</p></li>
 <li><p><strong>col_rating</strong> (<em>str</em>) – column name for rating</p></li>
 <li><p><strong>k</strong> (<em>int</em><em> or </em><em>None</em>) – number of items for each user; None means that the input has already been</p></li>
-<li><p><strong>again.</strong> (<em>filtered out top k items and sorted by ratings and there is no need to do that</em>) – </p></li>
+<li><p><strong>again.</strong> (<em>filtered out top k items and sorted by ratings and there is no need to do that</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -971,6 +972,43 @@ top k items are directly provided, so there is no need to compute the relevancy 
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>precision at k (min=0, max=1)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="recommenders.evaluation.python_evaluation.r_precision_at_k">
+<span class="sig-prename descclassname"><span class="pre">recommenders.evaluation.python_evaluation.</span></span><span class="sig-name descname"><span class="pre">r_precision_at_k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rating_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rating_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_prediction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prediction'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevancy_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'top_k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/evaluation/python_evaluation.html#r_precision_at_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.evaluation.python_evaluation.r_precision_at_k" title="Link to this definition">#</a></dt>
+<dd><p>R-precision at K.</p>
+<p>R-precision can be defined as the precision&#64;R for each user, where R is the
+numer of relevant items for the query. Its also equivalent to the recall at
+the R-th position.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As R can be high, in this case, the k indicates the maximum possible R.
+If every user has more than k true items, then r-precision&#64;k is equal to
+precision&#64;k. You might need to raise the k value to get meaningful results.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rating_true</strong> (<em>pandas.DataFrame</em>) – True DataFrame</p></li>
+<li><p><strong>rating_pred</strong> (<em>pandas.DataFrame</em>) – Predicted DataFrame</p></li>
+<li><p><strong>col_user</strong> (<em>str</em>) – column name for user</p></li>
+<li><p><strong>col_item</strong> (<em>str</em>) – column name for item</p></li>
+<li><p><strong>col_prediction</strong> (<em>str</em>) – column name for prediction</p></li>
+<li><p><strong>relevancy_method</strong> (<em>str</em>) – method for determining relevancy [‘top_k’, ‘by_threshold’, None]. None means that the
+top k items are directly provided, so there is no need to compute the relevancy operation.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – number of top k items per user</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold of top items per user (optional)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>recall at k (min=0, max=1). The maximum value is 1 even when fewer than
+k items exist for a user in rating_true.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -1732,6 +1770,7 @@ R squared, and explained variance.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.ndcg_at_k"><code class="docutils literal notranslate"><span class="pre">ndcg_at_k()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.novelty"><code class="docutils literal notranslate"><span class="pre">novelty()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.precision_at_k"><code class="docutils literal notranslate"><span class="pre">precision_at_k()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.r_precision_at_k"><code class="docutils literal notranslate"><span class="pre">r_precision_at_k()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.recall_at_k"><code class="docutils literal notranslate"><span class="pre">recall_at_k()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.rmse"><code class="docutils literal notranslate"><span class="pre">rmse()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.evaluation.python_evaluation.rsquared"><code class="docutils literal notranslate"><span class="pre">rsquared()</span></code></a></li>

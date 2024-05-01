@@ -25,6 +25,7 @@ from recommenders.evaluation.python_evaluation import (
     exp_var,
     get_top_k_items,
     precision_at_k,
+    r_precision_at_k,
     recall_at_k,
     ndcg_at_k,
     map_at_k,
@@ -364,6 +365,20 @@ def test_python_recall_at_k(rating_true, rating_pred, rating_nohit):
     ) == pytest.approx(1, TOL)
     assert recall_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert recall_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.37777, TOL)
+
+
+def test_python_r_precision(rating_true, rating_pred, rating_nohit):
+    assert r_precision_at_k(
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL,
+        k=10,
+    ) == pytest.approx(1, TOL)
+    assert r_precision_at_k(rating_true, rating_nohit, k=5) == 0.0
+    assert r_precision_at_k(rating_true, rating_pred, k=3) == pytest.approx(0.21111, TOL)
+    assert r_precision_at_k(rating_true, rating_pred, k=5) == pytest.approx(0.24444, TOL)
+    # Equivalent to precision
+    assert r_precision_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.37777, TOL)
 
 
 def test_python_auc(rating_true_binary, rating_pred_binary):

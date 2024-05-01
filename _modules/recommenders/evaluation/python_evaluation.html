@@ -41,7 +41,7 @@
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
@@ -905,6 +905,66 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="r_precision_at_k">
+<a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.r_precision_at_k">[docs]</a>
+<span class="k">def</span> <span class="nf">r_precision_at_k</span><span class="p">(</span>
+    <span class="n">rating_true</span><span class="p">,</span>
+    <span class="n">rating_pred</span><span class="p">,</span>
+    <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
+    <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
+    <span class="n">col_prediction</span><span class="o">=</span><span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
+    <span class="n">relevancy_method</span><span class="o">=</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">_</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;R-precision at K.</span>
+
+<span class="sd">    R-precision can be defined as the precision@R for each user, where R is the</span>
+<span class="sd">    numer of relevant items for the query. Its also equivalent to the recall at</span>
+<span class="sd">    the R-th position.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        As R can be high, in this case, the k indicates the maximum possible R.</span>
+<span class="sd">        If every user has more than k true items, then r-precision@k is equal to</span>
+<span class="sd">        precision@k. You might need to raise the k value to get meaningful results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rating_true (pandas.DataFrame): True DataFrame</span>
+<span class="sd">        rating_pred (pandas.DataFrame): Predicted DataFrame</span>
+<span class="sd">        col_user (str): column name for user</span>
+<span class="sd">        col_item (str): column name for item</span>
+<span class="sd">        col_prediction (str): column name for prediction</span>
+<span class="sd">        relevancy_method (str): method for determining relevancy [&#39;top_k&#39;, &#39;by_threshold&#39;, None]. None means that the</span>
+<span class="sd">            top k items are directly provided, so there is no need to compute the relevancy operation.</span>
+<span class="sd">        k (int): number of top k items per user</span>
+<span class="sd">        threshold (float): threshold of top items per user (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than</span>
+<span class="sd">        k items exist for a user in rating_true.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_hit</span><span class="p">,</span> <span class="n">df_hit_count</span><span class="p">,</span> <span class="n">n_users</span> <span class="o">=</span> <span class="n">merge_ranking_true_pred</span><span class="p">(</span>
+        <span class="n">rating_true</span><span class="o">=</span><span class="n">rating_true</span><span class="p">,</span>
+        <span class="n">rating_pred</span><span class="o">=</span><span class="n">rating_pred</span><span class="p">,</span>
+        <span class="n">col_user</span><span class="o">=</span><span class="n">col_user</span><span class="p">,</span>
+        <span class="n">col_item</span><span class="o">=</span><span class="n">col_item</span><span class="p">,</span>
+        <span class="n">col_prediction</span><span class="o">=</span><span class="n">col_prediction</span><span class="p">,</span>
+        <span class="n">relevancy_method</span><span class="o">=</span><span class="n">relevancy_method</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">df_merged</span> <span class="o">=</span> <span class="n">df_hit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_hit_count</span><span class="p">[[</span><span class="n">col_user</span><span class="p">,</span> <span class="s1">&#39;actual&#39;</span><span class="p">]])</span>
+    <span class="n">df_merged</span> <span class="o">=</span> <span class="n">df_merged</span><span class="p">[</span><span class="n">df_merged</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">df_merged</span><span class="p">[</span><span class="s1">&#39;actual&#39;</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">df_merged</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_user</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">/</span> <span class="n">df_hit_count</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">col_user</span><span class="p">)[</span><span class="s1">&#39;actual&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+
+
+
 <div class="viewcode-block" id="ndcg_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ndcg_at_k">[docs]</a>
 <span class="k">def</span> <span class="nf">ndcg_at_k</span><span class="p">(</span>
@@ -1200,6 +1260,7 @@ document.write(`
     <span class="n">exp_var</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">exp_var</span><span class="p">,</span>
     <span class="n">precision_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">precision_at_k</span><span class="p">,</span>
     <span class="n">recall_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">recall_at_k</span><span class="p">,</span>
+    <span class="n">r_precision_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">r_precision_at_k</span><span class="p">,</span>
     <span class="n">ndcg_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">ndcg_at_k</span><span class="p">,</span>
     <span class="n">map_at_k</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">map_at_k</span><span class="p">,</span>
     <span class="nb">map</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="nb">map</span><span class="p">,</span>
