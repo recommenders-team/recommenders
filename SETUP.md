@@ -150,8 +150,6 @@ Currently, tests are done on **Python CPU** (the base environment), **Python GPU
 
 Another way is to build a docker image and use the functions inside a [docker container](#setup-guide-for-docker).
 
-Another alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md).
-
 ## Setup for Making a Release
 
 The process of making a new release and publishing it to [PyPI](https://pypi.org/project/recommenders/) is as follows:
