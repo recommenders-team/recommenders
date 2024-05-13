@@ -2,17 +2,17 @@
 Copyright (c) Recommenders contributors.
 Licensed under the MIT License.
 -->
+<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
+
+# Recommenders
 
 [![Documentation status](https://github.com/recommenders-team/recommenders/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/recommenders-team/recommenders/actions/workflows/pages/pages-build-deployment)
 [![License](https://img.shields.io/github/license/recommenders-team/recommenders.svg)](https://github.com/recommenders-team/recommenders/blob/main/LICENSE)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyPI Version](https://img.shields.io/pypi/v/recommenders.svg?logo=pypi&logoColor=white)](https://pypi.org/project/recommenders)
 [![Python Versions](https://img.shields.io/pypi/pyversions/recommenders.svg?logo=python&logoColor=white)](https://pypi.org/project/recommenders)
-[![Slack](https://img.shields.io/badge/slack-join-green.svg?style=flat)](https://lfaifoundation.slack.com/archives/C06D2GQ9K8F)
+[<img align="right" width="150" src="https://raw.githubusercontent.com/recommenders-team/artwork/main/mix/join-slack-team.png">](https://lfaifoundation.slack.com/archives/C06D2GQ9K8F)
 
-<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
-
-# Recommenders
 
 ## What's New (May, 2024)
 
