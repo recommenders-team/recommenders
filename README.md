@@ -13,7 +13,7 @@ Licensed under the MIT License.
 [![PyPI Version](https://img.shields.io/pypi/v/recommenders.svg?logo=pypi&logoColor=white)](https://pypi.org/project/recommenders)
 [![Python Versions](https://img.shields.io/pypi/pyversions/recommenders.svg?logo=python&logoColor=white)](https://pypi.org/project/recommenders)
 
-[<img align="right" width="150" src="https://raw.githubusercontent.com/recommenders-team/artwork/main/mix/join-slack-team.png">](https://lfaifoundation.slack.com/archives/C06D2GQ9K8F)
+[<img align="left" width="150" src="https://raw.githubusercontent.com/recommenders-team/artwork/main/mix/join-slack-team.png">](https://lfaifoundation.slack.com/archives/C06D2GQ9K8F)
 <br>
 
 ## What's New (May, 2024)
