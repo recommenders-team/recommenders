@@ -5,8 +5,6 @@ Licensed under the MIT License.
 <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
 
 
-# Recommenders
-
 [![Documentation status](https://github.com/recommenders-team/recommenders/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/recommenders-team/recommenders/actions/workflows/pages/pages-build-deployment)
 [![License](https://img.shields.io/github/license/recommenders-team/recommenders.svg)](https://github.com/recommenders-team/recommenders/blob/main/LICENSE)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
