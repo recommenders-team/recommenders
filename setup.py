@@ -28,7 +28,7 @@ if HASH is not None:
 
 install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
-    "cornac>=1.15.2,<2",  # requires packaging, tqdm
+    "cornac>=1.15.2,<3",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
     "lightfm>=1.17,<2",  # requires requests
     "lightgbm>=4.0.0,<5",
