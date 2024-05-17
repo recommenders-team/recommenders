@@ -72,6 +72,8 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Dan Ciborowski](https://github.com/dciborow)**
    * ALS operationalization notebook
    * SAR PySpark improvement
+* **[David Davó](https://github.com/daviddavo)**
+   * Added R-Precision metric
 * **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook
 * **[Evgenia Chroni](https://github.com/EvgeniaChroni)**
