@@ -67,6 +67,7 @@ To contribute new metrics, please consider this:
 
 * A good way to contribute with metrics is by optimizing the code of the existing ones.
 * If you are adding a new metric, please consider adding not only a CPU version, but also a PySpark version.
+* When adding the tests, make sure you check for the limits. For example, if you add an error metric, check that the error between two identical datasets is zero.
 
 ### General tips
 
@@ -78,7 +79,7 @@ To contribute new metrics, please consider this:
 
 We strive to maintain high quality code to make the utilities in the repository easy to understand, use, and extend. We also work hard to maintain a friendly and constructive environment. We've found that having clear expectations on the development process and consistent style helps to ensure everyone can contribute and collaborate effectively.
 
-Please review the [coding guidelines](https://github.com/recommenders-team/recommenders/wiki/Coding-Guidelines) wiki page to see more details about the expectations for development approach and style.
+Please review the [Coding Guidelines](https://github.com/recommenders-team/recommenders/wiki/Coding-Guidelines) wiki page to see more details about the expectations for development approach and style.
 
 ## Code of Conduct
 
@@ -101,7 +102,7 @@ When making code reviews, try to support your ideas based on evidence (papers, l
 <details>
 <summary><em>Click here to see some examples</em></summary>
 
-"When reviewing this code, I saw that the Python implementation the metrics are based on classes, however, [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics) use functions. We should follow the standard in the industry."
+"When reviewing this code, I saw that the Python implementation of the metrics are based on classes, however, [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) use functions. We should follow the standard in the industry."
 
 </details>
 
