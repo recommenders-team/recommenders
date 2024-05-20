@@ -9,11 +9,17 @@ Contributions are welcomed! Here's a few things to know:
 
 - [Contribution Guidelines](#contribution-guidelines)
   - [Steps to Contributing](#steps-to-contributing)
+  - [Ideas for Contributions](#ideas-for-contributions)
+    - [A first contribution](#a-first-contribution)
+    - [Datasets](#datasets)
+    - [Models](#models)
+    - [Metrics](#metrics)
+    - [General tips](#general-tips)
   - [Coding Guidelines](#coding-guidelines)
   - [Code of Conduct](#code-of-conduct)
-      - [Do not point fingers](#do-not-point-fingers)
-      - [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
-      - [Ask questions do not give answers](#ask-questions-do-not-give-answers)
+    - [Do not point fingers](#do-not-point-fingers)
+    - [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
+    - [Ask questions do not give answers](#ask-questions-do-not-give-answers)
 
 ## Steps to Contributing
 
@@ -37,6 +43,8 @@ See the wiki for more details about our [merging strategy](https://github.com/mi
 ### A first contribution
 
 For people who are new to open source or to Recommenders, a good way to start is by contribution with documentation. You can help with any of the README files or in the notebooks.
+
+For more advanced users, consider fixing one of the bugs listed in the issues.
 
 ### Datasets
 
@@ -65,8 +73,7 @@ To contribute new metrics, please consider this:
 
 * Minimize dependencies. Around 80% of the issues in the repo are related to dependencies.
 * Prioritize PyTorch over TensorFlow.
-* Avoid GPL and other viral licenses. Prioritize MIT, Apache, and other permissive licenses.
-
+* Avoid adding code with GPL and other viral licenses. Prioritize MIT, Apache, and other permissive licenses.
 
 ## Coding Guidelines
 
@@ -74,9 +81,11 @@ We strive to maintain high quality code to make the utilities in the repository 
 
 Please review the [coding guidelines](https://github.com/recommenders-team/recommenders/wiki/Coding-Guidelines) wiki page to see more details about the expectations for development approach and style.
 
+## Code of Conduct
+
 Apart from the official [Code of Conduct](CODE_OF_CONDUCT.md), in Recommenders team we adopt the following behaviors, to ensure a great working environment:
 
-#### Do not point fingers
+### Do not point fingers
 Let’s be constructive.
 
 <details>
@@ -86,7 +95,7 @@ Let’s be constructive.
 
 </details>
 
-#### Provide code feedback based on evidence 
+### Provide code feedback based on evidence 
 
 When making code reviews, try to support your ideas based on evidence (papers, library documentation, stackoverflow, etc) rather than your personal preferences. 
 
@@ -97,7 +106,7 @@ When making code reviews, try to support your ideas based on evidence (papers, l
 
 </details>
 
-#### Ask questions do not give answers
+### Ask questions do not give answers
 Try to be empathic. 
 
 <details>
