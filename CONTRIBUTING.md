@@ -7,19 +7,18 @@ Licensed under the MIT License.
 
 Contributions are welcomed! Here's a few things to know:
 
-- [Contribution Guidelines](#contribution-guidelines)
-  - [Steps to Contributing](#steps-to-contributing)
-  - [Ideas for Contributions](#ideas-for-contributions)
-    - [A first contribution](#a-first-contribution)
-    - [Datasets](#datasets)
-    - [Models](#models)
-    - [Metrics](#metrics)
-    - [General tips](#general-tips)
-  - [Coding Guidelines](#coding-guidelines)
-  - [Code of Conduct](#code-of-conduct)
-    - [Do not point fingers](#do-not-point-fingers)
-    - [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
-    - [Ask questions do not give answers](#ask-questions-do-not-give-answers)
+- [Steps to Contributing](#steps-to-contributing)
+- [Ideas for Contributions](#ideas-for-contributions)
+  - [A first contribution](#a-first-contribution)
+  - [Datasets](#datasets)
+  - [Models](#models)
+  - [Metrics](#metrics)
+  - [General tips](#general-tips)
+- [Coding Guidelines](#coding-guidelines)
+- [Code of Conduct](#code-of-conduct)
+  - [Do not point fingers](#do-not-point-fingers)
+  - [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
+  - [Ask questions do not give answers](#ask-questions-do-not-give-answers)
 
 ## Steps to Contributing
 
