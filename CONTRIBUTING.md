@@ -10,7 +10,6 @@ Contributions are welcomed! Here's a few things to know:
 - [Contribution Guidelines](#contribution-guidelines)
   - [Steps to Contributing](#steps-to-contributing)
   - [Coding Guidelines](#coding-guidelines)
-  - [Microsoft Contributor License Agreement](#microsoft-contributor-license-agreement)
   - [Code of Conduct](#code-of-conduct)
       - [Do not point fingers](#do-not-point-fingers)
       - [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
@@ -32,6 +31,42 @@ Here are the basic steps to get started with your first contribution. Please rea
 1. Create a pull request against **staging** branch.
 
 See the wiki for more details about our [merging strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
+
+## Ideas for Contributions
+
+### A first contribution
+
+For people who are new to open source or to Recommenders, a good way to start is by contribution with documentation. You can help with any of the README files or in the notebooks.
+
+### Datasets
+
+To contribute new datasets, please consider this:
+
+* Minimize dependencies, it's better to use `requests` library than a custom library.
+* Make sure that the dataset is publicly available and that the license allows for redistribution.
+
+### Models
+
+To contribute new models, please consider this:
+
+* Please don't add models that are already implemented in the repo. An exception to this rule is if you are adding a more optimal implementation or you want to migrate a model from TensorFlow to PyTorch.
+* Prioritize the minimal code necessary instead of adding a full library. If you add code from another repository, please make sure to follow the license and give proper credit.
+* All models should be accompanied by a notebook that shows how to use the model and how to train it. The notebook should be in the [examples](examples) folder.
+* The model should be tested with unit tests, and the notebooks should be tested with functional tests.
+
+### Metrics
+
+To contribute new metrics, please consider this:
+
+* A good way to contribute with metrics is by optimizing the code of the existing ones.
+* If you are adding a new metric, please consider adding not only a CPU version, but also a PySpark version.
+
+### General tips
+
+* Minimize dependencies. Around 80% of the issues in the repo are related to dependencies.
+* Prioritize PyTorch over TensorFlow.
+* Avoid GPL and other viral licenses. Prioritize MIT, Apache, and other permissive licenses.
+
 
 ## Coding Guidelines
 
