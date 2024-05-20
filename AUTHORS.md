@@ -74,6 +74,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * SAR PySpark improvement
 * **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook
+* **[David Davó](https://github.com/daviddavo)**
+   * Added R-Precision metric
 * **[Evgenia Chroni](https://github.com/EvgeniaChroni)**
    * Multinomial VAE algorithm
    * Standard VAE algorithm
