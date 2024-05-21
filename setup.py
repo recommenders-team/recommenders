@@ -30,7 +30,8 @@ install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
     "cornac>=1.15.2,<3",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
-    "lightfm>=1.17,<2",  # requires requests
+    # TODO: Wait for the PR to be merged and released
+    "lightfm@git+https://github.com/daviddavo/lightfm",  # requires requests
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
