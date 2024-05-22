@@ -73,7 +73,7 @@ To contribute new metrics, please consider this:
 
 * Prioritize PyTorch over TensorFlow.
 * Minimize dependencies. Around 80% of the issues in the repo are related to dependencies.
-* Avoid adding code with GPL and other viral licenses. Prioritize MIT, Apache, and other permissive licenses.
+* Avoid adding code with GPL and other copyleft licenses. Prioritize MIT, Apache, and other permissive licenses.
 * Add the copyright statement at the beginning of the file: `Copyright (c) Recommenders contributors. Licensed under the MIT License.`
 
 ## Coding Guidelines
