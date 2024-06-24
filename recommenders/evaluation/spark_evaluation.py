@@ -761,7 +761,7 @@ class SparkDiversityEvaluation:
         if self.avg_diversity is None:
             self.df_user_diversity = self.user_diversity()
             self.avg_diversity = self.df_user_diversity.agg(
-                {"user_diversity": "mean"}
+                user_diversity="mean"
             ).first()[0]
         return self.avg_diversity
 
@@ -904,7 +904,7 @@ class SparkDiversityEvaluation:
         if self.avg_serendipity is None:
             self.df_user_serendipity = self.user_serendipity()
             self.avg_serendipity = self.df_user_serendipity.agg(
-                {"user_serendipity": "mean"}
+                user_serendipity="mean"
             ).first()[0]
         return self.avg_serendipity
 
