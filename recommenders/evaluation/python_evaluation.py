@@ -435,9 +435,9 @@ def merge_ranking_true_pred(
 
     # count the number of hits vs actual relevant items per user
     df_hit_count = pd.merge(
-        df_hit.groupby(col_user, as_index=False)[col_user].agg({"hit": "count"}),
+        df_hit.groupby(col_user, as_index=False)[col_user].agg(hit="count"),
         rating_true_common.groupby(col_user, as_index=False)[col_user].agg(
-            {"actual": "count"}
+            actual="count",
         ),
         on=col_user,
     )
