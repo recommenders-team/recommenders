@@ -2,12 +2,12 @@
 requires = [
     "setuptools>=52",
     "wheel>=0.36",
-    "numpy>=1.15",
+    "numpy>=1.15,<2",
 ]
 dependencies = [
     "setuptools>=52",
     "wheel>=0.36",
-    "numpy>=1.15",
+    "numpy>=1.15,<2",
 ]
 build-backend = "setuptools.build_meta"
 
