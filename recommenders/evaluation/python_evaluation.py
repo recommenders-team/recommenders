@@ -680,14 +680,14 @@ def ndcg_at_k(
     df_idcg["idcg"] = df_idcg["rel"] / discfun(1 + df_idcg["irank"])
 
     # Calculate the actual DCG for each user
-    df_user = df_dcg.groupby(col_user, as_index=False, sort=False).agg(dcg="sum")
+    df_user = df_dcg.groupby(col_user, as_index=False, sort=False).agg({"dcg": "sum"})
 
     # Calculate the ideal DCG for each user
     df_user = df_user.merge(
         df_idcg.groupby(col_user, as_index=False, sort=False)
         .head(k)
         .groupby(col_user, as_index=False, sort=False)
-        .agg(idcg="sum"),
+        .agg({"idcg": "sum"}),
         on=col_user,
     )
 
@@ -726,7 +726,7 @@ def _get_reciprocal_rank(
     df_hit_sorted["rr"] = (
         df_hit_sorted.groupby(col_user).cumcount() + 1
     ) / df_hit_sorted["rank"]
-    df_hit_sorted = df_hit_sorted.groupby(col_user).agg(rr="sum").reset_index()
+    df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
 
     return pd.merge(df_hit_sorted, df_hit_count, on=col_user), n_users
 
@@ -1235,7 +1235,7 @@ def _get_intralist_similarity(
         item_pair_sim["i1"] != item_pair_sim["i2"]
     ].reset_index(drop=True)
     df_intralist_similarity = (
-        item_pair_sim.groupby([col_user]).agg(**{col_sim: "mean"}).reset_index()
+        item_pair_sim.groupby([col_user]).agg({col_sim: "mean"}).reset_index()
     )
     df_intralist_similarity.columns = [col_user, "avg_il_sim"]
 
@@ -1345,7 +1345,7 @@ def diversity(
         col_item,
         col_sim,
     )
-    avg_diversity = df_user_diversity.agg(user_diversity="mean")[0]
+    avg_diversity = df_user_diversity.agg({"user_diversity": "mean"})[0]
     return avg_diversity
 
 
@@ -1432,7 +1432,7 @@ def novelty(train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_
     reco_item_novelty["product"] = (
         reco_item_novelty["count"] * reco_item_novelty["item_novelty"]
     )
-    avg_novelty = reco_item_novelty.agg(product="sum")[0] / n_recommendations
+    avg_novelty = reco_item_novelty.agg({"product": "sum"})[0] / n_recommendations
 
     return avg_novelty
 
@@ -1512,7 +1512,7 @@ def user_item_serendipity(
 
     reco_user_item_avg_sim = (
         reco_train_user_item_sim.groupby([col_user, col_item])
-        .agg(**{col_sim: "mean"})
+        .agg({col_sim: "mean"})
         .reset_index()
     )
     reco_user_item_avg_sim.columns = [
@@ -1582,7 +1582,7 @@ def user_serendipity(
     )
     df_user_serendipity = (
         df_user_item_serendipity.groupby(col_user)
-        .agg(user_item_serendipity="mean")
+        .agg({"user_item_serendipity": "mean"})
         .reset_index()
     )
     df_user_serendipity.columns = [col_user, "user_serendipity"]
@@ -1636,7 +1636,7 @@ def serendipity(
         col_sim,
         col_relevance,
     )
-    avg_serendipity = df_user_serendipity.agg(user_serendipity="mean")[0]
+    avg_serendipity = df_user_serendipity.agg({"user_serendipity": "mean"})[0]
     return avg_serendipity
 
 
@@ -1711,6 +1711,6 @@ def distributional_coverage(
     df_entropy["p(i)"] = df_entropy["count"] / count_row_reco
     df_entropy["entropy(i)"] = df_entropy["p(i)"] * np.log2(df_entropy["p(i)"])
 
-    d_coverage = -df_entropy.agg(**{"entropy(i)": "sum"})[0]
+    d_coverage = -df_entropy.agg({"entropy(i)": "sum"})[0]
 
     return d_coverage
