@@ -30,13 +30,11 @@ install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
     "cornac>=1.15.2,<3",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
-    # TODO: Wait for the PR to be merged and released
-    "lightfm@git+https://github.com/daviddavo/lightfm",  # requires requests
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
-    "notebook>=7.0.0,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
+    "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
@@ -81,6 +79,7 @@ extras_require["experimental"] = [
     # nni needs to be upgraded
     "nni==1.5",
     "pymanopt>=0.2.5",
+    "lightfm>=1.17,<2",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.

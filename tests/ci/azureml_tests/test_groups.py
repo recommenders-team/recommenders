@@ -47,8 +47,6 @@ nightly_test_groups = {
         "tests/functional/examples/test_notebooks_python.py::test_geoimc_functional",  # 1006.19s
         #
         "tests/functional/examples/test_notebooks_python.py::test_benchmark_movielens_cpu",  # 58s
-        #
-        "tests/functional/examples/test_notebooks_python.py::test_lightfm_functional",
     ],
     "group_cpu_003": [  # Total group time: 2253s
         "tests/data_validation/recommenders/datasets/test_criteo.py::test_download_criteo_sample",  # 1.05s
@@ -237,10 +235,6 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
         "tests/unit/recommenders/models/test_geoimc.py::test_inferer_init",
         "tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_interactions",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_fitting",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_users",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_items",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_init",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_fit",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_predict",
@@ -452,4 +446,15 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
     ],
+}
+
+# Experimental are additional test groups that require to install extra dependencies: pip install .[experimental]
+experimental_test_groups = {
+    "group_cpu_001": [
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_interactions",
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_fitting",
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_users",
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_items",
+        "tests/functional/examples/test_notebooks_python.py::test_lightfm_functional",
+    ]
 }

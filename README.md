@@ -2,16 +2,22 @@
 Copyright (c) Recommenders contributors.
 Licensed under the MIT License.
 -->
+<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
 
-# Recommenders
 
 [![Documentation status](https://github.com/recommenders-team/recommenders/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/recommenders-team/recommenders/actions/workflows/pages/pages-build-deployment)
+[![License](https://img.shields.io/github/license/recommenders-team/recommenders.svg)](https://github.com/recommenders-team/recommenders/blob/main/LICENSE)
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![PyPI Version](https://img.shields.io/pypi/v/recommenders.svg?logo=pypi&logoColor=white)](https://pypi.org/project/recommenders)
+[![Python Versions](https://img.shields.io/pypi/pyversions/recommenders.svg?logo=python&logoColor=white)](https://pypi.org/project/recommenders)
 
-<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
+[<img align="left" width="300" src="https://raw.githubusercontent.com/recommenders-team/artwork/main/mix/join_recommenders_slack.svg">](https://join.slack.com/t/lfaifoundation/shared_invite/zt-2iyl7zyya-g5rOO5K518CBoevyi28W6w)
+
+<br>
 
 ## What's New (May, 2024)
 
-We have a new release [Recommenders 1.2.0](https://github.com/microsoft/recommenders/releases/tag/1.2.0)!
+We have a new release [Recommenders 1.2.0](https://github.com/recommenders-team/recommenders/releases/tag/1.2.0)!
 
 So many changes since our last release. We have full tests on Python 3.8 to 3.11 (around 1800 tests), upgraded performance in many algorithms, reviewed notebooks, and many more improvements.
 
@@ -88,7 +94,7 @@ The table below lists the recommendation algorithms currently available in the r
 | LightFM/Factorization Machine | Collaborative Filtering | Factorization Machine algorithm for both implicit and explicit feedbacks. It works in the CPU environment. | [Quick start](examples/02_model_collaborative_filtering/lightfm_deep_dive.ipynb) |
 | LightGBM/Gradient Boosting Tree<sup>*</sup> | Content-Based Filtering | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems. It works in the CPU/GPU/PySpark environments. | [Quick start in CPU](examples/00_quick_start/lightgbm_tinycriteo.ipynb) / [Deep dive in PySpark](examples/02_model_content_based_filtering/mmlspark_lightgbm_criteo.ipynb) |
 | LightGCN | Collaborative Filtering | Deep learning algorithm which simplifies the design of GCN for predicting implicit feedback. It works in the CPU/GPU environment. | [Deep dive](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) |
-| GeoIMC<sup>*</sup> | Collaborative Filtering | Matrix completion algorithm that has into account user and item features using Riemannian conjugate gradients optimization and following a geometric approach. It works in the CPU environment. | [Quick start](examples/00_quick_start/geoimc_movielens.ipynb) |
+| GeoIMC<sup>*</sup> | Collaborative Filtering | Matrix completion algorithm that takes into account user and item features using Riemannian conjugate gradient optimization and follows a geometric approach. It works in the CPU environment. | [Quick start](examples/00_quick_start/geoimc_movielens.ipynb) |
 | GRU | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using recurrent neural networks. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
 | Multinomial VAE | Collaborative Filtering | Generative model for predicting user/item interactions. It works in the CPU/GPU environment. | [Deep dive](examples/02_model_collaborative_filtering/multi_vae_deep_dive.ipynb) |
 | Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with long- and short-term user interest modeling. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/lstur_MIND.ipynb) |

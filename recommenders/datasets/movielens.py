@@ -582,7 +582,7 @@ def unique_columns(df, *, columns):
     return not df[columns].duplicated().any()
 
 
-class MockMovielensSchema(pa.SchemaModel):
+class MockMovielensSchema(pa.DataFrameModel):
     """
     Mock dataset schema to generate fake data for testing purpose.
     This schema is configured to mimic the Movielens dataset
