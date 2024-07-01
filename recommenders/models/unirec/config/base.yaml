@@ -1,0 +1,83 @@
+
+## general
+gpu_id: 0
+use_gpu: True
+seed: 2022
+state: INFO
+verbose: 2
+saved: True   # whether to save models
+use_tensorboard: False
+use_wandb: False
+init_method: 'normal'
+init_std: 0.02
+init_mean: 0.0
+scheduler: 'reduce'
+scheduler_factor: 0.1
+time_seq: 0
+seq_last: False
+
+## for general model settings
+has_user_emb: False
+has_user_bias: False
+has_item_bias: False
+use_features: False
+use_text_emb: False
+use_position_emb: True
+load_pretrained_model: False
+
+# common model parameters
+embedding_size: 32
+hidden_size: 128
+inner_size: 128
+dropout_prob: 0.0
+
+## training settings
+epochs: 200
+batch_size: 400  # if group_size > 0 , then batch_size should be an integer multiples of group_size
+learning_rate: 0.001
+
+## for optimizer
+optimizer: adam
+eval_step: 1
+early_stop: 5
+clip_grad_norm: ~
+weight_decay: 0.0
+
+## for dataloader
+num_workers: 4 # # of sub processes in DataLoader
+persistent_workers: False
+pin_memory: False
+shuffle_train: False
+
+use_pre_item_emb: 0 # 1 for loading pretrained emb to initialize item_emb_table
+loss_type: 'bce' # [bce, bpr, softmax]
+ccl_w: 150
+ccl_m: 0.4
+distance_type: 'dot' # [mlp, dot, cosine]: mlp-use MLP layer to predict scores; dot-user Dot Product to predict scores
+metrics: "['group_auc', 'hit@1;3;5', 'ndcg@1;3;5', 'ndcg', 'mrr', 'mrr@1;3;5']"
+key_metric: "group_auc"
+test_protocol: one_vs_k
+valid_protocol: one_vs_k
+test_batch_size: 100
+
+model: 'MF'
+dataloader: 'BaseDataset'
+max_seq_len: 10
+history_mask_mode: 'unorder'
+
+tau: 1.0  # Temperature parameter for softmax type loss
+
+
+# morec configurations
+enable_morec: 0
+morec_objectives: ["fairness", "alignment", "revenue"]
+morec_objective_controller: "PID" #[PID, Static]
+morec_ngroup: [10, 10, -1]
+morec_alpha: 0.1
+morec_lambda: 0.2
+morec_expect_loss: 0.2
+morec_beta_min: 0.6
+morec_beta_max: 1.3
+morec_K_p: 0.01
+morec_K_i: 0.001
+morec_objective_weights: "[0.3,0.3,0.4]"
