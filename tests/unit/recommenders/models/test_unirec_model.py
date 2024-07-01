@@ -34,3 +34,9 @@ def test_sasrec_component_definition(base_config, unirec_config_path):
     model = SASRec(config)
 
     assert model.n_layers == 2
+    assert model.n_heads == 16
+    assert model.inner_size == 512
+    assert model.hidden_dropout_prob == 0.5
+    assert model.attn_dropout_prob == 0.5
+    assert model.hidden_act == "swish"
+    assert model.layer_norm_eps == 1e-10
