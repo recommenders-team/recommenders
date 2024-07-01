@@ -1,10 +1,8 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT license.
 
-import torch.nn as nn
 
-from unirec.model.base.recommender import BaseRecommender
-import unirec.model.modules as modules
+from recommenders.models.unirec.model.base.recommender import BaseRecommender
 
 
 class SeqRecBase(BaseRecommender):

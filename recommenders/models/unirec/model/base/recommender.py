@@ -7,9 +7,9 @@ import inspect
 import torch
 import torch.nn as nn
 
-import unirec.model.modules as modules
-from unirec.constants.loss_funcs import LossFuncType
-from .reco_abc import AbstractRecommender
+import recommenders.models.unirec.model.modules as modules
+from recommenders.models.unirec.constants.loss_funcs import LossFuncType
+from recommenders.models.unirec.model.base.reco_abc import AbstractRecommender
 
 
 class BaseRecommender(AbstractRecommender):

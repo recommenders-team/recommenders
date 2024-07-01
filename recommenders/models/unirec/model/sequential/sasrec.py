@@ -4,8 +4,8 @@
 import torch
 import torch.nn as nn
 
-from .seqrec_base import SeqRecBase
-import unirec.model.modules as modules
+from recommenders.models.unirec.model.sequential.seqrec_base import SeqRecBase
+import recommenders.models.unirec.model.modules as modules
 
 
 class SASRec(SeqRecBase):

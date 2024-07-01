@@ -10,7 +10,7 @@ from torch.nn import functional as F
 import torch.nn.init as init
 import numpy as np
 
-from unirec.constants.global_variables import *
+from recommenders.models.unirec.constants.global_variables import EPS
 
 
 def bpr_loss(pos_score, neg_score, reduction=True):

@@ -10,11 +10,11 @@ import torch.nn as nn
 import torch.nn.functional as fn
 from torch.nn.init import xavier_normal_, xavier_uniform_, constant_
 
-import unirec.model.modules as modules
-from unirec.constants.loss_funcs import LossFuncType
-from unirec.constants.global_variables import *
-from unirec.constants.protocols import *
-from unirec.utils import file_io
+import recommenders.models.unirec.model.modules as modules
+from recommenders.models.unirec.constants.loss_funcs import LossFuncType
+from recommenders.models.unirec.constants.global_variables import EPS, VALID_TRIGGER_P
+from recommenders.models.unirec.constants.protocols import DataFileFormat
+from recommenders.models.unirec.utils import file_io
 
 
 def xavier_normal_initialization(module):
