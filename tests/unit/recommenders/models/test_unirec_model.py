@@ -11,5 +11,6 @@ except ImportError:
 
 
 @pytest.mark.gpu
-def test_sasrec_component_definition():
+def test_sasrec_component_definition(unirec_config_path):
+
     model = SASRec()

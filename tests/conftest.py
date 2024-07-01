@@ -322,7 +322,9 @@ def notebooks():
             folder_notebooks, "02_model_collaborative_filtering", "fm_deep_dive.ipynb"
         ),
         "lightfm_deep_dive": os.path.join(
-            folder_notebooks, "02_model_collaborative_filtering", "lightfm_deep_dive.ipynb"
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "lightfm_deep_dive.ipynb",
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "evaluation_diversity": os.path.join(
@@ -537,4 +539,14 @@ def deeprec_config_path():
         .absolute()
         .parents[1]
         .joinpath("recommenders", "models", "deeprec", "config")
+    )
+
+
+@pytest.fixture(scope="module")
+def unirec_config_path():
+    return (
+        Path(__file__)
+        .absolute()
+        .parents[1]
+        .joinpath("recommenders", "models", "unirec", "config")
     )
