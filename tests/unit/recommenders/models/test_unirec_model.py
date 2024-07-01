@@ -18,7 +18,9 @@ def base_config(unirec_config_path):
     base_file = os.path.join(unirec_config_path, "base.yaml")
     config = load_yaml(base_file)
     config["exp_name"] = "pytest"
-    config["n_users"] = None
+    config["n_users"] = 1
+    config["n_items"] = 1
+    config["device"] = "cuda"
 
     return config
 
