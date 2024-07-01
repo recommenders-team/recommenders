@@ -1,13 +1,14 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT license.
+#
+# Based on https://github.com/microsoft/UniRec/blob/main/unirec/model/base/reco_abc.py
+#
 
-import math
 import numpy as np
 import random
 import logging
 import torch
 import torch.nn as nn
-import torch.nn.functional as fn
 from torch.nn.init import xavier_normal_, xavier_uniform_, constant_
 
 import recommenders.models.unirec.model.modules as modules

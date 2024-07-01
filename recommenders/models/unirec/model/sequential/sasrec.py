@@ -1,5 +1,8 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT license.
+#
+# Based on https://github.com/microsoft/UniRec/blob/main/unirec/model/sequential/sasrec.py
+#
 
 import torch
 import torch.nn as nn
