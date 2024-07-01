@@ -30,7 +30,6 @@ install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
     "cornac>=1.15.2,<2",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
-    "lightfm>=1.17,<2",  # requires requests
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
@@ -80,6 +79,7 @@ extras_require["experimental"] = [
     # nni needs to be upgraded
     "nni==1.5",
     "pymanopt>=0.2.5",
+    "lightfm>=1.17,<2",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
