@@ -79,9 +79,9 @@ runs:
       uses: azure/login@v2
       with:
         creds: ${{inputs.AZUREML_TEST_CREDENTIALS}}
-    - name: Install wheel package
+    - name: Install wheel and setuptools package
       shell: bash
-      run: pip install --quiet wheel
+      run: pip install --quiet wheel setuptools
     - name: Submit tests to AzureML
       shell: bash
       run: >-
