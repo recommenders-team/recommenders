@@ -14,4 +14,9 @@ assignees: ''
 <!--- For example:  -->
 <!--- *Adding algorithm xxx will help people understand more about xxx use case scenarios. -->
 
+### Willingness to contribute
+- [ ] Yes, I can contribute for this issue independently.
+- [ ] Yes, I can contribute for this issue with guidance from Recommenders community.
+- [ ] No, I cannot contribute at this time.
+
 ### Other Comments

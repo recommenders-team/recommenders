@@ -28,4 +28,9 @@ assignees: ''
 <!--- For example:  -->
 <!--- * The tests for SAR PySpark should pass successfully. -->
 
+### Willingness to contribute
+- [ ] Yes, I can contribute for this issue independently.
+- [ ] Yes, I can contribute for this issue with guidance from Recommenders community.
+- [ ] No, I cannot contribute at this time.
+
 ### Other Comments
