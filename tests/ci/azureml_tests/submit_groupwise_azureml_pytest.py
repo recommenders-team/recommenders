@@ -221,7 +221,7 @@ RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${
     conda_dep = CondaDependencies()
     conda_dep.add_conda_package(conda_pkg_python)
     conda_dep.add_pip_package(
-        "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
+        "pymanopt@https://github.com/pymanopt/pymanopt/archive/1de3b6f47258820fdc072fceaeaa763b9fd263b0.zip"
     )
 
     # install recommenders
