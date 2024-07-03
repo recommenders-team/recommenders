@@ -85,7 +85,7 @@ extras_require["experimental"] = [
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
 # Temporary fix for pymanopt, only this commit works with TF2
-# "pymanopt@https://github.com/pymanopt/pymanopt/archive/1de3b6f47258820fdc072fceaeaa763b9fd263b0.zip",
+# "git+https://github.com/pymanopt/pymanopt.git@1de3b6f47258820fdc072fceaeaa763b9fd263b0",
 
 setup(
     name="recommenders",
