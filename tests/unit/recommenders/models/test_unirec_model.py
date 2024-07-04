@@ -39,9 +39,8 @@ def test_seqrecbase_component_definition(base_config):
     assert model.device == "cuda"
     assert model.loss_type == "bce"
     assert model.embedding_size == 32
-    assert (
-        model.hidden_size == 32
-    )  # FIXME: Review https://github.com/microsoft/UniRec/pulls/12
+    # FIXME: Review https://github.com/microsoft/UniRec/pulls/12
+    assert model.hidden_size == 32
     assert model.dropout_prob == 0.0
     assert model.use_pre_item_emb == 0
     assert model.use_text_emb == 0
