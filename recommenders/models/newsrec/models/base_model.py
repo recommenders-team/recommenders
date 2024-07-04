@@ -186,6 +186,8 @@ class BaseModel:
         valid_behaviors_file,
         test_news_file=None,
         test_behaviors_file=None,
+        steps=None,
+
     ):
         """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
         If test_news_file is not None, evaluate it too.
@@ -212,6 +214,8 @@ class BaseModel:
             )
 
             for batch_data_input in tqdm_util:
+                if steps is not None and steps>=steps:
+                    break
 
                 step_result = self.train(batch_data_input)
                 step_data_loss = step_result
