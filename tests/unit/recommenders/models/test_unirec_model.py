@@ -6,6 +6,7 @@ import copy
 import pytest
 
 try:
+    import torch
     import torch.nn as nn
 
     from recommenders.models.unirec.utils.file_io import load_yaml
@@ -54,6 +55,8 @@ def test_seqrecbase_component_definition(base_config):
     assert model.tau == 1.0
 
     assert isinstance(model.item_embedding, nn.Embedding)
+    # n_items x embedding_size
+    assert model.item_embedding.weight.size() == torch.Size([1, 32])
 
     assert model.annotations == ["AbstractRecommender", "SeqRecBase"]
 
