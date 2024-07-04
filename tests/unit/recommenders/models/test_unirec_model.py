@@ -6,8 +6,9 @@ import copy
 import pytest
 
 try:
+    import torch.nn as nn
+
     from recommenders.models.unirec.utils.file_io import load_yaml
-    from recommenders.models.unirec.model.base.reco_abc import AbstractRecommender
     from recommenders.models.unirec.model.sequential.seqrec_base import SeqRecBase
     from recommenders.models.unirec.model.sequential.sasrec import SASRec
 except ImportError:
@@ -51,6 +52,8 @@ def test_seqrecbase_component_definition(base_config):
     assert model.has_user_bias is False
     assert model.has_item_bias is False
     assert model.tau == 1.0
+
+    assert isinstance(model.item_embedding, nn.Embedding)
 
     assert model.annotations == ["AbstractRecommender", "SeqRecBase"]
 
