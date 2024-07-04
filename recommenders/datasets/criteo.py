@@ -71,7 +71,7 @@ def load_spark_df(
 ):
     """Loads the Criteo DAC dataset as `pySpark.DataFrame`.
 
-    The dataset consists of a portion of Criteo’s traffic over a period
+    The dataset consists of a portion of Criteo's traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
     column is indicates whether this ad has been clicked or not.
 
@@ -110,10 +110,9 @@ def load_spark_df(
                 # needs to be on dbfs to load
                 dbutils.fs.cp(node_path, dbfs_datapath, recurse=True)
                 path = dbfs_datapath
-            except Exception:
-                raise ValueError(
-                    "To use on a Databricks notebook, dbutils object should be passed as an argument"
-                )
+            except Exception as exc:
+                raise ValueError("To use on a Databricks notebook, "
+                "dbutils object should be passed as an argument") from exc
         else:
             path = filepath
 
