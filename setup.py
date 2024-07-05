@@ -126,5 +126,8 @@ setup(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
     ),
-    setup_requires=["numpy>=1.19"],
+    setup_requires=[
+        "numpy>=1.19",
+        "numpy>=1.26;python_version>='3.12'",
+    ],
 )
