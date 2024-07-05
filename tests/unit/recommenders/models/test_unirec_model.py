@@ -80,9 +80,9 @@ def test_sasrec_component_definition(base_config, unirec_config_path):
     assert model.max_seq_len == 10
     assert model.hidden_size == 32
 
-    assert isinstance(model.position_embedding, nn.Embedding)
+    assert isinstance(model.position_embedding, nn.Embedding) is True
     # Size: max_seq_len+1 x hidden_size
     assert model.position_embedding.weight.size() == torch.Size([11, 32])
-    assert isinstance(model.trm_encoder, nn.Module)
-    assert isinstance(model.LayerNorm, nn.LayerNorm)
-    assert isinstance(model.dropout, nn.Dropout)
+    assert isinstance(model.trm_encoder, nn.Module) is True
+    assert isinstance(model.LayerNorm, nn.LayerNorm) is True
+    assert isinstance(model.dropout, nn.Dropout) is True
