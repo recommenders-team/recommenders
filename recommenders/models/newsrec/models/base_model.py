@@ -214,7 +214,7 @@ class BaseModel:
             )
 
             for batch_data_input in tqdm_util:
-                if step_limit is not None and step_limit>=step_limit:
+                if step_limit is not None and step>=step_limit:
                     break
 
                 step_result = self.train(batch_data_input)
