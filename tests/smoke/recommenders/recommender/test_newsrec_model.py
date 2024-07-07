@@ -62,7 +62,7 @@ def test_model_nrms(mind_resource_path):
     assert model.run_eval(valid_news_file, valid_behaviors_file) is not None
     assert isinstance(
         model.fit(
-            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=1
+            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=10
         ),
         BaseModel,
     )
@@ -115,7 +115,7 @@ def test_model_naml(mind_resource_path):
     assert model.run_eval(valid_news_file, valid_behaviors_file) is not None
     assert isinstance(
         model.fit(
-            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=1
+            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=10
         ),
         BaseModel,
     )
@@ -166,7 +166,7 @@ def test_model_lstur(mind_resource_path):
     assert model.run_eval(valid_news_file, valid_behaviors_file) is not None
     assert isinstance(
         model.fit(
-            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=1
+            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=10
         ),
         BaseModel,
     )
@@ -217,7 +217,7 @@ def test_model_npa(mind_resource_path):
     assert model.run_eval(valid_news_file, valid_behaviors_file) is not None
     assert isinstance(
         model.fit(
-            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=1
+            train_news_file, train_behaviors_file, valid_news_file, valid_behaviors_file,step_limit=10
         ),
         BaseModel,
     )
