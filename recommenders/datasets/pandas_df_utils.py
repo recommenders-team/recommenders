@@ -163,7 +163,7 @@ class LibffmConverter:
         types = df.dtypes
         if not all(
             [
-                x == object or np.issubdtype(x, np.integer) or x == np.float
+                x == object or np.issubdtype(x, np.integer) or x == float
                 for x in types
             ]
         ):

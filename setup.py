@@ -28,14 +28,13 @@ if HASH is not None:
 
 install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
-    "cornac>=1.15.2,<2",  # requires packaging, tqdm
+    "cornac>=1.15.2,<3",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
-    "lightfm>=1.17,<2",  # requires requests
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
-    "notebook>=7.0.0,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
+    "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
@@ -43,7 +42,7 @@ install_requires = [
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
-    "scipy>=1.10.1",
+    "scipy>=1.10.1,<=1.13.1",  # FIXME: Remove scipy<=1.13.1 once cornac release a version newer than 2.2.1.  See #2128
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
@@ -80,6 +79,7 @@ extras_require["experimental"] = [
     # nni needs to be upgraded
     "nni==1.5",
     "pymanopt>=0.2.5",
+    "lightfm>=1.17,<2",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
