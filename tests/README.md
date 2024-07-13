@@ -5,6 +5,12 @@ Licensed under the MIT License.
 
 # Tests
 
+Recommenders test pipeline is one of the most sophisticated MLOps pipelines in the open-source community. We execute tests in the three environments we support: CPU, GPU, and Spark, mirroring the tests in each Python version we support. We not only tests the library, but also the Jupyter notebooks in the examples folder.
+
+The reason to have this extensive test infrastructure is to ensure that the code is reproducible by the community and that we can maintain the project with a small number of core contributors.
+
+We currently execute over a thousand tests in the project, and we are always looking for ways to improve the test coverage. To get the exact number of tests, you can run `pytest tests --collect-only`, and then multiply the number of tests by the number of Python versions we support.
+
 In this document we show our test infrastructure and how to contribute tests to the repository.
 
 ## Table of Contents
