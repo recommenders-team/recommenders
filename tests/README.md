@@ -94,6 +94,7 @@ assert rmse(rating_true, rating_true) == 0
 assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 ```
 * Use the operator `==` with values. Use the operator `is` in singletons like `None`, `True` or `False`.
+* Make explicit asserts. In other words, make sure you assert to something (`assert computation == value`) and not just `assert computation`.
 * Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
 * Use `@pytest.mark.notebooks` if you are testing a notebook.
 
