@@ -126,8 +126,8 @@ def test_download_and_extract_movielens(size, tmp):
     )
     # Test if raw-zip file, rating file, and item file are cached
     assert len(os.listdir(tmp)) == 3
-    assert os.path.exists(rating_path)
-    assert os.path.exists(item_path)
+    assert os.path.exists(rating_path) is True
+    assert os.path.exists(item_path) is True
 
 
 @pytest.mark.parametrize(
