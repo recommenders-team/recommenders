@@ -74,15 +74,10 @@ In this section we show how to create tests and add them to the test pipeline. T
 
 ### How to create tests for the Recommenders library
 
-You want to make sure that all your code works before you submit it to the repository. Here are some guidelines for creating the unit tests:
+You want to make sure that all your code works before you submit it to the repository. Here are some guidelines for creating the tests:
 
 * It is better to create multiple small tests than one large test that checks all the code.
 * Use `@pytest.fixture` to create data in your tests.
-* Use the mark `@pytest.mark.gpu` if you want the test to be executed
-  in a GPU environment. Use `@pytest.mark.spark` if you want the test
-  to be executed in a Spark environment.
-* Use `@pytest.mark.notebooks` if you are testing a notebook.
-* Avoid using `is` in the asserts, instead use the operator `==`.
 * Follow the pattern `assert computation == value`, for example:
 ```python
 assert results["precision"] == pytest.approx(0.330753)
@@ -92,6 +87,10 @@ assert results["precision"] == pytest.approx(0.330753)
 assert rmse(rating_true, rating_true) == 0
 assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 ```
+* Use the operator `==` with values. Use the operator `is` in singletons like `None`, `True` or `False`.
+* Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
+* Use `@pytest.mark.notebooks` if you are testing a notebook.
+
 
 ### How to create tests for the notebooks
 
