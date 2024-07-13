@@ -25,7 +25,7 @@ def test_maybe_download(files_fixtures):
         os.remove(filepath)
 
     downloaded_filepath = maybe_download(file_url, "license.txt", expected_bytes=1212)
-    assert os.path.exists(downloaded_filepath)
+    assert os.path.exists(downloaded_filepath) is True
     assert os.path.basename(downloaded_filepath) == "license.txt"
 
 
@@ -51,7 +51,7 @@ def test_maybe_download_maybe(caplog, files_fixtures):
         os.remove(filepath)
 
     downloaded_filepath = maybe_download(file_url, "license.txt")
-    assert os.path.exists(downloaded_filepath)
+    assert os.path.exists(downloaded_filepath) is True
     maybe_download(file_url, "license.txt")
     assert "File ." + os.path.sep + "license.txt already downloaded" in caplog.text
 
@@ -69,11 +69,11 @@ def test_maybe_download_retry(caplog):
 def test_download_path():
     # Check that the temporal path is created and deleted
     with download_path() as path:
-        assert os.path.isdir(path)
-    assert not os.path.isdir(path)
+        assert os.path.isdir(path) is True
+    assert os.path.isdir(path) is False
 
     # Check the behavior when a path is provided
     tmp_dir = TemporaryDirectory()
     with download_path(tmp_dir.name) as path:
-        assert os.path.isdir(path)
-    assert os.path.isdir(path)
+        assert os.path.isdir(path) is True
+    assert os.path.isdir(path) is False

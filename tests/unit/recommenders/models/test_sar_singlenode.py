@@ -23,7 +23,7 @@ def test_init(header):
     assert model.col_prediction == "prediction"
     assert model.similarity_type == "jaccard"
     assert model.time_decay_half_life == 2592000
-    assert not model.time_decay_flag
+    assert model.time_decay_flag is False
     assert model.time_now is None
     assert model.threshold == 1
 
@@ -53,7 +53,7 @@ def test_predict(
     preds = model.predict(testset)
 
     assert len(preds) == 2
-    assert isinstance(preds, pd.DataFrame)
+    assert isinstance(preds, pd.DataFrame) is True
     assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
     assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
     assert preds[DEFAULT_PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
@@ -375,8 +375,8 @@ def test_get_normalized_scores(header):
     )
 
     assert actual.shape == (2, 7)
-    assert isinstance(actual, np.ndarray)
-    assert np.isclose(expected, np.asarray(actual)).all()
+    assert isinstance(actual, np.ndarray) is True
+    assert np.isclose(expected, np.asarray(actual)).all() is True
 
 
 def test_match_similarity_type_from_json_file(header):

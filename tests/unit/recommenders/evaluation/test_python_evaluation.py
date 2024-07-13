@@ -90,7 +90,7 @@ def test_column_dtypes_match(rating_true, rating_pred):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
         )
-    
+
     # Drop a column, and there should column mismatch error produced
     rating_true.drop(DEFAULT_USER_COL, axis="columns", inplace=True)
     with pytest.raises(ColumnMismatchError):
@@ -117,8 +117,8 @@ def test_merge_rating(rating_true, rating_pred):
     target_y_pred = np.array([14, 12, 7, 8, 13, 6, 11, 5])
 
     assert y_true.shape == y_pred.shape
-    assert np.all(y_true == target_y_true)
-    assert np.all(y_pred == target_y_pred)
+    assert np.all(y_true == target_y_true) is True
+    assert np.all(y_pred == target_y_pred) is True
 
 
 def test_merge_ranking(rating_true, rating_pred):
@@ -375,10 +375,16 @@ def test_python_r_precision(rating_true, rating_pred, rating_nohit):
         k=10,
     ) == pytest.approx(1, TOL)
     assert r_precision_at_k(rating_true, rating_nohit, k=5) == 0.0
-    assert r_precision_at_k(rating_true, rating_pred, k=3) == pytest.approx(0.21111, TOL)
-    assert r_precision_at_k(rating_true, rating_pred, k=5) == pytest.approx(0.24444, TOL)
+    assert r_precision_at_k(rating_true, rating_pred, k=3) == pytest.approx(
+        0.21111, TOL
+    )
+    assert r_precision_at_k(rating_true, rating_pred, k=5) == pytest.approx(
+        0.24444, TOL
+    )
     # Equivalent to precision
-    assert r_precision_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.37777, TOL)
+    assert r_precision_at_k(rating_true, rating_pred, k=10) == pytest.approx(
+        0.37777, TOL
+    )
 
 
 def test_python_auc(rating_true_binary, rating_pred_binary):
@@ -522,9 +528,7 @@ def test_user_diversity(diversity_data):
         col_relevance=None,
     )
     assert_frame_equal(
-        pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
-        ),
+        pd.DataFrame(dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])),
         actual,
         check_exact=False,
         atol=TOL,
@@ -625,9 +629,7 @@ def test_user_diversity_item_feature_vector(diversity_data):
         col_relevance=None,
     )
     assert_frame_equal(
-        pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_diversity=[0.5000, 0.5000, 0.5000])
-        ),
+        pd.DataFrame(dict(UserId=[1, 2, 3], user_diversity=[0.5000, 0.5000, 0.5000])),
         actual,
         check_exact=False,
     )
@@ -695,9 +697,7 @@ def test_user_serendipity_item_feature_vector(diversity_data):
         col_relevance="Relevance",
     )
     assert_frame_equal(
-        pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_serendipity=[0.2500, 0.625, 0.3333])
-        ),
+        pd.DataFrame(dict(UserId=[1, 2, 3], user_serendipity=[0.2500, 0.625, 0.3333])),
         actual,
         check_exact=False,
         atol=TOL,

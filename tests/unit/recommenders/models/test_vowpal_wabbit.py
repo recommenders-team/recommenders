@@ -28,10 +28,10 @@ def model():
 def test_vw_init_del():
     model = VW()
     tempdir = model.tempdir.name
-    assert os.path.exists(tempdir)
+    assert os.path.exists(tempdir) is True
 
     del model
-    assert not os.path.exists(tempdir)
+    assert os.path.exists(tempdir) is False
 
 
 @pytest.mark.experimental

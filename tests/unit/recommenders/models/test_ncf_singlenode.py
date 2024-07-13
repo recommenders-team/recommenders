@@ -92,8 +92,8 @@ def test_regular_save_load(model_type, n_users, n_items):
         Q_ = model.sess.run(model.embedding_mlp_Q)
 
     # test load function
-    assert np.array_equal(P, P_)
-    assert np.array_equal(Q, Q_)
+    assert np.array_equal(P, P_) is True
+    assert np.array_equal(Q, Q_) is True
 
     if os.path.exists(ckpt):
         shutil.rmtree(ckpt)
@@ -132,10 +132,10 @@ def test_neumf_save_load(n_users, n_items):
     P_mlp_ = model.sess.run(model.embedding_mlp_P)
     Q_mlp_ = model.sess.run(model.embedding_mlp_Q)
 
-    assert np.array_equal(P_gmf, P_gmf_)
-    assert np.array_equal(Q_gmf, Q_gmf_)
-    assert np.array_equal(P_mlp, P_mlp_)
-    assert np.array_equal(Q_mlp, Q_mlp_)
+    assert np.array_equal(P_gmf, P_gmf_) is True
+    assert np.array_equal(Q_gmf, Q_gmf_) is True
+    assert np.array_equal(P_mlp, P_mlp_) is True
+    assert np.array_equal(Q_mlp, Q_mlp_) is True
 
     if os.path.exists(ckpt_gmf):
         shutil.rmtree(ckpt_gmf)
