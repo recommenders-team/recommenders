@@ -243,7 +243,6 @@ RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${
     )
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
-    run_azuremlcompute.history.snapshot_project = False
     return run_azuremlcompute
 
 
