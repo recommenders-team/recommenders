@@ -40,4 +40,4 @@ def test_compute_test_results__return_success(mock_model, fake_movielens_df):
         [mock_metric_func],
         [mock_metric_func],
     )
-    assert mock_model.predict.is_called is True
+    assert mock_model.predict.is_called
