@@ -117,8 +117,8 @@ def test_merge_rating(rating_true, rating_pred):
     target_y_pred = np.array([14, 12, 7, 8, 13, 6, 11, 5])
 
     assert y_true.shape == y_pred.shape
-    assert np.all(y_true == target_y_true) is True
-    assert np.all(y_pred == target_y_pred) is True
+    assert np.all(y_true == target_y_true)
+    assert np.all(y_pred == target_y_pred)
 
 
 def test_merge_ranking(rating_true, rating_pred):
