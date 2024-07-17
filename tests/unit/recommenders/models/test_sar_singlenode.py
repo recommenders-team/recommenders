@@ -376,7 +376,7 @@ def test_get_normalized_scores(header):
 
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray) is True
-    assert np.isclose(expected, np.asarray(actual)).all() is True
+    assert np.isclose(expected, np.asarray(actual)).all()
 
 
 def test_match_similarity_type_from_json_file(header):
