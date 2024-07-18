@@ -12,4 +12,4 @@ def test_criteo_privacy(criteo_first_row):
     data is anonymized.
     """
     df = criteo.load_pandas_df(size="sample")
-    assert df.loc[0].equals(pd.Series(criteo_first_row))
+    assert df.loc[0].equals(pd.Series(criteo_first_row)) is True

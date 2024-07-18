@@ -11,4 +11,5 @@ def test_movielens_privacy():
     """
     df = movielens.load_pandas_df(size="100k")
     users = df["userID"].values.tolist()
-    assert all(isinstance(x, int) for x in users)
+
+    assert all(isinstance(x, int) for x in users) is True
