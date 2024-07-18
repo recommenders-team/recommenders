@@ -42,7 +42,7 @@ install_requires = [
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
-    "scipy>=1.10.1",
+    "scipy>=1.10.1,<=1.13.1",  # FIXME: Remove scipy<=1.13.1 once cornac release a version newer than 2.2.1.  See #2128
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]

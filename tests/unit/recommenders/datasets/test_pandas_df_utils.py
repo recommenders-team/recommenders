@@ -235,10 +235,10 @@ def test_has_columns():
     df_1 = pd.DataFrame(dict(a=[1, 2, 3]))
     df_2 = pd.DataFrame(dict(b=[7, 8, 9], a=[1, 2, 3]))
 
-    assert has_columns(df_1, ["a"])
-    assert has_columns(df_2, ["a"])
-    assert has_columns(df_2, ["a", "b"])
-    assert not has_columns(df_2, ["a", "b", "c"])
+    assert has_columns(df_1, ["a"]) is True
+    assert has_columns(df_2, ["a"]) is True
+    assert has_columns(df_2, ["a", "b"]) is True
+    assert has_columns(df_2, ["a", "b", "c"]) is False
 
 
 def test_has_same_base_dtype():
@@ -256,19 +256,19 @@ def test_has_same_base_dtype():
     df_6 = pd.DataFrame(dict(a=arr_str))
 
     # all columns match
-    assert has_same_base_dtype(df_1, df_2)
+    assert has_same_base_dtype(df_1, df_2) is True
     # specific column matches
-    assert has_same_base_dtype(df_3, df_4, columns=["a"])
+    assert has_same_base_dtype(df_3, df_4, columns=["a"]) is True
     # some column types do not match
-    assert not has_same_base_dtype(df_3, df_4)
+    assert has_same_base_dtype(df_3, df_4) is False
     # column types do not match
-    assert not has_same_base_dtype(df_1, df_3, columns=["a"])
+    assert has_same_base_dtype(df_1, df_3, columns=["a"]) is False
     # all columns are not shared
-    assert not has_same_base_dtype(df_4, df_5)
+    assert has_same_base_dtype(df_4, df_5) is False
     # column types do not match
-    assert not has_same_base_dtype(df_5, df_6, columns=["a"])
+    assert has_same_base_dtype(df_5, df_6, columns=["a"]) is False
     # assert string columns match
-    assert has_same_base_dtype(df_6, df_6)
+    assert has_same_base_dtype(df_6, df_6) is True
 
 
 def test_lru_cache_df():
