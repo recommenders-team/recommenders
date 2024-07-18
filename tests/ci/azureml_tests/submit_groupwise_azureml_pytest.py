@@ -199,12 +199,12 @@ RUN apt-get update && \
 # Conda Environment
 # Pin pip=20.1.1 due to the issue: No module named 'ruamel'
 # See https://learn.microsoft.com/en-us/python/api/overview/azure/ml/install?view=azure-ml-py#troubleshooting
-ENV MINICONDA_VERSION py38_23.3.1-0
+ENV MINICONDA_VERSION py310_24.5.0-0
 ENV PATH /opt/miniconda/bin:$PATH
-ENV CONDA_PACKAGE 23.5.0
+ENV CONDA_PACKAGE 24.5.0
 RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh && \
     bash /tmp/miniconda.sh -bf -p /opt/miniconda && \
-    conda install -y conda=${CONDA_PACKAGE} python=3.8 pip=20.1.1 && \
+    conda install -y conda=${CONDA_PACKAGE} python=3.10 pip=24 && \
     conda update --all -c conda-forge -y && \
     conda clean -ay && \
     rm -rf /opt/miniconda/pkgs && \
