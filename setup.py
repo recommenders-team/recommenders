@@ -34,6 +34,7 @@ install_requires = [
     "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
+    "numpy>=1.26.4;python_version>='3.12'", # https://stackoverflow.com/a/77364602/4505998
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
     "pandas>2.0.0,<3.0.0",  # requires numpy
@@ -126,6 +127,6 @@ setup(
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
     ),
     setup_requires=[
-        "numpy>=1.26",
+        "numpy>=1.26.4",
     ],
 )
