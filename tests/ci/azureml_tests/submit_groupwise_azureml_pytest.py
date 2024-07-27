@@ -66,14 +66,22 @@ def parse_args():
         help="Test Group",
     )
     parser.add_argument(
-        "--rg", action="store",
+        "--rg",
+        action="store",
         default="recommender",
         help="Azure Resource Group",
     )
     parser.add_argument(
-        "--ws", action="store",
+        "--ws",
+        action="store",
         default="RecoWS",
         help="AzureML workspace name",
+    )
+    parser.add_argument(
+        "--cluster",
+        action="store",
+        default="azuremlcompute",
+        help="AzureML cluster name",
     )
     parser.add_argument(
         "--vmsize",
@@ -82,7 +90,8 @@ def parse_args():
         help="VM size",
     )
     parser.add_argument(
-        "--subid", action="store",
+        "--subid",
+        action="store",
         default="123456",
         help="Azure Subscription ID",
     )
@@ -142,11 +151,10 @@ if __name__ == "__main__":
         workspace_name=args.ws,
     )
 
-    compute = "gpu-cluster" if "gpu" in args.testgroup else "cpu-cluster"
-    logger.info(f"Setting up compute {compute}")
+    logger.info(f"Setting up compute {args.cluster}")
     create_or_start_compute(
         client=client,
-        name=compute,
+        name=args.cluster,
         size=args.vmsize,
         max_instances=args.maxnodes
     )

@@ -70,6 +70,7 @@ runs:
           --branch ${{ github.ref }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
+          --cluster ${{ contains(inputs.TEST_GROUP, 'gpu') && 'gpu-cluster' || 'cpu-cluster' }} \
           --expname ${{ inputs.EXP_NAME }} \
           --envname ${{ inputs.ENV_NAME }} \
           --testkind ${{ inputs.TEST_KIND}} \
