@@ -129,10 +129,6 @@ dependencies:
         with open(condafile_path, "w") as file:
             file.write(condafile)
 
-        environment = client.environments.get(
-            name=environment_name,
-            label="latest",
-        )
         if environment is None:
             client.environments.create_or_update(
                 Environment(
