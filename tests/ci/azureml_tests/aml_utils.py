@@ -168,3 +168,13 @@ def run_tests(
             ),
         )
     )
+
+
+def correct_resource_name(resource_name):
+    """
+    Resource name can only contain alphanumeric characters, dashes, and
+    underscores, with a limit of 255 characters.
+    """
+    name = resource_name.replace(".", "_")
+    name = name.replace("/", "_")
+    return name

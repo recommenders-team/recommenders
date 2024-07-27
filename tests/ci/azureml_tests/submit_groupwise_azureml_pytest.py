@@ -26,8 +26,9 @@ import argparse
 import logging
 
 from aml_utils import (
-    get_client,
+    correct_resource_name,
     create_or_start_compute,
+    get_client,
     get_or_create_environment,
     run_tests,
 )
@@ -150,10 +151,11 @@ if __name__ == "__main__":
         max_instances=args.maxnodes
     )
 
-    logger.info(f"Setting up environment {args.envname}")
+    environment_name = correct_resource_name(args.envname)
+    logger.info(f"Setting up environment {environment_name}")
     get_or_create_environment(
         client=client,
-        environment_name=args.envname,
+        environment_name=environment_name,
         use_gpu=True if "gpu" in args.testgroup else False,
         use_spark=True if "spark" in args.testgroup else False,
         conda_pkg_jdk=args.conda_pkg_jdk,
@@ -161,12 +163,13 @@ if __name__ == "__main__":
         commit_sha=args.sha,
     )
 
-    logger.info(f"Running experiment {args.expname}")
+    experiment_name = correct_resource_name(args.expname)
+    logger.info(f"Running experiment {experiment_name}")
     run_tests(
         client=client,
         compute=args.cluster,
-        environment_name=args.envname,
-        experiment_name=args.expname,
+        environment_name=environment_name,
+        experiment_name=experiment_name,
         script=args.script,
         testgroup=args.testgroup,
         testkind=args.testkind,

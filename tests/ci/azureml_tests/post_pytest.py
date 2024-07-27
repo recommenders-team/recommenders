@@ -9,7 +9,7 @@ import argparse
 import mlflow
 import logging
 
-from aml_utils import get_client
+from aml_utils import get_client, correct_resource_name
 
 
 def parse_args():
@@ -76,8 +76,9 @@ if __name__ == "__main__":
 
     # See https://learn.microsoft.com/en-us/azure/machine-learning/how-to-track-experiments-mlflow?view=azureml-api-2
     logger.info(f"Searching runs")
+    experiment_name = correct_resource_name(args.expname)
     runs = mlflow.search_runs(
-        experiment_names=[args.expname],
+        experiment_names=[experiment_name],
         max_results=1,
         output_format="list",
     )
