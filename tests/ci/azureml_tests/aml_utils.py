@@ -52,7 +52,6 @@ def create_or_start_compute(client, name, size, max_instances):
                 max_instances=max_instances,
             )
         ).result()
-    client.compute.begin_start(name).wait()
 
 
 def get_or_create_environment(
