@@ -79,31 +79,6 @@ def get_or_create_environment(
         python_version (str): python version, such as "3.9"
         commit_sha (str): the commit that triggers the workflow
     """
-    image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"  # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
-    dockerfile = r"""# See https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
-FROM nvcr.io/nvidia/cuda:12.5.1-devel-ubuntu22.04
-USER root:root
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-    apt-get install -y wget git-all && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
-
-# Conda Environment
-ENV MINICONDA_VERSION py311_24.5.0-0
-ENV PATH /opt/miniconda/bin:$PATH
-RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh && \
-    bash /tmp/miniconda.sh -bf -p /opt/miniconda && \
-    conda update --all -c conda-forge -y && \
-    conda clean -ay && \
-    rm -rf /opt/miniconda/pkgs && \
-    rm /tmp/miniconda.sh && \
-    find / -type d -name __pycache__ | xargs rm -rf
-"""
-
     condafile = fr"""
 name: reco
 channels:
@@ -116,6 +91,44 @@ dependencies:
   - pip:
     - pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip
     - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}
+"""
+    image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"  # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
+    dockerfile = fr"""# See https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+FROM nvcr.io/nvidia/cuda:12.5.1-devel-ubuntu22.04
+USER root:root
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+RUN <<EOT
+apt-get update
+apt-get install -y wget git-all
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+EOT
+
+# Conda Environment
+ENV MINICONDA_VERSION py311_24.5.0-0
+ENV PATH /opt/miniconda/bin:$PATH
+RUN <<EOT
+wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${{MINICONDA_VERSION}}-Linux-x86_64.sh
+bash /tmp/miniconda.sh -bf -p /opt/miniconda
+conda update --all -c conda-forge -y
+conda clean -ay
+rm -rf /opt/miniconda/pkgs
+rm /tmp/miniconda.sh
+find / -type d -name __pycache__ | xargs rm -rf\
+conda init bash
+EOT
+RUN <<EOT cat > environment.yml
+{condafile}
+EOT
+RUN <<EOT
+conda init bash
+. /root/.bashrc
+conda create -f environment.yml
+conda activate reco
+EOT
 """
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -134,7 +147,7 @@ dependencies:
                 name=environment_name,
                 image=None if use_gpu else image,
                 build=build if use_gpu else None,
-                conda_file=condafile_path,
+                conda_file=None if use_gpu else condafile_path,
             )
         )
 
