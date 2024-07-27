@@ -3,7 +3,9 @@
 
 """
 This module includes utilities for tests on AzureML via AML Python SDK v2.
-See https://learn.microsoft.com/en-us/azure/machine-learning/reference-migrate-sdk-v1-mlflow-tracking?view=azureml-api-2&tabs=aml%2Ccli%2Cmlflow
+See
+* https://learn.microsoft.com/en-us/azure/machine-learning/concept-v2?view=azureml-api-2
+* https://learn.microsoft.com/en-us/azure/machine-learning/reference-migrate-sdk-v1-mlflow-tracking?view=azureml-api-2&tabs=aml%2Ccli%2Cmlflow
 """
 import pathlib
 import tempfile
@@ -20,7 +22,7 @@ def get_client(subscription_id, resource_group, workspace_name):
     params = dict(
         credential=DefaultAzureCredential(),
         subscription_id=subscription_id,
-        resource_group=resource_group,
+        resource_group_name=resource_group,
     )
     client = MLClient(**params)
 
