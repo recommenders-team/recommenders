@@ -12,6 +12,7 @@ import tempfile
 
 from azure.ai.ml import MLClient, command
 from azure.ai.ml.entities import AmlCompute, BuildContext, Environment, Workspace
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 def get_client(subscription_id, resource_group, workspace_name):
@@ -142,14 +143,21 @@ EOT
         with open(condafile_path, "w") as file:
             file.write(condafile)
 
-        client.environments.create_or_update(
-            Environment(
+        try:
+            client.environments.get(
                 name=environment_name,
-                image=None if use_gpu else image,
-                build=build if use_gpu else None,
-                conda_file=None if use_gpu else condafile_path,
+                label="latest",
             )
-        )
+        except ResourceNotFoundError:
+            client.environments.create_or_update(
+                Environment(
+                    name=environment_name,
+                    image=None if use_gpu else image,
+                    build=build if use_gpu else None,
+                    conda_file=None if use_gpu else condafile_path,
+                    auto_increment_version=True,
+                )
+            )
 
 
 def run_tests(
