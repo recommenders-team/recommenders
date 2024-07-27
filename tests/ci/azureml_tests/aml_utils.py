@@ -129,15 +129,14 @@ dependencies:
         with open(condafile_path, "w") as file:
             file.write(condafile)
 
-        if environment is None:
-            client.environments.create_or_update(
-                Environment(
-                    name=environment_name,
-                    image=None if use_gpu else image,
-                    build=build if use_gpu else None,
-                    conda_file=condafile_path,
-                )
+        client.environments.create_or_update(
+            Environment(
+                name=environment_name,
+                image=None if use_gpu else image,
+                build=build if use_gpu else None,
+                conda_file=condafile_path,
             )
+        )
 
 
 def run_tests(
