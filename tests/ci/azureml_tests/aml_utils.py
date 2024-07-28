@@ -12,6 +12,7 @@ import tempfile
 
 from azure.ai.ml import MLClient, command
 from azure.ai.ml.entities import AmlCompute, BuildContext, Environment, Workspace
+from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 
@@ -170,7 +171,7 @@ def run_tests(
     Pytest on AzureML compute.
     See https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/debug-and-monitor/debug-and-monitor.ipynb
     """
-    client.jobs.create_or_update(
+    job = client.jobs.create_or_update(
         command(
             experiment_name=experiment_name,
             compute=compute,
@@ -185,6 +186,10 @@ def run_tests(
             ),
         )
     )
+    client.jobs.stream(job.name)
+    job = client.jobs.get(job.name)
+    if job.status != "Completed":
+        raise JobException("Job Not Completed!")
 
 
 def correct_resource_name(resource_name):

@@ -88,7 +88,7 @@ runs:
       if: ${{ ! cancelled() }}
       uses: actions/upload-artifact@v4
       with:
-        name: logs-${{ inputs.EXP_NAME }}
+        name: logs-${{ inputs.TEST_GROUP }}-python${{ inputs.PYTHON_VERSION }}
         path: ${{ inputs.LOG_DIR }}
     - name: Get exit status
       shell: bash
