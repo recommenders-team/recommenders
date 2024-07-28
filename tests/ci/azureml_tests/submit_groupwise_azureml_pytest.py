@@ -108,12 +108,6 @@ def parse_args():
         help="Environment name on AzureML",
     )
     parser.add_argument(
-        "--branch",
-        action="store",
-        default="--branch MyGithubBranch",
-        help="Branch where the test is run on",
-    )
-    parser.add_argument(
         "--conda_pkg_jdk",
         action="store",
         default="openjdk=8",

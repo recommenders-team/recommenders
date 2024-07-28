@@ -12,7 +12,7 @@ import tempfile
 
 from azure.ai.ml import MLClient, command
 from azure.ai.ml.entities import AmlCompute, BuildContext, Environment, Workspace
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 
 def get_client(subscription_id, resource_group, workspace_name):
@@ -144,20 +144,16 @@ EOT
             file.write(condafile)
 
         try:
-            client.environments.get(
-                name=environment_name,
-                label="latest",
-            )
-        except ResourceNotFoundError:
             client.environments.create_or_update(
                 Environment(
                     name=environment_name,
                     image=None if use_gpu else image,
                     build=build if use_gpu else None,
                     conda_file=None if use_gpu else condafile_path,
-                    auto_increment_version=True,
                 )
             )
+        except ResourceExistsError:
+            pass
 
 
 def run_tests(
@@ -174,12 +170,12 @@ def run_tests(
     Pytest on AzureML compute.
     See https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/debug-and-monitor/debug-and-monitor.ipynb
     """
-    client.create_or_update(
+    client.jobs.create_or_update(
         command(
             experiment_name=experiment_name,
             compute=compute,
             environment=f"{environment_name}@latest",
-            code=".",
+            code="./",
             command=(
                 f"python {script} "
                 f"--expname {experiment_name} "
