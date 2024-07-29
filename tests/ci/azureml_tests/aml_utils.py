@@ -112,9 +112,9 @@ EOT
 ENV MINICONDA_VERSION py311_24.5.0-0
 RUN <<EOT
 wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${{MINICONDA_VERSION}}-Linux-x86_64.sh
-bash /tmp/miniconda.sh -bf -p /opt/miniconda\
+bash /tmp/miniconda.sh -bf -p /opt/miniconda
 # Activate Conda
-source /opt/miniconda/bin/activate\
+source /opt/miniconda/bin/activate
 # Make Conda available in bash
 conda init bash
 . /root/.bashrc
