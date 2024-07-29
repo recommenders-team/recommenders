@@ -24,7 +24,6 @@ Example:
 """
 import argparse
 import logging
-import sys
 
 from aml_utils import (
     correct_resource_name,
@@ -137,7 +136,6 @@ def parse_args():
 
 if __name__ == "__main__":
     logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     args = parse_args()
 
     logger.info(f"Setting up workspace {args.ws}")

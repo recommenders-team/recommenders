@@ -11,7 +11,6 @@ import argparse
 import logging
 import mlflow
 import pytest
-import sys
 
 from test_groups import nightly_test_groups, pr_gate_test_groups
 
@@ -49,7 +48,6 @@ def parse_args():
 if __name__ == "__main__":
 
     logger = logging.getLogger("run_groupwise_pytest.py")
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
     args = parse_args()
     if args.testkind == "nightly":
