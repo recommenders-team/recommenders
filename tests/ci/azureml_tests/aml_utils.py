@@ -81,15 +81,14 @@ def get_or_create_environment(
         python_version (str): python version, such as "3.9"
         commit_sha (str): the commit that triggers the workflow
     """
+    conda_env_name = "reco"
     condafile = fr"""
-name: reco
+name: {conda_env_name}
 channels:
   - conda-forge
 dependencies:
   - python={python_version}
   - {conda_pkg_jdk}
-  - anaconda::git
-  - pip
   - pip:
     - pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip
     - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}
@@ -111,25 +110,30 @@ EOT
 
 # Conda Environment
 ENV MINICONDA_VERSION py311_24.5.0-0
-ENV PATH /opt/miniconda/bin:$PATH
 RUN <<EOT
 wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${{MINICONDA_VERSION}}-Linux-x86_64.sh
-bash /tmp/miniconda.sh -bf -p /opt/miniconda
+bash /tmp/miniconda.sh -bf -p /opt/miniconda\
+# Activate Conda
+source /opt/miniconda/bin/activate\
+# Make Conda available in bash
+conda init bash
+. /root/.bashrc
+conda config --set auto_activate_base false
 conda update --all -c conda-forge -y
 conda clean -ay
 rm -rf /opt/miniconda/pkgs
 rm /tmp/miniconda.sh
-find / -type d -name __pycache__ | xargs rm -rf\
-conda init bash
+find / -type d -name __pycache__ | xargs rm -rf
 EOT
+
 RUN <<EOT cat > environment.yml
 {condafile}
 EOT
+
 RUN <<EOT
-conda init bash
-. /root/.bashrc
 conda create -f environment.yml
-conda activate reco
+# Activate Conda environment
+conda shell.bash activate {conda_env_name} >> /root/.bashrc
 EOT
 """
 

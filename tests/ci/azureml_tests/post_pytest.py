@@ -59,6 +59,7 @@ def parse_args():
 
 if __name__ == "__main__":
     logger = logging.getLogger("post_pytest.py")
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     args = parse_args()
 
     logger.info(f"Setting up workspace {args.ws}")
