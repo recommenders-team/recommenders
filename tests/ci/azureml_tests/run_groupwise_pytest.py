@@ -9,8 +9,8 @@ are set otherwise.
 
 import argparse
 import logging
-import mlflow
 import pytest
+import sys
 
 from test_groups import nightly_test_groups, pr_gate_test_groups
 
@@ -55,9 +55,6 @@ if __name__ == "__main__":
     else:
         test_group = pr_gate_test_groups[args.testgroup]
 
-    # See https://learn.microsoft.com/en-us/azure/machine-learning/how-to-log-view-metrics?view=azureml-api-2&tabs=jobs
-    mlflow.autolog()
-
     # Add options to pytest command (Duration and disable warnings)
     pytest_string = test_group + ["--durations"] + ["0"]
     if args.disable_warnings is True:
@@ -65,9 +62,5 @@ if __name__ == "__main__":
 
     # Execute pytest command
     logger.info("Executing tests now...")
-    pytest_exit_code = pytest.main(pytest_string)
+    sys.exit(pytest.main(pytest_string))
     logger.info("Test execution completed!")
-
-    # Log pytest exit code as a metric
-    # to be used to indicate success/failure in GitHub workflow
-    mlflow.log_metric("pytest_exit_code", pytest_exit_code.value)

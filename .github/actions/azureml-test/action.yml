@@ -39,10 +39,6 @@ inputs:
     required: false
     description: Directory storing the test logs
     default: "test_logs"
-  PYTEST_EXIT_CODE_FILE:
-    required: false
-    description: File storing the pytest exit code
-    default: "pytest_exit_code.log"
 
 runs:
   using: "composite"
@@ -82,21 +78,10 @@ runs:
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
           --expname ${{ inputs.EXP_NAME }} \
-          --log-dir ${{ inputs.LOG_DIR }} \
-          --pytest-exit-code-file ${{ inputs.PYTEST_EXIT_CODE_FILE }}
+          --log-dir ${{ inputs.LOG_DIR }}
     - name: Save logs
       if: ${{ ! cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: logs-${{ inputs.TEST_GROUP }}-python${{ inputs.PYTHON_VERSION }}
         path: ${{ inputs.LOG_DIR }}
-    - name: Get exit status
-      shell: bash
-      id: exit_status
-      run: echo "code=$(cat ${{ inputs.PYTEST_EXIT_CODE_FILE }})" >> $GITHUB_OUTPUT
-    - name: Check PyTest Success/Failure
-      if: ${{ steps.exit_status.outputs.code != 0 }}
-      uses: actions/github-script@v7
-      with:
-        script: |
-            core.setFailed('All tests did not pass!')

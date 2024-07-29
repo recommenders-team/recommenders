@@ -47,12 +47,6 @@ def parse_args():
         default="test_logs",
         help="Test logs will be downloaded to this path",
     )
-    parser.add_argument(
-        "--pytest-exit-code-file",
-        action="store",
-        default="test_logs",
-        help="File storing Pytest exit code",
-    )
 
     return parser.parse_args()
 
@@ -94,10 +88,3 @@ if __name__ == "__main__":
             run_id=run.info.run_id,
             dst_path=args.log_dir,
         )
-
-        # See https://www.mlflow.org/docs/latest/python_api/mlflow.entities.html?highlight=rundata#mlflow.entities.RunData.metrics
-        logger.info(f"Saving Pytest exit code")
-        pytest_exit_code = run.data.metrics.get("pytest_exit_code")
-        if pytest_exit_code is not None:
-            with open(args.pytest_exit_code_file, "w") as f:
-                f.write(str(pytest_exit_code))
