@@ -7,11 +7,12 @@ pytest runs all tests in the specified test folder unless parameters
 are set otherwise.
 """
 
-import sys
-import logging
-import pytest
 import argparse
+import logging
 import mlflow
+import pytest
+import sys
+
 from test_groups import nightly_test_groups, pr_gate_test_groups
 
 def parse_args():

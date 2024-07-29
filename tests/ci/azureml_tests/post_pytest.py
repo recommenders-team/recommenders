@@ -8,6 +8,7 @@ This Python script completes post test tasks such as downloading logs.
 import argparse
 import mlflow
 import logging
+import sys
 
 from aml_utils import get_client, correct_resource_name
 

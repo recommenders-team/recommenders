@@ -24,6 +24,7 @@ Example:
 """
 import argparse
 import logging
+import sys
 
 from aml_utils import (
     correct_resource_name,
