@@ -82,6 +82,7 @@ def get_or_create_environment(
         commit_sha (str): the commit that triggers the workflow
     """
     conda_env_name = "reco"
+    conda_env_yml = "environment.yml"
     condafile = fr"""
 name: {conda_env_name}
 channels:
@@ -120,10 +121,8 @@ RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py
     find / -type d -name __pycache__ | xargs rm -rf
 
 # Create Conda environment
-COPY <<EOT /tmp/environment.yml
-{condafile}
-EOT
-RUN ${{CONDA_PREFIX}}/bin/conda env create -f /tmp/environment.yml
+COPY {conda_env_yml} /tmp/{conda_env_yml}
+RUN ${{CONDA_PREFIX}}/bin/conda env create -f /tmp/{conda_env_yml}
 
 # Activate Conda environment
 ENV CONDA_DEFAULT_ENV {conda_env_name}
@@ -134,7 +133,7 @@ ENV PATH="${{CONDA_PREFIX}}/bin:${{PATH}}"  LD_LIBRARY_PATH="${{CONDA_PREFIX}}/l
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = pathlib.Path(tmpdir)
         dockerfile_path = tmpdir / "Dockerfile"
-        condafile_path = tmpdir / "environment.yml"
+        condafile_path = tmpdir / conda_env_yml
         build = BuildContext(path=tmpdir, dockerfile_path=dockerfile_path.name)
 
         with open(dockerfile_path, "w") as file:
