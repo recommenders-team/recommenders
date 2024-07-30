@@ -63,4 +63,3 @@ if __name__ == "__main__":
     # Execute pytest command
     logger.info("Executing tests now...")
     sys.exit(pytest.main(pytest_string))
-    logger.info("Test execution completed!")

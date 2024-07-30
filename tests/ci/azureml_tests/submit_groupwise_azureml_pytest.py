@@ -116,7 +116,7 @@ def parse_args():
     parser.add_argument(
         "--python-version",
         action="store",
-        default="3.7",
+        default="3.8",
         help="Python version",
     )
     parser.add_argument(
