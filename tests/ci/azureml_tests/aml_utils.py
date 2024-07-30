@@ -118,7 +118,7 @@ RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py
     find / -type d -name __pycache__ | xargs rm -rf
 
 # Create Conda environment
-RUN <<EOT cat > /tmp/environment.yml
+COPY <<EOT /tmp/environment.yml
 {condafile}
 EOT
 RUN ${{CONDA_PREFIX}}/bin/conda env create -f /tmp/environment.yml
