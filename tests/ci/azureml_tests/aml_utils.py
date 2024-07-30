@@ -93,8 +93,10 @@ dependencies:
     - pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip
     - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}
 """
-    image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"  # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
-    dockerfile = fr"""# See https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+    # See https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
+    image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
+    # See https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+    dockerfile = fr"""# syntax=docker/dockerfile:1
 FROM nvcr.io/nvidia/cuda:12.5.1-devel-ubuntu22.04
 SHELL ["/bin/bash", "-c"]
 USER root:root
