@@ -96,45 +96,37 @@ dependencies:
     image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"  # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
     dockerfile = fr"""# See https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
 FROM nvcr.io/nvidia/cuda:12.5.1-devel-ubuntu22.04
+SHELL ["/bin/bash", "-c"]
 USER root:root
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
-RUN <<EOT
-apt-get update
-apt-get install -y wget git-all
-apt-get clean -y
-rm -rf /var/lib/apt/lists/*
-EOT
+RUN apt-get update && \
+    apt-get install -y wget git-all && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
 
-# Conda Environment
-ENV MINICONDA_VERSION py311_24.5.0-0
-RUN <<EOT
-wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-${{MINICONDA_VERSION}}-Linux-x86_64.sh
-bash /tmp/miniconda.sh -bf -p /opt/miniconda
-# Activate Conda
-source /opt/miniconda/bin/activate
-# Make Conda available in bash
-conda init bash
-. /root/.bashrc
-conda config --set auto_activate_base false
-conda update --all -c conda-forge -y
-conda clean -ay
-rm -rf /opt/miniconda/pkgs
-rm /tmp/miniconda.sh
-find / -type d -name __pycache__ | xargs rm -rf
-EOT
+# Install Conda
+ENV CONDA_PREFIX /opt/miniconda
+RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh && \
+    bash /tmp/miniconda.sh -bf -p ${{CONDA_PREFIX}} && \
+    ${{CONDA_PREFIX}}/bin/conda update --all -c conda-forge -y && \
+    ${{CONDA_PREFIX}}/bin/conda clean -ay && \
+    rm -rf ${{CONDA_PREFIX}}/pkgs && \
+    rm /tmp/miniconda.sh && \
+    find / -type d -name __pycache__ | xargs rm -rf
 
-RUN <<EOT cat > environment.yml
+# Create Conda environment
+RUN <<EOT cat > /tmp/environment.yml
 {condafile}
 EOT
+RUN ${{CONDA_PREFIX}}/bin/conda env create -f /tmp/environment.yml
 
-RUN <<EOT
-conda create -f environment.yml
 # Activate Conda environment
-conda shell.bash activate {conda_env_name} >> /root/.bashrc
-EOT
+ENV CONDA_DEFAULT_ENV {conda_env_name}
+ENV CONDA_PREFIX ${{CONDA_PREFIX}}/envs/${{CONDA_DEFAULT_ENV}}
+ENV PATH="${{CONDA_PREFIX}}/bin:${{PATH}}"  LD_LIBRARY_PATH="${{CONDA_PREFIX}}/lib:$LD_LIBRARY_PATH"
 """
 
     with tempfile.TemporaryDirectory() as tmpdir:
