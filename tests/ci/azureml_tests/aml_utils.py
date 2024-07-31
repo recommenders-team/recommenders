@@ -171,6 +171,7 @@ def run_tests(
     """
     job = client.jobs.create_or_update(
         command(
+            name=experiment_name,
             experiment_name=experiment_name,
             compute=compute,
             environment=f"{environment_name}@latest",
