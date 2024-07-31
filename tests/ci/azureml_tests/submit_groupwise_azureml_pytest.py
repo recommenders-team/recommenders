@@ -125,11 +125,6 @@ def parse_args():
         default="unit",
         help="Test kind - nightly or unit",
     )
-    parser.add_argument(
-        "--disable-warnings",
-        action="store_true",
-        help="Turn off the warnings",
-    )
 
     return parser.parse_args()
 
@@ -185,5 +180,4 @@ if __name__ == "__main__":
         script=args.script,
         testgroup=args.testgroup,
         testkind=args.testkind,
-        disable_warnings=args.disable_warnings,
     )

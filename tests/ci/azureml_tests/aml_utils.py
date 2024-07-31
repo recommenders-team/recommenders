@@ -163,7 +163,6 @@ def run_tests(
     script,
     testgroup,
     testkind,
-    disable_warnings,
 ):
     """
     Pytest on AzureML compute.
@@ -180,7 +179,6 @@ def run_tests(
                 f"--expname {experiment_name} "
                 f"--testgroup {testgroup} "
                 f"--testkind {testkind}"
-                " --disable-warnings" if disable_warnings else ""
             ),
         )
     )

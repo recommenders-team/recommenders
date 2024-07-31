@@ -37,11 +37,6 @@ def parse_args():
         default="group_cpu_001",
         help="Group name for the tests",
     )
-    parser.add_argument(
-        "--disable-warnings",
-        action="store_true",
-        help="Turn off warnings",
-    )
     return parser.parse_args()
 
 
@@ -55,10 +50,8 @@ if __name__ == "__main__":
     else:
         test_group = pr_gate_test_groups[args.testgroup]
 
-    # Add options to pytest command (Duration and disable warnings)
+    # Add options to pytest command (Duration)
     pytest_string = test_group + ["--durations"] + ["0"]
-    if args.disable_warnings is True:
-        pytest_string += ["--disable-warnings"]
 
     # Execute pytest command
     logger.info("Executing tests now...")
