@@ -129,6 +129,8 @@ recommenders/utils/tf_utils.py
 recommenders/utils/timer.py
 tests/ci/__init__.py
 tests/ci/azureml_tests/__init__.py
+tests/ci/azureml_tests/aml_utils.py
+tests/ci/azureml_tests/post_pytest.py
 tests/ci/azureml_tests/run_groupwise_pytest.py
 tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py
 tests/ci/azureml_tests/test_groups.py
@@ -171,11 +173,11 @@ tests/smoke/examples/test_notebooks_gpu.py
 tests/smoke/examples/test_notebooks_pyspark.py
 tests/smoke/examples/test_notebooks_python.py
 tests/smoke/recommenders/__init__.py
-tests/smoke/recommenders/recommender/__init__.py
-tests/smoke/recommenders/recommender/test_deeprec_model.py
-tests/smoke/recommenders/recommender/test_deeprec_utils.py
-tests/smoke/recommenders/recommender/test_newsrec_model.py
-tests/smoke/recommenders/recommender/test_newsrec_utils.py
+tests/smoke/recommenders/models/__init__.py
+tests/smoke/recommenders/models/test_deeprec_model.py
+tests/smoke/recommenders/models/test_deeprec_utils.py
+tests/smoke/recommenders/models/test_newsrec_model.py
+tests/smoke/recommenders/models/test_newsrec_utils.py
 tests/unit/__init__.py
 tests/unit/examples/__init__.py
 tests/unit/examples/test_notebooks_gpu.py

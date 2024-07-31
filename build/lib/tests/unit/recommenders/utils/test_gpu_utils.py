@@ -47,7 +47,7 @@ def test_get_cudnn_version():
 
 @pytest.mark.gpu
 def test_cudnn_enabled():
-    assert torch.backends.cudnn.enabled == True
+    assert torch.backends.cudnn.enabled is True
 
 
 @pytest.mark.gpu
