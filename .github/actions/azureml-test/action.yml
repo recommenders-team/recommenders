@@ -6,64 +6,39 @@
 name: azureml-tests
 description: "Submit experiment to AzureML cluster"
 inputs:
-  # azureml experiment name
   EXP_NAME:
     required: true
-    type: string
-  # type of test - unit or nightly
+    description: AzureML experiment Name
+  ENV_NAME:
+    required: true
+    description: AzureML environment Name
   TEST_KIND:
     required: true
-    type: string
-  # test environment - cpu, gpu or spark
-  TEST_ENV:
-    required: false
-    type: string
-  # azureml compute credentials
+    description: Type of test - unit or nightly
   AZUREML_TEST_CREDENTIALS:
     required: true
-    type: string
-  # azureml compute subid
+    description: Credentials for AzureML login
   AZUREML_TEST_SUBID:
     required: true
-    type: string
-  # python version
+    description: AzureML subscription ID
   PYTHON_VERSION:
     required: true
-    type: string
-  # test group name
+    description: Python version used for the tests
   TEST_GROUP:
     required: true
-    type: string
-  # cpu cluster name
-  CPU_CLUSTER_NAME:
-    required: false
-    type: string
-    default: "cpu-cluster"
-  # gpu cluster name
-  GPU_CLUSTER_NAME:
-    required: false
-    type: string
-    default: "gpu-cluster"
-  # AzureML resource group name
+    description: Test group defined in test_group.py
   RG:
     required: false
-    type: string
+    description: AzureML resource group name
     default: "recommenders_project_resources"
-  # AzureML workspace name
   WS:
     required: false
-    type: string
+    description: AzureML workspace name
     default: "azureml-test-workspace"
-  # test logs path
-  TEST_LOGS_PATH:
+  LOG_DIR:
     required: false
-    type: string
-    default: '"test_logs.log"'
-  # pytest exit code
-  PYTEST_EXIT_CODE:
-    required: false
-    type: string
-    default: "pytest_exit_code.log"
+    description: Directory storing the test logs
+    default: "test_logs"
 
 runs:
   using: "composite"
@@ -72,42 +47,44 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.10"
-    - name: Install azureml-core and azure-cli on a GitHub hosted server
+    - name: Install AzureML Python SDK
       shell: bash
-      run: pip install --quiet "azureml-core>1,<2" "azure-cli>2,<3"
+      run: pip install --quiet "azure-ai-ml>1,<2" mlflow "azureml-mlflow>1,<2" 
     - name: Log in to Azure
       uses: azure/login@v2
       with:
-        creds: ${{inputs.AZUREML_TEST_CREDENTIALS}}
-    - name: Install wheel and setuptools package
-      shell: bash
-      run: pip install --quiet wheel setuptools
+        creds: ${{ inputs.AZUREML_TEST_CREDENTIALS }}
     - name: Submit tests to AzureML
       shell: bash
-      run: >-
+      run: |
+        echo "::group::Running tests ..."
         python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
-          --subid ${{inputs.AZUREML_TEST_SUBID}} \
-          --reponame "recommenders" \
-          --branch ${{ github.ref }} \
-          --rg ${{inputs.RG}} \
-          --wsname ${{inputs.WS}} \
-          --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}} \
-          --testlogs ${{inputs.TEST_LOGS_PATH}} \
-          --testkind ${{inputs.TEST_KIND}} \
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} \
-          --testgroup ${{inputs.TEST_GROUP}} \
-          --disable-warnings \
-          --sha "${GITHUB_SHA}" \
-          --clustername $(if [[ ${{inputs.TEST_GROUP}} =~ "gpu" ]]; then echo "${{inputs.GPU_CLUSTER_NAME}}"; else echo "${{inputs.CPU_CLUSTER_NAME}}"; fi) \
-          $(if [[ ${{inputs.TEST_GROUP}} =~ "gpu" ]]; then echo "--add_gpu_dependencies"; fi) \
-          $(if [[ ${{inputs.TEST_GROUP}} =~ "spark" ]]; then echo "--add_spark_dependencies"; fi)
-    - name: Get exit status
+          --subid ${{ inputs.AZUREML_TEST_SUBID }} \
+          --rg ${{ inputs.RG }} \
+          --ws ${{ inputs.WS }} \
+          --cluster ${{ contains(inputs.TEST_GROUP, 'gpu') && 'gpu-cluster' || 'cpu-cluster' }} \
+          --expname ${{ inputs.EXP_NAME }} \
+          --envname ${{ inputs.ENV_NAME }} \
+          --testkind ${{ inputs.TEST_KIND}} \
+          --python-version ${{ inputs.PYTHON_VERSION }} \
+          --testgroup ${{ inputs.TEST_GROUP }} \
+          --sha ${GITHUB_SHA}
+        echo "::endgroup::"
+    - name: Post tests
+      if: ${{ ! cancelled() }}
       shell: bash
-      id: exit_status
-      run: echo "code=$(cat ${{inputs.PYTEST_EXIT_CODE}})" >> $GITHUB_OUTPUT
-    - name: Check Success/Failure
-      if: ${{ steps.exit_status.outputs.code != 0 }}
-      uses: actions/github-script@v7
+      run: |
+        echo "::group::Pytest logs"
+        python tests/ci/azureml_tests/post_pytest.py \
+          --subid ${{ inputs.AZUREML_TEST_SUBID }} \
+          --rg ${{ inputs.RG }} \
+          --ws ${{ inputs.WS }} \
+          --expname ${{ inputs.EXP_NAME }} \
+          --log-dir ${{ inputs.LOG_DIR }}
+        echo "::endgroup::"
+    - name: Save logs
+      if: ${{ ! cancelled() }}
+      uses: actions/upload-artifact@v4
       with:
-        script: |
-            core.setFailed('All tests did not pass!')
+        name: logs-${{ inputs.TEST_GROUP }}-python${{ inputs.PYTHON_VERSION }}
+        path: ${{ inputs.LOG_DIR }}
