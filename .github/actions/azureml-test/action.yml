@@ -57,6 +57,7 @@ runs:
     - name: Submit tests to AzureML
       shell: bash
       run: |
+        echo "::group::Running tests ..."
         python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
           --subid ${{ inputs.AZUREML_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
@@ -69,16 +70,19 @@ runs:
           --testgroup ${{ inputs.TEST_GROUP }} \
           --disable-warnings \
           --sha ${GITHUB_SHA}
+        echo "::endgroup::"
     - name: Post tests
       if: ${{ ! cancelled() }}
       shell: bash
       run: |
+        echo "::group::Pytest logs"
         python tests/ci/azureml_tests/post_pytest.py \
           --subid ${{ inputs.AZUREML_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
           --expname ${{ inputs.EXP_NAME }} \
           --log-dir ${{ inputs.LOG_DIR }}
+        echo "::endgroup::"
     - name: Save logs
       if: ${{ ! cancelled() }}
       uses: actions/upload-artifact@v4
