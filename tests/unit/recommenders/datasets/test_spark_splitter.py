@@ -80,8 +80,8 @@ def test_min_rating_filter(spark_dataset):
         x["count"] >= 5 for x in dfs_item.groupBy(DEFAULT_ITEM_COL).count().collect()
     ]
 
-    assert all(user_rating_counts)
-    assert all(item_rating_counts)
+    assert all(user_rating_counts) is True
+    assert all(item_rating_counts) is True
 
 
 @pytest.mark.spark
@@ -123,7 +123,7 @@ def test_chrono_splitter(spark_dataset):
 
     assert set(users_train) == set(users_test)
 
-    assert _if_later(splits[0], splits[1])
+    assert _if_later(splits[0], splits[1]) is True
 
     splits = spark_chrono_split(spark_dataset, ratio=RATIOS)
 
@@ -131,8 +131,8 @@ def test_chrono_splitter(spark_dataset):
     assert splits[1].count() / NUM_ROWS == pytest.approx(RATIOS[1], TOL)
     assert splits[2].count() / NUM_ROWS == pytest.approx(RATIOS[2], TOL)
 
-    assert _if_later(splits[0], splits[1])
-    assert _if_later(splits[1], splits[2])
+    assert _if_later(splits[0], splits[1]) is True
+    assert _if_later(splits[1], splits[2]) is True
 
 
 @pytest.mark.spark
