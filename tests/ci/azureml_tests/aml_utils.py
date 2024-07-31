@@ -90,6 +90,7 @@ channels:
 dependencies:
   - python={python_version}
   - {conda_pkg_jdk}
+  - pip
   - pip:
     - pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip
     - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}

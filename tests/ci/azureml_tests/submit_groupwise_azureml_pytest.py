@@ -153,6 +153,16 @@ if __name__ == "__main__":
         max_instances=args.maxnodes
     )
 
+    # TODO: Unlike Azure DevOps pipelines, GitHub Actions only has simple
+    #       string functions like startsWith() and contains().  And AzureML
+    #       only accepts simple names that do not contain '.' and '/'.
+    #       correct_resource_name() is used to replace '.' and '/' with '-'
+    #       which makes names in the workflow and on AzureML inconsistent.
+    #       For example, a name
+    #       * in the workflow
+    #           recommenders-unit-group_cpu_001-python3.8-c8adeafabc011b549f875dc145313ffbe3fc53a8
+    #       * on AzureML
+    #           recommenders-unit-group_cpu_001-python3-8-c8adeafabc011b549f875dc145313ffbe3fc53a8
     environment_name = correct_resource_name(args.envname)
     logger.info(f"Setting up environment {environment_name}")
     get_or_create_environment(
