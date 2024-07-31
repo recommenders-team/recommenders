@@ -8,7 +8,6 @@ from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
 
 @pytest.mark.notebooks
-# @pytest.mark.skip(reason="Wikidata API is unstable")
 def test_wikidata_runs(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wikidata_knowledge_graph"]
     MOVIELENS_SAMPLE_SIZE = 5
@@ -25,7 +24,6 @@ def test_wikidata_runs(notebooks, output_notebook, kernel_name, tmp):
 
 
 @pytest.mark.notebooks
-# @pytest.mark.skip(reason="Wikidata API is unstable")
 def test_wikidata_values(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["wikidata_knowledge_graph"]
     execute_notebook(
