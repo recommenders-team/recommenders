@@ -8,6 +8,7 @@ This Python script completes post test tasks such as downloading logs.
 import argparse
 import mlflow
 import logging
+import pathlib
 
 from aml_utils import get_client, correct_resource_name
 
@@ -88,3 +89,8 @@ if __name__ == "__main__":
             run_id=run.info.run_id,
             dst_path=args.log_dir,
         )
+        log_path = pathlib.Path("user_logs/std_log.txt")
+        with open(pathlib.Path(args.log_dir) / log_path, "r") as file:
+            print(f"\nDumping logs in {log_path}")
+            print("=====================================")
+            print(file.read())
