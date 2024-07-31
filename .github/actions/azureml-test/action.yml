@@ -68,6 +68,7 @@ runs:
           --testkind ${{ inputs.TEST_KIND}} \
           --python-version ${{ inputs.PYTHON_VERSION }} \
           --testgroup ${{ inputs.TEST_GROUP }} \
+          --disable-warnings \
           --sha ${GITHUB_SHA}
         echo "::endgroup::"
     - name: Post tests

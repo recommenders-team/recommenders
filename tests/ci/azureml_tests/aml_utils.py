@@ -171,7 +171,6 @@ def run_tests(
     """
     job = client.jobs.create_or_update(
         command(
-            name=experiment_name,
             experiment_name=experiment_name,
             compute=compute,
             environment=f"{environment_name}@latest",
@@ -180,8 +179,8 @@ def run_tests(
                 f"python {script} "
                 f"--expname {experiment_name} "
                 f"--testgroup {testgroup} "
-                f"--testkind {testkind} "
-                "--disable-warnings" if disable_warnings else ""
+                f"--testkind {testkind}"
+                " --disable-warnings" if disable_warnings else ""
             ),
         )
     )
