@@ -53,9 +53,12 @@ extras_require = {
     "gpu": [
         "fastai>=2.7.11,<3",
         "nvidia-ml-py>=11.525.84",
-        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.17",  # Fixed TF due to constant security problems and breaking changes #2073
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16; python_version<='3.8'",  # Fixed TF due to constant security problems and breaking changes #2073
+        "tensorflow~=2.16; python_version>'3.8'",  # Version needed for python 3.12
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
-        "tf-keras<3",
+        # Use keras 2 instead of keras 3
+        "tf-keras~=2.15; python_version<='3.8'", # Not compatible with py3.12
+        "tf-keras~=2.16; python_version>'3.8'",
         "torch>=2.0.1,<3",
     ],
     "spark": [
