@@ -74,9 +74,11 @@ We are currently evaluating inclusion of the following dependencies:
 
 ## Other dependencies
 
-Some dependencies are not available via the recommenders PyPI package, but can be installed in the following ways: 
- - pymanopt: this dependency is required for the RLRMC and GeoIMC algorithms; a version of this code compatible with TensorFlow 2 can be
- installed with `pip install "git+https://github.com/pymanopt/pymanopt.git@1de3b6f47258820fdc072fceaeaa763b9fd263b0"`. 
+Some dependencies are not available via the recommenders PyPI package, but can be installed with the [requirements-external.txt](./requirements-external.txt) file:
+
+```
+pip install -r requirements-external.txt
+```
 
 ## NNI dependencies
 
