@@ -92,7 +92,7 @@ dependencies:
   - {conda_pkg_jdk}
   - pip
   - pip:
-    - pymanopt@git+https://github.com/pymanopt/pymanopt@1de3b6f47258820fdc072fceaeaa763b9fd263b0
+    - -r requirements-external.txt
     - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}
 """
     # See https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
