@@ -39,7 +39,8 @@ install_requires = [
     "numba>=0.57.0,<1",
     "numpy<2.0.0",  # FIXME: Remove numpy<2.0.0 once cornac release a version newer than 2.2.1 that resolve ImportError: numpy.core.multiarray failed to import.
     "pandas>2.0.0,<3.0.0",  # requires numpy
-    "pandera[strategies]>=0.15.0",
+    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
+    "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
@@ -124,7 +125,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.9",
+    python_requires=">=3.6",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
