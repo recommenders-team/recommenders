@@ -92,7 +92,6 @@ dependencies:
   - {conda_pkg_jdk}
   - pip
   - pip:
-    - -r https://raw.githubusercontent.com/recommenders-team/recommenders/{commit_sha}/requirements-external.txt
     - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}
 """
     # See https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
