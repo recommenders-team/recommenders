@@ -689,7 +689,7 @@ class SASREC(tf.keras.Model):
         for epoch in range(1, num_epochs + 1):
 
             step_loss = []
-            train_loss.reset_states()
+            train_loss.reset_state()
             for step in tqdm(
                 range(num_steps), total=num_steps, ncols=70, leave=False, unit="b"
             ):
