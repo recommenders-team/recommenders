@@ -27,32 +27,33 @@ from recommenders.datasets.mind import download_mind, extract_mind
             '"0x8D8B8AD5B126C3B"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_train.zip",
             "52952752",
             "0x8D834F2EB31BDEC",
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
             "30945572",
             "0x8D834F2EBA8D865",
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDsmall_utils.zip",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
             "155178106",
             "0x8D87F67F4AEB960",
         ),
+        # FIXME: Issue #2133
+        # (
+        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
+        #     "530196631",
+        #     "0x8D8244E90C15C07",
+        # ),
+        # (
+        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
+        #     "103456245",
+        #     "0x8D8244E92005849",
+        # ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip",
-            "530196631",
-            "0x8D8244E90C15C07",
-        ),
-        (
-            "https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip",
-            "103456245",
-            "0x8D8244E92005849",
-        ),
-        (
-            "https://mind201910small.blob.core.windows.net/release/MINDlarge_utils.zip",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
             "150359301",
             "0x8D87F67E6CA4364",
         ),
