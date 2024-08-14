@@ -6,14 +6,17 @@ import pytest
 import itertools
 import numpy as np
 import pandas as pd
-from lightfm.data import Dataset
-from lightfm import LightFM, cross_validation
 
-from recommenders.models.lightfm.lightfm_utils import (
-    track_model_metrics,
-    similar_users,
-    similar_items,
-)
+try:
+    from lightfm.data import Dataset
+    from lightfm import LightFM, cross_validation
+    from recommenders.models.lightfm.lightfm_utils import (
+        track_model_metrics,
+        similar_users,
+        similar_items,
+    )
+except ModuleNotFoundError:
+    pass
 
 
 SEEDNO = 42
@@ -128,6 +131,7 @@ def sim_items(interactions, fitting):
     )
 
 
+@pytest.mark.experimental
 def test_interactions(interactions):
     train_interactions, test_interactions, item_features, user_features = interactions
     assert train_interactions.shape == (10, 10)
@@ -136,6 +140,7 @@ def test_interactions(interactions):
     assert user_features.shape == (10, 17)
 
 
+@pytest.mark.experimental
 @pytest.mark.skip(reason="Flaky test")
 def test_fitting(fitting):
     output, _ = fitting
@@ -152,9 +157,11 @@ def test_fitting(fitting):
     np.testing.assert_array_equal(output, target)
 
 
+@pytest.mark.experimental
 def test_sim_users(sim_users):
     assert sim_users.shape == (5, 2)
 
 
+@pytest.mark.experimental
 def test_sim_items(sim_items):
     assert sim_items.shape == (5, 2)
