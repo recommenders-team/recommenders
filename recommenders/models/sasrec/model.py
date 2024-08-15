@@ -313,7 +313,7 @@ class Encoder(tf.keras.layers.Layer):
         """
 
         for i in range(self.num_layers):
-            x = self.enc_layers[i](x, training, mask)
+            x = self.enc_layers[i](x, training=training, mask=mask)
 
         return x  # (batch_size, input_seq_len, d_model)
 
