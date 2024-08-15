@@ -240,7 +240,7 @@ class EncoderLayer(tf.keras.layers.Layer):
 
         Args:
             x (tf.Tensor): Input tensor.
-            training (tf.Tensor): Training tensor.
+            training (Boolean): True if in training mode.
             mask (tf.Tensor): Mask tensor.
 
         Returns:
@@ -305,7 +305,7 @@ class Encoder(tf.keras.layers.Layer):
 
         Args:
             x (tf.Tensor): Input tensor.
-            training (tf.Tensor): Training tensor.
+            training (Boolean): True if in training mode.
             mask (tf.Tensor): Mask tensor.
 
         Returns:
