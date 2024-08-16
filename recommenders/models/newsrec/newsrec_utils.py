@@ -310,7 +310,7 @@ def get_mind_data_set(type):
 
     if type == "large":
         return (
-            "https://recodatasets.z20.web.core.windows.net/newsrec",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             "MINDlarge_train.zip",
             "MINDlarge_dev.zip",
             "MINDlarge_utils.zip",
