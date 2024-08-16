@@ -41,17 +41,16 @@ from recommenders.datasets.mind import download_mind, extract_mind
             "155178106",
             "0x8D87F67F4AEB960",
         ),
-        # FIXME: Issue #2133
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
-        #     "530196631",
-        #     "0x8D8244E90C15C07",
-        # ),
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
-        #     "103456245",
-        #     "0x8D8244E92005849",
-        # ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
+            "530196631",
+            "0x8D8244E90C15C07",
+        ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
+            "103456245",
+            "0x8D8244E92005849",
+        ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
             "150359301",
