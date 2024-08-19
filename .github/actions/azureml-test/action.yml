@@ -62,7 +62,7 @@ runs:
           --subid ${{ inputs.AZUREML_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
-          --cluster ${{ contains(inputs.TEST_GROUP, 'gpu') && 'gpu-cluster' || 'cpu-cluster' }} \
+          --cluster ${{ contains(inputs.TEST_GROUP, 'gpu') && 'gpu-cluster' || 'cpu-cluster2' }} \
           --expname ${{ inputs.EXP_NAME }} \
           --envname ${{ inputs.ENV_NAME }} \
           --testkind ${{ inputs.TEST_KIND}} \
