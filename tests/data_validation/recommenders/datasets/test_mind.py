@@ -28,12 +28,12 @@ from recommenders.datasets.mind import download_mind, extract_mind
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_train.zip",
-            "52952752",
+            "52953372",
             "0x8D834F2EB31BDEC",
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
-            "30945572",
+            "30946172",
             "0x8D834F2EBA8D865",
         ),
         (
@@ -43,18 +43,18 @@ from recommenders.datasets.mind import download_mind, extract_mind
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
-            "530196631",
+            "531361237",
             "0x8D8244E90C15C07",
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
-            "103456245",
+            "103593383",
             "0x8D8244E92005849",
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
             "150359301",
-            "0x8D87F67E6CA4364",
+            "0x8D8B8AD5B2ED4C9",
         ),
     ],
 )
@@ -75,9 +75,9 @@ def test_download_mind_demo(tmp):
 def test_download_mind_small(tmp):
     train_path, valid_path = download_mind(size="small", dest_path=tmp)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 52952752
+    assert statinfo.st_size == 52953372
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 30945572
+    assert statinfo.st_size == 30946172
 
 
 def test_extract_mind_demo(tmp):
@@ -127,9 +127,9 @@ def test_extract_mind_small(tmp):
 def test_download_mind_large(tmp_path):
     train_path, valid_path = download_mind(size="large", dest_path=tmp_path)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 530196631
+    assert statinfo.st_size == 531361237
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 103456245
+    assert statinfo.st_size == 103593383
 
 
 def test_extract_mind_large(tmp):
