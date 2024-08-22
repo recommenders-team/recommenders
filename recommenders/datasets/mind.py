@@ -18,16 +18,16 @@ from recommenders.datasets.download_utils import (
 
 
 URL_MIND_LARGE_TRAIN = (
-    "https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip"
 )
 URL_MIND_LARGE_VALID = (
-    "https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip"
 )
 URL_MIND_SMALL_TRAIN = (
-    "https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_train.zip"
 )
 URL_MIND_SMALL_VALID = (
-    "https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip"
 )
 URL_MIND_DEMO_TRAIN = (
     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip"
