@@ -28,33 +28,33 @@ from recommenders.datasets.mind import download_mind, extract_mind
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_train.zip",
-            "52953372",
-            "0x8D834F2EB31BDEC",
+            "52994575",
+            '"0x8DCC5A830190676"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
-            "30946172",
-            "0x8D834F2EBA8D865",
+            "30948560",
+            '"0x8DCC5A82E182A0F"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
             "155178106",
-            "0x8D87F67F4AEB960",
+            '"0x8D8B8AD5B3677C6"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
-            "531361237",
-            "0x8D8244E90C15C07",
+            "531360717",
+            '"0x8DCC5A8375BDC1D"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
-            "103593383",
-            "0x8D8244E92005849",
+            "103592887",
+            '"0x8DCC5A82FE8609C"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
             "150359301",
-            "0x8D8B8AD5B2ED4C9",
+            '"0x8D8B8AD5B2ED4C9"',
         ),
     ],
 )
@@ -70,14 +70,6 @@ def test_download_mind_demo(tmp):
     assert statinfo.st_size == 17372879
     statinfo = os.stat(valid_path)
     assert statinfo.st_size == 10080022
-
-
-def test_download_mind_small(tmp):
-    train_path, valid_path = download_mind(size="small", dest_path=tmp)
-    statinfo = os.stat(train_path)
-    assert statinfo.st_size == 52953372
-    statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 30946172
 
 
 def test_extract_mind_demo(tmp):
@@ -100,6 +92,14 @@ def test_extract_mind_demo(tmp):
     assert statinfo.st_size == 15624320
     statinfo = os.stat(os.path.join(valid_path, "relation_embedding.vec"))
     assert statinfo.st_size == 1044588
+
+
+def test_download_mind_small(tmp):
+    train_path, valid_path = download_mind(size="small", dest_path=tmp)
+    statinfo = os.stat(train_path)
+    assert statinfo.st_size == 52994575
+    statinfo = os.stat(valid_path)
+    assert statinfo.st_size == 30948560
 
 
 def test_extract_mind_small(tmp):
@@ -127,9 +127,9 @@ def test_extract_mind_small(tmp):
 def test_download_mind_large(tmp_path):
     train_path, valid_path = download_mind(size="large", dest_path=tmp_path)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 531361237
+    assert statinfo.st_size == 531360717
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 103593383
+    assert statinfo.st_size == 103592887
 
 
 def test_extract_mind_large(tmp):
