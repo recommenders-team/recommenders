@@ -29,12 +29,12 @@ from recommenders.datasets.mind import download_mind, extract_mind
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_train.zip",
             "52994575",
-            '"0x8DCBBBBA40EECC6"',
+            '"0x8DCC5A830190676"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
             "30948560",
-            '"0x8DCBBBB989916FE"',
+            '"0x8DCC5A82E182A0F"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
@@ -44,12 +44,12 @@ from recommenders.datasets.mind import download_mind, extract_mind
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
             "531360717",
-            '"0x8DCBE08E04726C1"',
+            '"0x8DCC5A8375BDC1D"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
             "103592887",
-            '"0x8DCBE0865CB161F"',
+            '"0x8DCC5A82FE8609C"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
