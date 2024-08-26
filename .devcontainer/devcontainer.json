@@ -1,44 +1,60 @@
 {
-	"name": "Recommenders",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": "..",
-		"args": { 
-			// Python version: 3, 3.6, 3.7
-			"PYTHON_VERSION": "3.7",
-			"REMOTE_USER": "vscode"
-		}
-	},
+    "name": "Recommenders",
+    // Version list: https://github.com/devcontainers/images/tree/main/src/base-ubuntu
+    // Includes: curl, wget, ca-certificates, git, Oh My Zsh!, 
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+    "features": {
+        // https://github.com/devcontainers/features/blob/main/src/java/devcontainer-feature.json
+        "ghcr.io/devcontainers/features/java:1": {
+            // available versions: latest (default), 24, 23, 22, 21, 17, 11, 8
+            // available distros: ms (default), open, oracle, tem, amzn
+            // vscode extensions: vscjava.vscode-java-pack
+            // JAVA_HOME: /usr/local/sdkman/candidates/java/current
+            "jdkDistro": "open",
+            "version": "21"  // the latest Long Term Support version, next one will be 25
+        },
+        // https://github.com/devcontainers/features/blob/main/src/python/devcontainer-feature.json
+        "ghcr.io/devcontainers/features/python:1": {
+            // * python path: /usr/local/python/current/bin/python -> /usr/local/python/3.x/bin/python
+            // * tools: pylint, flake8, mypy, autopep8, black, yapf, pydocstyle, pycodestyle, bandit, pipenv, virtualenv, pytest
+            // * vscode extensions: 
+            //   + [ms-python.python](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
+            //     - [ms-python.vscode-pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
+            //     - [ms-python.debugpy](https://marketplace.visualstudio.com/items?itemName=ms-python.debugpy)
+            //   + [ms-python.autopep8](https://marketplace.visualstudio.com/items?itemName=ms-python.autopep8)
+            "version": "3.10",
+            "installJupyterlab": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": "explicit"
+                    }
+                },
+                "isort.args": ["--profile", "black"],
+                "python.analysis.autoImportCompletions": true,
+                "python.testing.pytestEnabled": true,
+                // set the directory where all tests are 
+                "python.testing.pytestArgs": ["tests"]
+            },
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "ms-python.black-formatter",  // https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
+                "ms-python.isort",  // https://marketplace.visualstudio.com/items?itemName=ms-python.isort
+                "ms-python.mypy-type-checker",  // https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker
+                "ms-python.pylint",  // https://marketplace.visualstudio.com/items?itemName=ms-python.pylint
+                "ms-toolsai.datawrangler",  // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.datawrangler
+                "ms-toolsai.jupyter"  // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
+            ]
+        }
+    },
 
-	// Set *default* container specific settings.json values on container create.
-	"settings": { 
-		"python.pythonPath": "/usr/local/bin/python",
-		"python.languageServer": "Pylance",
-		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
-		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
-		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
-		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
-	},
-
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"ms-python.python",
-		"ms-python.vscode-pylance"
-	],
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [8888],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install -U pip && pip install --user -e .[dev,examples,spark,xlearn]",
-
-	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode"
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "pip install -U pip && pip install --user -e .[dev,spark]"
 }
