@@ -97,9 +97,9 @@ def test_extract_mind_demo(tmp):
 def test_download_mind_small(tmp):
     train_path, valid_path = download_mind(size="small", dest_path=tmp)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 52953372
+    assert statinfo.st_size == 52994575
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 30946172
+    assert statinfo.st_size == 30948560
 
 
 def test_extract_mind_small(tmp):
@@ -127,9 +127,9 @@ def test_extract_mind_small(tmp):
 def test_download_mind_large(tmp_path):
     train_path, valid_path = download_mind(size="large", dest_path=tmp_path)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 531361237
+    assert statinfo.st_size == 531360717
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 103593383
+    assert statinfo.st_size == 103592887
 
 
 def test_extract_mind_large(tmp):
