@@ -34,22 +34,22 @@ from recommenders.datasets.mind import download_mind, extract_mind
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
             "30946172",
-            '"0x8D834F2EBA8D865"',
+            '"0x8DCBBBB989916FE"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
             "155178106",
-            '"0x8D87F67F4AEB960"',
+            '"0x8D8B8AD5B3677C6"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
             "531361237",
-            '"0x8D8244E90C15C07"',
+            '"0x8DCBE08E04726C1"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
             "103593383",
-            '"0x8D8244E92005849"',
+            '"0x8DCBE0865CB161F"',
         ),
         (
             "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
