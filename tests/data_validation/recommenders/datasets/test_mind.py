@@ -72,14 +72,6 @@ def test_download_mind_demo(tmp):
     assert statinfo.st_size == 10080022
 
 
-def test_download_mind_small(tmp):
-    train_path, valid_path = download_mind(size="small", dest_path=tmp)
-    statinfo = os.stat(train_path)
-    assert statinfo.st_size == 52953372
-    statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 30946172
-
-
 def test_extract_mind_demo(tmp):
     train_zip, valid_zip = download_mind(size="demo", dest_path=tmp)
     train_path, valid_path = extract_mind(train_zip, valid_zip, clean_zip_file=False)
@@ -100,6 +92,14 @@ def test_extract_mind_demo(tmp):
     assert statinfo.st_size == 15624320
     statinfo = os.stat(os.path.join(valid_path, "relation_embedding.vec"))
     assert statinfo.st_size == 1044588
+
+
+def test_download_mind_small(tmp):
+    train_path, valid_path = download_mind(size="small", dest_path=tmp)
+    statinfo = os.stat(train_path)
+    assert statinfo.st_size == 52953372
+    statinfo = os.stat(valid_path)
+    assert statinfo.st_size == 30946172
 
 
 def test_extract_mind_small(tmp):
