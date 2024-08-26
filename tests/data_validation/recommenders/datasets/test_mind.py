@@ -31,31 +31,31 @@ from recommenders.datasets.mind import download_mind, extract_mind
             "52953372",
             '"0x8DCBBBBA40EECC6"',
         ),
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
-        #     "30946172",
-        #     "0x8D834F2EBA8D865",
-        # ),
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
-        #     "155178106",
-        #     "0x8D87F67F4AEB960",
-        # ),
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
-        #     "531361237",
-        #     "0x8D8244E90C15C07",
-        # ),
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
-        #     "103593383",
-        #     "0x8D8244E92005849",
-        # ),
-        # (
-        #     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
-        #     "150359301",
-        #     "0x8D8B8AD5B2ED4C9",
-        # ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
+            "30946172",
+            '"0x8D834F2EBA8D865"',
+        ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
+            "155178106",
+            '"0x8D87F67F4AEB960"',
+        ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
+            "531361237",
+            '"0x8D8244E90C15C07"',
+        ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
+            "103593383",
+            '"0x8D8244E92005849"',
+        ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
+            "150359301",
+            '"0x8D8B8AD5B2ED4C9"',
+        ),
     ],
 )
 def test_mind_url(url, content_length, etag):
