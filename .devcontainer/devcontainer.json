@@ -3,6 +3,11 @@
     // Version list: https://github.com/devcontainers/images/tree/main/src/base-ubuntu
     // Includes: curl, wget, ca-certificates, git, Oh My Zsh!, 
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "16gb",
+        "storage": "32gb"
+    },
     "features": {
         // https://github.com/devcontainers/features/blob/main/src/anaconda/devcontainer-feature.json
         "ghcr.io/devcontainers/features/anaconda:1": {
