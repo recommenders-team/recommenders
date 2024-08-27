@@ -122,7 +122,7 @@ class SSEPT(SASREC):
         # --- ATTENTION BLOCKS ---
         seq_attention = seq_embeddings  # (b, s, h1 + h2)
 
-        seq_attention = self.encoder(seq_attention, training, mask)
+        seq_attention = self.encoder(seq_attention, training=training, mask=mask)
         seq_attention = self.layer_normalization(seq_attention)  # (b, s, h1+h2)
 
         # --- PREDICTION LAYER ---
@@ -197,7 +197,7 @@ class SSEPT(SASREC):
 
         seq_embeddings *= mask
         seq_attention = seq_embeddings
-        seq_attention = self.encoder(seq_attention, training, mask)
+        seq_attention = self.encoder(seq_attention, training=training, mask=mask)
         seq_attention = self.layer_normalization(seq_attention)  # (b, s, h1+h2)
         seq_emb = tf.reshape(
             seq_attention,
