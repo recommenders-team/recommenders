@@ -22,6 +22,7 @@
                 },
                 "isort.args": ["--profile", "black"],
                 "python.analysis.autoImportCompletions": true,
+                "python.defaultInterpreterPath": "/usr/local/conda/envs/Recommenders/bin/python",
                 "python.testing.pytestEnabled": true,
                 // set the directory where all tests are 
                 "python.testing.pytestArgs": ["tests"]
