@@ -41,5 +41,5 @@
     },
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "conda config --set auto_activate_base false && conda init bash && conda create -n Recommenders -c conda-forge -y python=3.10 openjdk=21 pip && bash -c -i 'conda activate Recommenders && pip install -e .[dev,spark]'"
+    "postCreateCommand": "conda create -n Recommenders -c conda-forge -y python=3.10 openjdk=21 pip && conda init bash && bash -c -i 'conda activate Recommenders && pip install -e .[dev,spark]' && conda config --set auto_activate_base false"
 }
