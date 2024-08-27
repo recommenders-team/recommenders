@@ -4,26 +4,9 @@
     // Includes: curl, wget, ca-certificates, git, Oh My Zsh!, 
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
     "features": {
-        // https://github.com/devcontainers/features/blob/main/src/java/devcontainer-feature.json
-        "ghcr.io/devcontainers/features/java:1": {
-            // available versions: latest (default), 24, 23, 22, 21, 17, 11, 8
-            // available distros: ms (default), open, oracle, tem, amzn
-            // vscode extensions: vscjava.vscode-java-pack
-            // JAVA_HOME: /usr/local/sdkman/candidates/java/current
-            "jdkDistro": "open",
-            "version": "21"  // the latest Long Term Support version, next one will be 25
-        },
-        // https://github.com/devcontainers/features/blob/main/src/python/devcontainer-feature.json
-        "ghcr.io/devcontainers/features/python:1": {
-            // * python path: /usr/local/python/current/bin/python -> /usr/local/python/3.x/bin/python
-            // * tools: pylint, flake8, mypy, autopep8, black, yapf, pydocstyle, pycodestyle, bandit, pipenv, virtualenv, pytest
-            // * vscode extensions: 
-            //   + [ms-python.python](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
-            //     - [ms-python.vscode-pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
-            //     - [ms-python.debugpy](https://marketplace.visualstudio.com/items?itemName=ms-python.debugpy)
-            //   + [ms-python.autopep8](https://marketplace.visualstudio.com/items?itemName=ms-python.autopep8)
-            "version": "3.10",
-            "installJupyterlab": true
+        // https://github.com/devcontainers/features/blob/main/src/anaconda/devcontainer-feature.json
+        "ghcr.io/devcontainers/features/anaconda:1": {
+            "version": "2024.06-1"
         }
     },
     "customizations": {
@@ -49,6 +32,7 @@
                 "ms-python.isort",  // https://marketplace.visualstudio.com/items?itemName=ms-python.isort
                 "ms-python.mypy-type-checker",  // https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker
                 "ms-python.pylint",  // https://marketplace.visualstudio.com/items?itemName=ms-python.pylint
+                "ms-python.python",  // https://marketplace.visualstudio.com/items?itemName=ms-python.python
                 "ms-toolsai.datawrangler",  // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.datawrangler
                 "ms-toolsai.jupyter"  // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
             ]
@@ -56,5 +40,5 @@
     },
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "pip install -U pip && pip install --user -e .[dev,spark]"
+    "postCreateCommand": "conda config --set auto_activate_base false && conda init bash && conda create -n Recommenders -c conda-forge -y python=3.10 openjdk=21 pip && bash -c -i 'conda activate Recommenders && pip install -e .[dev,spark]'"
 }
