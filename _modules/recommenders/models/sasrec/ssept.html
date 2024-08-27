@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -460,7 +460,7 @@ document.write(`
         <span class="c1"># --- ATTENTION BLOCKS ---</span>
         <span class="n">seq_attention</span> <span class="o">=</span> <span class="n">seq_embeddings</span>  <span class="c1"># (b, s, h1 + h2)</span>
 
-        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
         <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">)</span>  <span class="c1"># (b, s, h1+h2)</span>
 
         <span class="c1"># --- PREDICTION LAYER ---</span>
@@ -538,7 +538,7 @@ document.write(`
 
         <span class="n">seq_embeddings</span> <span class="o">*=</span> <span class="n">mask</span>
         <span class="n">seq_attention</span> <span class="o">=</span> <span class="n">seq_embeddings</span>
-        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
         <span class="n">seq_attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">seq_attention</span><span class="p">)</span>  <span class="c1"># (b, s, h1+h2)</span>
         <span class="n">seq_emb</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
             <span class="n">seq_attention</span><span class="p">,</span>

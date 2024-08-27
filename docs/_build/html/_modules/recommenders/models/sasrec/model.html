@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -599,7 +599,7 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (tf.Tensor): Input tensor.</span>
-<span class="sd">            training (tf.Tensor): Training tensor.</span>
+<span class="sd">            training (Boolean): True if in training mode.</span>
 <span class="sd">            mask (tf.Tensor): Mask tensor.</span>
 
 <span class="sd">        Returns:</span>
@@ -673,7 +673,7 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (tf.Tensor): Input tensor.</span>
-<span class="sd">            training (tf.Tensor): Training tensor.</span>
+<span class="sd">            training (Boolean): True if in training mode.</span>
 <span class="sd">            mask (tf.Tensor): Mask tensor.</span>
 
 <span class="sd">        Returns:</span>
@@ -681,7 +681,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">):</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_layers</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_layers</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span></div>
 </div>
@@ -1090,7 +1090,7 @@ document.write(`
         <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
 
             <span class="n">step_loss</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">train_loss</span><span class="o">.</span><span class="n">reset_states</span><span class="p">()</span>
+            <span class="n">train_loss</span><span class="o">.</span><span class="n">reset_state</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                 <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;b&quot;</span>
             <span class="p">):</span>
