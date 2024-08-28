@@ -52,6 +52,8 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Aaron Palpallatoc](https://github.com/ubergonmx)**
+   * Corrected variable in pickle dump in `mind_utils.ipynb` notebook
 * **[Abir Chakraborty](https://github.com/aeroabir)**
    * Self-Attentive Sequential Recommendation (SASRec)
    * Sequential Recommendation Via Personalized Transformer (SSEPT)
