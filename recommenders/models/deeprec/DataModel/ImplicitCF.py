@@ -206,6 +206,8 @@ class ImplicitCF(object):
         """
 
         def sample_neg(x):
+            if len(x) >= self.n_items:
+                raise ValueError("A user has voted in every item. Can't find a negative sample.")
             while True:
                 neg_id = random.randint(0, self.n_items - 1)
                 if neg_id not in x:
