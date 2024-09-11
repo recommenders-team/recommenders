@@ -23,17 +23,17 @@ pandera[strategies]<0.18,>=0.6.5
 pandera[strategies]>=0.15.0
 
 [all]
-pyspark<=4,>=3.3.0
-tf-slim>=1.1.0
-pyarrow>=10.0.1
-pytest-mock>=3.10.0
-nvidia-ml-py>=11.525.84
-tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
-fastai<3,>=2.7.11
-pytest-cov>=4.1.0
-black>=23.3.0
-pytest>=7.2.1
 torch<3,>=2.0.1
+nvidia-ml-py>=11.525.84
+black>=23.3.0
+pytest-cov>=4.1.0
+tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
+pytest-mock>=3.10.0
+pyarrow>=10.0.1
+tf-slim>=1.1.0
+pytest>=7.2.1
+fastai<3,>=2.7.11
+pyspark<=4,>=3.3.0
 
 [dev]
 black>=23.3.0
