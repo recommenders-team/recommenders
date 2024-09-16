@@ -34,7 +34,7 @@ ARG VIRTUAL_ENV="conda"
 # Choose an appropriate CPU compute image
 #####################################################################
 # * [buildpack-deps:24.04](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/noble/Dockerfile)
-# * [Created on 2024-08-17](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a)
+#   + [Created on 2024-08-17](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a)
 FROM buildpack-deps@sha256:dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a AS cpu
 
 ARG COMPUTE
@@ -48,9 +48,10 @@ ARG VIRTUAL_ENV
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
-# * [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
-# * [nvidia/cuda:12.5.1-devel-ubuntu22.04](https://hub.docker.com/r/nvidia/cuda/tags)
-FROM nvcr.io/nvidia/cuda:12.5.1-devel-ubuntu22.04 AS gpu
+# * [nvidia/cuda:12.6.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.6.1/ubuntu2404/devel/Dockerfile?ref_type=heads)
+#   + [Created on 2024-09-13](https://hub.docker.com/layers/nvidia/cuda/12.6.1-devel-ubuntu24.04/images/sha256-16696cc4610b50d57d8e9f5b9f776bca4e17ceb800084e7f009c42bd72a3a771)
+# * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
+FROM nvcr.io/nvidia/cuda:12.6.1-devel-ubuntu24.04@sha256:16696cc4610b50d57d8e9f5b9f776bca4e17ceb800084e7f009c42bd72a3a771 AS gpu
 
 ARG COMPUTE
 ARG EXTRAS
@@ -58,7 +59,8 @@ ARG GIT_REF
 ARG PYTHON_VERSION
 ARG VIRTUAL_ENV
 
-RUN apt-get update && \
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update && \
     apt-get install -y wget git-all && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
