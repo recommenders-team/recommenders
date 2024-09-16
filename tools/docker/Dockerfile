@@ -43,6 +43,9 @@ ARG GIT_REF
 ARG PYTHON_VERSION
 ARG VIRTUAL_ENV
 
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+
 
 #####################################################################
 # Compute Stage - GPU
@@ -59,8 +62,10 @@ ARG GIT_REF
 ARG PYTHON_VERSION
 ARG VIRTUAL_ENV
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get update && \
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && \
     apt-get install -y wget git-all && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
