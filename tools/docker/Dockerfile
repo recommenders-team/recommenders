@@ -43,18 +43,15 @@ ARG GIT_REF
 ARG PYTHON_VERSION
 ARG VIRTUAL_ENV
 
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
-
 
 #####################################################################
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
-# * [nvidia/cuda:12.6.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.6.1/ubuntu2404/devel/Dockerfile?ref_type=heads)
-#   + [Created on 2024-09-13](https://hub.docker.com/layers/nvidia/cuda/12.6.1-devel-ubuntu24.04/images/sha256-16696cc4610b50d57d8e9f5b9f776bca4e17ceb800084e7f009c42bd72a3a771)
+# * [nvidia/cuda:12.6.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.6.1/ubuntu2404/devel/Dockerfile)
+#   + [Created on 2024-09-13](https://hub.docker.com/layers/nvidia/cuda/12.6.1-devel-ubuntu24.04/images/sha256-bfc293f21611f3c47a3442cf6516ebfe99d529926a4bef4bc389ef02fd038800)
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
-FROM nvcr.io/nvidia/cuda:12.6.1-devel-ubuntu24.04@sha256:16696cc4610b50d57d8e9f5b9f776bca4e17ceb800084e7f009c42bd72a3a771 AS gpu
+FROM nvcr.io/nvidia/cuda:12.6.1-devel-ubuntu24.04@sha256:bfc293f21611f3c47a3442cf6516ebfe99d529926a4bef4bc389ef02fd038800 AS gpu
 
 ARG COMPUTE
 ARG EXTRAS
@@ -62,10 +59,11 @@ ARG GIT_REF
 ARG PYTHON_VERSION
 ARG VIRTUAL_ENV
 
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && apt-get install -y wget git
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y wget git && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
 
 
 #####################################################################
