@@ -8,13 +8,14 @@ See
 * https://learn.microsoft.com/en-us/azure/machine-learning/reference-migrate-sdk-v1-mlflow-tracking?view=azureml-api-2&tabs=aml%2Ccli%2Cmlflow
 """
 import pathlib
-import tempfile
+import re
 
 from azure.ai.ml import MLClient, command
 from azure.ai.ml.entities import AmlCompute, BuildContext, Environment, Workspace
 from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
+
 
 def get_client(subscription_id, resource_group, workspace_name):
     """
@@ -61,9 +62,8 @@ def get_or_create_environment(
     environment_name,
     use_gpu,
     use_spark,
-    conda_pkg_jdk,
+    conda_openjdk_version,
     python_version,
-    commit_sha,
 ):
     """
     AzureML requires the run environment to be setup prior to submission.
@@ -77,81 +77,37 @@ def get_or_create_environment(
             added to the conda environment, else False
         use_spark (bool): True if PySpark packages should be
             added to the conda environment, else False
-        conda_pkg_jdk (str): "openjdk=8" by default
-        python_version (str): python version, such as "3.9"
-        commit_sha (str): the commit that triggers the workflow
+        conda_openjdk_version (str): "21" by default
+        python_version (str): python version, such as "3.11"
     """
-    conda_env_name = "reco"
-    conda_env_yml = "environment.yml"
-    condafile = fr"""
-name: {conda_env_name}
-channels:
-  - conda-forge
-dependencies:
-  - python={python_version}
-  - {conda_pkg_jdk}
-  - pip
-  - pip:
-    - recommenders[dev{",gpu" if use_gpu else ""}{",spark" if use_spark else ""}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}
-"""
-    # See https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
-    image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
-    # See https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
-    dockerfile = fr"""# syntax=docker/dockerfile:1
-FROM nvcr.io/nvidia/cuda:12.5.1-devel-ubuntu22.04
-SHELL ["/bin/bash", "-c"]
-USER root:root
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-    apt-get install -y wget git-all && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+    compute = "gpu" if use_gpu else "cpu"
+    extras = "dev" + ",gpu" if use_gpu else "" + ",spark" if use_spark else ""
+    dockerfile = pathlib.Path("tools/docker/Dockerfile")
 
-# Install Conda
-ENV CONDA_PREFIX /opt/miniconda
-RUN wget -qO /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh && \
-    bash /tmp/miniconda.sh -bf -p ${{CONDA_PREFIX}} && \
-    ${{CONDA_PREFIX}}/bin/conda update --all -c conda-forge -y && \
-    ${{CONDA_PREFIX}}/bin/conda clean -ay && \
-    rm -rf ${{CONDA_PREFIX}}/pkgs && \
-    rm /tmp/miniconda.sh && \
-    find / -type d -name __pycache__ | xargs rm -rf
+    # Docker's --build-args is not supported by AzureML Python SDK v2 as shown
+    # in [the issue #33902](https://github.com/Azure/azure-sdk-for-python/issues/33902)
+    # so the build args are configured by regex substituion
+    text = dockerfile.read_text()
+    text = re.sub(r"(ARG\sCOMPUTE=).*", rf'\1"{compute}"', text)
+    text = re.sub(r"(ARG\sGIT_REF=).*", r'\1""', text)
+    text = re.sub(r"(ARG\sEXTRAS=).*", rf'\1"{extras}"', text)
+    text = re.sub(r"(ARG\sPYTHON_VERSION=).*", rf'\1"{python_version}"', text)
+    text = re.sub(r"(ARG\sJDK_VERSION=).*", rf'\1"{conda_openjdk_version}"', text)
+    dockerfile.write_text(text)
 
-# Create Conda environment
-COPY {conda_env_yml} /tmp/{conda_env_yml}
-RUN ${{CONDA_PREFIX}}/bin/conda env create -f /tmp/{conda_env_yml}
-
-# Activate Conda environment
-ENV CONDA_DEFAULT_ENV {conda_env_name}
-ENV CONDA_PREFIX ${{CONDA_PREFIX}}/envs/${{CONDA_DEFAULT_ENV}}
-ENV PATH="${{CONDA_PREFIX}}/bin:${{PATH}}"  LD_LIBRARY_PATH="${{CONDA_PREFIX}}/lib:$LD_LIBRARY_PATH"
-"""
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmpdir = pathlib.Path(tmpdir)
-        dockerfile_path = tmpdir / "Dockerfile"
-        condafile_path = tmpdir / conda_env_yml
-        build = BuildContext(path=tmpdir, dockerfile_path=dockerfile_path.name)
-
-        with open(dockerfile_path, "w") as file:
-            file.write(dockerfile)
-        with open(condafile_path, "w") as file:
-            file.write(condafile)
-
-        try:
-            client.environments.create_or_update(
-                Environment(
-                    name=environment_name,
-                    image=None if use_gpu else image,
-                    build=build if use_gpu else None,
-                    conda_file=None if use_gpu else condafile_path,
-                )
+    try:
+        client.environments.create_or_update(
+            Environment(
+                name=environment_name,
+                build=BuildContext(
+                    # Set path for Docker to access to Recommenders root
+                    path=".",
+                    dockerfile_path=dockerfile,
+                ),
             )
-        except ResourceExistsError:
-            pass
+        )
+    except ResourceExistsError:
+        pass
 
 
 def run_tests(

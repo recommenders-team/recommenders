@@ -25,7 +25,7 @@ Example:
 import argparse
 import logging
 
-from aml_utils import (
+from .aml_utils import (
     correct_resource_name,
     create_or_start_compute,
     get_client,
@@ -108,15 +108,15 @@ def parse_args():
         help="Environment name on AzureML",
     )
     parser.add_argument(
-        "--conda_pkg_jdk",
+        "--conda-openjdk-version",
         action="store",
-        default="openjdk=8",
-        help="Conda package for JDK",
+        default="21",
+        help="Conda OpenJDK package version",
     )
     parser.add_argument(
         "--python-version",
         action="store",
-        default="3.8",
+        default="3.11",
         help="Python version",
     )
     parser.add_argument(
@@ -133,19 +133,16 @@ if __name__ == "__main__":
     logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
     args = parse_args()
 
-    logger.info(f"Setting up workspace {args.ws}")
+    logger.info("Setting up workspace %s", args.ws)
     client = get_client(
         subscription_id=args.subid,
         resource_group=args.rg,
         workspace_name=args.ws,
     )
 
-    logger.info(f"Setting up compute {args.cluster}")
+    logger.info("Setting up compute %s", args.cluster)
     create_or_start_compute(
-        client=client,
-        name=args.cluster,
-        size=args.vmsize,
-        max_instances=args.maxnodes
+        client=client, name=args.cluster, size=args.vmsize, max_instances=args.maxnodes
     )
 
     # TODO: Unlike Azure DevOps pipelines, GitHub Actions only has simple
@@ -159,19 +156,18 @@ if __name__ == "__main__":
     #       * on AzureML
     #           recommenders-unit-group_cpu_001-python3_8-c8adeafabc011b549f875dc145313ffbe3fc53a8
     environment_name = correct_resource_name(args.envname)
-    logger.info(f"Setting up environment {environment_name}")
+    logger.info("Setting up environment %s", environment_name)
     get_or_create_environment(
         client=client,
         environment_name=environment_name,
-        use_gpu=True if "gpu" in args.testgroup else False,
-        use_spark=True if "spark" in args.testgroup else False,
-        conda_pkg_jdk=args.conda_pkg_jdk,
+        use_gpu="gpu" in args.testgroup,
+        use_spark="spark" in args.testgroup,
+        conda_openjdk_version=args.conda_openjdk_version,
         python_version=args.python_version,
-        commit_sha=args.sha,
     )
 
     experiment_name = correct_resource_name(args.expname)
-    logger.info(f"Running experiment {experiment_name}")
+    logger.info("Running experiment %s", experiment_name)
     run_tests(
         client=client,
         compute=args.cluster,
