@@ -25,7 +25,7 @@ Example:
 import argparse
 import logging
 
-from .aml_utils import (
+from aml_utils import (
     correct_resource_name,
     create_or_start_compute,
     get_client,
