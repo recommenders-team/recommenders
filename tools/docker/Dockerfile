@@ -80,7 +80,7 @@ SHELL ["/bin/bash", "-i", "-c"]
 
 # Exit if VIRTUAL_ENV is not specified correctly
 RUN if ! [[ "${VIRTUAL_ENV}" =~ ^(conda|venv|virtualenv)$ ]]; then \
-        echo 'VIRTUAL_ENV should be either "conda", "venv" or "virtualenv"'; \
+        echo "VIRTUAL_ENV is now '${VIRTUAL_ENV}', which should be either 'conda', 'venv' or 'virtualenv'"; \
         exit 1; \
     fi
 
