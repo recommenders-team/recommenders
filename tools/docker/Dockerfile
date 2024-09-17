@@ -37,11 +37,11 @@ ARG VIRTUAL_ENV="conda"
 #   + [Created on 2024-08-17](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a)
 FROM buildpack-deps@sha256:dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a AS cpu
 
-ARG COMPUTE
-ARG EXTRAS
-ARG GIT_REF
-ARG PYTHON_VERSION
-ARG VIRTUAL_ENV
+ARG COMPUTE="cpu"
+ARG EXTRAS=""
+ARG GIT_REF="main"
+ARG PYTHON_VERSION="3.11"
+ARG VIRTUAL_ENV="conda"
 
 
 #####################################################################
@@ -53,11 +53,11 @@ ARG VIRTUAL_ENV
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
 FROM nvcr.io/nvidia/cuda:12.6.1-devel-ubuntu24.04@sha256:bfc293f21611f3c47a3442cf6516ebfe99d529926a4bef4bc389ef02fd038800 AS gpu
 
-ARG COMPUTE
-ARG EXTRAS
-ARG GIT_REF
-ARG PYTHON_VERSION
-ARG VIRTUAL_ENV
+ARG COMPUTE="cpu"
+ARG EXTRAS=""
+ARG GIT_REF="main"
+ARG PYTHON_VERSION="3.11"
+ARG VIRTUAL_ENV="conda"
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
@@ -148,6 +148,8 @@ FROM ${VIRTUAL_ENV} AS deps
 
 ARG JDK_VERSION="21"
 
+
+RUN echo "ENV_HOME: ${ENV_HOME}"
 RUN if [[ "${VIRTUAL_ENV}" =~ ^(venv|virtualenv)$ ]]; then \
         if [[ "${EXTRAS}" =~ spark ]]; then \
             apt-get install -y openjdk-${JDK_VERSION}-jdk; \
