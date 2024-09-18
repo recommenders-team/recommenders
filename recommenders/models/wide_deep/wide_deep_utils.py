@@ -211,3 +211,136 @@ def build_model(
         )
 
     return model
+
+from typing import Tuple
+
+import torch
+from torch.utils.data import DataLoader
+from torch import nn
+
+# TODO: Perhaps it would be better to define an hparams object/dict
+# like in `recommenders.models.deeprec`
+WAD_DEFAULT_HIDDEN_UNITS: Tuple[int, ...] = (128, 128)
+WAD_DEFAULT_DROPOUT: float = 0.0
+
+class WideAndDeepModel(nn.Module):
+    def __init__(
+        self, 
+        num_users: int, 
+        num_items: int, 
+        user_dim: int,
+        item_dim: int, 
+        dnn_hidden_units: tuple[int, ...] = WAD_DEFAULT_HIDDEN_UNITS,
+        dnn_dropout: float = WAD_DEFAULT_DROPOUT,
+    ):
+        super().__init__()
+
+        self.embeddings = nn.ModuleDict({
+            'users_emb': nn.Embedding(num_users, user_dim),
+            'items_emb': nn.Embedding(num_items, item_dim),
+            # TODO: Put other embeddings for other categorical features
+        })
+
+        # Randomly initialize embeddings
+        total_emb_dim = 0
+        for _, emb in self.embeddings.items():
+            total_emb_dim += emb.embedding_dim
+            nn.init.uniform_(emb.weight, -1, 1)
+
+        layers = []
+        # TODO: Add support for continuous features
+        cont_features = 0
+        prev_output = cont_features + total_emb_dim
+        for hu in dnn_hidden_units:
+            layers.append(nn.Linear(prev_output, hu))
+            layers.append(nn.Dropout(dnn_dropout))
+            layers.append(nn.ReLU())
+            prev_output = hu
+
+        self.deep = nn.Sequential(*layers)
+
+        # P(Y=1|X) = W*wide + W'*a^(lf) + bias
+        # which is eq. to W"*cat(wide, a^(lf))+bias
+        wide_input = num_users * num_items # (cross product dim)
+        self.head = nn.Sequential(
+            # Reading the paper I thought the output was a scalar, but in that
+            # notebook they use `embed_dict_len`, which is equiv. to `wide_input`
+            # https://www.kaggle.com/code/matanivanov/wide-deep-learning-for-recsys-with-pytorch
+            # Output
+            nn.Linear(wide_input+prev_output, wide_input),
+            nn.Sigmoid(),
+        )
+
+    def forward(self, X):
+        # TODO: What is X? How do we extract what we need?
+        # (Pending until I think about dataloader)
+        all_embed = torch.cat([
+            self.embeddings['users_emb'](...),
+            self.embeddings['items_emb'](...),
+        ], dim=1)
+
+        # TODO: Add support for continuous features
+        cont_features = torch.empty()
+        deep_output = self.deep(torch.cat([cont_features, all_embed]))
+
+        # TODO: Get the cross product somehow
+        # https://datascience.stackexchange.com/a/58915/169220
+        return self.head(torch.cat([
+            cross_product, # wide input (cross product user-item)
+            deep_output, # deep output
+        ], dim=1))
+
+
+class WideAndDeep(object):
+    def __init__(
+        self, 
+        data,
+        user_dim: int,
+        item_dim: int,
+        dnn_hidden_units: Tuple[int,...] = WAD_DEFAULT_HIDDEN_UNITS, 
+        dnn_dropout: float = WAD_DEFAULT_DROPOUT,
+        seed=None,
+    ):
+        self.model = WideAndDeepModel(
+            num_users=...,
+            num_items=...,
+            user_dim=user_dim,
+            item_dim=item_dim,
+            dnn_hidden_units=dnn_hidden_units,
+            dnn_dropout=dnn_dropout,
+        )
+        self.dataloader = DataLoader(...)
+        self.loss_fn = nn.CrossEntropyLoss()
+        
+    def fit(self):
+        self.train_loop()
+        self.test_loop()
+
+    def train_loop(self):
+        self.model.train()
+        
+        for batch, (X,y) in enumerate(self.dataloader):
+            pred = self.model(X)
+            loss = self.loss_fn(pred, y)
+
+            # Propagate error
+            loss.backward()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
+
+    def test_loop(self):
+        # TODO: Copypasted example from pytorch's tutorial. Might need complete rewritting.
+        self.model.eval()
+        
+        size = len(self.dataloader.dataset)
+        num_batches = len(self.dataloader)
+        test_loss, correct = 0, 0
+
+        with torch.no_grad():
+            for X, y in self.dataloader:
+                pred = self.model(X)
+                test_loss += self.loss_fn(pred, y).item()
+                correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+
+        test_loss /= num_batches
+        correct /= size
