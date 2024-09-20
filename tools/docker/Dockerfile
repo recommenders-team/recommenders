@@ -61,13 +61,9 @@ ARG PYTHON_VERSION="3.11"
 ARG VIRTUAL_ENV="conda"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
 
 WORKDIR /root
 USER root:root
-
-# -i option used to source bashrc (thus activating conda env) at every RUN statement
-SHELL ["/bin/bash", "-i", "-c"]
 
 # Exit if VIRTUAL_ENV is not specified correctly
 RUN if ! [[ "${VIRTUAL_ENV}" =~ ^(conda|venv|virtualenv)$ ]]; then \
@@ -163,6 +159,9 @@ FROM deps AS final
 
 ARG RECO_LOCAL_DIR="./"
 ARG RECO_DIR="/tmp/recommenders"
+
+# -i option used to source bashrc (thus activating conda env) at every RUN statement
+SHELL ["/bin/bash", "-i", "-c"]
 
 COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 
