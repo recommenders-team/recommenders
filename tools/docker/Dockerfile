@@ -45,13 +45,19 @@ RUN apt-get update && \
 # Base Stage
 # Basic settings for all stages built on top of compute stage
 #####################################################################
-FROM ${COMPUTE} AS base
+FROM ${COMPUTE}
+
+# Extra dependencies: dev, gpu, spark
+ARG EXTRAS=""
+
+# Git ref of Recommenders to install: main, staging, etc.
+# Empty value ("") indicates editable installation of current clone
+ARG GIT_REF="main"
+
+ARG JDK_VERSION="21"
 
 # Valid versions: 3.8, 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
-
-# Valid virtual environments: venv, virtualenv, conda
-ARG VIRTUAL_ENV="conda"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -60,117 +66,26 @@ USER root:root
 
 SHELL ["/bin/bash", "-c"]
 
-# Exit if VIRTUAL_ENV is not specified correctly
-RUN if ! [[ "${VIRTUAL_ENV}" =~ ^(conda|venv|virtualenv)$ ]]; then \
-        echo "VIRTUAL_ENV is now '${VIRTUAL_ENV}', which should be either 'conda', 'venv' or 'virtualenv'"; \
-        exit 1; \
-    fi
-
-# Install system Python
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y software-properties-common  # Required for add-apt-repository
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y python${PYTHON_VERSION}-dev
-
-
-#####################################################################
-# Virtual Environment Stage - Conda
-#####################################################################
-FROM base AS conda
-
-ARG PYTHON_VERSION
-ARG VIRTUAL_ENV
-
 ARG CONDA_FILE="/tmp/conda.sh"
 ARG CONDA_PREFIX="conda"
 ARG CONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-ARG ENV_HOME="${CONDA_PREFIX}/envs/Recommenders"
-
-# Install Conda
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
-        wget -qO ${CONDA_FILE} ${CONDA_URL} && \
-        bash ${CONDA_FILE} -bf -p ${CONDA_PREFIX} && \
-        ${CONDA_PREFIX}/bin/conda clean -ay && \
-        rm -rf ${CONDA_PREFIX}/pkgs && \
-        rm ${CONDA_FILE} && \
-        ${CONDA_PREFIX}/bin/conda init bash && \
-        ${CONDA_PREFIX}/bin/conda config --set auto_activate_base false; \ 
-    fi
-
-
-#####################################################################
-# Virtual Environment Stage - Venv
-#####################################################################
-FROM base AS venv
-
-ARG PYTHON_VERSION
-ARG ENV_HOME=".venv"
-
-# Install venv
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y python${PYTHON_VERSION}-venv
-
-# Create virtual environment
-RUN python${PYTHON_VERSION} -m venv ${ENV_HOME}
-
-
-#####################################################################
-# Virtual Environment Stage - Virtualenv
-#####################################################################
-FROM base AS virtualenv
-
-ARG PYTHON_VERSION
-ARG ENV_HOME=".virtualenv"
-
-# Install virtualenv
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y python3-virtualenv
-
-# Create virtual environment
-RUN virtualenv -p python${PYTHON_VERSION} ${ENV_HOME}
-
-
-#####################################################################
-# Dependencies Stage
-#####################################################################
-FROM ${VIRTUAL_ENV} AS deps
-
-# Extra dependencies: dev, gpu, spark
-ARG EXTRAS=""
-ARG JDK_VERSION="21"
-ARG PYTHON_VERSION
-ARG VIRTUAL_ENV
-
-RUN echo "ENV_HOME: ${ENV_HOME}"
-RUN if [[ "${VIRTUAL_ENV}" =~ ^(venv|virtualenv)$ ]]; then \
-        if [[ "${EXTRAS}" =~ spark ]]; then \
-            DEBIAN_FRONTEND=noninteractive \
-            apt-get install -y openjdk-${JDK_VERSION}-jdk; \
-        fi; \
-        source ${ENV_HOME}/bin/activate; \
-        pip install --upgrade pip setuptools; \
-        echo "source ${ENV_HOME}/bin/activate" >> ~/.bashrc; \
-    fi
-RUN if [[ "${VIRTUAL_ENV}" =~ ^(conda)$ ]]; then \
-        JDK=$(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi) \
-        conda create -n ${ENV_HOME##*/} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}; \
-        echo "conda activate ${ENV_HOME##*/}" >> ~/.bashrc; \
-    fi
-
-
-#####################################################################
-# Final Stage
-#####################################################################
-FROM deps AS final
-
-# Git ref of Recommenders to install: main, staging, etc.
-# Empty value ("") indicates editable installation of current clone
-ARG GIT_REF="main"
-ARG VIRTUAL_ENV
+ARG ENV_NAME="Recommenders"
 ARG RECO_LOCAL_DIR="./"
 ARG RECO_DIR="/tmp/recommenders"
+
+# Install Conda
+RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
+    bash ${CONDA_FILE} -bf -p ${CONDA_PREFIX} && \
+    ${CONDA_PREFIX}/bin/conda clean -ay && \
+    rm -rf ${CONDA_PREFIX}/pkgs && \
+    rm ${CONDA_FILE} && \
+    ${CONDA_PREFIX}/bin/conda init bash && \
+    ${CONDA_PREFIX}/bin/conda config --set auto_activate_base false 
+
+# Create Conda environment
+RUN JDK=$(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi) \
+    conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}; \
+    echo "conda activate ${ENV_NAME}" >> ~/.bashrc
 
 # -i option used to source bashrc (thus activating conda env) at every RUN statement
 SHELL ["/bin/bash", "-i", "-c"]
@@ -180,4 +95,4 @@ COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommenders"; fi); \
     RECO_URL=$(if [ -z "${GIT_REF}" ]; then echo ""; else echo "@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}"; fi); \
     pip install ${RECO}$(if [ -z "${EXTRAS}" ]; then echo ""; else echo "[${EXTRAS}]"; fi)${RECO_URL} && \
-    python -m ipykernel install --user --name ${VIRTUAL_ENV} --display-name "Python (${VIRTUAL_ENV})"
+    python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
