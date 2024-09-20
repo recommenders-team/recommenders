@@ -47,13 +47,6 @@ RUN apt-get update && \
 #####################################################################
 FROM ${COMPUTE} AS base
 
-# Extra dependencies: dev, gpu, spark
-ARG EXTRAS=""
-
-# Git ref of Recommenders to install: main, staging, etc.
-# Empty value ("") indicates editable installation of current clone
-ARG GIT_REF="main"
-
 # Valid versions: 3.8, 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
@@ -87,6 +80,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
 #####################################################################
 FROM base AS conda
 
+ARG PYTHON_VERSION
+ARG VIRTUAL_ENV
+
 ARG CONDA_FILE="/tmp/conda.sh"
 ARG CONDA_PREFIX="conda"
 ARG CONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -109,6 +105,7 @@ RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
 #####################################################################
 FROM base AS venv
 
+ARG PYTHON_VERSION
 ARG ENV_HOME=".venv"
 
 # Install venv
@@ -124,6 +121,7 @@ RUN python${PYTHON_VERSION} -m venv ${ENV_HOME}
 #####################################################################
 FROM base AS virtualenv
 
+ARG PYTHON_VERSION
 ARG ENV_HOME=".virtualenv"
 
 # Install virtualenv
@@ -139,8 +137,11 @@ RUN virtualenv -p python${PYTHON_VERSION} ${ENV_HOME}
 #####################################################################
 FROM ${VIRTUAL_ENV} AS deps
 
+# Extra dependencies: dev, gpu, spark
+ARG EXTRAS=""
 ARG JDK_VERSION="21"
-
+ARG PYTHON_VERSION
+ARG VIRTUAL_ENV
 
 RUN echo "ENV_HOME: ${ENV_HOME}"
 RUN if [[ "${VIRTUAL_ENV}" =~ ^(venv|virtualenv)$ ]]; then \
@@ -164,6 +165,10 @@ RUN if [[ "${VIRTUAL_ENV}" =~ ^(conda)$ ]]; then \
 #####################################################################
 FROM deps AS final
 
+# Git ref of Recommenders to install: main, staging, etc.
+# Empty value ("") indicates editable installation of current clone
+ARG GIT_REF="main"
+ARG VIRTUAL_ENV
 ARG RECO_LOCAL_DIR="./"
 ARG RECO_DIR="/tmp/recommenders"
 
