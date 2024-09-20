@@ -65,6 +65,8 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 WORKDIR /root
 USER root:root
 
+SHELL ["/bin/bash", "-c"]
+
 # Exit if VIRTUAL_ENV is not specified correctly
 RUN if ! [[ "${VIRTUAL_ENV}" =~ ^(conda|venv|virtualenv)$ ]]; then \
         echo "VIRTUAL_ENV is now '${VIRTUAL_ENV}', which should be either 'conda', 'venv' or 'virtualenv'"; \
@@ -73,9 +75,11 @@ RUN if ! [[ "${VIRTUAL_ENV}" =~ ^(conda|venv|virtualenv)$ ]]; then \
 
 # Install system Python
 RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get install -y software-properties-common  # Required for add-apt-repository
 RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get install -y python${PYTHON_VERSION}-dev
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y python${PYTHON_VERSION}-dev
 
 
 #####################################################################
@@ -108,7 +112,8 @@ FROM base AS venv
 ARG ENV_HOME=".venv"
 
 # Install venv
-RUN apt-get install -y python${PYTHON_VERSION}-venv
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y python${PYTHON_VERSION}-venv
 
 # Create virtual environment
 RUN python${PYTHON_VERSION} -m venv ${ENV_HOME}
@@ -122,7 +127,8 @@ FROM base AS virtualenv
 ARG ENV_HOME=".virtualenv"
 
 # Install virtualenv
-RUN apt-get install -y python3-virtualenv
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y python3-virtualenv
 
 # Create virtual environment
 RUN virtualenv -p python${PYTHON_VERSION} ${ENV_HOME}
@@ -139,6 +145,7 @@ ARG JDK_VERSION="21"
 RUN echo "ENV_HOME: ${ENV_HOME}"
 RUN if [[ "${VIRTUAL_ENV}" =~ ^(venv|virtualenv)$ ]]; then \
         if [[ "${EXTRAS}" =~ spark ]]; then \
+            DEBIAN_FRONTEND=noninteractive \
             apt-get install -y openjdk-${JDK_VERSION}-jdk; \
         fi; \
         source ${ENV_HOME}/bin/activate; \
