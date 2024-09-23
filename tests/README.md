@@ -222,7 +222,7 @@ Then, follow the steps below to create the AzureML infrastructure:
 3. Add the subscription ID to GitHub action secrets [here](https://github.com/recommenders-team/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
 4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
 5. Select your subscription: `az account set -s $AZURE_SUBSCRIPTION_ID`.
-6. Create a Service Principal: `az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --json-auth`. This will output a JSON blob with the credentials of the Service Principal:
+6. Create a Service Principal: `az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --role "AzureML Compute Operator" --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --json-auth`. This will output a JSON blob with the credentials of the Service Principal:
     ```
     {
         "clientId": "XXXXXXXXXXXXXXXXXXXXX",
@@ -237,7 +237,9 @@ Then, follow the steps below to create the AzureML infrastructure:
         "managementEndpointUrl": "https://management.core.windows.net/"
     }
     ```
-7. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
+7. Assign AzureML Data Scientist role: `az role assignment create --assignee $SERVICE_PRINCIPAL_NAME --role "AzureML Data Scientist" --scope /subscriptions/$AZURE_SUBSCRIPTION_ID` 
+8. Assign Reader role: `az role assignment create --assignee $SERVICE_PRINCIPAL_NAME --role "Reader" --scope /subscriptions/$AZURE_SUBSCRIPTION_ID`
+9. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
 
 
 ## How to execute tests in your local environment
