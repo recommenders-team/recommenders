@@ -237,7 +237,9 @@ Then, follow the steps below to create the AzureML infrastructure:
         "managementEndpointUrl": "https://management.core.windows.net/"
     }
     ```
-7. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
+7. Assign AzureML Data Scientist role: `az role assignment create --assignee $SERVICE_PRINCIPAL_NAME --role "AzureML Data Scientist" --scope /subscriptions/$AZURE_SUBSCRIPTION_ID` 
+8. Assign Reader role: `az role assignment create --assignee $SERVICE_PRINCIPAL_NAME --role "Reader" --scope /subscriptions/$AZURE_SUBSCRIPTION_ID`
+9. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
 
 
 ## How to execute tests in your local environment
