@@ -95,3 +95,5 @@ RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommend
     conda activate ${ENV_NAME} && \
     pip install ${RECO}$(if [ -z "${EXTRAS}" ]; then echo ""; else echo "[${EXTRAS}]"; fi)${RECO_URL} && \
     python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
+
+SHELL ["/bin/bash", "-i", "-c"]
