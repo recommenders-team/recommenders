@@ -87,8 +87,10 @@ RUN JDK=$(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; els
     ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}; \
     echo "conda activate ${ENV_NAME}" >> ~/.bashrc
 
+# Copy Recommenders into the image
 COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 
+# Install Recommenders and its dependencies
 RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommenders"; fi); \
     RECO_URL=$(if [ -z "${GIT_REF}" ]; then echo ""; else echo "@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}"; fi); \
     source ${CONDA_PREFIX}/bin/activate && \
@@ -96,4 +98,7 @@ RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommend
     pip install ${RECO}$(if [ -z "${EXTRAS}" ]; then echo ""; else echo "[${EXTRAS}]"; fi)${RECO_URL} && \
     python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
 
+# Source ~/.bashrc to activate the Conda environment
 SHELL ["/bin/bash", "-i", "-c"]
+ENV ENV="/root/.bashrc"
+ENV BASH_ENV="${ENV}"
