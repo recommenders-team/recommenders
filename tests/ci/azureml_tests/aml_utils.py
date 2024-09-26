@@ -81,7 +81,7 @@ def get_or_create_environment(
         python_version (str): python version, such as "3.11"
     """
     compute = "gpu" if use_gpu else "cpu"
-    extras = "dev" + ",gpu" if use_gpu else "" + ",spark" if use_spark else ""
+    extras = "dev" + (",gpu" if use_gpu else "") + (",spark" if use_spark else "")
     dockerfile = pathlib.Path("tools/docker/Dockerfile")
 
     # Docker's --build-args is not supported by AzureML Python SDK v2 as shown
