@@ -72,6 +72,7 @@ ARG CONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_6
 ARG ENV_NAME="Recommenders"
 ARG RECO_LOCAL_DIR="./"
 ARG RECO_DIR="/tmp/recommenders"
+ARG RECO_GIT_URL="git+https://github.com/recommenders-team/recommenders.git"
 
 # Install Conda
 RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
@@ -83,18 +84,22 @@ RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
     ${CONDA_PREFIX}/bin/conda config --set auto_activate_base false 
 
 # Create Conda environment
-RUN JDK=$(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi) \
-    ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}
+RUN ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y \
+        python=${PYTHON_VERSION} \
+        pip \
+        $(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi)
 
 # Copy Recommenders into the image
 COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 
 # Install Recommenders and its dependencies
-RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommenders"; fi); \
-    RECO_URL=$(if [ -z "${GIT_REF}" ]; then echo ""; else echo "@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}"; fi); \
-    source ${CONDA_PREFIX}/bin/activate && \
+RUN source ${CONDA_PREFIX}/bin/activate && \
     conda activate ${ENV_NAME} && \
-    pip install ${RECO}$(if [ -z "${EXTRAS}" ]; then echo ""; else echo "[${EXTRAS}]"; fi)${RECO_URL} && \
+    if [ -z "${GIT_REF}" ]; then \
+        pip install ${RECO_DIR}${EXTRAS}; \
+    else \
+        pip install recommenders${EXTRAS}@${RECO_GIT_URL}@${GIT_REF}; \
+    fi && \
     python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
 
 # Activate Recommenders Conda environment

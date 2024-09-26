@@ -8,7 +8,7 @@
         "target": "deps",
         "args": {
             "COMPUTE": "cpu",
-            "EXTRAS": "dev,spark",
+            "EXTRAS": "[dev,spark]",
             "GIT_REF": "",
             "JDK_VERSION": "21",
             "PYTHON_VERSION": "3.11"
