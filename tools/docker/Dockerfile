@@ -84,7 +84,7 @@ RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
 
 # Create Conda environment
 RUN JDK=$(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi) \
-    conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}; \
+    ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}; \
     echo "conda activate ${ENV_NAME}" >> ~/.bashrc
 
 COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
