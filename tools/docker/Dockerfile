@@ -67,7 +67,7 @@ USER root:root
 SHELL ["/bin/bash", "-c"]
 
 ARG CONDA_FILE="/tmp/conda.sh"
-ARG CONDA_PREFIX="conda"
+ARG CONDA_PREFIX="/root/conda"
 ARG CONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 ARG ENV_NAME="Recommenders"
 ARG RECO_LOCAL_DIR="./"
@@ -84,8 +84,7 @@ RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
 
 # Create Conda environment
 RUN JDK=$(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi) \
-    ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}; \
-    echo "conda activate ${ENV_NAME}" >> ~/.bashrc
+    ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y python=${PYTHON_VERSION} pip ${JDK}
 
 # Copy Recommenders into the image
 COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
@@ -98,7 +97,11 @@ RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommend
     pip install ${RECO}$(if [ -z "${EXTRAS}" ]; then echo ""; else echo "[${EXTRAS}]"; fi)${RECO_URL} && \
     python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
 
-# Source ~/.bashrc to activate the Conda environment
-SHELL ["/bin/bash", "-i", "-c"]
-ENV ENV="/root/.bashrc"
-ENV BASH_ENV="${ENV}"
+# Activate Recommenders Conda environment
+ENV CONDA_DEFAULT_ENV="${ENV_NAME}"
+ENV CONDA_EXE="${CONDA_PREFIX}/bin/conda"
+ENV CONDA_PROMPT_MODIFIER="(${ENV_NAME}) "
+ENV CONDA_PYTHON_EXE="${CONDA_PREFIX}/bin/python"
+ENV PATH="${CONDA_PREFIX}/envs/${CONDA_DEFAULT_ENV}/bin:${PATH}"
+
+ENV CONDA_PREFIX="${CONDA_PREFIX}/envs/${CONDA_DEFAULT_ENV}"
