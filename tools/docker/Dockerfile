@@ -91,6 +91,6 @@ COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 
 RUN RECO=$(if [ -z "${GIT_REF}" ]; then echo "${RECO_DIR}"; else echo "recommenders"; fi); \
     RECO_URL=$(if [ -z "${GIT_REF}" ]; then echo ""; else echo "@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}"; fi); \
-    source ~/.bashrc && \
+    ${CONDA_PREFIX}/bin/conda activate ${ENV_NAME} && \
     pip install ${RECO}$(if [ -z "${EXTRAS}" ]; then echo ""; else echo "[${EXTRAS}]"; fi)${RECO_URL} && \
     python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
