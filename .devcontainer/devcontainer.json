@@ -3,8 +3,6 @@
     "build": {
         "dockerfile": "../tools/docker/Dockerfile",
         "context": "..",
-        // Docker build stops at Dependencies Stage for *editable installation*
-        // of Recommenders later in postCreateCommand
         "target": "deps",
         "args": {
             "COMPUTE": "cpu",

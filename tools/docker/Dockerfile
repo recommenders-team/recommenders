@@ -4,13 +4,8 @@
 # Licensed under the MIT License.
 
 #####################################################################
-# Stage build order depending on the compute, extras, python version
-# and virtual environment:
-#        Compute Stage (CPU/GPU)
-#     -> Base Stage
-#     -> Virtual Environment Stage (Conda/Venv/Virtualenv)
-#     -> Dependencies Stage
-#     -> Final Stage
+# Stage build order depending on the compute:
+#     Compute Stage (CPU/GPU) -> Dependencies Stage -> Final Stage
 #####################################################################
 # Valid computes: cpu, gpu
 ARG COMPUTE="cpu"
@@ -42,10 +37,11 @@ RUN apt-get update && \
 
 
 #####################################################################
-# Base Stage
-# Basic settings for all stages built on top of compute stage
+# Dependencies Stage
+# Set up all dependencies.  This Stage is used by dev containers,
+# because editable installation is required.
 #####################################################################
-FROM ${COMPUTE}
+FROM ${COMPUTE} AS deps
 
 # Extra dependencies: dev, gpu, spark
 ARG EXTRAS=""
@@ -69,10 +65,6 @@ SHELL ["/bin/bash", "-c"]
 ARG CONDA_FILE="/tmp/conda.sh"
 ARG CONDA_PREFIX="/root/conda"
 ARG CONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-ARG ENV_NAME="Recommenders"
-ARG RECO_LOCAL_DIR="./"
-ARG RECO_DIR="/tmp/recommenders"
-ARG RECO_GIT_URL="git+https://github.com/recommenders-team/recommenders.git"
 
 # Install Conda
 RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
@@ -80,33 +72,34 @@ RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
     ${CONDA_PREFIX}/bin/conda clean -ay && \
     rm -rf ${CONDA_PREFIX}/pkgs && \
     rm ${CONDA_FILE} && \
-    ${CONDA_PREFIX}/bin/conda init bash && \
     ${CONDA_PREFIX}/bin/conda config --set auto_activate_base false 
 
 # Create Conda environment
-RUN ${CONDA_PREFIX}/bin/conda create -n ${ENV_NAME} -c conda-forge -y \
+RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y \
         python=${PYTHON_VERSION} \
         pip \
-        $(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi)
+        $(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi) && \
+    echo ". ${CONDA_PREFIX}/etc/profile.d/conda.sh" >> /etc/profile.d/conda.sh && \
+    echo "conda activate Recommenders" >> /etc/profile.d/conda.sh
+
+
+#####################################################################
+# Final Stage
+# Install Recommenders
+#####################################################################
+FROM deps AS final
+
+ARG RECO_LOCAL_DIR="./"
+ARG RECO_DIR="/tmp/recommenders"
+ARG RECO_GIT_URL="git+https://github.com/recommenders-team/recommenders.git"
 
 # Copy Recommenders into the image
 COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 
 # Install Recommenders and its dependencies
-RUN source ${CONDA_PREFIX}/bin/activate && \
-    conda activate ${ENV_NAME} && \
-    if [ -z "${GIT_REF}" ]; then \
+RUN if [ -z "${GIT_REF}" ]; then \
         pip install ${RECO_DIR}${EXTRAS}; \
     else \
         pip install recommenders${EXTRAS}@${RECO_GIT_URL}@${GIT_REF}; \
     fi && \
-    python -m ipykernel install --user --name ${ENV_NAME} --display-name "Python (${ENV_NAME})"
-
-# Activate Recommenders Conda environment
-ENV CONDA_DEFAULT_ENV="${ENV_NAME}"
-ENV CONDA_EXE="${CONDA_PREFIX}/bin/conda"
-ENV CONDA_PROMPT_MODIFIER="(${ENV_NAME}) "
-ENV CONDA_PYTHON_EXE="${CONDA_PREFIX}/bin/python"
-ENV PATH="${CONDA_PREFIX}/envs/${CONDA_DEFAULT_ENV}/bin:${PATH}"
-
-ENV CONDA_PREFIX="${CONDA_PREFIX}/envs/${CONDA_DEFAULT_ENV}"
+    python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
