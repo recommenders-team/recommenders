@@ -26,10 +26,10 @@
                 },
                 "isort.args": ["--profile", "black"],
                 "python.analysis.autoImportCompletions": true,
-                // Conda env name *must* align with ENV_HOME in Dockerfle
+                // Conda env name *must* align with the one in Dockerfle
                 "python.defaultInterpreterPath": "/root/conda/envs/Recommenders/bin/python",
                 "python.testing.pytestEnabled": true,
-                // Test directory 
+                // Test directory
                 "python.testing.pytestArgs": ["tests"]
             },
             // VS Code extensions to install on container create
@@ -53,5 +53,5 @@
     },
 
     // Install Recommenders in development mode after container create
-    "postCreateCommand": "pip install -e .[dev,spark]"
+    "postCreateCommand": "bash -i -c 'conda activate Recommenders && pip install -e .[dev,spark]'"
 }
