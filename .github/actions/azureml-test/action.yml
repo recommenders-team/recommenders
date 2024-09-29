@@ -21,7 +21,7 @@ inputs:
   AZURE_VM_SUBSCRIPTION_ID:
     required: true
     description: Azure login VM subscription ID
-  AZUREML_TEST_SUBID:
+  AZUREML_SIMON_TEST_SUBID:
     required: true
     description: AzureML subscription ID
   PYTHON_VERSION:
@@ -64,7 +64,7 @@ runs:
       run: |
         echo "::group::Running tests ..."
         python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
-          --subid ${{ inputs.AZUREML_TEST_SUBID }} \
+          --subid ${{ inputs.AZUREML_SIMON_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
           --cluster ${{ contains(inputs.TEST_GROUP, 'gpu') && 'gpu-cluster' || 'cpu-cluster' }} \
@@ -81,7 +81,7 @@ runs:
       run: |
         echo "::group::Pytest logs"
         python tests/ci/azureml_tests/post_pytest.py \
-          --subid ${{ inputs.AZUREML_TEST_SUBID }} \
+          --subid ${{ inputs.AZUREML_SIMON_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
           --expname ${{ inputs.EXP_NAME }} \

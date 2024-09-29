@@ -71,7 +71,7 @@ jobs:
           TEST_KIND: 'unit'
           AZURE_VM_TENANT_ID: ${{ secrets.AZURE_VM_TENANT_ID }}
           AZURE_VM_SUBSCRIPTION_ID: ${{ secrets.AZURE_VM_SUBSCRIPTION_ID }}
-          AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
+          AZUREML_SIMON_TEST_SUBID: ${{ secrets.AZUREML_SIMON_TEST_SUBID }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           TEST_GROUP: ${{ matrix.test-group }}
     if: github.event.pull_request.draft == false
