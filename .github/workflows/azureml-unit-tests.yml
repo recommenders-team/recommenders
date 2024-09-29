@@ -52,7 +52,7 @@ jobs:
   execute-tests:
     needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
@@ -68,7 +68,8 @@ jobs:
           EXP_NAME: recommenders-unit-${{ matrix.test-group }}-python${{ matrix.python-version }}-${{ github.sha }}
           ENV_NAME: recommenders-${{ github.sha }}-python${{ matrix.python-version }}${{ contains(matrix.test-group, 'gpu') && '-gpu' || '' }}${{ contains(matrix.test-group, 'spark') && '-spark' || '' }}
           TEST_KIND: 'unit'
-          AZUREML_TEST_CREDENTIALS: ${{ secrets.AZUREML_TEST_CREDENTIALS }}
+          AZURE_VM_TENANT_ID: ${{ secrets.AZURE_VM_TENANT_ID }}
+          AZURE_VM_SUBSCRIPTION_ID: ${{ secrets.AZURE_VM_SUBSCRIPTION_ID }}
           AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           TEST_GROUP: ${{ matrix.test-group }}
