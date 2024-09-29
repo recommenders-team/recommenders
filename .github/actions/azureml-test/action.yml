@@ -15,10 +15,13 @@ inputs:
   TEST_KIND:
     required: true
     description: Type of test - unit or nightly
-  AZUREML_TEST_CREDENTIALS:
+  AZURE_VM_TENANT_ID:
     required: true
-    description: Credentials for AzureML login
-  AZUREML_TEST_SUBID:
+    description: Azure login VM tenant ID
+  AZURE_VM_SUBSCRIPTION_ID:
+    required: true
+    description: Azure login VM subscription ID
+  AZUREML_SIMON_TEST_SUBID:
     required: true
     description: AzureML subscription ID
   PYTHON_VERSION:
@@ -30,11 +33,11 @@ inputs:
   RG:
     required: false
     description: AzureML resource group name
-    default: "recommenders_project_resources"
+    default: "recommenders"
   WS:
     required: false
     description: AzureML workspace name
-    default: "azureml-test-workspace"
+    default: "reco-aml"
   LOG_DIR:
     required: false
     description: Directory storing the test logs
@@ -53,13 +56,15 @@ runs:
     - name: Log in to Azure
       uses: azure/login@v2
       with:
-        creds: ${{ inputs.AZUREML_TEST_CREDENTIALS }}
+        auth-type: IDENTITY
+        tenant-id: ${{ inputs.AZURE_VM_TENANT_ID }}
+        subscription-id: ${{ inputs.AZURE_VM_SUBSCRIPTION_ID }}
     - name: Submit tests to AzureML
       shell: bash
       run: |
         echo "::group::Running tests ..."
         python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py \
-          --subid ${{ inputs.AZUREML_TEST_SUBID }} \
+          --subid ${{ inputs.AZUREML_SIMON_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
           --cluster ${{ contains(inputs.TEST_GROUP, 'gpu') && 'gpu-cluster' || 'cpu-cluster' }} \
@@ -76,7 +81,7 @@ runs:
       run: |
         echo "::group::Pytest logs"
         python tests/ci/azureml_tests/post_pytest.py \
-          --subid ${{ inputs.AZUREML_TEST_SUBID }} \
+          --subid ${{ inputs.AZUREML_SIMON_TEST_SUBID }} \
           --rg ${{ inputs.RG }} \
           --ws ${{ inputs.WS }} \
           --expname ${{ inputs.EXP_NAME }} \
