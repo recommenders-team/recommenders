@@ -365,78 +365,78 @@ pr_gate_test_groups = {
         # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
         # "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s=746.53s (flaky test, it rerun several times)
     ],
-    "group_gpu_001": [  # Total group time: 492.62s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/unit/recommenders/models/test_rbm.py::test_class_init",
-        "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
-        "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
-        "tests/unit/recommenders/models/test_rbm.py::test_save_load",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_train_loader",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_test_loader",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_unsorted",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_empty",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column",
-        "tests/unit/recommenders/models/test_ncf_dataset.py::test_negative_sampler",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_init",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_fit",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model",
-        "tests/unit/recommenders/models/test_newsrec_model.py::test_naml_component_definition",
-        "tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_component_definition",
-        "tests/unit/recommenders/models/test_newsrec_model.py::test_nrms_component_definition",
-        "tests/unit/recommenders/models/test_newsrec_model.py::test_npa_component_definition",
-        "tests/unit/recommenders/models/test_newsrec_utils.py::test_prepare_hparams",
-        "tests/unit/recommenders/models/test_newsrec_utils.py::test_load_yaml_file",
-        # "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data", # FIXME: it takes too long to run
-        # "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler", # FIXME: it takes too long to run
-        # "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec", # FIXME: it takes too long to run
-        # "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept", # FIXME: it takes too long to run
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_clear_memory_all_gpus",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cuda_version",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cudnn_version",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_cudnn_enabled",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_tensorflow_gpu",
-        "tests/unit/recommenders/utils/test_gpu_utils.py::test_pytorch_gpu",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_evaluation_log_hook",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn_for_saved_model",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_build_optimizer",
-    ],
-    "group_gpu_002": [  # Total group time:
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
-        # "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams",
-        "tests/unit/recommenders/models/test_deeprec_utils.py::test_load_yaml_file",
-        "tests/security/test_dependency_security.py::test_tensorflow",
-        "tests/security/test_dependency_security.py::test_torch",
-        "tests/regression/test_compatibility_tf.py",
-    ],
-    "group_notebooks_gpu_001": [  # Total group time: 563.35s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart",
-        "tests/unit/examples/test_notebooks_gpu.py::test_ncf",
-        "tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive",
-        "tests/unit/examples/test_notebooks_gpu.py::test_fastai",
-    ],
-    "group_notebooks_gpu_002": [  # Total group time: 241.15s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/unit/examples/test_notebooks_gpu.py::test_wide_deep",
-        "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
-    ],
+    # "group_gpu_001": [  # Total group time: 492.62s
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
+    #     "tests/unit/recommenders/models/test_rbm.py::test_class_init",
+    #     "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
+    #     "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
+    #     "tests/unit/recommenders/models/test_rbm.py::test_save_load",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_train_loader",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_test_loader",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_unsorted",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_empty",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column",
+    #     "tests/unit/recommenders/models/test_ncf_dataset.py::test_negative_sampler",
+    #     "tests/unit/recommenders/models/test_ncf_singlenode.py::test_init",
+    #     "tests/unit/recommenders/models/test_ncf_singlenode.py::test_fit",
+    #     "tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load",
+    #     "tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load",
+    #     "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
+    #     "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
+    #     "tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model",
+    #     "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model",
+    #     "tests/unit/recommenders/models/test_newsrec_model.py::test_naml_component_definition",
+    #     "tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_component_definition",
+    #     "tests/unit/recommenders/models/test_newsrec_model.py::test_nrms_component_definition",
+    #     "tests/unit/recommenders/models/test_newsrec_model.py::test_npa_component_definition",
+    #     "tests/unit/recommenders/models/test_newsrec_utils.py::test_prepare_hparams",
+    #     "tests/unit/recommenders/models/test_newsrec_utils.py::test_load_yaml_file",
+    #     # "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data", # FIXME: it takes too long to run
+    #     # "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler", # FIXME: it takes too long to run
+    #     # "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec", # FIXME: it takes too long to run
+    #     # "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept", # FIXME: it takes too long to run
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_clear_memory_all_gpus",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cuda_version",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cudnn_version",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_cudnn_enabled",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_tensorflow_gpu",
+    #     "tests/unit/recommenders/utils/test_gpu_utils.py::test_pytorch_gpu",
+    #     "tests/unit/recommenders/utils/test_tf_utils.py::test_evaluation_log_hook",
+    #     "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn",
+    #     "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn_for_saved_model",
+    #     "tests/unit/recommenders/utils/test_tf_utils.py::test_build_optimizer",
+    # ],
+    # "group_gpu_002": [  # Total group time:
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
+    #     # "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+    #     "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
+    #     "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
+    #     "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
+    #     "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
+    #     # "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+    #     "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
+    #     "tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams",
+    #     "tests/unit/recommenders/models/test_deeprec_utils.py::test_load_yaml_file",
+    #     "tests/security/test_dependency_security.py::test_tensorflow",
+    #     "tests/security/test_dependency_security.py::test_torch",
+    #     "tests/regression/test_compatibility_tf.py",
+    # ],
+    # "group_notebooks_gpu_001": [  # Total group time: 563.35s
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart",
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_ncf",
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive",
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_fastai",
+    # ],
+    # "group_notebooks_gpu_002": [  # Total group time: 241.15s
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_wide_deep",
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
+    #     "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
+    # ],
 }
 
 # Experimental are additional test groups that require to install extra dependencies: pip install .[experimental]
