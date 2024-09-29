@@ -33,11 +33,11 @@ inputs:
   RG:
     required: false
     description: AzureML resource group name
-    default: "recommenders_project_resources"
+    default: "recommenders"
   WS:
     required: false
     description: AzureML workspace name
-    default: "azureml-test-workspace"
+    default: "reco-aml"
   LOG_DIR:
     required: false
     description: Directory storing the test logs
