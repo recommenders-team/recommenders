@@ -1,13 +1,19 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, Any
 from dataclasses import dataclass, field
+
+import numpy as np
+import pandas as pd
+from tqdm.auto import tqdm
 
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
 
-from recommenders.utils.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL
+from recommenders.utils.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, DEFAULT_PREDICTION_COL
+import recommenders.utils.python_utils as pu
+import recommenders.utils.torch_utils as tu
 
 @dataclass(kw_only=True, frozen=True)
 class WideAndDeepHyperParams:
@@ -25,6 +31,7 @@ class WideAndDeepModel(nn.Module):
         num_users: int, 
         num_items: int, 
         hparams: WideAndDeepHyperParams = WideAndDeepHyperParams(),
+        binary_output: bool = False,
     ):
         super().__init__()
 
@@ -58,10 +65,11 @@ class WideAndDeepModel(nn.Module):
         exclusive_wide_input = hparams.crossed_feat_dim
 
         self.head = nn.Sequential(
-            # Output is binary score. 1 iif item-user pair is a good recommendation.
             nn.Linear(exclusive_wide_input+prev_output, 1),
-            nn.Sigmoid(),
         )
+
+        if binary_output:
+            self.head.append(nn.Sigmoid())
 
     def forward(
         self, 
@@ -92,50 +100,171 @@ class WideAndDeepModel(nn.Module):
         ], dim=1))
 
 
+class WideAndDeepDataset(torch.utils.data.Dataset):
+    def __init__(
+        self, 
+        ratings: pd.DataFrame, 
+        user_col: str = DEFAULT_USER_COL, 
+        item_col: str = DEFAULT_ITEM_COL,
+        rating_col: str = DEFAULT_RATING_COL,
+        n_users: Optional[int] = None, 
+        n_items: Optional[int] = None,
+    ):
+        self.user_col = user_col
+        self.item_col = item_col
+        self.rating_col = rating_col
+        self.ratings = ratings.copy()
+
+        self.n_users = n_users or ratings[user_col].max()+1
+        self.n_items = n_items or ratings[item_col].max()+1
+
+        self.ratings[rating_col] = self.ratings[rating_col].astype('float32')
+    
+    def __len__(self):
+        return len(self.ratings)
+
+    def __getitem__(self, idx):
+        # TODO: Get not only the interactions, but the continuous features and add. embs too
+        item = self.ratings.iloc[idx]
+        return { 
+            'interactions': self.ratings[[self.user_col, self.item_col]].iloc[idx].values,
+        }, item[self.rating_col]
+    
+
 class WideAndDeep(object):
     def __init__(
         self, 
-        data,
+        train: WideAndDeepDataset,
+        test: WideAndDeepDataset,
         hparams: WideAndDeepHyperParams = WideAndDeepHyperParams(),
-        seed=None,
+        *,
+        n_users: Optional[int] = None,
+        n_items: Optional[int] = None,
+        epochs: int = 100,
+        batch_size: int = 128,
+        loss_fn: str | nn.Module = 'mse',
+        optimizer: str = 'sgd',
+        l1: float = 0.0001,
+        optimizer_params: dict[str, Any] = dict(),
+        disable_batch_progress: bool = False,
+        disable_iter_progress: bool = False,
+        prediction_col: str = DEFAULT_PREDICTION_COL,
     ):
+        self.n_users = n_users or max(train.n_users, test.n_users)
+        self.n_items = n_items or max(train.n_items, test.n_items)
+        
         self.model = WideAndDeepModel(
-            num_users=...,
-            num_items=...,
+            num_users=self.n_users,
+            num_items=self.n_items,
             hparams=hparams,
         )
-        self.dataloader = DataLoader(...)
-        self.loss_fn = nn.CrossEntropyLoss()
+
+        self.train = train
+        self.test = test
+        self.train_dataloader = DataLoader(train, batch_size, shuffle=True)
+        self.test_dataloader = DataLoader(test, len(test))
+        
+        if isinstance(loss_fn, nn.Module):
+            self.loss_fn = loss_fn
+        else:
+            self.loss_fn = tu.LOSS_DICT[loss_fn]()
+        
+        self.optimizer = tu.OPTIM_DICT[optimizer](
+            self.model.parameters(), 
+            lr=l1,
+            **optimizer_params,
+        )
+
+        self.disable_batch_progress = disable_batch_progress
+        self.disable_iter_progress = disable_iter_progress
+        self.prediction_col = prediction_col
+
+        self.current_epoch = 0
+        self.epochs = epochs
+
+        self.train_loss_history = list()
+        self.test_loss_history = list()
+
+    @property
+    def user_col(self) -> str:
+        return self.train.user_col
+
+    @property
+    def item_col(self) -> str:
+        return self.train.item_col
         
     def fit(self):
-        self.train_loop()
-        self.test_loop()
+        if self.current_epoch >= self.epochs:
+            print(f"Model is already trained with {self.epochs} epochs. Increment the number of epochs.")
+        
+        with tqdm(total=self.epochs, leave=True, disable=self.disable_iter_progress) as pbar:
+            pbar.update(self.current_epoch)
+            for _ in range(self.current_epoch, self.epochs):
+                self.fit_step()
+                pbar.update()
+                pbar.set_postfix(
+                    train_loss=self.train_loss_history[-1],
+                    test_loss=self.test_loss_history[-1],
+                )
 
-    def train_loop(self):
+    def fit_step(self):
         self.model.train()
         
-        for batch, (X,y) in enumerate(self.dataloader):
-            pred = self.model(X)
+        train_loss = 0.0
+        for X,y in tqdm(self.train_dataloader, 'batch', leave=False, disable=self.disable_batch_progress):
+            pred = self.model(X['interactions'])
             loss = self.loss_fn(pred, y)
+            # TODO: Can we use this loss? Or should I calculate it again with no_grad?
+            train_loss += loss.item()
 
             # Propagate error
             loss.backward()
             self.optimizer.step()
             self.optimizer.zero_grad()
 
-    def test_loop(self):
-        # TODO: Copypasted example from pytorch's tutorial. Might need complete rewritting.
+        self.train_loss_history.append(train_loss / len(self.train_dataloader))
         self.model.eval()
         
-        size = len(self.dataloader.dataset)
-        num_batches = len(self.dataloader)
-        test_loss, correct = 0, 0
+        num_batches = len(self.test_dataloader)
+        test_loss = 0
 
         with torch.no_grad():
-            for X, y in self.dataloader:
-                pred = self.model(X)
+            for X, y in self.test_dataloader:
+                pred = self.model(X['interactions'])
                 test_loss += self.loss_fn(pred, y).item()
-                correct += (pred.argmax(1) == y).type(torch.float).sum().item()
 
         test_loss /= num_batches
-        correct /= size
+        self.test_loss_history.append(test_loss)
+    
+        self.current_epoch += 1
+
+    def recommend_k_items(
+        self, user_ids=None, item_ids=None, top_k=10, remove_seen=True,
+    ):
+        if user_ids is None:
+            user_ids = np.arange(1, self.n_users)
+        if item_ids is None:
+            item_ids = np.arange(1, self.n_items)
+
+        uip = pd.MultiIndex.from_product(
+            [user_ids, item_ids], 
+            names=[self.user_col, self.item_col],
+        )
+
+        if remove_seen:
+            uip = uip.difference(
+                self.train.ratings.set_index([self.user_col, self.item_col]).index
+            )
+        
+        uip = uip.to_frame(index=False)
+        
+        with torch.no_grad():
+            uip[self.prediction_col] = self.model(torch.from_numpy(uip[[self.user_col, self.item_col]].values))
+
+        return (
+            uip
+            .sort_values([self.user_col, self.prediction_col], ascending=[True, False])
+            .groupby(self.user_col)
+            .head(top_k)
+            .reset_index(drop=True)
+        )
