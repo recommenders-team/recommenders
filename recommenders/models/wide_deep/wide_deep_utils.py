@@ -104,31 +104,71 @@ class WideAndDeepDataset(torch.utils.data.Dataset):
     def __init__(
         self, 
         ratings: pd.DataFrame, 
-        user_col: str = DEFAULT_USER_COL, 
+        user_col: str = DEFAULT_USER_COL,
         item_col: str = DEFAULT_ITEM_COL,
         rating_col: str = DEFAULT_RATING_COL,
         n_users: Optional[int] = None, 
         n_items: Optional[int] = None,
+        item_feat: Optional[pd.DataFrame] = None,
+        user_feat: Optional[pd.DataFrame] = None,
+        n_cont_features: Optional[int] = None,
     ):
+        self._check_cols_df('ratings', ratings, [user_col, item_col, rating_col])
+        self._check_cols_df('item_feat', item_feat, [item_col])
+
         self.user_col = user_col
         self.item_col = item_col
         self.rating_col = rating_col
         self.ratings = ratings.copy()
+        self.item_feat = item_feat.set_index(item_col).copy() if item_feat is not None else pd.DataFrame()
+        self.user_feat = user_feat.set_index(user_col).copy() if user_feat is not None else pd.DataFrame()
+        self.n_cont_features = n_cont_features or len(self._get_continuous_features(self.item_feat.index.min(), self.user_feat.index.min()))
 
         self.n_users = n_users or ratings[user_col].max()+1
         self.n_items = n_items or ratings[item_col].max()+1
 
         self.ratings[rating_col] = self.ratings[rating_col].astype('float32')
+
+    @staticmethod
+    def _check_cols_df(df_name: str, df: Optional[pd.DataFrame], cols: list[str]) -> bool:
+        if df is None or df.empty:
+            return True
+        
+        for c in cols:
+            if c not in df.columns:
+                raise ValueError(f"Column '{c}' is not present on {df_name}")
+
+        return True
     
     def __len__(self):
         return len(self.ratings)
 
+    def _get_continuous_features(self, item_id, user_id) -> np.array:
+        # Put empty array so concat doesn't fail
+        continuous_features = [np.array([])]
+
+        if not self.item_feat.empty:
+            feats = self.item_feat.loc[item_id]
+            continuous_features.extend(np.array(f).reshape(-1) for f in feats)
+
+        if not self.user_feat.empty:
+            feats = self.user_feat.loc[user_id]
+            continuous_features.extend(np.array(f).reshape(-1) for f in feats)
+
+        return np.concatenate(continuous_features).astype('float32')
+
     def __getitem__(self, idx):
-        # TODO: Get not only the interactions, but the continuous features and add. embs too
+        # TODO: Get additional embeddings too (e.g: user demographics)
         item = self.ratings.iloc[idx]
-        return { 
+
+        ret = { 
             'interactions': self.ratings[[self.user_col, self.item_col]].iloc[idx].values,
-        }, item[self.rating_col]
+        }
+
+        if self.n_cont_features:
+            ret['continuous_features'] = self._get_continuous_features(item[self.item_col], item[self.user_col])
+
+        return ret, self.ratings[self.rating_col].iloc[idx]
     
 
 class WideAndDeep(object):
@@ -152,17 +192,25 @@ class WideAndDeep(object):
     ):
         self.n_users = n_users or max(train.n_users, test.n_users)
         self.n_items = n_items or max(train.n_items, test.n_items)
+
+        if train.n_cont_features != test.n_cont_features:
+            raise ValueError(f'The number of cont. features on the train dataset is not the same as in test')
+        if train.n_cont_features != hparams.dnn_cont_features:
+            raise ValueError(
+                f"The number of cont. features on the dataset ({train.n_cont_features}) "
+                f"is not the same as in the hparams ({hparams.dnn_cont_features})"
+            )
+
+        self.train = train
+        self.test = test
+        self.train_dataloader = DataLoader(train, batch_size, shuffle=True)
+        self.test_dataloader = DataLoader(test, len(test))
         
         self.model = WideAndDeepModel(
             num_users=self.n_users,
             num_items=self.n_items,
             hparams=hparams,
         )
-
-        self.train = train
-        self.test = test
-        self.train_dataloader = DataLoader(train, batch_size, shuffle=True)
-        self.test_dataloader = DataLoader(test, len(test))
         
         if isinstance(loss_fn, nn.Module):
             self.loss_fn = loss_fn
@@ -212,7 +260,10 @@ class WideAndDeep(object):
         
         train_loss = 0.0
         for X,y in tqdm(self.train_dataloader, 'batch', leave=False, disable=self.disable_batch_progress):
-            pred = self.model(X['interactions'])
+            pred = self.model(
+                X['interactions'],
+                continuous_features=X.get('continuous_features', None),
+            )
             loss = self.loss_fn(pred, y)
             # TODO: Can we use this loss? Or should I calculate it again with no_grad?
             train_loss += loss.item()
@@ -230,7 +281,10 @@ class WideAndDeep(object):
 
         with torch.no_grad():
             for X, y in self.test_dataloader:
-                pred = self.model(X['interactions'])
+                pred = self.model(
+                    X['interactions'],
+                    continuous_features=X.get('continuous_features', None),
+                )
                 test_loss += self.loss_fn(pred, y).item()
 
         test_loss /= num_batches
@@ -255,11 +309,21 @@ class WideAndDeep(object):
             uip = uip.difference(
                 self.train.ratings.set_index([self.user_col, self.item_col]).index
             )
+
+        cont_features = None
+        # TODO: [!] CACHE THE "RANKING POOL" (uip and cont_features) IT TAKES SEVERAL SECONDS TO GEN
+        if self.train.n_cont_features > 0:
+            cont_features = torch.from_numpy(
+                np.stack(uip.map(lambda x: self.train._get_continuous_features(*x)).values)
+            )
         
         uip = uip.to_frame(index=False)
         
         with torch.no_grad():
-            uip[self.prediction_col] = self.model(torch.from_numpy(uip[[self.user_col, self.item_col]].values))
+            uip[self.prediction_col] = self.model(
+                torch.from_numpy(uip[[self.user_col, self.item_col]].values),
+                continuous_features=cont_features,
+            )
 
         return (
             uip
