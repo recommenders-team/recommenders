@@ -212,6 +212,7 @@ class WideAndDeep(object):
         optimizer_params: dict[str, Any] = dict(),
         disable_batch_progress: bool = False,
         disable_iter_progress: bool = False,
+        eval_epoch: int = 1,
         model_dir: Optional[Union[str, Path]] = None,
         save_model_iter: int = -1,
         prediction_col: str = DEFAULT_PREDICTION_COL,
@@ -255,6 +256,7 @@ class WideAndDeep(object):
 
         self.current_epoch = 0
         self.epochs = epochs
+        self.eval_epoch = eval_epoch
 
         self.model_dir = Path(model_dir) if model_dir else None
         self.save_model_iter = save_model_iter
@@ -297,7 +299,7 @@ class WideAndDeep(object):
                 pbar.update()
                 pbar.set_postfix(
                     train_loss=self.train_loss_history[-1],
-                    test_loss=self.test_loss_history[-1],
+                    test_loss=self.test_loss_history[-1][1],
                 )
 
                 if self.save_model_iter != -1 and self.current_epoch % self.save_model_iter == 0:
@@ -341,19 +343,20 @@ class WideAndDeep(object):
         self.train_loss_history.append(train_loss / len(self.train_dataloader))
         self.model.eval()
         
-        num_batches = len(self.test_dataloader)
-        test_loss = 0
+        if self.eval_epoch != -1 and self.current_epoch%self.eval_epoch == 0:
+            num_batches = len(self.test_dataloader)
+            test_loss = 0
 
-        with torch.no_grad():
-            for X, y in self.test_dataloader:
-                pred = self.model(
-                    X['interactions'],
-                    continuous_features=X.get('continuous_features', None),
-                )
-                test_loss += self.loss_fn(pred, y).item()
+            with torch.no_grad():
+                for X, y in self.test_dataloader:
+                    pred = self.model(
+                        X['interactions'],
+                        continuous_features=X.get('continuous_features', None),
+                    )
+                    test_loss += self.loss_fn(pred, y).item()
 
-        test_loss /= num_batches
-        self.test_loss_history.append(test_loss)
+            test_loss /= num_batches
+            self.test_loss_history.append((self.current_epoch, test_loss))
     
         self.current_epoch += 1
 
