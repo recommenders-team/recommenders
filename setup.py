@@ -34,6 +34,7 @@ install_requires = [
     "locust>=2.12.2,<3",  # requires jinja2
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
+    "numpy>=1.26.4,<2;python_version>='3.12'", # https://stackoverflow.com/a/77364602/4505998
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
     "numpy<2.0.0",  # FIXME: Remove numpy<2.0.0 once cornac release a version newer than 2.2.1 that resolve ImportError: numpy.core.multiarray failed to import.
@@ -43,7 +44,7 @@ install_requires = [
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
-    "scipy>=1.10.1,<=1.13.1",  # FIXME: Remove scipy<=1.13.1 once cornac release a version newer than 2.2.1.  See #2128
+    "scipy>=1.9,<=1.13.1",  # FIXME: Remove scipy<=1.13.1 once cornac release a version newer than 2.2.1.  See #2128
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
@@ -53,8 +54,12 @@ extras_require = {
     "gpu": [
         "fastai>=2.7.11,<3",
         "nvidia-ml-py>=11.525.84",
-        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",  # Fixed TF due to constant security problems and breaking changes #2073
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16; python_version<='3.8'",  # Fixed TF due to constant security problems and breaking changes #2073
+        "tensorflow~=2.16; python_version>'3.8'",  # Version needed for python 3.12
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
+        # Use keras 2 instead of keras 3
+        "tf-keras~=2.15; python_version<='3.8'", # Not compatible with py3.12
+        "tf-keras~=2.16; python_version>'3.8'",
         "torch>=2.0.1,<3",
     ],
     "spark": [
@@ -84,8 +89,8 @@ extras_require["experimental"] = [
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
-# Temporary fix for pymanopt, only this commit works with TF2
-# "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
+# Temporary fix for pymanopt, pypi version does not work with TF2
+# pip install -r requirements-external.txt
 
 setup(
     name="recommenders",
@@ -112,6 +117,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,
@@ -124,5 +130,7 @@ setup(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
     ),
-    setup_requires=["numpy>=1.19"],
+    setup_requires=[
+        "numpy>=1.15",
+    ],
 )
