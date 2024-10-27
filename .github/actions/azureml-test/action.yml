@@ -15,9 +15,15 @@ inputs:
   TEST_KIND:
     required: true
     description: Type of test - unit or nightly
-  AZUREML_TEST_CREDENTIALS:
+  AZUREML_TEST_UMI_CLIENT_ID:
     required: true
-    description: Credentials for AzureML login
+    description: AzureML User-managed identity client ID
+  AZUREML_TEST_UMI_TENANT_ID:
+    required: true
+    description: AzureML User-managed identity tenant ID
+  AZUREML_TEST_UMI_SUB_ID:
+    required: true
+    description: AzureML User-managed identity subscription ID
   AZUREML_TEST_SUBID:
     required: true
     description: AzureML subscription ID
@@ -53,7 +59,9 @@ runs:
     - name: Log in to Azure
       uses: azure/login@v2
       with:
-        creds: ${{ inputs.AZUREML_TEST_CREDENTIALS }}
+        client-id: ${{ inputs.AZUREML_TEST_UMI_CLIENT_ID }}
+        tenant-id: ${{ inputs.AZUREML_TEST_UMI_TENANT_ID }}
+        subscription-id: ${{ inputs.AZUREML_TEST_UMI_SUB_ID }}
     - name: Submit tests to AzureML
       shell: bash
       run: |
