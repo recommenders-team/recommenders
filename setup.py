@@ -29,7 +29,7 @@ if HASH is not None:
 install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
     "cornac>=1.15.2,<3",  # requires packaging, tqdm
-    "Cython<3.0",  # Breaking changes of Cython makes statsmodels required by category-encoders compilation fails.  See https://github.com/statsmodels/statsmodels/issues/8868
+    "Cython<3.0",  # FIXME: Remove this when statsmodels resolves the compilation issue with Cython 3.0.  See https://github.com/statsmodels/statsmodels/issues/8868
     "hyperopt>=0.2.7,<1",
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
@@ -37,7 +37,9 @@ install_requires = [
     "nltk>=3.8.1,<4",  # requires tqdm
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
-    "numpy<2.0.0",  # FIXME: Remove numpy<2.0.0 once cornac release a version newer than 2.2.1 that resolve ImportError: numpy.core.multiarray failed to import.
+    # FIXME: Remove numpy<2.0.0 once cornac release a version newer than 2.2.1 that resolve ImportError: numpy.core.multiarray failed to import.
+    #        Remove numpy<1.25.0 when Recommenders stop the support for Python 3.8 since numpy 1.25.0+ requires Python 3.9+.
+    "numpy<1.25.0",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
