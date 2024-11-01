@@ -29,6 +29,7 @@ if HASH is not None:
 install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
     "cornac>=1.15.2,<3",  # requires packaging, tqdm
+    "Cython<3.0",  # Breaking changes of Cython makes statsmodels required by category-encoders compilation fails.  See https://github.com/statsmodels/statsmodels/issues/8868
     "hyperopt>=0.2.7,<1",
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
