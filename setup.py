@@ -37,16 +37,12 @@ install_requires = [
     "nltk>=3.8.1,<4",  # requires tqdm
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
-    # FIXME: Remove numpy<2.0.0 once cornac release a version newer than 2.2.1 that resolve ImportError: numpy.core.multiarray failed to import.
-    #        Remove numpy<1.25.0 when Recommenders stop the support for Python 3.8 since numpy 1.25.0+ requires Python 3.9+.
-    "numpy<1.25.0",
     "pandas>2.0.0,<3.0.0",  # requires numpy
-    "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "scikit-surprise>=1.1.3",
-    "scipy>=1.10.1,<=1.13.1",  # FIXME: Remove scipy<=1.13.1 once cornac release a version newer than 2.2.1.  See #2128
+    "scipy>=1.10.1",
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
@@ -111,7 +107,6 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
