@@ -46,6 +46,7 @@ install_requires = [
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "statsmodels<=0.14.1;python_version<='3.8'",
     "statsmodels>=0.14.4;python_version>='3.9'",
+    "thinc<=8.2.5;python_version<='3.8'",
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
 
