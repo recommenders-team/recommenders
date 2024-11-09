@@ -27,7 +27,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "category-encoders>=2.6.0,<2.6.4",  # requires packaging
+    "category-encoders>=2.6.0,<3",  # requires packaging
     "cornac>=1.15.2,<3",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
     "lightgbm>=4.0.0,<5",
@@ -36,7 +36,6 @@ install_requires = [
     "nltk>=3.8.1,<4",  # requires tqdm
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
-    "numpy<1.24.4",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
@@ -45,7 +44,6 @@ install_requires = [
     "scikit-surprise>=1.1.3",
     "scipy>=1.10.1",
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
-    "statsmodels<0.14.4",
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
 
@@ -109,7 +107,6 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
