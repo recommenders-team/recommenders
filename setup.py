@@ -37,6 +37,7 @@ install_requires = [
     "nltk>=3.8.1,<4",  # requires tqdm
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
+    "numpy<1.25.0;python_version<='3.8'",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
@@ -46,7 +47,6 @@ install_requires = [
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "statsmodels<=0.14.1;python_version<='3.8'",
     "statsmodels>=0.14.4;python_version>='3.9'",
-    "thinc<=8.2.5;python_version<='3.8'",
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
 
