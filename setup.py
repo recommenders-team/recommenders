@@ -44,6 +44,7 @@ install_requires = [
     "scikit-surprise>=1.1.3",
     "scipy>=1.10.1",
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
+    "statsmodels<0.14.4",
     "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
 ]
 
