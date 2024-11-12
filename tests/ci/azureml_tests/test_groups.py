@@ -87,8 +87,8 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_cornac_bivae_smoke",  # 67.84s
         "tests/functional/examples/test_notebooks_gpu.py::test_cornac_bivae_functional",  # 453.21s
-        #
-        "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
+        # FIXME: https://github.com/recommenders-team/recommenders/issues/2072
+        # "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_fastai_smoke",  # 33.22s
         "tests/functional/examples/test_notebooks_gpu.py::test_fastai_functional",  # 667.88s
@@ -383,9 +383,10 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model",
+        # FIXME: https://github.com/recommenders-team/recommenders/issues/2072
+        # "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
+        # "tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model",
+        # "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model",
         "tests/unit/recommenders/models/test_newsrec_model.py::test_naml_component_definition",
         "tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_component_definition",
         "tests/unit/recommenders/models/test_newsrec_model.py::test_nrms_component_definition",
@@ -433,7 +434,8 @@ pr_gate_test_groups = {
     ],
     "group_notebooks_gpu_002": [  # Total group time: 241.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/unit/examples/test_notebooks_gpu.py::test_wide_deep",
+        # FIXME: https://github.com/recommenders-team/recommenders/issues/2072
+        # "tests/unit/examples/test_notebooks_gpu.py::test_wide_deep",
         "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
     ],

@@ -55,7 +55,7 @@ extras_require = {
         "numpy<1.25.0;python_version<='3.8'",
         "nvidia-ml-py>=11.525.84",
         "spacy<=3.7.5;python_version<='3.8'",
-        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",  # Fixed TF due to constant security problems and breaking changes #2073
+        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*",
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
     ],
