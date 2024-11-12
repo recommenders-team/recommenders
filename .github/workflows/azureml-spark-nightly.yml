@@ -63,6 +63,8 @@ jobs:
     needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
     strategy:
       max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
@@ -78,7 +80,9 @@ jobs:
           EXP_NAME: recommenders-nightly-${{ matrix.test-group }}-python${{ matrix.python-version }}-${{ github.ref }}
           ENV_NAME: recommenders-${{ github.sha }}-python${{ matrix.python-version }}${{ contains(matrix.test-group, 'gpu') && '-gpu' || '' }}${{ contains(matrix.test-group, 'spark') && '-spark' || '' }}
           TEST_KIND: 'nightly'
-          AZUREML_TEST_CREDENTIALS: ${{ secrets.AZUREML_TEST_CREDENTIALS }}
+          AZUREML_TEST_UMI_CLIENT_ID: ${{ secrets.AZUREML_TEST_UMI_CLIENT_ID }}
+          AZUREML_TEST_UMI_TENANT_ID: ${{ secrets.AZUREML_TEST_UMI_TENANT_ID }}
+          AZUREML_TEST_UMI_SUB_ID: ${{ secrets.AZUREML_TEST_UMI_SUB_ID }}
           AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           TEST_GROUP: ${{ matrix.test-group }}

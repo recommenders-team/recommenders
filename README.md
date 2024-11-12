@@ -144,7 +144,7 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
 
-This project adheres to [Microsoft's Open Source Code of Conduct](CODE_OF_CONDUCT.md) in order to foster a welcoming and inspiring community for all.
+This project adheres to this [Code of Conduct](CODE_OF_CONDUCT.md) in order to foster a welcoming and inspiring community for all.
 
 ## Build Status
 
