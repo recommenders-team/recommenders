@@ -216,28 +216,46 @@ Then, follow the steps below to create the AzureML infrastructure:
     - Name: `azureml-test-workspace`
     - Resource group: `recommenders_project_resources`
     - Location: *Make sure you have enough quota in the location you choose*
-2. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
+1. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
     - Select the CPU VM base. Anything above 64GB of RAM, and 8 cores should be fine.
     - Select the GPU VM base. Anything above 56GB of RAM, and 6 cores, and an NVIDIA K80 should be fine.
-3. Add the subscription ID to GitHub action secrets [here](https://github.com/recommenders-team/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
-4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
-5. Select your subscription: `az account set -s $AZURE_SUBSCRIPTION_ID`.
-6. Create a Service Principal: `az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --json-auth`. This will output a JSON blob with the credentials of the Service Principal:
-    ```
-    {
-        "clientId": "XXXXXXXXXXXXXXXXXXXXX",
-        "clientSecret": "XXXXXXXXXXXXXXXXXXXXX",
-        "subscriptionId": "XXXXXXXXXXXXXXXXXXXXX",
-        "tenantId": "XXXXXXXXXXXXXXXXXXXXX",
-        "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-        "resourceManagerEndpointUrl": "https://management.azure.com/",
-        "activeDirectoryGraphResourceId": "https://graph.windows.net/",
-        "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
-        "galleryEndpointUrl": "https://gallery.azure.com/",
-        "managementEndpointUrl": "https://management.core.windows.net/"
-    }
-    ```
-7. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
+1. Add the subscription ID to GitHub action secrets
+   [here](https://github.com/recommenders-team/recommenders/settings/secrets/actions).
+   * Create a new repository secret called `AZUREML_TEST_SUBID` and
+     add the subscription ID as the value.
+1. Set up [login with OpenID Connect
+   (OIDC)](https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended)
+   for GitHub Actions.
+   1. Create a user-assigned managed identity (UMI) and assign the
+      following 3 roles of the AzureML workspace created above to the
+      UMI (See [Create a user-assigned managed
+      identity](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity)):
+      * AzureML Compute Operator
+      * AzureML Data Scientist
+      * Reader
+   1. [Create a federated identiy credential on the
+      UMI](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity?pivots=identity-wif-mi-methods-azp#github-actions-deploying-azure-resources)
+      with the following settings:
+      * Name: A unique name for the federated identity credential
+        within your application.
+      * Issuer: Set to `https://token.actions.githubusercontent.com`
+        for GitHub Actions.
+      * Subject: The subject claim format, e.g.,
+        `repo:recommenders-team/recommenders:ref:refs/heads/<branch-name>`:
+        + `repo:recommenders-team/recommenders:pull_request`
+        + `repo:recommenders-team/recommenders:ref:refs/heads/staging`
+        + `repo:recommenders-team/recommenders:ref:refs/heads/main`
+      * Description: (Optional) A description of the credential.
+      * Audiences: Specifies who can use this credential; for GitHub
+        Actions, use `api://AzureADTokenExchange`.
+1. Create 3 Actions secrets
+   * `AZUREML_TEST_UMI_TENANT_ID`
+   * `AZUREML_TEST_UMI_SUB_ID`
+   * `AZUREML_TEST_UMI_CLIENT_ID`
+   
+   and use the UMI's tenant ID, subscription ID and client ID as the
+   values of the secrets, respectively, under the repository's
+   **Settings > Security > Secrets and variables > Actions**.
 
 
 ## How to execute tests in your local environment

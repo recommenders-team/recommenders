@@ -8,7 +8,7 @@ description: "Get test group names from tests_groups.py"
 inputs:
   TEST_KIND:
     required: true
-    description: Type of test - unit or nightly
+    description: Type of test - pr gate or nightly
   TEST_ENV:
     required: false
     description: Test environment - cpu, gpu or spark
