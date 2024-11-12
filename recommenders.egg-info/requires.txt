@@ -7,33 +7,37 @@ memory-profiler<1,>=0.61.0
 nltk<4,>=3.8.1
 notebook<8,>=6.5.5
 numba<1,>=0.57.0
-numpy<2.0.0
 pandas<3.0.0,>2.0.0
 retrying<2,>=1.3.4
 scikit-learn<2,>=1.2.0
 scikit-surprise>=1.1.3
-scipy<=1.13.1,>=1.10.1
 seaborn<1,>=0.13.0
 transformers<5,>=4.27.0
 
 [:python_version <= "3.8"]
 pandera[strategies]<0.18,>=0.6.5
+statsmodels<=0.14.1
 
 [:python_version >= "3.9"]
 pandera[strategies]>=0.15.0
+statsmodels>=0.14.4
 
 [all]
-torch<3,>=2.0.1
-nvidia-ml-py>=11.525.84
-black>=23.3.0
-pytest-cov>=4.1.0
-tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
 pytest-mock>=3.10.0
-pyarrow>=10.0.1
 tf-slim>=1.1.0
-pytest>=7.2.1
+pyarrow>=10.0.1
 fastai<3,>=2.7.11
+pytest-cov>=4.1.0
+black>=23.3.0
+torch<3,>=2.0.1
 pyspark<=4,>=3.3.0
+tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
+nvidia-ml-py>=11.525.84
+pytest>=7.2.1
+
+[all:python_version <= "3.8"]
+spacy<=3.7.5
+numpy<1.25.0
 
 [dev]
 black>=23.3.0
@@ -54,6 +58,10 @@ nvidia-ml-py>=11.525.84
 tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
 tf-slim>=1.1.0
 torch<3,>=2.0.1
+
+[gpu:python_version <= "3.8"]
+numpy<1.25.0
+spacy<=3.7.5
 
 [spark]
 pyarrow>=10.0.1
