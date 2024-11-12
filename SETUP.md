@@ -50,16 +50,19 @@ pip install recommenders[spark]
 #   c. Run the notebook.
 ```
 
-## Setup for Azure Databricks
+## Setup for Databricks
 
-The following instructions were tested on Azure Databricks Runtime 12.2 LTS (Apache Spark version 3.3.2) and 11.3 LTS (Apache Spark version 3.3.0).
-As of April 2023, Databricks Runtime 13 is not yet supported as it is on Python 3.10.
+The following instructions were tested on Databricks Runtime 15.4 LTS (Apache Spark version 3.5.0), 14.3 LTS (Apache Spark version 3.5.0), 13.3 LTS (Apache Spark version 3.4.1), and 12.2 LTS (Apache Spark version 3.3.2). We have tested the runtime on python 3.9,3.10 and 3.11. 
 
-After an Azure Databricks cluster is provisioned:
+After an Databricks cluster is provisioned:
 ```bash
 # 1. Go to the "Compute" tab on the left of the page, click on the provisioned cluster and then click on "Libraries". 
 # 2. Click the "Install new" button.  
 # 3. In the popup window, select "PyPI" as the library source. Enter "recommenders[examples]" as the package name. Click "Install" to install the package.
+# 4. Now, repeat the step 3 for below packages:
+#   a. numpy<2.0.0
+#   b. pandera<=0.18.3
+#   c. scipy<=1.13.1
 ```
 
 ### Prepare Azure Databricks for Operationalization
