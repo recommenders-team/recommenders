@@ -145,6 +145,91 @@ git checkout staging
 pip install -e .[all]
 ```
 
+We also provides [devcontainer.json](./.devcontainer/devcontainer.json)
+and [Dockerfile](./tools/docker/Dockerfile) for developers to
+facilitate the development on
+[Dev Containers with VS Code](https://code.visualstudio.com/docs/devcontainers/containers)
+and [GitHub Codespaces](https://github.com/features/codespaces).
+
+<details>
+<summary><strong><em>VS Code Dev Containers</em></strong></summary>
+
+The typical scenario using Docker containers for development is as
+follows.  Say, we want to develop applications for a specific
+environment, so
+1. we create a contaienr with the dependencies required, 
+1. and mount the folder containing the code to the container,
+1. then code parsing, debugging and testing are all performed against
+   the contaienr.
+This workflow seperates the development environment from your local
+environment, so that your local environment won't be affected.  The
+container used here for this end is called Dev Container in the
+VS Code Dev Containers extension.  And the extension eases this
+development workflow with Docker containers automatically without
+pains.
+
+To use VS Code Dev Containers, your local machine must have the
+following applicatioins installed:
+* [Docker](https://docs.docker.com/get-started/get-docker/)
+* [VS Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+
+Then
+* When you open your local Recommenders folder in VS Code, it will
+  detect [devcontainer.json](./.devcontainer/devcontainer.json), and
+  prompt you to **Reopen in Container**.  If you'd like to reopen,
+  it will create a container with the required environment described
+  in devcontainer.json, install a VS Code server in the container,
+  and mount the folder into the container.
+  + If you don't see the prompt, you can use the command
+    **Dev Containers: Reopen in Container**
+* If you don't have a local clone of Recommenders, you can also use
+  the command **Dev Containers: Clone Repository in Container Volume**,
+  and type in a branch/PR URL of Recommenders you'd like to develop
+  on, such as https://github.com/recommenders-team/recommenders,
+  https://github.com/recommenders-team/recommenders/tree/staging, or
+  https://github.com/recommenders-team/recommenders/pull/2098.  VS
+  Code will create a container with the environment described in
+  devcontainer.json, and clone the specified branch of Recommenders
+  into the container.
+
+Once everything is set up, VS Code will act as a client to the server
+in the container, and all subsequent operations on VS Code will be
+performed against the container.
+
+</details>
+
+<details>
+<summary><strong><em>GitHub Codespaces</em></strong></summary>
+
+GitHub Codespaces also uses devcontainer.json and Dockerfile in the
+repo to create the environment on a VM for you to develop on the Web
+VS Code.  To use the GitHub Codespaces on Recommenders, you can go to
+[Recommenders](https://github.com/recommenders-team/recommenders)
+$\to$ switch to the branch of interest $\to$ Code $\to$ Codespaces
+$\to$ Create codespaces on the branch.
+
+</details>
+
+<details>
+<summary><strong><em>devcontainer.json & Dockerfile</em></strong></summary>
+
+[devcontainer.json](./.devcontainer/devcontainer.json) describes:
+* the Dockerfile to use with configurable build arguments, such as
+  `COMPUTE` and `PYTHON_VERSION`.
+* settings on VS Code server, such as Python interpreter path in the
+  container, Python formatter.
+* extensions on VS Code server, such as black-formatter, pylint.
+* how to create the Conda environment for Recommenders in 
+  `postCreateCommand`
+
+[Dockerfile](./tools/docker/Dockerfile) serves 3 places:
+* Dev containers on VS Code and GitHub Codespaces
+* [Testing workflows on AzureML](./tests/README.md)
+* [Jupyter notebook examples on Docker](./tools/docker/README.md)
+
+</details>
+
+
 ## Test Environments
 
 Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements.

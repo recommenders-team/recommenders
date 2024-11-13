@@ -100,13 +100,16 @@ RUN source /root/conda/bin/activate && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
 # Activate Recommenders Conda environment
+ENV PS1='(Recommenders) \[\]\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ \[\]'
+ENV PATH="/root/conda/envs/Recommenders/bin:/root/conda/condabin:${PATH}"
 ENV CONDA_SHLVL='1'
 ENV CONDA_PROMPT_MODIFIER='(Recommenders) '
+ENV CONDA_PREFIX="/root/conda/envs/Recommenders"
+ENV CONDA_EXE="/root/conda/bin/conda"
+ENV CONDA_PYTHON_EXE="/root/conda/bin/python"
 ENV JAVA_HOME="/root/conda/lib/jvm"
 ENV JAVA_LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
-ENV PATH="/root/conda/envs/Recommenders/bin:/root/conda/condabin:${PATH}"
-ENV CONDA_PREFIX="/root/conda/envs/Recommenders"
-ENV PS1='(Recommenders) \[\]\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ \[\]'
 
+# Setup Jupyter notebook
 EXPOSE 8888
 CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.allow_origin='*'", "--IdentityProvider.token=''"]
