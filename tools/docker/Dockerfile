@@ -53,19 +53,17 @@ USER root:root
 
 SHELL ["/bin/bash", "-c"]
 
-ENV CONDA_PREFIX="/root/conda"
-
 # Install Conda
 RUN wget -qO /tmp/conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
-    bash /tmp/conda.sh -bf -p ${CONDA_PREFIX} && \
-    ${CONDA_PREFIX}/bin/conda clean -ay && \
-    rm -rf ${CONDA_PREFIX}/pkgs && \
+    bash /tmp/conda.sh -bf -p /root/conda && \
+    /root/conda/bin/conda clean -ay && \
+    rm -rf /root/conda/pkgs && \
     rm /tmp/conda.sh && \
-    ${CONDA_PREFIX}/bin/conda init bash && \
-    ${CONDA_PREFIX}/bin/conda config --set auto_activate_base false 
+    /root/conda/bin/conda init bash && \
+    /root/conda/bin/conda config --set auto_activate_base false 
 
 # Create Conda environment
-RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y python=${PYTHON_VERSION} pip
+RUN /root/conda/bin/conda create -n Recommenders -c conda-forge -y python=${PYTHON_VERSION} pip
 
 
 #####################################################################
@@ -73,8 +71,6 @@ RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y python=${
 # Install Recommenders
 #####################################################################
 FROM deps AS final
-
-ENV CONDA_PREFIX="/root/conda"
 
 # Extra dependencies: dev, gpu, spark
 ARG EXTRAS=""
@@ -91,7 +87,7 @@ ARG RECO_DIR="/root/Recommenders"
 COPY ./ ${RECO_DIR}
 
 # Install Recommenders and its dependencies
-RUN source ${CONDA_PREFIX}/bin/activate && \
+RUN source /root/conda/bin/activate && \
     conda activate Recommenders && \
     if [[ "${EXTRAS}" =~ spark ]]; then conda install -c conda-forge -y "openjdk=${JDK_VERSION}"; fi && \
     if [ -z "${GIT_REF}" ]; then \
@@ -106,10 +102,10 @@ RUN source ${CONDA_PREFIX}/bin/activate && \
 # Activate Recommenders Conda environment
 ENV CONDA_SHLVL='1'
 ENV CONDA_PROMPT_MODIFIER='(Recommenders) '
-ENV JAVA_HOME="${CONDA_PREFIX}/lib/jvm"
+ENV JAVA_HOME="/root/conda/lib/jvm"
 ENV JAVA_LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
-ENV PATH="${CONDA_PREFIX}/envs/Recommenders/bin:${CONDA_PREFIX}/condabin:${PATH}"
-ENV CONDA_PREFIX="${CONDA_PREFIX}/envs/Recommenders"
+ENV PATH="/root/conda/envs/Recommenders/bin:/root/conda/condabin:${PATH}"
+ENV CONDA_PREFIX="/root/conda/envs/Recommenders"
 ENV PS1='(Recommenders) \[\]\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ \[\]'
 
 EXPOSE 8888
