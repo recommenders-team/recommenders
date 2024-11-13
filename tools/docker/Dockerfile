@@ -107,7 +107,7 @@ ENV CONDA_PROMPT_MODIFIER='(Recommenders) '
 ENV CONDA_PREFIX="/root/conda/envs/Recommenders"
 ENV CONDA_EXE="/root/conda/bin/conda"
 ENV CONDA_PYTHON_EXE="/root/conda/bin/python"
-ENV JAVA_HOME="/root/conda/lib/jvm"
+ENV JAVA_HOME="/root/conda/envs/Recommenders/lib/jvm"
 ENV JAVA_LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
 
 # Setup Jupyter notebook
