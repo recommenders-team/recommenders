@@ -91,10 +91,10 @@ def get_or_create_environment(
     # so the build args are configured by regex substituion
     text = dockerfile.read_text()
     text = re.sub(r"(ARG\sCOMPUTE=).*", rf'\1"{compute}"', text)
-    text = re.sub(r"(ARG\sGIT_REF=).*", r'\1""', text)
     text = re.sub(r"(ARG\sEXTRAS=).*", rf'\1"{extras}"', text)
-    text = re.sub(r"(ARG\sPYTHON_VERSION=).*", rf'\1"{python_version}"', text)
+    text = re.sub(r"(ARG\sGIT_REF=).*", r'\1""', text)
     text = re.sub(r"(ARG\sJDK_VERSION=).*", rf'\1"{conda_openjdk_version}"', text)
+    text = re.sub(r"(ARG\sPYTHON_VERSION=).*", rf'\1"{python_version}"', text)
     dockerfile.write_text(text)
 
     try:

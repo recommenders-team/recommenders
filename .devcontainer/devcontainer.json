@@ -6,9 +6,6 @@
         "target": "deps",
         "args": {
             "COMPUTE": "cpu",
-            "EXTRAS": "[dev,spark]",
-            "GIT_REF": "",
-            "JDK_VERSION": "21",
             "PYTHON_VERSION": "3.11"
         }
     },
@@ -53,5 +50,5 @@
     },
 
     // Install Recommenders in development mode after container create
-    "postCreateCommand": "bash -i -c 'conda activate Recommenders && pip install -e .[dev,spark]'"
+    "postCreateCommand": "bash -i -c 'conda activate Recommenders && conda install -c conda-forge -y openjdk=21 && pip install -e .[dev,spark]'"
 }

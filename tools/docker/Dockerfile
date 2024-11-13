@@ -43,15 +43,6 @@ RUN apt-get update && \
 #####################################################################
 FROM ${COMPUTE} AS deps
 
-# Extra dependencies: dev, gpu, spark
-ARG EXTRAS=""
-
-# Git ref of Recommenders to install: main, staging, etc.
-# Empty value ("") indicates editable installation of current clone
-ARG GIT_REF="main"
-
-ARG JDK_VERSION="21"
-
 # Valid versions: 3.8, 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
@@ -62,24 +53,19 @@ USER root:root
 
 SHELL ["/bin/bash", "-c"]
 
-ARG CONDA_FILE="/tmp/conda.sh"
-ARG CONDA_PREFIX="/root/conda"
-ARG CONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+ENV CONDA_PREFIX="/root/conda"
 
 # Install Conda
-RUN wget -qO ${CONDA_FILE} ${CONDA_URL} && \
-    bash ${CONDA_FILE} -bf -p ${CONDA_PREFIX} && \
+RUN wget -qO /tmp/conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
+    bash /tmp/conda.sh -bf -p ${CONDA_PREFIX} && \
     ${CONDA_PREFIX}/bin/conda clean -ay && \
     rm -rf ${CONDA_PREFIX}/pkgs && \
-    rm ${CONDA_FILE} && \
+    rm /tmp/conda.sh && \
     ${CONDA_PREFIX}/bin/conda init bash && \
     ${CONDA_PREFIX}/bin/conda config --set auto_activate_base false 
 
 # Create Conda environment
-RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y \
-        python=${PYTHON_VERSION} \
-        pip \
-        $(if [[ "${EXTRAS}" =~ spark ]]; then echo "openjdk=${JDK_VERSION}"; else echo ""; fi)
+RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y python=${PYTHON_VERSION} pip
 
 
 #####################################################################
@@ -88,20 +74,30 @@ RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y \
 #####################################################################
 FROM deps AS final
 
-ARG RECO_LOCAL_DIR="./"
+ENV CONDA_PREFIX="/root/conda"
+
+# Extra dependencies: dev, gpu, spark
+ARG EXTRAS=""
+
+# Git ref of Recommenders to install: main, staging, etc.
+# Empty value ("") indicates editable installation of current clone
+ARG GIT_REF="main"
+
+ARG JDK_VERSION="21"
+
 ARG RECO_DIR="/root/Recommenders"
-ARG RECO_GIT_URL="git+https://github.com/recommenders-team/recommenders.git"
 
 # Copy Recommenders into the image
-COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
+COPY ./ ${RECO_DIR}
 
 # Install Recommenders and its dependencies
 RUN source ${CONDA_PREFIX}/bin/activate && \
     conda activate Recommenders && \
+    if [[ "${EXTRAS}" =~ spark ]]; then conda install -c conda-forge -y "openjdk=${JDK_VERSION}"; fi && \
     if [ -z "${GIT_REF}" ]; then \
         pip install ${RECO_DIR}${EXTRAS}; \
     else \
-        pip install recommenders${EXTRAS}@${RECO_GIT_URL}@${GIT_REF}; \
+        pip install recommenders${EXTRAS}@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}; \
     fi && \
     jupyter notebook --generate-config && \
     echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
