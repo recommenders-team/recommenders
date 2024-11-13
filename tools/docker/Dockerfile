@@ -89,7 +89,7 @@ RUN ${CONDA_PREFIX}/bin/conda create -n Recommenders -c conda-forge -y \
 FROM deps AS final
 
 ARG RECO_LOCAL_DIR="./"
-ARG RECO_DIR="/tmp/recommenders"
+ARG RECO_DIR="/root/Recommenders"
 ARG RECO_GIT_URL="git+https://github.com/recommenders-team/recommenders.git"
 
 # Copy Recommenders into the image
@@ -97,12 +97,14 @@ COPY ${RECO_LOCAL_DIR} ${RECO_DIR}
 
 # Install Recommenders and its dependencies
 RUN source ${CONDA_PREFIX}/bin/activate && \
-    conda activate ${ENV_NAME} && \
+    conda activate Recommenders && \
     if [ -z "${GIT_REF}" ]; then \
         pip install ${RECO_DIR}${EXTRAS}; \
     else \
         pip install recommenders${EXTRAS}@${RECO_GIT_URL}@${GIT_REF}; \
     fi && \
+    jupyter notebook --generate-config && \
+    echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
 # Activate Recommenders Conda environment
@@ -113,3 +115,6 @@ ENV JAVA_LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
 ENV PATH="${CONDA_PREFIX}/envs/Recommenders/bin:${CONDA_PREFIX}/condabin:${PATH}"
 ENV CONDA_PREFIX="${CONDA_PREFIX}/envs/Recommenders"
 ENV PS1='(Recommenders) \[\]\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ \[\]'
+
+EXPOSE 8888
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.allow_origin='*'", "--IdentityProvider.token=''"]

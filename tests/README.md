@@ -63,9 +63,26 @@ GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-g
 
 There are three scripts used with each workflow, all of them are located in [ci/azureml_tests](./ci/azureml_tests/):
 
-* `submit_groupwise_azureml_pytest.py`: this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK.
-* `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
-* `test_groups.py`: this script defines the groups of tests. If the tests are part of the unit tests, the total compute time of each group should be less than 15min. If the tests are part of the nightly builds, the total time of each group should be less than 35min.
+* [`submit_groupwise_azureml_pytest.py`](./ci/azureml_tests/submit_groupwise_azureml_pytest.py):
+  this script uses parameters in the workflow yml to set up the
+  AzureML environment for testing using the AzureML SDK.
+* [`run_groupwise_pytest.py`](./ci/azureml_tests/run_groupwise_pytest.pyy):
+  this script uses pytest to run the tests of the libraries and
+  notebooks. This script runs in an AzureML workspace with the
+  environment created by the script above.
+* [`aml_utils.py`](./ci/azureml_tests/aml_utils.py): this script
+  defines several utility functions using
+  [the AzureML Python SDK v2](https://learn.microsoft.com/en-us/azure/machine-learning/concept-v2?view=azureml-api-2).
+  These fuctions are used by scripts above to set up the compute and
+  the environment for the tests on AzureML.  For example, the
+  environment with all dependencies of Recommenders is created by the
+  function `get_or_create_environment` via the [Dockerfile](../tools/docker/Dockerfile).
+  More details on Docker support can be found at [tools/docker/README.md](../tools/docker/README.md).
+* [`test_groups.py`](./ci/azureml_tests/test_groups.py): this script
+  defines the groups of tests. If the tests are part of the unit
+  tests, the total compute time of each group should be less than
+  15min. If the tests are part of the nightly builds, the total time
+  of each group should be less than 35min.
 
 ## How to contribute tests to the repository
 
