@@ -160,7 +160,7 @@ environment, so
 1. we create a contaienr with the dependencies required, 
 1. and mount the folder containing the code to the container,
 1. then code parsing, debugging and testing are all performed against
-   the contaienr.
+   the container.
 This workflow seperates the development environment from your local
 environment, so that your local environment won't be affected.  The
 container used here for this end is called Dev Container in the
