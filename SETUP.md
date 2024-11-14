@@ -201,7 +201,7 @@ performed against the container.
 <details>
 <summary><strong><em>GitHub Codespaces</em></strong></summary>
 
-GitHub Codespaces also uses devcontainer.json and Dockerfile in the
+GitHub Codespaces also uses `devcontainer.json` and Dockerfile in the
 repo to create the environment on a VM for you to develop on the Web
 VS Code.  To use the GitHub Codespaces on Recommenders, you can go to
 [Recommenders](https://github.com/recommenders-team/recommenders)
