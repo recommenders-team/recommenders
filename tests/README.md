@@ -73,7 +73,7 @@ There are three scripts used with each workflow, all of them are located in [ci/
 * [`aml_utils.py`](./ci/azureml_tests/aml_utils.py): this script
   defines several utility functions using
   [the AzureML Python SDK v2](https://learn.microsoft.com/en-us/azure/machine-learning/concept-v2?view=azureml-api-2).
-  These fuctions are used by scripts above to set up the compute and
+  These functions are used by the scripts above to set up the compute and
   the environment for the tests on AzureML.  For example, the
   environment with all dependencies of Recommenders is created by the
   function `get_or_create_environment` via the [Dockerfile](../tools/docker/Dockerfile).
