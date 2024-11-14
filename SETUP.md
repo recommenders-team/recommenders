@@ -189,7 +189,7 @@ Then
   https://github.com/recommenders-team/recommenders/tree/staging, or
   https://github.com/recommenders-team/recommenders/pull/2098.  VS
   Code will create a container with the environment described in
-  devcontainer.json, and clone the specified branch of Recommenders
+  `devcontainer.json`, and clone the specified branch of Recommenders
   into the container.
 
 Once everything is set up, VS Code will act as a client to the server
