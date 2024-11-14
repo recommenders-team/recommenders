@@ -166,7 +166,7 @@ environment, so that your local environment won't be affected.  The
 container used here for this end is called Dev Container in the
 VS Code Dev Containers extension.  And the extension eases this
 development workflow with Docker containers automatically without
-pains.
+pain.
 
 To use VS Code Dev Containers, your local machine must have the
 following applicatioins installed:
