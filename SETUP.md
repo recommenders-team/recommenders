@@ -222,7 +222,7 @@ $\to$ Create codespaces on the branch.
 * how to create the Conda environment for Recommenders in 
   `postCreateCommand`
 
-[Dockerfile](./tools/docker/Dockerfile) serves 3 places:
+[Dockerfile](./tools/docker/Dockerfile) is used in 3 places:
 * Dev containers on VS Code and GitHub Codespaces
 * [Testing workflows on AzureML](./tests/README.md)
 * [Jupyter notebook examples on Docker](./tools/docker/README.md)
