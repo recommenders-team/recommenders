@@ -145,7 +145,7 @@ git checkout staging
 pip install -e .[all]
 ```
 
-We also provides [devcontainer.json](./.devcontainer/devcontainer.json)
+We also provide a [devcontainer.json](./.devcontainer/devcontainer.json)
 and [Dockerfile](./tools/docker/Dockerfile) for developers to
 facilitate the development on
 [Dev Containers with VS Code](https://code.visualstudio.com/docs/devcontainers/containers)
