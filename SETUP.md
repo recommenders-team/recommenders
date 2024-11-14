@@ -178,7 +178,7 @@ Then
   detect [devcontainer.json](./.devcontainer/devcontainer.json), and
   prompt you to **Reopen in Container**.  If you'd like to reopen,
   it will create a container with the required environment described
-  in devcontainer.json, install a VS Code server in the container,
+  in `devcontainer.json`, install a VS Code server in the container,
   and mount the folder into the container.
   + If you don't see the prompt, you can use the command
     **Dev Containers: Reopen in Container**
