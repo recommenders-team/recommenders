@@ -1,189 +1,115 @@
+# syntax=docker/dockerfile:1
+
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-ARG ENV="cpu"
-ARG HOME="/root"
-
-FROM mcr.microsoft.com/mirror/docker/library/ubuntu:18.04 AS base
-
-LABEL maintainer="Microsoft Recommender Project <RecoDevTeam@service.microsoft.com>"
-
-ARG HOME
-ARG VIRTUAL_ENV
-ENV HOME="${HOME}"
-WORKDIR ${HOME}
-
-# Exit if VIRTUAL_ENV is not specified correctly
-RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "${VIRTUAL_ENV}" != "virtualenv" ]; then \
-    echo 'VIRTUAL_ENV argument should be either "conda", "venv" or "virtualenv"'; exit 1; fi
-
-# Install base dependencies and libpython (for cornac)
-RUN apt-get update && \
-    apt-get install -y curl build-essential
-RUN apt-get install -y libpython3.7-dev
-RUN apt-get install -y python3-dev  
-
-# Install Anaconda
-ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then curl ${ANACONDA} -o anaconda.sh && \
-    /bin/bash anaconda.sh -b -p conda && \
-    rm anaconda.sh && \
-    echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc ; fi
-
-ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
-
-# --login option used to source bashrc (thus activating conda env) at every RUN statement
-SHELL ["/bin/bash", "--login", "-c"]
-
-# Python version supported by recommenders
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.7; \
-    apt-get -y install python3-pip; \
-    apt-get -y install python3.7-venv; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; \
-    apt-get -y install python3-pip; \
-    python3.7 -m pip install --user virtualenv; fi
-
-# Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv $HOME/${VIRTUAL_ENV}; \
-    source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install --upgrade pip; \
-    pip install --upgrade setuptools wheel; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
-    source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install --upgrade pip; \
-    pip install --upgrade setuptools wheel; fi
-
-###########
-# CPU Stage
-###########
-FROM base AS cpu
-
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[examples]; fi
+#####################################################################
+# Stage build order depending on the compute:
+#     Compute Stage (CPU/GPU) -> Dependencies Stage -> Final Stage
+#####################################################################
+# Valid computes: cpu, gpu
+ARG COMPUTE="cpu"
 
 
-###############
-# PySpark Stage
-###############
-FROM base AS pyspark
-
-# Install Java version 8
-RUN apt-get update && \
-    apt-get install -y libgomp1 openjdk-8-jre
-
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
-    PYSPARK_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python" \
-    PYSPARK_DRIVER_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python"
-
-# Install dependencies in virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[spark,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,examples]; fi
+#####################################################################
+# Compute Stage - CPU
+# Choose an appropriate CPU compute image
+#####################################################################
+# * [buildpack-deps:24.04](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/noble/Dockerfile)
+#   + [Created on 2024-08-17](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a)
+FROM buildpack-deps@sha256:dbfee7e7ee2340b0d6567efd3a8a9281ce45ee78598485b4d7a7f09fe641811a AS cpu
 
 
-###########
-# GPU Stage
-###########
-FROM mcr.microsoft.com/mirror/nvcr/nvidia/cuda:11.4.2-cudnn8-runtime-ubuntu18.04 AS gpu
-
-ARG HOME
-ARG VIRTUAL_ENV
-ENV HOME="${HOME}"
-WORKDIR ${HOME}
-
-# Exit if VIRTUAL_ENV is not specified correctly
-RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "${VIRTUAL_ENV}" != "virtualenv" ]; then \
-    echo 'VIRTUAL_ENV argument should be either "conda", "venv" or "virtualenv"'; exit 1; fi
+#####################################################################
+# Compute Stage - GPU
+# Choose an appropriate GPU compute image
+#####################################################################
+# * [nvidia/cuda:12.6.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.6.1/ubuntu2404/devel/Dockerfile)
+#   + [Created on 2024-09-13](https://hub.docker.com/layers/nvidia/cuda/12.6.1-devel-ubuntu24.04/images/sha256-bfc293f21611f3c47a3442cf6516ebfe99d529926a4bef4bc389ef02fd038800)
+# * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
+FROM nvcr.io/nvidia/cuda:12.6.1-devel-ubuntu24.04@sha256:bfc293f21611f3c47a3442cf6516ebfe99d529926a4bef4bc389ef02fd038800 AS gpu
 
 RUN apt-get update && \
-    apt-get install -y curl build-essential
-RUN apt-get install -y libpython3.7-dev
-RUN apt-get install -y python3-dev
-
-# Install Anaconda
-ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then curl ${ANACONDA} -o anaconda.sh && \
-    /bin/bash anaconda.sh -b -p conda && \
-    rm anaconda.sh && \
-    echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc; fi
-
-ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
-
-SHELL ["/bin/bash", "--login", "-c"]
-
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.7; \
-    apt-get -y install python3-pip; \
-    apt-get -y install python3.7-venv; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; \
-    apt-get -y install python3-pip; \
-    python3.7 -m pip install --user virtualenv; fi
-
-# Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv $HOME/${VIRTUAL_ENV}; \
-    source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install --upgrade pip; \
-    pip install --upgrade setuptools wheel; \
-    pip install recommenders[gpu,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
-    source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install --upgrade pip; \
-    pip install --upgrade setuptools wheel; \
-    pip install recommenders[gpu,examples]; fi
-
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
-    pip install recommenders[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html ; fi
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y wget git && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
 
 
-############
-# Full Stage
-############
-FROM gpu AS full
+#####################################################################
+# Dependencies Stage
+# Set up all dependencies.  This Stage is used by dev containers,
+# because editable installation is required.
+#####################################################################
+FROM ${COMPUTE} AS deps
 
-ARG HOME
-WORKDIR ${HOME}
+# Valid versions: 3.8, 3.9, 3.10, 3.11
+ARG PYTHON_VERSION="3.11"
 
-SHELL ["/bin/bash", "--login", "-c"]
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-# Install Java version 8
-RUN apt-get update && \
-    apt-get install -y libgomp1 openjdk-8-jre
+WORKDIR /root
+USER root:root
 
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
-    PYSPARK_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python" \
-    PYSPARK_DRIVER_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python"
+SHELL ["/bin/bash", "-c"]
 
-# Install dependencies in virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[all]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[all]; fi
+# Install Conda
+RUN wget -qO /tmp/conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
+    bash /tmp/conda.sh -bf -p /root/conda && \
+    /root/conda/bin/conda clean -ay && \
+    rm -rf /root/conda/pkgs && \
+    rm /tmp/conda.sh && \
+    /root/conda/bin/conda init bash && \
+    /root/conda/bin/conda config --set auto_activate_base false 
+
+# Create Conda environment
+RUN /root/conda/bin/conda create -n Recommenders -c conda-forge -y python=${PYTHON_VERSION} pip
 
 
-#############
+#####################################################################
 # Final Stage
-#############
-FROM $ENV AS final
+# Install Recommenders
+#####################################################################
+FROM deps AS final
 
-# Setup Jupyter notebook configuration
-ENV NOTEBOOK_CONFIG="${HOME}/.jupyter/jupyter_notebook_config.py"
-RUN mkdir ${HOME}/.jupyter && \
-    echo "c.NotebookApp.token = ''" >> ${NOTEBOOK_CONFIG} && \
-    echo "c.NotebookApp.ip = '0.0.0.0'" >> ${NOTEBOOK_CONFIG} && \
-    echo "c.NotebookApp.allow_root = True" >> ${NOTEBOOK_CONFIG} && \
-    echo "c.NotebookApp.open_browser = False" >> ${NOTEBOOK_CONFIG} && \
-    echo "c.MultiKernelManager.default_kernel_name = 'python3'" >> ${NOTEBOOK_CONFIG}
+# Extra dependencies: dev, gpu, spark
+ARG EXTRAS=""
 
-# Register the environment with Jupyter
-RUN if [ "${VIRTUAL_ENV}" = "conda" ]; then python -m ipykernel install --user --name base --display-name "Python (base)"; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    python -m ipykernel install --user --name venv --display-name "Python (venv)"; fi
+# Git ref of Recommenders to install: main, staging, etc.
+# Empty value ("") indicates editable installation of current clone
+ARG GIT_REF="main"
 
-ARG HOME
-WORKDIR ${HOME}
+ARG JDK_VERSION="21"
 
+ARG RECO_DIR="/root/Recommenders"
+
+# Copy Recommenders into the image
+COPY ./ ${RECO_DIR}
+
+# Install Recommenders and its dependencies
+RUN source /root/conda/bin/activate && \
+    conda activate Recommenders && \
+    if [[ "${EXTRAS}" =~ spark ]]; then conda install -c conda-forge -y "openjdk=${JDK_VERSION}"; fi && \
+    if [ -z "${GIT_REF}" ]; then \
+        pip install ${RECO_DIR}${EXTRAS}; \
+    else \
+        pip install recommenders${EXTRAS}@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}; \
+    fi && \
+    jupyter notebook --generate-config && \
+    echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
+    python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
+
+# Activate Recommenders Conda environment
+ENV PS1='(Recommenders) \[\]\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ \[\]'
+ENV PATH="/root/conda/envs/Recommenders/bin:/root/conda/condabin:${PATH}"
+ENV CONDA_SHLVL='1'
+ENV CONDA_PROMPT_MODIFIER='(Recommenders) '
+ENV CONDA_PREFIX="/root/conda/envs/Recommenders"
+ENV CONDA_EXE="/root/conda/bin/conda"
+ENV CONDA_PYTHON_EXE="/root/conda/bin/python"
+ENV JAVA_HOME="/root/conda/envs/Recommenders/lib/jvm"
+ENV JAVA_LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
+
+# Setup Jupyter notebook
 EXPOSE 8888
-CMD ["jupyter", "notebook"]
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.allow_origin='*'", "--IdentityProvider.token=''"]

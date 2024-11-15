@@ -1,22 +1,18 @@
 {
     "name": "Recommenders",
-    // Version list: https://github.com/devcontainers/images/tree/main/src/base-ubuntu
-    // Includes: curl, wget, ca-certificates, git, Oh My Zsh!, 
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
-    "hostRequirements": {
-        "cpus": 4,
-        "memory": "16gb",
-        "storage": "32gb"
-    },
-    "features": {
-        // https://github.com/devcontainers/features/blob/main/src/anaconda/devcontainer-feature.json
-        "ghcr.io/devcontainers/features/anaconda:1": {
-            "version": "2024.06-1"
+    "build": {
+        "dockerfile": "../tools/docker/Dockerfile",
+        "context": "..",
+        "target": "deps",
+        "args": {
+            "COMPUTE": "cpu",
+            "PYTHON_VERSION": "3.11"
         }
     },
     "customizations": {
         "vscode": {
-            // Set *default* container specific settings.json values on container create.
+            // Set default container specific settings.json values on container
+            // create
             "settings": {
                 "[python]": {
                     "editor.defaultFormatter": "ms-python.black-formatter",
@@ -27,24 +23,32 @@
                 },
                 "isort.args": ["--profile", "black"],
                 "python.analysis.autoImportCompletions": true,
-                "python.defaultInterpreterPath": "/usr/local/conda/envs/Recommenders/bin/python",
+                // Conda env name *must* align with the one in Dockerfle
+                "python.defaultInterpreterPath": "/root/conda/envs/Recommenders/bin/python",
                 "python.testing.pytestEnabled": true,
-                // set the directory where all tests are 
+                // Test directory
                 "python.testing.pytestArgs": ["tests"]
             },
-            // Add the IDs of extensions you want installed when the container is created.
+            // VS Code extensions to install on container create
             "extensions": [
-                "ms-python.black-formatter",  // https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
-                "ms-python.isort",  // https://marketplace.visualstudio.com/items?itemName=ms-python.isort
-                "ms-python.mypy-type-checker",  // https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker
-                "ms-python.pylint",  // https://marketplace.visualstudio.com/items?itemName=ms-python.pylint
-                "ms-python.python",  // https://marketplace.visualstudio.com/items?itemName=ms-python.python
-                "ms-toolsai.datawrangler",  // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.datawrangler
-                "ms-toolsai.jupyter"  // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
+                // https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter
+                "ms-python.black-formatter",
+                // https://marketplace.visualstudio.com/items?itemName=ms-python.isort
+                "ms-python.isort",
+                // https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker
+                "ms-python.mypy-type-checker",
+                // https://marketplace.visualstudio.com/items?itemName=ms-python.pylint
+                "ms-python.pylint",
+                // https://marketplace.visualstudio.com/items?itemName=ms-python.python
+                "ms-python.python",
+                // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.datawrangler
+                "ms-toolsai.datawrangler",
+                // https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
+                "ms-toolsai.jupyter"
             ]
         }
     },
 
-    // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "conda create -n Recommenders -c conda-forge -y python=3.10 openjdk=21 pip && conda init bash && bash -c -i 'conda activate Recommenders && pip install -e .[dev,spark]' && conda config --set auto_activate_base false"
+    // Install Recommenders in development mode after container create
+    "postCreateCommand": "bash -i -c 'conda activate Recommenders && conda install -c conda-forge -y openjdk=21 && pip install -e .[dev,spark]'"
 }
