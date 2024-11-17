@@ -52,7 +52,8 @@ jobs:
   execute-tests:
     needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120 
     permissions:
       id-token: write # This is required for requesting the JWT
     strategy:
