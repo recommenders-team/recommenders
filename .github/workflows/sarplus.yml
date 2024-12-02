@@ -8,7 +8,7 @@
 #   * GitHub Actions workflow templates
 #       + [python package](https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml)
 #       + [scala](https://github.com/actions/starter-workflows/blob/main/ci/scala.yml)
-#   * [GitHub hosted runner - Ubuntu 20.04 LTS](https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md)
+#   * [GitHub hosted runner - Ubuntu 24.04 LTS](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
 #   * [Azure Databricks runtime releases](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/releases)
 #   * [Azure Synapse Analytics runtimes](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-version-support)
 
@@ -52,6 +52,14 @@ jobs:
         run: |
           python -m pip install -U build cibuildwheel pip twine
           python -m pip install -U flake8 pytest pytest-cov scikit-learn
+
+          # Install sbt
+          # See https://github.com/yokra9/akka-http-example/pull/119/files
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list
+          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
+          sudo apt-get update
+          sudo apt-get install sbt
 
       - name: Lint with flake8
         run: |
@@ -132,6 +140,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install sbt
+        run: |
+          # See https://github.com/yokra9/akka-http-example/pull/119/files
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list
+          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
+          sudo apt-get update
+          sudo apt-get install sbt
 
       - name: Test
         run: |
