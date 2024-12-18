@@ -15,11 +15,11 @@ Licensed under the MIT License.
 
 <br>
 
-## What's New (May, 2024)
+## What's New (Dec, 2024)
 
-We have a new release [Recommenders 1.2.0](https://github.com/recommenders-team/recommenders/releases/tag/1.2.0)!
+We have a new release [Recommenders 1.2.1](https://github.com/recommenders-team/recommenders/releases/tag/1.2.1)!
 
-So many changes since our last release. We have full tests on Python 3.8 to 3.11 (around 1800 tests), upgraded performance in many algorithms, reviewed notebooks, and many more improvements.
+We fixed a lot of bugs due to dependencies, improved security, reviewed the notebooks and the libraries.
 
 ## Introduction
 
