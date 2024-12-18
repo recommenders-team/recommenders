@@ -5,6 +5,12 @@ Licensed under the MIT License.
 
 # What's New
 
+## Update December 20, 2024
+
+We have a new release [Recommenders 1.2.1](https://github.com/recommenders-team/recommenders/releases/tag/1.2.1)!
+
+We fixed a lot of bugs due to dependencies, improved security, reviewed the notebooks and the libraries.
+
 ## Update May 2, 2024
 
 We have a new release [Recommenders 1.2.0](https://github.com/microsoft/recommenders/releases/tag/1.2.0)!
