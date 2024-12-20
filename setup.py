@@ -57,6 +57,7 @@ extras_require = {
         "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
         "accelerate>=0.20.3",
+        "cvxpy>=1.3.1",
     ],
     "spark": [
         "pyarrow>=10.0.1",
