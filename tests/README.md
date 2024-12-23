@@ -250,8 +250,7 @@ Then, follow the steps below to create the AzureML infrastructure:
       * AzureML Compute Operator
       * AzureML Data Scientist
       * Reader
-   1. [Create a federated identiy credential on the
-      UMI](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity?pivots=identity-wif-mi-methods-azp#github-actions-deploying-azure-resources)
+   1. [Create a federated identity credential on the UMI](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity?pivots=identity-wif-mi-methods-azp#github-actions-deploying-azure-resources)
       with the following settings:
       * Name: A unique name for the federated identity credential
         within your application.
@@ -262,6 +261,7 @@ Then, follow the steps below to create the AzureML infrastructure:
         + `repo:recommenders-team/recommenders:pull_request`
         + `repo:recommenders-team/recommenders:ref:refs/heads/staging`
         + `repo:recommenders-team/recommenders:ref:refs/heads/main`
+        + `repo:recommenders-team/recommenders:ref:refs/tags/1.2.1`
       * Description: (Optional) A description of the credential.
       * Audiences: Specifies who can use this credential; for GitHub
         Actions, use `api://AzureADTokenExchange`.
