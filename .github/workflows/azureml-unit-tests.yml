@@ -19,6 +19,7 @@ on:
       - tests/**
       - '!tests/**/*.md'
       - setup.py
+      - .github/**
     types: [opened, synchronize, reopened, ready_for_review]
 
   # Enable manual trigger
@@ -33,7 +34,7 @@ on:
 
 jobs:
   get-test-groups:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -52,7 +53,8 @@ jobs:
   execute-tests:
     needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120 
     permissions:
       id-token: write # This is required for requesting the JWT
     strategy:
