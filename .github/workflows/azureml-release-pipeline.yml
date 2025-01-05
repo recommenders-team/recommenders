@@ -29,7 +29,7 @@ jobs:
     secrets: inherit
 
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [unit-test-workflow, cpu-nightly-workflow, gpu-nightly-workflow, spark-nightly-workflow]
     steps:
       - name: Check out repository code
@@ -37,7 +37,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v5
         with: 
-          python-version: "3.8"
+          python-version: "3.10"
       - name: Install wheel package
         run: pip install wheel
       - name: Create wheel from setup.py

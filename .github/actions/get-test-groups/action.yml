@@ -6,18 +6,17 @@
 name: get-test-groups
 description: "Get test group names from tests_groups.py"
 inputs:
-  # type of test - unit or nightly
   TEST_KIND:
     required: true
-    type: string
-  # test environment - cpu, gpu or spark
+    description: Type of test - pr gate or nightly
   TEST_ENV:
     required: false
-    type: string
+    description: Test environment - cpu, gpu or spark
     default: 'cpu'
 outputs:
   test_groups:
-    value: ${{steps.get_test_groups.outputs.test_groups}}
+    description: A list of test groups
+    value: ${{ steps.get_test_groups.outputs.test_groups }}
 
 runs:
   using: "composite"

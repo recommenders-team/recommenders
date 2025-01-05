@@ -32,14 +32,13 @@ They have admin access to the repo and provide support reviewing issues and pull
 * **[Miguel González-Fierro](https://github.com/miguelfierro)**
    * Recommendation algorithms review, development and optimization.
    * Reco utils review, development and optimization.
-   * Github statistics.
    * Continuous integration build / test setup.
 * **[Scott Graham](https://github.com/gramhagen)**
    * Improving documentation
    * VW notebook
 * **[Simon Zhao](https://github.com/simonyansenzhao)**
    * SARplus algorithm upgrade
-* **[Tao Wu](https://github.com/wutaomsft)**
+* **[Tao Wu](https://github.com/wav8k)**
    * Improving documentation
 
 
@@ -52,6 +51,8 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Aaron Palpallatoc](https://github.com/ubergonmx)**
+   * Corrected variable in pickle dump in `mind_utils.ipynb` notebook
 * **[Abir Chakraborty](https://github.com/aeroabir)**
    * Self-Attentive Sequential Recommendation (SASRec)
    * Sequential Recommendation Via Personalized Transformer (SSEPT)

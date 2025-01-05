@@ -27,34 +27,34 @@ from recommenders.datasets.mind import download_mind, extract_mind
             '"0x8D8B8AD5B126C3B"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip",
-            "52952752",
-            "0x8D834F2EB31BDEC",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_train.zip",
+            "52994575",
+            '"0x8DCC5A830190676"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip",
-            "30945572",
-            "0x8D834F2EBA8D865",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_dev.zip",
+            "30948560",
+            '"0x8DCC5A82E182A0F"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDsmall_utils.zip",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDsmall_utils.zip",
             "155178106",
-            "0x8D87F67F4AEB960",
+            '"0x8D8B8AD5B3677C6"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip",
-            "530196631",
-            "0x8D8244E90C15C07",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_train.zip",
+            "531360717",
+            '"0x8DCC5A8375BDC1D"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip",
-            "103456245",
-            "0x8D8244E92005849",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_dev.zip",
+            "103592887",
+            '"0x8DCC5A82FE8609C"',
         ),
         (
-            "https://mind201910small.blob.core.windows.net/release/MINDlarge_utils.zip",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDlarge_utils.zip",
             "150359301",
-            "0x8D87F67E6CA4364",
+            '"0x8D8B8AD5B2ED4C9"',
         ),
     ],
 )
@@ -70,14 +70,6 @@ def test_download_mind_demo(tmp):
     assert statinfo.st_size == 17372879
     statinfo = os.stat(valid_path)
     assert statinfo.st_size == 10080022
-
-
-def test_download_mind_small(tmp):
-    train_path, valid_path = download_mind(size="small", dest_path=tmp)
-    statinfo = os.stat(train_path)
-    assert statinfo.st_size == 52952752
-    statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 30945572
 
 
 def test_extract_mind_demo(tmp):
@@ -100,6 +92,14 @@ def test_extract_mind_demo(tmp):
     assert statinfo.st_size == 15624320
     statinfo = os.stat(os.path.join(valid_path, "relation_embedding.vec"))
     assert statinfo.st_size == 1044588
+
+
+def test_download_mind_small(tmp):
+    train_path, valid_path = download_mind(size="small", dest_path=tmp)
+    statinfo = os.stat(train_path)
+    assert statinfo.st_size == 52994575
+    statinfo = os.stat(valid_path)
+    assert statinfo.st_size == 30948560
 
 
 def test_extract_mind_small(tmp):
@@ -127,9 +127,9 @@ def test_extract_mind_small(tmp):
 def test_download_mind_large(tmp_path):
     train_path, valid_path = download_mind(size="large", dest_path=tmp_path)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 530196631
+    assert statinfo.st_size == 531360717
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 103456245
+    assert statinfo.st_size == 103592887
 
 
 def test_extract_mind_large(tmp):

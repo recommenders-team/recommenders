@@ -47,8 +47,6 @@ nightly_test_groups = {
         "tests/functional/examples/test_notebooks_python.py::test_geoimc_functional",  # 1006.19s
         #
         "tests/functional/examples/test_notebooks_python.py::test_benchmark_movielens_cpu",  # 58s
-        #
-        "tests/functional/examples/test_notebooks_python.py::test_lightfm_functional",
     ],
     "group_cpu_003": [  # Total group time: 2253s
         "tests/data_validation/recommenders/datasets/test_criteo.py::test_download_criteo_sample",  # 1.05s
@@ -65,24 +63,24 @@ nightly_test_groups = {
     ],
     "group_gpu_001": [  # Total group time: 1937.01s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/smoke/recommenders/recommender/test_deeprec_utils.py",  # 2.91
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator",  # 0.74s
-        "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_news_iterator",  # 3.04s
+        "tests/smoke/recommenders/models/test_deeprec_utils.py",  # 2.91
+        "tests/smoke/recommenders/models/test_deeprec_model.py::test_FFM_iterator",  # 0.74s
+        "tests/smoke/recommenders/models/test_newsrec_utils.py::test_news_iterator",  # 3.04s
         #
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_lightgcn",  # 6.03s
+        "tests/smoke/recommenders/models/test_deeprec_model.py::test_model_lightgcn",  # 6.03s
         "tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional",  # 19.45s
         #
-        # "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_sum",  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
+        # "tests/smoke/recommenders/models/test_deeprec_model.py::test_model_sum",  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
         #
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s
+        "tests/smoke/recommenders/models/test_deeprec_model.py::test_model_dkn",  # 187.20s
         "tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional",  # 1167.93s
         #
         "tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional",  # 175.00s
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
+        "tests/smoke/recommenders/models/test_deeprec_model.py::test_model_slirec",  # 346.72s
     ],
     "group_gpu_002": [  # Total group time: 1896.76s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s
+        "tests/smoke/recommenders/models/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s
         # FIXME: https://github.com/microsoft/recommenders/issues/1883
         # "tests/smoke/examples/test_notebooks_gpu.py::test_xdeepfm_smoke",  # 77.93s
         "tests/functional/examples/test_notebooks_gpu.py::test_xdeepfm_functional",
@@ -102,9 +100,9 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke",  # 102.71s
         "tests/functional/examples/test_notebooks_gpu.py::test_ncf_deep_dive_functional",  # 351.17s
         #
-        "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_naml_iterator",  # 5.50s
+        "tests/smoke/recommenders/models/test_newsrec_utils.py::test_naml_iterator",  # 5.50s
         # FIXME: https://github.com/microsoft/recommenders/issues/1883
-        # "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml",  # 450.65s
+        # "tests/smoke/recommenders/models/test_newsrec_model.py::test_model_naml",  # 450.65s
     ],
     "group_gpu_004": [  # Total group time: 2103.34s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
@@ -127,8 +125,8 @@ nightly_test_groups = {
     ],
     "group_gpu_006": [  # Total group time: 1763.99s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_npa",  # 202.61s
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_nrms",  # 188.60s
+        "tests/smoke/recommenders/models/test_newsrec_model.py::test_model_npa",  # 202.61s
+        "tests/smoke/recommenders/models/test_newsrec_model.py::test_model_nrms",  # 188.60s
     ],
     "group_gpu_007": [  # Total group time: 846.89s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
@@ -140,7 +138,7 @@ nightly_test_groups = {
         # "tests/functional/examples/test_notebooks_gpu.py::test_naml_quickstart_functional",  # 2033.85s
         # FIXME: https://github.com/microsoft/recommenders/issues/1716
         # "tests/functional/examples/test_notebooks_gpu.py::test_sasrec_quickstart_functional",  # 448.06s + 614.69s
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
+        "tests/smoke/recommenders/models/test_newsrec_model.py::test_model_lstur",  # 194.88s
     ],
     "group_spark_001": [  # Total group time: 987.16s
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 4.33s+ 25.58s + 101.99s + 139.23s
@@ -219,7 +217,6 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_item_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_python_evaluation.py::test_serendipity_item_feature_vector",
-        "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_init",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_clean_dataframe",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_fit",
@@ -230,17 +227,6 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations",
         "tests/unit/recommenders/models/test_cornac_utils.py::test_predict",
         "tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items",
-        "tests/unit/recommenders/models/test_geoimc.py::test_dataptr",
-        "tests/unit/recommenders/models/test_geoimc.py::test_length_normalize",
-        "tests/unit/recommenders/models/test_geoimc.py::test_mean_center",
-        "tests/unit/recommenders/models/test_geoimc.py::test_reduce_dims",
-        "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
-        "tests/unit/recommenders/models/test_geoimc.py::test_inferer_init",
-        "tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_interactions",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_fitting",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_users",
-        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_items",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_init",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_fit",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_predict",
@@ -313,7 +299,6 @@ pr_gate_test_groups = {
         "tests/integration/recommenders/utils/test_k8s_utils.py",
     ],
     "group_notebooks_cpu_001": [  # Total group time: 226.42s
-        "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
         "tests/unit/examples/test_notebooks_python.py::test_sar_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_baseline_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_template_runs",
@@ -452,4 +437,24 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
     ],
+}
+
+# Experimental are additional test groups that require to install extra dependencies: pip install .[experimental]
+experimental_test_groups = {
+    "group_cpu_001": [
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_interactions",
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_fitting",
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_users",
+        "tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_items",
+        "tests/functional/examples/test_notebooks_python.py::test_lightfm_functional",
+        "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
+        "tests/unit/recommenders/models/test_geoimc.py::test_dataptr",
+        "tests/unit/recommenders/models/test_geoimc.py::test_length_normalize",
+        "tests/unit/recommenders/models/test_geoimc.py::test_mean_center",
+        "tests/unit/recommenders/models/test_geoimc.py::test_reduce_dims",
+        "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
+        "tests/unit/recommenders/models/test_geoimc.py::test_inferer_init",
+        "tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer",
+        "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
+    ]
 }

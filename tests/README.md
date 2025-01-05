@@ -5,6 +5,12 @@ Licensed under the MIT License.
 
 # Tests
 
+Recommenders test pipeline is one of the most sophisticated MLOps pipelines in the open-source community. We execute tests in the three environments we support: CPU, GPU, and Spark, mirroring the tests in each Python version we support. We not only tests the library, but also the Jupyter notebooks in the examples folder.
+
+The reason to have this extensive test infrastructure is to ensure that the code is reproducible by the community and that we can maintain the project with a small number of core contributors.
+
+We currently execute over a thousand tests in the project, and we are always looking for ways to improve the test coverage. To get the exact number of tests, you can run `pytest tests --collect-only`, and then multiply the number of tests by the number of Python versions we support.
+
 In this document we show our test infrastructure and how to contribute tests to the repository.
 
 ## Table of Contents
@@ -57,9 +63,26 @@ GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-g
 
 There are three scripts used with each workflow, all of them are located in [ci/azureml_tests](./ci/azureml_tests/):
 
-* `submit_groupwise_azureml_pytest.py`: this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK.
-* `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
-* `test_groups.py`: this script defines the groups of tests. If the tests are part of the unit tests, the total compute time of each group should be less than 15min. If the tests are part of the nightly builds, the total time of each group should be less than 35min.
+* [`submit_groupwise_azureml_pytest.py`](./ci/azureml_tests/submit_groupwise_azureml_pytest.py):
+  this script uses parameters in the workflow yml to set up the
+  AzureML environment for testing using the AzureML SDK.
+* [`run_groupwise_pytest.py`](./ci/azureml_tests/run_groupwise_pytest.pyy):
+  this script uses pytest to run the tests of the libraries and
+  notebooks. This script runs in an AzureML workspace with the
+  environment created by the script above.
+* [`aml_utils.py`](./ci/azureml_tests/aml_utils.py): this script
+  defines several utility functions using
+  [the AzureML Python SDK v2](https://learn.microsoft.com/en-us/azure/machine-learning/concept-v2?view=azureml-api-2).
+  These functions are used by the scripts above to set up the compute and
+  the environment for the tests on AzureML.  For example, the
+  environment with all dependencies of Recommenders is created by the
+  function `get_or_create_environment` via the [Dockerfile](../tools/docker/Dockerfile).
+  More details on Docker support can be found at [tools/docker/README.md](../tools/docker/README.md).
+* [`test_groups.py`](./ci/azureml_tests/test_groups.py): this script
+  defines the groups of tests. If the tests are part of the unit
+  tests, the total compute time of each group should be less than
+  15min. If the tests are part of the nightly builds, the total time
+  of each group should be less than 35min.
 
 ## How to contribute tests to the repository
 
@@ -74,15 +97,10 @@ In this section we show how to create tests and add them to the test pipeline. T
 
 ### How to create tests for the Recommenders library
 
-You want to make sure that all your code works before you submit it to the repository. Here are some guidelines for creating the unit tests:
+You want to make sure that all your code works before you submit it to the repository. Here are some guidelines for creating the tests:
 
 * It is better to create multiple small tests than one large test that checks all the code.
 * Use `@pytest.fixture` to create data in your tests.
-* Use the mark `@pytest.mark.gpu` if you want the test to be executed
-  in a GPU environment. Use `@pytest.mark.spark` if you want the test
-  to be executed in a Spark environment.
-* Use `@pytest.mark.notebooks` if you are testing a notebook.
-* Avoid using `is` in the asserts, instead use the operator `==`.
 * Follow the pattern `assert computation == value`, for example:
 ```python
 assert results["precision"] == pytest.approx(0.330753)
@@ -92,6 +110,11 @@ assert results["precision"] == pytest.approx(0.330753)
 assert rmse(rating_true, rating_true) == 0
 assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 ```
+* Use the operator `==` with values. Use the operator `is` in singletons like `None`, `True` or `False`.
+* Make explicit asserts. In other words, make sure you assert to something (`assert computation == value`) and not just `assert computation`.
+* Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
+* Use `@pytest.mark.notebooks` if you are testing a notebook.
+
 
 ### How to create tests for the notebooks
 
@@ -210,28 +233,46 @@ Then, follow the steps below to create the AzureML infrastructure:
     - Name: `azureml-test-workspace`
     - Resource group: `recommenders_project_resources`
     - Location: *Make sure you have enough quota in the location you choose*
-2. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
+1. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
     - Select the CPU VM base. Anything above 64GB of RAM, and 8 cores should be fine.
     - Select the GPU VM base. Anything above 56GB of RAM, and 6 cores, and an NVIDIA K80 should be fine.
-3. Add the subscription ID to GitHub action secrets [here](https://github.com/recommenders-team/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
-4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
-5. Select your subscription: `az account set -s $AZURE_SUBSCRIPTION_ID`.
-6. Create a Service Principal: `az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --json-auth`. This will output a JSON blob with the credentials of the Service Principal:
-    ```
-    {
-        "clientId": "XXXXXXXXXXXXXXXXXXXXX",
-        "clientSecret": "XXXXXXXXXXXXXXXXXXXXX",
-        "subscriptionId": "XXXXXXXXXXXXXXXXXXXXX",
-        "tenantId": "XXXXXXXXXXXXXXXXXXXXX",
-        "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-        "resourceManagerEndpointUrl": "https://management.azure.com/",
-        "activeDirectoryGraphResourceId": "https://graph.windows.net/",
-        "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
-        "galleryEndpointUrl": "https://gallery.azure.com/",
-        "managementEndpointUrl": "https://management.core.windows.net/"
-    }
-    ```
-7. Add the output as github's action secret `AZUREML_TEST_CREDENTIALS` under repository's **Settings > Security > Secrets and variables > Actions**.
+1. Add the subscription ID to GitHub action secrets
+   [here](https://github.com/recommenders-team/recommenders/settings/secrets/actions).
+   * Create a new repository secret called `AZUREML_TEST_SUBID` and
+     add the subscription ID as the value.
+1. Set up [login with OpenID Connect
+   (OIDC)](https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended)
+   for GitHub Actions.
+   1. Create a user-assigned managed identity (UMI) and assign the
+      following 3 roles of the AzureML workspace created above to the
+      UMI (See [Create a user-assigned managed
+      identity](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity)):
+      * AzureML Compute Operator
+      * AzureML Data Scientist
+      * Reader
+   1. [Create a federated identiy credential on the
+      UMI](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity?pivots=identity-wif-mi-methods-azp#github-actions-deploying-azure-resources)
+      with the following settings:
+      * Name: A unique name for the federated identity credential
+        within your application.
+      * Issuer: Set to `https://token.actions.githubusercontent.com`
+        for GitHub Actions.
+      * Subject: The subject claim format, e.g.,
+        `repo:recommenders-team/recommenders:ref:refs/heads/<branch-name>`:
+        + `repo:recommenders-team/recommenders:pull_request`
+        + `repo:recommenders-team/recommenders:ref:refs/heads/staging`
+        + `repo:recommenders-team/recommenders:ref:refs/heads/main`
+      * Description: (Optional) A description of the credential.
+      * Audiences: Specifies who can use this credential; for GitHub
+        Actions, use `api://AzureADTokenExchange`.
+1. Create 3 Actions secrets
+   * `AZUREML_TEST_UMI_TENANT_ID`
+   * `AZUREML_TEST_UMI_SUB_ID`
+   * `AZUREML_TEST_UMI_CLIENT_ID`
+   
+   and use the UMI's tenant ID, subscription ID and client ID as the
+   values of the secrets, respectively, under the repository's
+   **Settings > Security > Secrets and variables > Actions**.
 
 
 ## How to execute tests in your local environment
