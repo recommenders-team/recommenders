@@ -491,8 +491,7 @@ def lru_cache_df(maxsize, typed=False):
 
 
 def _get_valid_ids(df, col_name, k):
-    """
-    Get valid IDs from a DataFrame based on the frequency of a column.
+    """Get valid IDs from a DataFrame based on the frequency of a column.
 
     Args:
         df (pandas.DataFrame): The DataFrame to extract IDs from.
@@ -502,6 +501,7 @@ def _get_valid_ids(df, col_name, k):
     Returns:
         pandas.Index: The valid IDs.
     """
+    # FIXME: Use instead return df[col_name].value_counts()[lambda x: x >= k].index
     frequency = df.groupby([col_name])[[col_name]].count()
     return frequency[frequency[col_name] >= k].index
 
