@@ -490,6 +490,22 @@ def lru_cache_df(maxsize, typed=False):
     return decorating_function
 
 
+def _get_valid_ids(df, col_name, k):
+    """
+    Get valid IDs from a DataFrame based on the frequency of a column.
+
+    Args:
+        df (pandas.DataFrame): The DataFrame to extract IDs from.
+        col_name (str): The name of the column to calculate frequency on.
+        k (int): The minimum frequency required for an ID to be considered valid.
+
+    Returns:
+        pandas.Index: The valid IDs.
+    """
+    frequency = df.groupby([col_name])[[col_name]].count()
+    return frequency[frequency[col_name] >= k].index
+
+
 def filter_k_interactions(
     df,
     user_k=10,
@@ -518,10 +534,10 @@ def filter_k_interactions(
     n_iter = 0
 
     while delta and n_iter < max_iter:
-        valid_users = get_valid_ids(df, user_col, user_k)
+        valid_users = _get_valid_ids(df, user_col, user_k)
         df = df[df[user_col].isin(valid_users)]
 
-        valid_items = get_valid_ids(df, item_col, item_k)
+        valid_items = _get_valid_ids(df, item_col, item_k)
         df = df[df[item_col].isin(valid_items)]
 
         num_users = len(valid_users)
