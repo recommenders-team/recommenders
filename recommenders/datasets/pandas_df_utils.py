@@ -162,10 +162,7 @@ class LibffmConverter:
         # Check column types.
         types = df.dtypes
         if not all(
-            [
-                x == object or np.issubdtype(x, np.integer) or x == float
-                for x in types
-            ]
+            [x == object or np.issubdtype(x, np.integer) or x == float for x in types]
         ):
             raise TypeError("Input columns should be only object and/or numeric types.")
 
@@ -491,3 +488,51 @@ def lru_cache_df(maxsize, typed=False):
         return wrapper
 
     return decorating_function
+
+
+def filter_k_interactions(
+    df,
+    user_k=10,
+    item_k=10,
+    max_iter=5,
+    user_col=DEFAULT_USER_COL,
+    item_col=DEFAULT_ITEM_COL,
+):
+    """Filters the DataFrame to retain only the users and items that have at least 'user_k' interactions and 'item_k' interactions respectively.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame containing user-item interactions.
+        user_k (int): The minimum number of interactions required for a user to be retained.
+        item_k (int): The minimum number of interactions required for an item to be retained.
+        max_iter (int): The maximum number of iterations to run the filtering process.
+        user_col (str): The name of the column representing the user IDs.
+        item_col (str): The name of the column representing the item IDs.
+
+    Returns:
+        pd.DataFrame: The filtered DataFrame containing only the users and items that satisfy the interaction count criteria.
+    """
+    num_users_prev, num_items_prev = len(df[user_col].unique()), len(
+        df[item_col].unique()
+    )
+    delta = True
+    n_iter = 0
+
+    while delta and n_iter < max_iter:
+        valid_users = get_valid_ids(df, user_col, user_k)
+        df = df[df[user_col].isin(valid_users)]
+
+        valid_items = get_valid_ids(df, item_col, item_k)
+        df = df[df[item_col].isin(valid_items)]
+
+        num_users = len(valid_users)
+        num_items = len(valid_items)
+
+        delta = (num_users != num_users_prev) or (num_items != num_items_prev)
+        logger.info(
+            f"Iteration: {n_iter}, users: {num_users} / {num_users_prev}, items: {num_items} / {num_items_prev}"
+        )
+
+        num_users_prev = num_users
+        num_items_prev = num_items
+        n_iter += 1
+    return df
