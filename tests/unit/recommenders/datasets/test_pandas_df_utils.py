@@ -330,19 +330,19 @@ def test_filter_k_interactions(sample_df):
     )
     pd.testing.assert_frame_equal(result, sample_df)
 
-    # # Test with simple filtering
-    # result = filter_k_interactions(
-    #     sample_df, user_k=2, item_k=2, user_col="user_id", item_col="item_id"
-    # )
-    # assert result.shape == (4, 2)  # Only users 1, 5 and items 6, 1 should remain
-    # assert set(result["user_id"].unique()) == {1, 5}
-    # assert set(result["item_id"].unique()) == {1, 6}
+    # Test with simple filtering
+    result = filter_k_interactions(
+        sample_df, user_k=2, item_k=1, user_col="user_id", item_col="item_id"
+    )
+    expected_array = np.array([[1, 2], [5, 6], [5, 8], [1, 2]])
+    np.testing.assert_array_equal(result.values, expected_array)
 
-    # # No change expected
-    # result = filter_k_interactions(
-    #     sample_df, user_k=1, item_k=1, user_col="user_id", item_col="item_id"
-    # )
-    # pd.testing.assert_frame_equal(result, sample_df)
+    # Test with simple filtering
+    result = filter_k_interactions(
+        sample_df, user_k=1, item_k=2, user_col="user_id", item_col="item_id"
+    )
+    expected_array = np.array([[1, 2], [9, 6], [5, 6], [1, 2]])
+    np.testing.assert_array_equal(result.values, expected_array)
 
     # # High thresholds should result in an empty DataFrame
     # result = filter_k_interactions(
