@@ -344,11 +344,11 @@ def test_filter_k_interactions(sample_df):
     expected_array = np.array([[1, 2], [9, 6], [5, 6], [1, 2]])
     np.testing.assert_array_equal(result.values, expected_array)
 
-    # # High thresholds should result in an empty DataFrame
-    # result = filter_k_interactions(
-    #     sample_df, user_k=5, item_k=5, user_col="user_id", item_col="item_id"
-    # )
-    # assert result.empty
+    # High thresholds should result in an empty DataFrame
+    result = filter_k_interactions(
+        sample_df, user_k=5, item_k=5, user_col="user_id", item_col="item_id"
+    )
+    assert result.empty
 
     # # Test with max iterations
     # result = filter_k_interactions(
