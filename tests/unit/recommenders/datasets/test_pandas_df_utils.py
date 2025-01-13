@@ -349,22 +349,3 @@ def test_filter_k_interactions(sample_df):
         sample_df, user_k=5, item_k=5, user_col="user_id", item_col="item_id"
     )
     assert result.empty
-
-    # # Test with max iterations
-    # result = filter_k_interactions(
-    #     sample_df,
-    #     user_k=2,
-    #     item_k=2,
-    #     max_iter=1,
-    #     user_col="user_id",
-    #     item_col="item_id",
-    # )
-    # # Since we're limited to one iteration, only initial filtering occurs
-    # assert result.shape == (4, 2)
-
-    # # Test with very few data points
-    # small_df = sample_df.iloc[:3]
-    # result = filter_k_interactions(
-    #     small_df, user_k=2, item_k=2, user_col="user_id", item_col="item_id"
-    # )
-    # assert result.empty  # Since no user or item has 2 interactions
