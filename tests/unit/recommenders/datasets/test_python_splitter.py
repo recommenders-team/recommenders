@@ -20,6 +20,7 @@ from recommenders.datasets.python_splitters import (
     python_chrono_split,
     python_random_split,
     python_stratified_split,
+    python_leave_one_out_split,
     numpy_stratified_split,
 )
 
@@ -94,6 +95,17 @@ def python_float_dataset(test_specs):
     )
 
 
+@pytest.fixture(scope="module")
+def python_ordered_dataset():
+    return pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5],
+            DEFAULT_ITEM_COL: [5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1],
+            DEFAULT_RATING_COL: np.random.randint(1, 6, 15),
+        }
+    )
+
+
 def test_split_pandas_data(pandas_dummy_timestamp):
     splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.5, 0.5])
     assert len(splits[0]) == 5
@@ -113,14 +125,7 @@ def test_split_pandas_data(pandas_dummy_timestamp):
         )
 
 
-def test_min_rating_filter():
-    python_dataset = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5],
-            DEFAULT_ITEM_COL: [5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1],
-            DEFAULT_RATING_COL: np.random.randint(1, 6, 15),
-        }
-    )
+def test_min_rating_filter(python_ordered_dataset):
 
     def count_filtered_rows(data, filter_by="user"):
         split_by_column = DEFAULT_USER_COL if filter_by == "user" else DEFAULT_ITEM_COL
@@ -133,8 +138,12 @@ def test_min_rating_filter():
 
         return row_counts
 
-    df_user = min_rating_filter_pandas(python_dataset, min_rating=3, filter_by="user")
-    df_item = min_rating_filter_pandas(python_dataset, min_rating=2, filter_by="item")
+    df_user = min_rating_filter_pandas(
+        python_ordered_dataset, min_rating=3, filter_by="user"
+    )
+    df_item = min_rating_filter_pandas(
+        python_ordered_dataset, min_rating=2, filter_by="item"
+    )
     user_rating_counts = count_filtered_rows(df_user, filter_by="user")
     item_rating_counts = count_filtered_rows(df_item, filter_by="item")
 
@@ -345,6 +354,30 @@ def test_stratified_splitter(test_specs, python_dataset):
 
     for split in splits:
         assert set(split.columns) == set(python_dataset.columns)
+
+
+def test_leave_one_out_split(python_ordered_dataset):
+    expected_train = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [2, 3, 3, 4, 4, 4, 5, 5, 5, 5],
+            DEFAULT_ITEM_COL: [5, 5, 5, 4, 4, 4, 3, 3, 2, 2],
+        },
+        index=range(10),
+    )
+    expected_test = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2, 3, 4, 5],
+            DEFAULT_ITEM_COL: [5, 5, 4, 3, 1],
+        },
+        index=range(5),
+    )
+
+    df_train, df_test = python_leave_one_out_split(
+        python_ordered_dataset[[DEFAULT_USER_COL, DEFAULT_ITEM_COL]], DEFAULT_USER_COL
+    )
+
+    pd.testing.assert_frame_equal(df_train, expected_train, check_dtype=False)
+    pd.testing.assert_frame_equal(df_test, expected_test, check_dtype=False)
 
 
 def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
