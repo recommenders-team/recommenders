@@ -379,6 +379,28 @@ def test_leave_one_out_split(python_ordered_dataset):
     pd.testing.assert_frame_equal(df_train, expected_train, check_dtype=False)
     pd.testing.assert_frame_equal(df_test, expected_test, check_dtype=False)
 
+    expected_train = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2, 2, 3, 3, 4, 4, 4, 5, 5],
+            DEFAULT_ITEM_COL: [5, 5, 5, 5, 4, 4, 4, 3, 3, 2],
+        },
+        index=range(10),
+    )
+    expected_test = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [3, 4, 5, 5, 5],
+            DEFAULT_ITEM_COL: [5, 4, 3, 2, 1],
+        },
+        index=range(5),
+    )
+
+    df_train, df_test = python_leave_one_out_split(
+        python_ordered_dataset[[DEFAULT_USER_COL, DEFAULT_ITEM_COL]], DEFAULT_ITEM_COL
+    )
+
+    pd.testing.assert_frame_equal(df_train, expected_train, check_dtype=False)
+    pd.testing.assert_frame_equal(df_test, expected_test, check_dtype=False)
+
 
 def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
     # generate a syntetic dataset
