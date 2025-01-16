@@ -204,6 +204,26 @@ def python_stratified_split(
     )
 
 
+def python_leave_one_out_split(data, col_name):
+    """Pandas leave-one-out splitter.
+
+    This function splits data into two sets: one set contains all but the last
+    occurrence of each user/item, and the other set contains only the last
+    occurrence of each user/item.
+
+    Args:
+        data (pandas.DataFrame): Pandas DataFrame to be split.
+        col_name (str): Column name to group by.
+
+    Returns:
+        pandas.DataFrame, pandas.DataFrame: Two splits of the input data.
+    """
+    df_groupby = data.groupby(by=col_name, as_index=False)
+    df_test = df_groupby.nth(-1)
+    df_train = data.iloc[data.index.difference(df_test.index)]
+    return df_train.reset_index(drop=True), df_test.reset_index(drop=True)
+
+
 def numpy_stratified_split(X, ratio=0.75, seed=42):
     """Split the user/item affinity matrix (sparse matrix) into train and test set matrices while maintaining
     local (i.e. per user) ratios.
