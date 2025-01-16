@@ -275,3 +275,34 @@ def spark_timestamp_split(
         col_item=col_item,
         col_timestamp=col_timestamp,
     )
+
+
+def spark_leave_one_out_split(data, col_name):
+    """
+    PySpark leave-one-out splitter.
+
+    This function splits data into two sets: one set contains all but the last
+    occurrence of each user/item, and the other set contains only the last
+    occurrence of each user/item.
+
+    Args:
+        data (pyspark.sql.DataFrame): PySpark DataFrame to be split.
+        col_name (str): Column name to group by.
+
+    Returns:
+        pyspark.sql.DataFrame, pyspark.sql.DataFrame: Two splits of the input data.
+    """
+    col_num = "row_num"
+    window_spec = Window.partitionBy(col_name).orderBy("index")
+    df_with_row_num = data.withColumn(col_num, F.row_number().over(window_spec))
+
+    df_test = df_with_row_num.filter(
+        df_with_row_num.row_num
+        == df_with_row_num.select(col_num).agg({col_num: "max"}).first()[0]
+    )
+    df_train = df_with_row_num.filter(
+        df_with_row_num.row_num
+        != df_with_row_num.select(col_num).agg({col_num: "max"}).first()[0]
+    )
+
+    return df_train.drop(col_num), df_test.drop(col_num)
