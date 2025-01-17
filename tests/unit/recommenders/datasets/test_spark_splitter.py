@@ -100,21 +100,6 @@ def _if_later(data1, data2):
     return all([x[0] for x in all_times.collect()])
 
 
-def is_df_equal(df1, df2):
-    """Helper function to assert if two dataframes are equal.
-
-    Args:
-        df1 (pyspark.sql.DataFrame): First dataframe.
-        df2 (pyspark.sql.DataFrame): Second dataframe.
-
-    Returns:
-        bool: True or False indicating if two dataframes are equal.
-    """
-    if df1.schema != df2.schema:
-        return False
-    return df1.subtract(df2).count() == 0 and df2.subtract(df1).count() == 0
-
-
 @pytest.mark.spark
 def test_min_rating_filter(spark_dataset):
     dfs_user = min_rating_filter_spark(spark_dataset, min_rating=5, filter_by="user")
@@ -289,37 +274,34 @@ def test_leave_one_out_split(spark, spark_ordered_dataset):
     assert df_train.collect() == expected_train.collect()
     assert df_test.collect() == expected_test.collect()
 
-    # assert is_df_equal(df_train, expected_train) is True
-    # assert is_df_equal(df_test, expected_test) is True
+    # Test by itemID
+    expected_train = spark.createDataFrame(
+        [
+            (1, 5),
+            (2, 5),
+            (2, 5),
+            (3, 5),
+            (3, 5),
+            (4, 4),
+            (4, 4),
+            (4, 4),
+            (5, 3),
+            (5, 3),
+        ],
+        [DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+    )
 
-    # # Test by itemID
-    # expected_train = spark.createDataFrame(
-    #     [
-    #         (1, 5),
-    #         (2, 5),
-    #         (2, 5),
-    #         (3, 5),
-    #         (3, 5),
-    #         (4, 4),
-    #         (4, 4),
-    #         (4, 4),
-    #         (5, 3),
-    #         (5, 3),
-    #     ],
-    #     [DEFAULT_USER_COL, DEFAULT_ITEM_COL],
-    # )
+    expected_test = spark.createDataFrame(
+        [(3, 5), (4, 4), (5, 3), (5, 2), (5, 1)], [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
+    )
 
-    # expected_test = spark.createDataFrame(
-    #     [(3, 5), (4, 4), (5, 3), (5, 2), (5, 1)], [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
-    # )
+    df_train, df_test = spark_leave_one_out_split(
+        spark_ordered_dataset.select(DEFAULT_USER_COL, DEFAULT_ITEM_COL).withColumn(
+            "index",
+            F.row_number().over(Window.orderBy(DEFAULT_ITEM_COL, DEFAULT_USER_COL)),
+        ),
+        DEFAULT_ITEM_COL,
+    )
 
-    # df_train, df_test = spark_leave_one_out_split(
-    #     spark_ordered_dataset.select(DEFAULT_USER_COL, DEFAULT_ITEM_COL).withColumn(
-    #         "index",
-    #         F.row_number().over(Window.orderBy(DEFAULT_ITEM_COL, DEFAULT_USER_COL)),
-    #     ),
-    #     DEFAULT_ITEM_COL,
-    # )
-
-    # assert is_df_equal(df_train, expected_train) is True
-    # assert is_df_equal(df_test, expected_test) is True
+    assert df_train.collect() == expected_train.collect()
+    assert df_test.collect() == expected_test.collect()

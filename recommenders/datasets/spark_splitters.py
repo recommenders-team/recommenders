@@ -293,67 +293,23 @@ def spark_leave_one_out_split(data, col_name):
         pyspark.sql.DataFrame, pyspark.sql.DataFrame: Two splits of the input data.
     """
     col_num = "row_num"
-    # window_spec = Window.partitionBy(col_name).orderBy(F.monotonically_increasing_id())
-    # df_with_row_num = data.withColumn(col_num, F.row_number().over(window_spec))
+    col_max_num = "max_row_num"
+    # Define a window spec to partition by col_name and order by a unique ID
+    window_spec = Window.partitionBy(col_name).orderBy(F.monotonically_increasing_id())
 
-    # df_test = df_with_row_num.filter(
-    #     df_with_row_num.row_num
-    #     == df_with_row_num.select(col_num).agg({col_num: "max"}).first()[0]
-    # )
-    # df_train = df_with_row_num.filter(
-    #     df_with_row_num.row_num
-    #     != df_with_row_num.select(col_num).agg({col_num: "max"}).first()[0]
-    # )
+    # Add a row number column and calculate the max row number for each group
+    df_with_row_num = data.withColumn(
+        "row_num", F.row_number().over(window_spec)
+    ).withColumn("max_row_num", F.max("row_num").over(Window.partitionBy(col_name)))
 
-    # # Define a window spec to order data within each group
-    # window_spec = Window.partitionBy(col_name).orderBy(F.monotonically_increasing_id())
-
-    # # Add a row number to each group
-    # data_with_row_num = data.withColumn("row_num", F.row_number().over(window_spec))
-
-    # # Determine the max row number for each group
-    # max_row_num = data_with_row_num.groupBy(col_name).agg(
-    #     F.max("row_num").alias("max_row_num")
-    # )
-
-    # # Extract the test data (last occurrence for each group)
-    # test_data = data_with_row_num.join(max_row_num, on=[col_name])
-    # test_data = test_data.filter(F.col("row_num") == F.col("max_row_num")).drop(
-    #     "row_num", "max_row_num"
-    # )
-
-    # # Extract the training data (all but the last occurrence for each group)
-    # train_data = data_with_row_num.join(
-    #     test_data.select("row_num").withColumnRenamed("row_num", "test_row"),
-    #     on=(data_with_row_num["row_num"] == F.col("test_row")),
-    #     how="left_anti",
-    # )
-
-    # # Drop the additional row_num column before returning
-    # train_data = train_data.drop("row_num")
-    # test_data = test_data.drop("row_num")
-
-    # return train_data, test_data
-
-    # Create a window spec to rank rows within each group
-    window = Window.partitionBy(col_name).orderBy(F.monotonically_increasing_id())
-
-    # Add row numbers within each group
-    data_with_rank = data.withColumn("row_num", F.row_number().over(window))
-
-    # Get the count for each group
-    counts = data_with_rank.groupBy(col_name).agg(F.count("*").alias("group_count"))
-
-    # Join the counts back to get last row indicator
-    data_with_counts = data_with_rank.join(counts, on=col_name, how="left")
-
-    # Split into train and test sets
-    df_test = data_with_counts.filter(F.col("row_num") == F.col("group_count")).drop(
-        "row_num", "group_count"
+    # Find the last row for each group as the test set
+    test_data = df_with_row_num.filter(F.col("row_num") == F.col("max_row_num")).drop(
+        "row_num", "max_row_num"
     )
 
-    df_train = data_with_counts.filter(F.col("row_num") != F.col("group_count")).drop(
-        "row_num", "group_count"
+    # Create the train set by filtering out the last row of each group
+    train_data = df_with_row_num.filter(F.col("row_num") < F.col("max_row_num")).drop(
+        "row_num", "max_row_num"
     )
 
-    return df_train, df_test
+    return train_data, test_data
