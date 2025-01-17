@@ -292,13 +292,36 @@ def spark_leave_one_out_split(data, col_name):
     Returns:
         pyspark.sql.DataFrame, pyspark.sql.DataFrame: Two splits of the input data.
     """
-    col_num = "row_num"
-    col_max_num = "max_row_num"
-    # Define a window spec to partition by col_name and order by a unique ID
-    window_spec = Window.partitionBy(col_name).orderBy(F.monotonically_increasing_id())
+    # col_num = "row_num"
+    # col_max_num = "max_row_num"
+    # # Define a window spec to partition by col_name and order by a unique ID
+    # window_spec = Window.partitionBy(col_name).orderBy(F.monotonically_increasing_id())
+
+    # # Add a row number column and calculate the max row number for each group
+    # df_with_row_num = data.withColumn(
+    #     "row_num", F.row_number().over(window_spec)
+    # ).withColumn("max_row_num", F.max("row_num").over(Window.partitionBy(col_name)))
+
+    # # Find the last row for each group as the test set
+    # test_data = df_with_row_num.filter(F.col("row_num") == F.col("max_row_num")).drop(
+    #     "row_num", "max_row_num"
+    # )
+
+    # # Create the train set by filtering out the last row of each group
+    # train_data = df_with_row_num.filter(F.col("row_num") < F.col("max_row_num")).drop(
+    #     "row_num", "max_row_num"
+    # )
+
+    # return train_data, test_data
+
+    # Add an ordering column to preserve the original order
+    data_with_order = data.withColumn("original_order", F.monotonically_increasing_id())
+
+    # Define a window spec to partition by col_name and order by the original order
+    window_spec = Window.partitionBy(col_name).orderBy("original_order")
 
     # Add a row number column and calculate the max row number for each group
-    df_with_row_num = data.withColumn(
+    df_with_row_num = data_with_order.withColumn(
         "row_num", F.row_number().over(window_spec)
     ).withColumn("max_row_num", F.max("row_num").over(Window.partitionBy(col_name)))
 
@@ -311,5 +334,9 @@ def spark_leave_one_out_split(data, col_name):
     train_data = df_with_row_num.filter(F.col("row_num") < F.col("max_row_num")).drop(
         "row_num", "max_row_num"
     )
+
+    # Ensure both train and test data are ordered by the original input order
+    train_data = train_data.orderBy("original_order").drop("original_order")
+    test_data = test_data.orderBy("original_order").drop("original_order")
 
     return train_data, test_data

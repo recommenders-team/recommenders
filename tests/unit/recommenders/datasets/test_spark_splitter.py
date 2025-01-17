@@ -281,12 +281,12 @@ def test_leave_one_out_split(spark, spark_ordered_dataset):
             (2, 5),
             (2, 5),
             (3, 5),
-            (3, 5),
+            (3, 4),
             (4, 4),
             (4, 4),
-            (4, 4),
+            (4, 3),
             (5, 3),
-            (5, 3),
+            (5, 2),
         ],
         [DEFAULT_USER_COL, DEFAULT_ITEM_COL],
     )
@@ -296,10 +296,7 @@ def test_leave_one_out_split(spark, spark_ordered_dataset):
     )
 
     df_train, df_test = spark_leave_one_out_split(
-        spark_ordered_dataset.select(DEFAULT_USER_COL, DEFAULT_ITEM_COL).withColumn(
-            "index",
-            F.row_number().over(Window.orderBy(DEFAULT_ITEM_COL, DEFAULT_USER_COL)),
-        ),
+        spark_ordered_dataset.select(DEFAULT_USER_COL, DEFAULT_ITEM_COL),
         DEFAULT_ITEM_COL,
     )
 
