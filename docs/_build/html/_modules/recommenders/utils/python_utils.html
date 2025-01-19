@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,9 +318,9 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">sparse</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
@@ -328,7 +328,7 @@
 
 <div class="viewcode-block" id="exponential_decay">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.exponential_decay">[docs]</a>
-<span class="k">def</span> <span class="nf">exponential_decay</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">half_life</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">exponential_decay</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">half_life</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute decay factor for a given value based on an exponential decay.</span>
 
 <span class="sd">    Values greater than `max_val` will be set to 1.</span>
@@ -345,7 +345,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_row_and_column_matrix</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_row_and_column_matrix</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to get the row and column matrix from an array.</span>
 
 <span class="sd">    Args:</span>
@@ -361,7 +361,7 @@
 
 <div class="viewcode-block" id="jaccard">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.jaccard">[docs]</a>
-<span class="k">def</span> <span class="nf">jaccard</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">jaccard</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to calculate the Jaccard similarity of a matrix of</span>
 <span class="sd">    co-occurrences.  When comparing Jaccard with count co-occurrence</span>
 <span class="sd">    and lift similarity, count favours predictability, meaning that</span>
@@ -390,7 +390,7 @@
 
 <div class="viewcode-block" id="lift">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.lift">[docs]</a>
-<span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lift</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to calculate the Lift of a matrix of</span>
 <span class="sd">    co-occurrences. In comparison with basic co-occurrence and Jaccard</span>
 <span class="sd">    similarity, lift favours discoverability and serendipity, as</span>
@@ -416,7 +416,7 @@
 
 <div class="viewcode-block" id="mutual_information">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.mutual_information">[docs]</a>
-<span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mutual_information</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to calculate the Mutual Information of a matrix of</span>
 <span class="sd">    co-occurrences.</span>
 
@@ -440,7 +440,7 @@
 
 <div class="viewcode-block" id="lexicographers_mutual_information">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.lexicographers_mutual_information">[docs]</a>
-<span class="k">def</span> <span class="nf">lexicographers_mutual_information</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lexicographers_mutual_information</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to calculate the Lexicographers Mutual Information of</span>
 <span class="sd">    a matrix of co-occurrences.</span>
 
@@ -465,7 +465,7 @@
 
 <div class="viewcode-block" id="cosine_similarity">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.cosine_similarity">[docs]</a>
-<span class="k">def</span> <span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to calculate the Cosine similarity of a matrix of</span>
 <span class="sd">    co-occurrences.</span>
 
@@ -491,7 +491,7 @@
 
 <div class="viewcode-block" id="inclusion_index">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.inclusion_index">[docs]</a>
-<span class="k">def</span> <span class="nf">inclusion_index</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inclusion_index</span><span class="p">(</span><span class="n">cooccurrence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to calculate the Inclusion Index of a matrix of</span>
 <span class="sd">    co-occurrences.</span>
 
@@ -516,7 +516,7 @@
 
 <div class="viewcode-block" id="get_top_k_scored_items">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.get_top_k_scored_items">[docs]</a>
-<span class="k">def</span> <span class="nf">get_top_k_scored_items</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_top_k_scored_items</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract top K items from a matrix of scores for each user-item pair, optionally sort results per user.</span>
 
 <span class="sd">    Args:</span>
@@ -559,7 +559,7 @@
 
 <div class="viewcode-block" id="binarize">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.binarize">[docs]</a>
-<span class="k">def</span> <span class="nf">binarize</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">binarize</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Binarize the values.</span>
 
 <span class="sd">    Args:</span>
@@ -575,7 +575,7 @@
 
 <div class="viewcode-block" id="rescale">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.python_utils.rescale">[docs]</a>
-<span class="k">def</span> <span class="nf">rescale</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_max</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rescale</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_max</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rescale/normalize the data to be within the range `[new_min, new_max]`</span>
 <span class="sd">    If data_min and data_max are explicitly provided, they will be used</span>
 <span class="sd">    as the old min/max values instead of taken from the data.</span>

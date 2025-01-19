@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,20 +318,20 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span><span class="p">,</span> <span class="n">Window</span>
-    <span class="kn">from</span> <span class="nn">pyspark.storagelevel</span> <span class="kn">import</span> <span class="n">StorageLevel</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span><span class="p">,</span> <span class="n">Window</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.storagelevel</span><span class="w"> </span><span class="kn">import</span> <span class="n">StorageLevel</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>  <span class="c1"># skip this import if we are in pure python environment</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_TIMESTAMP_COL</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">recommenders.datasets.split_utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.datasets.split_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">process_split_ratio</span><span class="p">,</span>
     <span class="n">min_rating_filter_spark</span><span class="p">,</span>
 <span class="p">)</span>
@@ -339,7 +339,7 @@
 
 <div class="viewcode-block" id="spark_random_split">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.spark_splitters.spark_random_split">[docs]</a>
-<span class="k">def</span> <span class="nf">spark_random_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spark_random_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark random splitter.</span>
 
 <span class="sd">    Randomly split the data into several splits.</span>
@@ -365,7 +365,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_do_stratification_spark</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_do_stratification_spark</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
     <span class="n">min_rating</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -468,7 +468,7 @@
 
 <div class="viewcode-block" id="spark_chrono_split">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.spark_splitters.spark_chrono_split">[docs]</a>
-<span class="k">def</span> <span class="nf">spark_chrono_split</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spark_chrono_split</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
     <span class="n">min_rating</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -518,7 +518,7 @@
 
 <div class="viewcode-block" id="spark_stratified_split">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.spark_splitters.spark_stratified_split">[docs]</a>
-<span class="k">def</span> <span class="nf">spark_stratified_split</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spark_stratified_split</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
     <span class="n">min_rating</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -565,7 +565,7 @@
 
 <div class="viewcode-block" id="spark_timestamp_split">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.spark_splitters.spark_timestamp_split">[docs]</a>
-<span class="k">def</span> <span class="nf">spark_timestamp_split</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spark_timestamp_split</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">ratio</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>

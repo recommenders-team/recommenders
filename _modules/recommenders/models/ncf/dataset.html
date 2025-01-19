@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,16 +318,16 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
@@ -339,35 +339,35 @@
 
 <div class="viewcode-block" id="EmptyFileException">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.EmptyFileException">[docs]</a>
-<span class="k">class</span> <span class="nc">EmptyFileException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmptyFileException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if file is empty&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="MissingFieldsException">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.MissingFieldsException">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingFieldsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingFieldsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if file is missing expected fields&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="FileNotSortedException">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.FileNotSortedException">[docs]</a>
-<span class="k">class</span> <span class="nc">FileNotSortedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileNotSortedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if file is not sorted correctly&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="MissingUserException">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.MissingUserException">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingUserException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingUserException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if user is not in file&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="DataFile">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.DataFile">[docs]</a>
-<span class="k">class</span> <span class="nc">DataFile</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataFile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    DataFile class for NCF. Iterator to read data from a csv file.</span>
 <span class="sd">    Data must be sorted by user. Includes utilities for loading user data from</span>
@@ -376,7 +376,7 @@
 
 <div class="viewcode-block" id="DataFile.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.DataFile.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">col_user</span><span class="p">,</span> <span class="n">col_item</span><span class="p">,</span> <span class="n">col_rating</span><span class="p">,</span> <span class="n">col_test_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
@@ -404,21 +404,21 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">end_of_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end_of_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="ow">is</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;UTF8&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_for_missing_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_fields</span><span class="p">)</span>
@@ -426,13 +426,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_row</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -446,7 +446,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span>
 
-    <span class="k">def</span> <span class="nf">_check_for_missing_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_to_check</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_for_missing_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_to_check</span><span class="p">):</span>
         <span class="n">missing_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fields_to_check</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">fieldnames</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_fields</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MissingFieldsException</span><span class="p">(</span>
@@ -455,7 +455,7 @@
                 <span class="p">)</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_extract_row_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_row_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">row</span>
         <span class="n">user</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">])</span>
@@ -473,7 +473,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">col_test_batch</span><span class="p">:</span> <span class="n">test_batch</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Compile lists of unique users and items, assign IDs to users and items,</span>
         <span class="c1"># and ensure file is sorted by user (and batch index if test set)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Indexing </span><span class="si">{}</span><span class="s2"> ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
@@ -514,7 +514,7 @@
 
 <div class="viewcode-block" id="DataFile.load_data">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.DataFile.load_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load data for a specified user or test batch</span>
 
 <span class="sd">        Args:</span>
@@ -551,12 +551,12 @@
 
 <div class="viewcode-block" id="NegativeSampler">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler">[docs]</a>
-<span class="k">class</span> <span class="nc">NegativeSampler</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NegativeSampler</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;NegativeSampler class for NCF. Samples a subset of negative items from a given population of items.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="NegativeSampler.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user</span><span class="p">,</span>
         <span class="n">n_samples</span><span class="p">,</span>
@@ -600,7 +600,7 @@
 
 <div class="viewcode-block" id="NegativeSampler.sample">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.NegativeSampler.sample">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Method for sampling uniformly from a population of negative items</span>
 
 <span class="sd">        Returns: list</span>
@@ -608,17 +608,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_user_negatives_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_user_negatives_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># get list of items user has not interacted with</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_pool</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_positive_item_pool</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_sample_negatives_with_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_negatives_with_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_negative_item_pool</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_sample_negatives_without_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_negatives_without_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_negative_item_pool</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># if sampling without replacement, check sample population is sufficient and reduce</span>
         <span class="c1"># n_samples if not.</span>
         <span class="n">n_neg_var</span> <span class="o">=</span> <span class="s2">&quot;n_neg&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="k">else</span> <span class="s2">&quot;n_neg_test&quot;</span>
@@ -647,12 +647,12 @@
 
 <div class="viewcode-block" id="Dataset">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset">[docs]</a>
-<span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset class for NCF&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Dataset.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train_file</span><span class="p">,</span>
         <span class="n">test_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -742,7 +742,7 @@
         <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_create_negative_examples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">user_negative_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_negative_examples_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">user_negative_samples</span><span class="p">):</span>
         <span class="c1"># create dataframe containing negative examples for user assigned zero rating</span>
         <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_negative_samples</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
@@ -753,7 +753,7 @@
             <span class="p">}</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_test_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_test_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Creating full leave-one-out test file </span><span class="si">{}</span><span class="s2"> ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">)</span>
@@ -805,25 +805,25 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">test_file_full</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span>
                         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_split_into_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_into_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shuffle_buffer</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">shuffle_buffer</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_batch_with_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_batch_with_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">item2id</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
             <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
         <span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_batch_without_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_batch_without_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
             <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
             <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_rating</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
         <span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_release_shuffle_buffer</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_release_shuffle_buffer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">shuffle_buffer</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">yield_id</span><span class="p">,</span> <span class="n">write_to</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">prepare_batch</span> <span class="o">=</span> <span class="p">(</span>
@@ -843,7 +843,7 @@
 
 <div class="viewcode-block" id="Dataset.train_loader">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset.train_loader">[docs]</a>
-    <span class="k">def</span> <span class="nf">train_loader</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train_loader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yield_id</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">write_to</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -909,7 +909,7 @@
 
 <div class="viewcode-block" id="Dataset.test_loader">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.dataset.Dataset.test_loader">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yield_id</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yield_id</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator for serving batches of test data for leave-one-out evaluation. Data is loaded from test_file_full.</span>
 
 <span class="sd">        Args:</span>

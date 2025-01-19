@@ -29,7 +29,7 @@
   <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -337,22 +337,22 @@
 <span class="sd">Constructing multi-layer cells is supported by the class `MultiRNNCell`, or by</span>
 <span class="sd">calling the `rnn` ops several times.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_function</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">array_ops</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">clip_ops</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">init_ops</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">math_ops</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">nn_ops</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">partitioned_variables</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">variable_scope</span> <span class="k">as</span> <span class="n">vs</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.platform</span> <span class="kn">import</span> <span class="n">tf_logging</span> <span class="k">as</span> <span class="n">logging</span>
-<span class="kn">from</span> <span class="nn">tensorflow.python.util</span> <span class="kn">import</span> <span class="n">nest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">array_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">clip_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">math_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">partitioned_variables</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">variable_scope</span> <span class="k">as</span> <span class="n">vs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.platform</span><span class="w"> </span><span class="kn">import</span> <span class="n">tf_logging</span> <span class="k">as</span> <span class="n">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">nest</span>
 
-<span class="kn">from</span> <span class="nn">tensorflow.python.ops.rnn_cell_impl</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.python.ops.rnn_cell_impl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">RNNCell</span><span class="p">,</span>
     <span class="n">LSTMStateTuple</span><span class="p">,</span>
     <span class="n">_BIAS_VARIABLE_NAME</span><span class="p">,</span>
@@ -362,8 +362,8 @@
 
 <div class="viewcode-block" id="Time4LSTMCell">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell">[docs]</a>
-<span class="k">class</span> <span class="nc">Time4LSTMCell</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Time4LSTMCell</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_units</span><span class="p">,</span>
         <span class="n">use_peepholes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -437,16 +437,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">state_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
 
 <div class="viewcode-block" id="Time4LSTMCell.call">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4LSTMCell.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call method for the Time4LSTMCell.</span>
 
 <span class="sd">        Args:</span>
@@ -633,8 +633,8 @@
 
 <div class="viewcode-block" id="Time4ALSTMCell">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4ALSTMCell">[docs]</a>
-<span class="k">class</span> <span class="nc">Time4ALSTMCell</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Time4ALSTMCell</span><span class="p">(</span><span class="n">RNNCell</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_units</span><span class="p">,</span>
         <span class="n">use_peepholes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -708,16 +708,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_w_o_diag</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">state_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_size</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
 
 <div class="viewcode-block" id="Time4ALSTMCell.call">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.rnn_cell_implement.Time4ALSTMCell.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call method for the Time4ALSTMCell.</span>
 
 <span class="sd">        Args:</span>
@@ -904,7 +904,7 @@
 
 
 
-<span class="k">class</span> <span class="nc">_Linear</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Linear</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Linear map: sum_i(args[i] * W[i]), where W[i] is a variable.</span>
 
 <span class="sd">    Args:</span>
@@ -920,7 +920,7 @@
 <span class="sd">      ValueError: if inputs_shape is wrong.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">args</span><span class="p">,</span>
         <span class="n">output_size</span><span class="p">,</span>
@@ -976,7 +976,7 @@
                         <span class="n">initializer</span><span class="o">=</span><span class="n">bias_initializer</span><span class="p">,</span>
                     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_sequence</span><span class="p">:</span>
             <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">]</span>
 

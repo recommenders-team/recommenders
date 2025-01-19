@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,16 +318,16 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
-<span class="kn">from</span> <span class="nn">lightfm.evaluation</span> <span class="kn">import</span> <span class="n">precision_at_k</span><span class="p">,</span> <span class="n">recall_at_k</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lightfm.evaluation</span><span class="w"> </span><span class="kn">import</span> <span class="n">precision_at_k</span><span class="p">,</span> <span class="n">recall_at_k</span>
 
 
 <div class="viewcode-block" id="model_perf_plots">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.model_perf_plots">[docs]</a>
-<span class="k">def</span> <span class="nf">model_perf_plots</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_perf_plots</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to plot model performance metrics.</span>
 
 <span class="sd">    Args:</span>
@@ -343,7 +343,7 @@
 
 <div class="viewcode-block" id="compare_metric">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.compare_metric">[docs]</a>
-<span class="k">def</span> <span class="nf">compare_metric</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;prec&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_metric</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;prec&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to combine and prepare list of dataframes into tidy format.</span>
 
 <span class="sd">    Args:</span>
@@ -370,7 +370,7 @@
 
 <div class="viewcode-block" id="track_model_metrics">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.track_model_metrics">[docs]</a>
-<span class="k">def</span> <span class="nf">track_model_metrics</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">track_model_metrics</span><span class="p">(</span>
     <span class="n">model</span><span class="p">,</span>
     <span class="n">train_interactions</span><span class="p">,</span>
     <span class="n">test_interactions</span><span class="p">,</span>
@@ -453,7 +453,7 @@
 
 <div class="viewcode-block" id="similar_users">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.similar_users">[docs]</a>
-<span class="k">def</span> <span class="nf">similar_users</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_features</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">similar_users</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_features</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to return top N similar users based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681</span>
 
 <span class="sd">     Args:</span>
@@ -483,7 +483,7 @@
 
 <div class="viewcode-block" id="similar_items">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.similar_items">[docs]</a>
-<span class="k">def</span> <span class="nf">similar_items</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">item_features</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">similar_items</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">item_features</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to return top N similar items</span>
 <span class="sd">    based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681</span>
 
@@ -514,7 +514,7 @@
 
 <div class="viewcode-block" id="prepare_test_df">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.prepare_test_df">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_test_df</span><span class="p">(</span><span class="n">test_idx</span><span class="p">,</span> <span class="n">uids</span><span class="p">,</span> <span class="n">iids</span><span class="p">,</span> <span class="n">uid_map</span><span class="p">,</span> <span class="n">iid_map</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_test_df</span><span class="p">(</span><span class="n">test_idx</span><span class="p">,</span> <span class="n">uids</span><span class="p">,</span> <span class="n">iids</span><span class="p">,</span> <span class="n">uid_map</span><span class="p">,</span> <span class="n">iid_map</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to prepare test df for evaluation</span>
 
 <span class="sd">    Args:</span>
@@ -547,7 +547,7 @@
 
 <div class="viewcode-block" id="prepare_all_predictions">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightfm.lightfm_utils.prepare_all_predictions">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_all_predictions</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_all_predictions</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">uid_map</span><span class="p">,</span>
     <span class="n">iid_map</span><span class="p">,</span>

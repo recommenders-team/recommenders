@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -328,17 +328,17 @@
 <span class="c1"># Based on: https://github.com/ianozsvald/ipython_memory_usage</span>
 <span class="c1">#</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>  <span class="c1"># 1/2 == 0.5, as in Py3</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>  <span class="c1"># avoid hiding global modules with locals</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>  <span class="c1"># force use of print(&quot;hello&quot;)</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>  <span class="c1"># 1/2 == 0.5, as in Py3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">absolute_import</span>  <span class="c1"># avoid hiding global modules with locals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_function</span>  <span class="c1"># force use of print(&quot;hello&quot;)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">unicode_literals</span><span class="p">,</span>
 <span class="p">)</span>  <span class="c1"># force unadorned strings &quot;&quot; to be Unicode without prepending u&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">memory_profiler</span>
-<span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">get_ipython</span>
-<span class="kn">import</span> <span class="nn">psutil</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">memory_profiler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ipython</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 
 <span class="c1"># keep a global accounting for the last known memory usage</span>
@@ -355,7 +355,7 @@
 
 <div class="viewcode-block" id="start_watching_memory">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_memory_management.start_watching_memory">[docs]</a>
-<span class="k">def</span> <span class="nf">start_watching_memory</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_watching_memory</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register memory profiling tools to IPython instance.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">watching_memory</span>
     <span class="n">watching_memory</span> <span class="o">=</span> <span class="kc">True</span>
@@ -367,7 +367,7 @@
 
 <div class="viewcode-block" id="stop_watching_memory">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_memory_management.stop_watching_memory">[docs]</a>
-<span class="k">def</span> <span class="nf">stop_watching_memory</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stop_watching_memory</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unregister memory profiling tools from IPython instance.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">watching_memory</span>
     <span class="n">watching_memory</span> <span class="o">=</span> <span class="kc">False</span>
@@ -387,7 +387,7 @@
 
 <div class="viewcode-block" id="watch_memory">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_memory_management.watch_memory">[docs]</a>
-<span class="k">def</span> <span class="nf">watch_memory</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">watch_memory</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Bring in the global memory usage value from the previous iteration&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">previous_call_memory_usage</span><span class="p">,</span> <span class="n">keep_watching</span><span class="p">,</span> <span class="n">watching_memory</span><span class="p">,</span> <span class="n">input_cells</span>
     <span class="n">new_memory_usage</span> <span class="o">=</span> <span class="n">memory_profiler</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
@@ -420,7 +420,7 @@
 
 <div class="viewcode-block" id="pre_run_cell">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_memory_management.pre_run_cell">[docs]</a>
-<span class="k">def</span> <span class="nf">pre_run_cell</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_run_cell</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture current time before we execute the current command&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">t1</span>
     <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>

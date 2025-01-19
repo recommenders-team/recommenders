@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">scipy.sparse</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
@@ -333,7 +333,7 @@
 
 <div class="viewcode-block" id="ImplicitCF">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF">[docs]</a>
-<span class="k">class</span> <span class="nc">ImplicitCF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImplicitCF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data processing class for GCN models which use implicit feedback.</span>
 
 <span class="sd">    Initialize train and test set, create normalized adjacency matrix and sample data for training epochs.</span>
@@ -342,7 +342,7 @@
 
 <div class="viewcode-block" id="ImplicitCF.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train</span><span class="p">,</span>
         <span class="n">test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -380,7 +380,7 @@
         <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_data_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.</span>
 
 <span class="sd">        Args:</span>
@@ -427,7 +427,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span><span class="p">(</span><span class="n">train</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_reindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.</span>
 
 <span class="sd">        Args:</span>
@@ -453,7 +453,7 @@
 
         <span class="k">return</span> <span class="n">df_reindex</span>
 
-    <span class="k">def</span> <span class="nf">_init_train_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_train_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Record items interated with each user in a dataframe self.interact_status, and create adjacency</span>
 <span class="sd">        matrix self.R.</span>
 
@@ -469,7 +469,7 @@
 
 <div class="viewcode-block" id="ImplicitCF.get_norm_adj_mat">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF.get_norm_adj_mat">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_norm_adj_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_norm_adj_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load normalized adjacency matrix if it exists, otherwise create (and save) it.</span>
 
 <span class="sd">        Returns:</span>
@@ -491,7 +491,7 @@
 
 <div class="viewcode-block" id="ImplicitCF.create_norm_adj_mat">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF.create_norm_adj_mat">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_norm_adj_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_norm_adj_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create normalized adjacency matrix.</span>
 
 <span class="sd">        Returns:</span>
@@ -522,7 +522,7 @@
 
 <div class="viewcode-block" id="ImplicitCF.train_loader">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF.train_loader">[docs]</a>
-    <span class="k">def</span> <span class="nf">train_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample train data every batch. One positive item and one negative item sampled for each user.</span>
 
 <span class="sd">        Args:</span>
@@ -535,7 +535,7 @@
 <span class="sd">            - Sampled negative items.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">sample_neg</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">sample_neg</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_items</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A user has voted in every item. Can&#39;t find a negative sample.&quot;</span><span class="p">)</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>

@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,13 +318,13 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
 
 
 <div class="viewcode-block" id="invert_dictionary">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.general_utils.invert_dictionary">[docs]</a>
-<span class="k">def</span> <span class="nf">invert_dictionary</span><span class="p">(</span><span class="n">dictionary</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_dictionary</span><span class="p">(</span><span class="n">dictionary</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Invert a dictionary</span>
 
 <span class="sd">    Note:</span>
@@ -344,7 +344,7 @@
 
 <div class="viewcode-block" id="get_physical_memory">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.general_utils.get_physical_memory">[docs]</a>
-<span class="k">def</span> <span class="nf">get_physical_memory</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_physical_memory</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the physical memory in GBs.</span>
 
 <span class="sd">    Returns:</span>
@@ -356,7 +356,7 @@
 
 <div class="viewcode-block" id="get_number_processors">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.general_utils.get_number_processors">[docs]</a>
-<span class="k">def</span> <span class="nf">get_number_processors</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_number_processors</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of processors in a CPU.</span>
 
 <span class="sd">    Returns:</span>
@@ -365,7 +365,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">num</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">multiprocessing</span>  <span class="c1"># force exception in case multiprocessing is not installed</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>  <span class="c1"># force exception in case multiprocessing is not installed</span>
 
         <span class="n">num</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">num</span></div>

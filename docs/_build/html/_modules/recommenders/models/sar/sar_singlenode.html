@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">sparse</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.python_utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.python_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">cosine_similarity</span><span class="p">,</span>
     <span class="n">inclusion_index</span><span class="p">,</span>
     <span class="n">jaccard</span><span class="p">,</span>
@@ -334,7 +334,7 @@
     <span class="n">get_top_k_scored_items</span><span class="p">,</span>
     <span class="n">rescale</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">recommenders.utils</span> <span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 
 
 <span class="n">SIM_COOCCUR</span> <span class="o">=</span> <span class="s2">&quot;cooccurrence&quot;</span>
@@ -350,7 +350,7 @@
 
 <div class="viewcode-block" id="SARSingleNode">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode">[docs]</a>
-<span class="k">class</span> <span class="nc">SARSingleNode</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SARSingleNode</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple Algorithm for Recommendations (SAR) implementation</span>
 
 <span class="sd">    SAR is a fast scalable adaptive algorithm for personalized recommendations based on user transaction history</span>
@@ -361,7 +361,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">col_user</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
         <span class="n">col_item</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -457,7 +457,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.compute_affinity_matrix">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_affinity_matrix">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_affinity_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">rating_col</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_affinity_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">rating_col</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Affinity matrix.</span>
 
 <span class="sd">        The user-affinity matrix can be constructed by treating the users and items as</span>
@@ -481,7 +481,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.compute_time_decay">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_time_decay">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_time_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">decay_column</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_time_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">decay_column</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute time decay on provided column.</span>
 
 <span class="sd">        Args:</span>
@@ -509,7 +509,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.compute_cooccurrence_matrix">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.compute_cooccurrence_matrix">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_cooccurrence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooccurrence_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Co-occurrence matrix.</span>
 
 <span class="sd">        The co-occurrence matrix is defined as :math:`C = U^T * U`</span>
@@ -537,7 +537,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.set_index">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.set_index">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate continuous indices for users and items to reduce memory usage.</span>
 
 <span class="sd">        Args:</span>
@@ -559,7 +559,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.fit">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Main fit method for SAR.</span>
 
 <span class="sd">        Note:</span>
@@ -661,7 +661,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.score">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.score">[docs]</a>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score all items for test users.</span>
 
 <span class="sd">        Args:</span>
@@ -718,7 +718,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.get_popularity_based_topk">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.get_popularity_based_topk">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_popularity_based_topk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_popularity_based_topk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get top K most frequently occurring items across all users.</span>
 
 <span class="sd">        Args:</span>
@@ -759,7 +759,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.get_item_based_topk">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.get_item_based_topk">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_item_based_topk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_item_based_topk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get top K similar items to provided seed items based on similarity metric defined.</span>
 <span class="sd">        This method will take a set of items and use them to recommend the most similar items to that set</span>
 <span class="sd">        based on the similarity matrix fit during training.</span>
@@ -838,7 +838,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.get_topk_most_similar_users">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.get_topk_most_similar_users">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_topk_most_similar_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_topk_most_similar_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">top_k</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Based on user affinity towards items, calculate the most similar users to the given user.</span>
 
 <span class="sd">        Args:</span>
@@ -870,7 +870,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.recommend_k_items">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.recommend_k_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recommend top K items for all users which are in the test set</span>
 
 <span class="sd">        Args:</span>
@@ -905,7 +905,7 @@
 
 <div class="viewcode-block" id="SARSingleNode.predict">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Output SAR scores for only the users-items pairs which are in the test set</span>
 
 <span class="sd">        Args:</span>

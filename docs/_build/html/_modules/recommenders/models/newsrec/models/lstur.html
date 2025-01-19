@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow.compat.v1.keras</span> <span class="k">as</span> <span class="nn">keras</span>
-<span class="kn">from</span> <span class="nn">tensorflow.compat.v1.keras</span> <span class="kn">import</span> <span class="n">layers</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.keras</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">keras</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.keras</span><span class="w"> </span><span class="kn">import</span> <span class="n">layers</span>
 
 
-<span class="kn">from</span> <span class="nn">recommenders.models.newsrec.models.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.newsrec.models.layers</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.newsrec.models.base_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.newsrec.models.layers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AttLayer2</span><span class="p">,</span>
     <span class="n">ComputeMasking</span><span class="p">,</span>
     <span class="n">OverwriteMasking</span><span class="p">,</span>
@@ -334,7 +334,7 @@
 
 <div class="viewcode-block" id="LSTURModel">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.lstur.LSTURModel">[docs]</a>
-<span class="k">class</span> <span class="nc">LSTURModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LSTURModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;LSTUR model(Neural News Recommendation with Multi-Head Self-Attention)</span>
 
 <span class="sd">    Mingxiao An, Fangzhao Wu, Chuhan Wu, Kun Zhang, Zheng Liu and Xing Xie:</span>
@@ -347,7 +347,7 @@
 
 <div class="viewcode-block" id="LSTURModel.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.lstur.LSTURModel.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization steps for LSTUR.</span>
 <span class="sd">        Compared with the BaseModel, LSTUR need word embedding.</span>
 <span class="sd">        After creating word embedding matrix, BaseModel&#39;s __init__ method will be called.</span>
@@ -364,7 +364,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_input_label_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_input_label_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
         <span class="n">input_feat</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;user_index_batch&quot;</span><span class="p">],</span>
             <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;clicked_title_batch&quot;</span><span class="p">],</span>
@@ -373,13 +373,13 @@
         <span class="n">input_label</span> <span class="o">=</span> <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">input_feat</span><span class="p">,</span> <span class="n">input_label</span>
 
-    <span class="k">def</span> <span class="nf">_get_user_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_user_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;clicked_title_batch&quot;</span><span class="p">],</span> <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;user_index_batch&quot;</span><span class="p">]]</span>
 
-    <span class="k">def</span> <span class="nf">_get_news_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_news_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;candidate_title_batch&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build LSTUR model and scorer.</span>
 
 <span class="sd">        Returns:</span>
@@ -390,7 +390,7 @@
         <span class="n">model</span><span class="p">,</span> <span class="n">scorer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_lstur</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">scorer</span>
 
-    <span class="k">def</span> <span class="nf">_build_userencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">titleencoder</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;ini&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_userencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">titleencoder</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;ini&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create user encoder of LSTUR.</span>
 
 <span class="sd">        Args:</span>
@@ -447,7 +447,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-    <span class="k">def</span> <span class="nf">_build_newsencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_newsencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create news encoder of LSTUR.</span>
 
 <span class="sd">        Args:</span>
@@ -479,7 +479,7 @@
         <span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">sequences_input_title</span><span class="p">,</span> <span class="n">pred_title</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;news_encoder&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-    <span class="k">def</span> <span class="nf">_build_lstur</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_lstur</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create LSTUR&#39;s logic. The core of LSTUR</span>
 <span class="sd">        is a user encoder and a news encoder.</span>
 

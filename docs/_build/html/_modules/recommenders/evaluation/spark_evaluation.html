@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,20 +318,20 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyspark.mllib.evaluation</span> <span class="kn">import</span> <span class="n">RegressionMetrics</span><span class="p">,</span> <span class="n">RankingMetrics</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">Window</span><span class="p">,</span> <span class="n">DataFrame</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">row_number</span><span class="p">,</span> <span class="n">expr</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">udf</span>
-    <span class="kn">import</span> <span class="nn">pyspark.sql.functions</span> <span class="k">as</span> <span class="nn">F</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">,</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span>
-    <span class="kn">from</span> <span class="nn">pyspark.ml.linalg</span> <span class="kn">import</span> <span class="n">VectorUDT</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.mllib.evaluation</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegressionMetrics</span><span class="p">,</span> <span class="n">RankingMetrics</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">Window</span><span class="p">,</span> <span class="n">DataFrame</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">row_number</span><span class="p">,</span> <span class="n">expr</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">udf</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyspark.sql.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">,</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.ml.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorUDT</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>  <span class="c1"># skip this import if we are in pure python environment</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_PREDICTION_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -348,12 +348,12 @@
 
 <div class="viewcode-block" id="SparkRatingEvaluation">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation">[docs]</a>
-<span class="k">class</span> <span class="nc">SparkRatingEvaluation</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SparkRatingEvaluation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Rating Evaluator&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SparkRatingEvaluation.__init__">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rating_true</span><span class="p">,</span>
         <span class="n">rating_pred</span><span class="p">,</span>
@@ -447,7 +447,7 @@
 
 <div class="viewcode-block" id="SparkRatingEvaluation.rmse">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rmse">[docs]</a>
-    <span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rmse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Root Mean Squared Error.</span>
 
 <span class="sd">        Returns:</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="SparkRatingEvaluation.mae">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.mae">[docs]</a>
-    <span class="k">def</span> <span class="nf">mae</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mae</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Mean Absolute Error.</span>
 
 <span class="sd">        Returns:</span>
@@ -469,7 +469,7 @@
 
 <div class="viewcode-block" id="SparkRatingEvaluation.rsquared">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.rsquared">[docs]</a>
-    <span class="k">def</span> <span class="nf">rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate R squared.</span>
 
 <span class="sd">        Returns:</span>
@@ -480,7 +480,7 @@
 
 <div class="viewcode-block" id="SparkRatingEvaluation.exp_var">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.exp_var">[docs]</a>
-    <span class="k">def</span> <span class="nf">exp_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exp_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate explained variance.</span>
 
 <span class="sd">        Note:</span>
@@ -503,12 +503,12 @@
 
 <div class="viewcode-block" id="SparkRankingEvaluation">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation">[docs]</a>
-<span class="k">class</span> <span class="nc">SparkRankingEvaluation</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SparkRankingEvaluation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Ranking Evaluator&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SparkRankingEvaluation.__init__">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rating_true</span><span class="p">,</span>
         <span class="n">rating_pred</span><span class="p">,</span>
@@ -625,7 +625,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_metrics</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate ranking metrics.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items_for_user_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_pred</span>
 
@@ -643,7 +643,7 @@
 
 <div class="viewcode-block" id="SparkRankingEvaluation.precision_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.precision_at_k">[docs]</a>
-    <span class="k">def</span> <span class="nf">precision_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">precision_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get precision@k.</span>
 
 <span class="sd">        Note:</span>
@@ -658,7 +658,7 @@
 
 <div class="viewcode-block" id="SparkRankingEvaluation.recall_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.recall_at_k">[docs]</a>
-    <span class="k">def</span> <span class="nf">recall_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recall_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get recall@K.</span>
 
 <span class="sd">        Note:</span>
@@ -673,7 +673,7 @@
 
 <div class="viewcode-block" id="SparkRankingEvaluation.ndcg_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.ndcg_at_k">[docs]</a>
-    <span class="k">def</span> <span class="nf">ndcg_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ndcg_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Normalized Discounted Cumulative Gain (NDCG)</span>
 
 <span class="sd">        Note:</span>
@@ -688,7 +688,7 @@
 
 <div class="viewcode-block" id="SparkRankingEvaluation.map">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map">[docs]</a>
-    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mean average precision.</span>
 
 <span class="sd">        Return:</span>
@@ -699,7 +699,7 @@
 
 <div class="viewcode-block" id="SparkRankingEvaluation.map_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.map_at_k">[docs]</a>
-    <span class="k">def</span> <span class="nf">map_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map_at_k</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mean average precision at k.</span>
 
 <span class="sd">        Note:</span>
@@ -713,7 +713,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_top_k_items</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_top_k_items</span><span class="p">(</span>
     <span class="n">dataframe</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -755,7 +755,7 @@
     <span class="k">return</span> <span class="n">items_for_user</span>
 
 
-<span class="k">def</span> <span class="nf">_get_relevant_items_by_threshold</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_relevant_items_by_threshold</span><span class="p">(</span>
     <span class="n">dataframe</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -797,7 +797,7 @@
     <span class="k">return</span> <span class="n">items_for_user</span>
 
 
-<span class="k">def</span> <span class="nf">_get_relevant_items_by_timestamp</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_relevant_items_by_timestamp</span><span class="p">(</span>
     <span class="n">dataframe</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -843,12 +843,12 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation">[docs]</a>
-<span class="k">class</span> <span class="nc">SparkDiversityEvaluation</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SparkDiversityEvaluation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Spark Evaluator for diversity, coverage, novelty, serendipity&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.__init__">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train_df</span><span class="p">,</span>
         <span class="n">reco_df</span><span class="p">,</span>
@@ -966,7 +966,7 @@
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_pairwise_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_pairwise_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_item</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">))</span>
@@ -980,7 +980,7 @@
             <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_user</span><span class="p">,</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span> <span class="s2">&quot;i2&quot;</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_cosine_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_cosine_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_sim_measure</span> <span class="o">==</span> <span class="s2">&quot;item_cooccurrence_count&quot;</span><span class="p">:</span>
             <span class="c1"># calculate item-item similarity based on item co-occurrence count</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_cooccurrence_similarity</span><span class="p">(</span><span class="n">n_partitions</span><span class="p">)</span>
@@ -993,7 +993,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span>
 
-    <span class="k">def</span> <span class="nf">_get_cooccurrence_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_cooccurrence_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Cosine similarity metric from</span>
 
 <span class="sd">        :Citation:</span>
@@ -1038,11 +1038,11 @@
 
     <span class="nd">@staticmethod</span>
     <span class="nd">@udf</span><span class="p">(</span><span class="n">returnType</span><span class="o">=</span><span class="n">DoubleType</span><span class="p">())</span>
-    <span class="k">def</span> <span class="nf">sim_cos</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sim_cos</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
         <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">v2</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_get_item_feature_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_item_feature_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_partitions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Cosine similarity metric based on item feature vectors</span>
 
 <span class="sd">        The item indexes in the result are such that i1 &lt;= i2.</span>
@@ -1067,7 +1067,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_cosine_similarity</span>
 
     <span class="c1"># Diversity metrics</span>
-    <span class="k">def</span> <span class="nf">_get_intralist_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_intralist_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Intra-list similarity from</span>
 
 <span class="sd">        :Citation:</span>
@@ -1092,7 +1092,7 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.user_diversity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_diversity">[docs]</a>
-    <span class="k">def</span> <span class="nf">user_diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user_diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average diversity of recommendations for each user.</span>
 <span class="sd">        The metric definition is based on formula (3) in the following reference:</span>
 
@@ -1118,7 +1118,7 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.diversity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.diversity">[docs]</a>
-    <span class="k">def</span> <span class="nf">diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average diversity of recommendations across all users.</span>
 
 <span class="sd">        Returns:</span>
@@ -1135,7 +1135,7 @@
     <span class="c1"># Novelty metrics</span>
 <div class="viewcode-block" id="SparkDiversityEvaluation.historical_item_novelty">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.historical_item_novelty">[docs]</a>
-    <span class="k">def</span> <span class="nf">historical_item_novelty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">historical_item_novelty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate novelty for each item. Novelty is computed as the minus logarithm of</span>
 <span class="sd">        (number of interactions with item / total number of interactions). The definition of the metric</span>
 <span class="sd">        is based on the following reference using the choice model (eqs. 1 and 6):</span>
@@ -1168,7 +1168,7 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.novelty">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.novelty">[docs]</a>
-    <span class="k">def</span> <span class="nf">novelty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">novelty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the average novelty in a list of recommended items (this assumes that the recommendation list</span>
 <span class="sd">        is already computed). Follows section 5 from</span>
 
@@ -1197,7 +1197,7 @@
     <span class="c1"># Serendipity metrics</span>
 <div class="viewcode-block" id="SparkDiversityEvaluation.user_item_serendipity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_item_serendipity">[docs]</a>
-    <span class="k">def</span> <span class="nf">user_item_serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user_item_serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate serendipity of each item in the recommendations for each user.</span>
 <span class="sd">        The metric definition is based on the following references:</span>
 
@@ -1258,7 +1258,7 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.user_serendipity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.user_serendipity">[docs]</a>
-    <span class="k">def</span> <span class="nf">user_serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user_serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average serendipity for each user&#39;s recommendations.</span>
 
 <span class="sd">        Returns:</span>
@@ -1276,7 +1276,7 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.serendipity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.serendipity">[docs]</a>
-    <span class="k">def</span> <span class="nf">serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serendipity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average serendipity for recommendations across all users.</span>
 
 <span class="sd">        Returns:</span>
@@ -1293,7 +1293,7 @@
     <span class="c1"># Coverage metrics</span>
 <div class="viewcode-block" id="SparkDiversityEvaluation.catalog_coverage">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.catalog_coverage">[docs]</a>
-    <span class="k">def</span> <span class="nf">catalog_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">catalog_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate catalog coverage for recommendations across all users.</span>
 <span class="sd">        The metric definition is based on the &quot;catalog coverage&quot; definition in the following reference:</span>
 
@@ -1319,7 +1319,7 @@
 
 <div class="viewcode-block" id="SparkDiversityEvaluation.distributional_coverage">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.spark_evaluation.SparkDiversityEvaluation.distributional_coverage">[docs]</a>
-    <span class="k">def</span> <span class="nf">distributional_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">distributional_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate distributional coverage for recommendations across all users.</span>
 <span class="sd">        The metric definition is based on formula (21) in the following reference:</span>
 

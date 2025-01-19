@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,16 +318,16 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">_pickle</span> <span class="k">as</span> <span class="nn">cPickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_pickle</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cPickle</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="n">SEED</span>
-<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SEED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.datasets.download_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">maybe_download</span>
 
 
 <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
@@ -336,7 +336,7 @@
 
 <div class="viewcode-block" id="get_review_data">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.amazon_reviews.get_review_data">[docs]</a>
-<span class="k">def</span> <span class="nf">get_review_data</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_review_data</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads amazon review data (only), prepares in the required format</span>
 <span class="sd">    and stores in the same location</span>
 
@@ -352,7 +352,7 @@
 
 <div class="viewcode-block" id="data_preprocessing">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.amazon_reviews.data_preprocessing">[docs]</a>
-<span class="k">def</span> <span class="nf">data_preprocessing</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">data_preprocessing</span><span class="p">(</span>
     <span class="n">reviews_file</span><span class="p">,</span>
     <span class="n">meta_file</span><span class="p">,</span>
     <span class="n">train_file</span><span class="p">,</span>
@@ -391,7 +391,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_create_vocab</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="n">user_vocab</span><span class="p">,</span> <span class="n">item_vocab</span><span class="p">,</span> <span class="n">cate_vocab</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_vocab</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="n">user_vocab</span><span class="p">,</span> <span class="n">item_vocab</span><span class="p">,</span> <span class="n">cate_vocab</span><span class="p">):</span>
 
     <span class="n">f_train</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">train_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 
@@ -457,7 +457,7 @@
     <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cat_voc</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">cate_vocab</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_negative_sampling_offline</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_negative_sampling_offline</span><span class="p">(</span>
     <span class="n">instance_input_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">valid_neg_nums</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">test_neg_nums</span><span class="o">=</span><span class="mi">49</span>
 <span class="p">):</span>
 
@@ -512,7 +512,7 @@
             <span class="n">write_test</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_data_generating</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">min_sequence</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_data_generating</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">min_sequence</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;produce train, valid and test file from processed_output file</span>
 <span class="sd">    Each user&#39;s behavior sequence will be unfolded and produce multiple lines in trian file.</span>
 <span class="sd">    Like, user&#39;s behavior sequence: 12345, and this function will write into train file:</span>
@@ -586,7 +586,7 @@
             <span class="n">dt_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_data_generating_no_history_expanding</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_data_generating_no_history_expanding</span><span class="p">(</span>
     <span class="n">input_file</span><span class="p">,</span> <span class="n">train_file</span><span class="p">,</span> <span class="n">valid_file</span><span class="p">,</span> <span class="n">test_file</span><span class="p">,</span> <span class="n">min_sequence</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce train, valid and test file from processed_output file</span>
@@ -675,7 +675,7 @@
             <span class="n">dt_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_create_item2cate</span><span class="p">(</span><span class="n">instance_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_item2cate</span><span class="p">(</span><span class="n">instance_file</span><span class="p">):</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;creating item2cate dict&quot;</span><span class="p">)</span>
     <span class="k">global</span> <span class="n">item2cate</span>
     <span class="n">instance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
@@ -686,7 +686,7 @@
     <span class="n">item2cate</span> <span class="o">=</span> <span class="n">instance_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;item_id&quot;</span><span class="p">)[</span><span class="s2">&quot;cate_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">_get_sampled_data</span><span class="p">(</span><span class="n">instance_file</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_sampled_data</span><span class="p">(</span><span class="n">instance_file</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">):</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;getting sampled data...&quot;</span><span class="p">)</span>
     <span class="k">global</span> <span class="n">item2cate</span>
     <span class="n">output_file</span> <span class="o">=</span> <span class="n">instance_file</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sample_rate</span><span class="p">)</span>
@@ -705,7 +705,7 @@
     <span class="k">return</span> <span class="n">output_file</span>
 
 
-<span class="k">def</span> <span class="nf">_meta_preprocessing</span><span class="p">(</span><span class="n">meta_readfile</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_meta_preprocessing</span><span class="p">(</span><span class="n">meta_readfile</span><span class="p">):</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start meta preprocessing...&quot;</span><span class="p">)</span>
     <span class="n">meta_writefile</span> <span class="o">=</span> <span class="n">meta_readfile</span> <span class="o">+</span> <span class="s2">&quot;_output&quot;</span>
     <span class="n">meta_r</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_readfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
@@ -718,7 +718,7 @@
     <span class="k">return</span> <span class="n">meta_writefile</span>
 
 
-<span class="k">def</span> <span class="nf">_reviews_preprocessing</span><span class="p">(</span><span class="n">reviews_readfile</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_reviews_preprocessing</span><span class="p">(</span><span class="n">reviews_readfile</span><span class="p">):</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start reviews preprocessing...&quot;</span><span class="p">)</span>
     <span class="n">reviews_writefile</span> <span class="o">=</span> <span class="n">reviews_readfile</span> <span class="o">+</span> <span class="s2">&quot;_output&quot;</span>
     <span class="n">reviews_r</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">reviews_readfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
@@ -738,7 +738,7 @@
     <span class="k">return</span> <span class="n">reviews_writefile</span>
 
 
-<span class="k">def</span> <span class="nf">_create_instance</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">,</span> <span class="n">meta_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_instance</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">,</span> <span class="n">meta_file</span><span class="p">):</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start create instances...&quot;</span><span class="p">)</span>
     <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">reviews_file</span><span class="p">)</span>
     <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="s2">&quot;instance_output&quot;</span><span class="p">)</span>
@@ -779,7 +779,7 @@
     <span class="k">return</span> <span class="n">output_file</span>
 
 
-<span class="k">def</span> <span class="nf">_data_processing</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_data_processing</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;start data processing...&quot;</span><span class="p">)</span>
     <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
     <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="s2">&quot;preprocessed_output&quot;</span><span class="p">)</span>
@@ -821,7 +821,7 @@
 
 <div class="viewcode-block" id="download_and_extract">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.amazon_reviews.download_and_extract">[docs]</a>
-<span class="k">def</span> <span class="nf">download_and_extract</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_and_extract</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads and extracts Amazon reviews and meta datafiles if they don’t already exist</span>
 
 <span class="sd">    Args:</span>
@@ -844,7 +844,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_download_reviews</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_download_reviews</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads Amazon reviews datafile.</span>
 
 <span class="sd">    Args:</span>
@@ -862,7 +862,7 @@
     <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">dirs</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_extract_reviews</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">zip_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_reviews</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">zip_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Amazon reviews and meta datafiles from the raw zip files.</span>
 
 <span class="sd">    To extract all files,</span>

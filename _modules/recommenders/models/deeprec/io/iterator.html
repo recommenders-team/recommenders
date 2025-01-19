@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,20 +318,20 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
 
 
 <div class="viewcode-block" id="BaseIterator">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.BaseIterator">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseIterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseIterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base iterator class&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BaseIterator.parser_one_line">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.BaseIterator.parser_one_line">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Abstract method. Parse one string line into feature values.</span>
 
 <span class="sd">        Args:</span>
@@ -343,7 +343,7 @@
 <div class="viewcode-block" id="BaseIterator.load_data_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.BaseIterator.load_data_from_file">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Abstract method. Read and parse data from a file.</span>
 
 <span class="sd">        Args:</span>
@@ -353,13 +353,13 @@
 
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="BaseIterator.gen_feed_dict">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.BaseIterator.gen_feed_dict">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">gen_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Abstract method. Construct a dictionary that maps graph elements to values.</span>
 
 <span class="sd">        Args:</span>
@@ -372,7 +372,7 @@
 
 <div class="viewcode-block" id="FFMTextIterator">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator">[docs]</a>
-<span class="k">class</span> <span class="nc">FFMTextIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FFMTextIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data loader for FFM format based models, such as xDeepFM.</span>
 <span class="sd">    Iterator will not load the whole data into memory. Instead, it loads data into memory</span>
 <span class="sd">    per mini-batch, so that large files can be used as input data.</span>
@@ -380,7 +380,7 @@
 
 <div class="viewcode-block" id="FFMTextIterator.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an iterator. Create the necessary placeholders for the model.</span>
 
 <span class="sd">        Args:</span>
@@ -423,7 +423,7 @@
 
 <div class="viewcode-block" id="FFMTextIterator.parser_one_line">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator.parser_one_line">[docs]</a>
-    <span class="k">def</span> <span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse one string line into feature values.</span>
 
 <span class="sd">        Args:</span>
@@ -454,7 +454,7 @@
 
 <div class="viewcode-block" id="FFMTextIterator.load_data_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator.load_data_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse data from a file.</span>
 
 <span class="sd">        Args:</span>
@@ -489,7 +489,7 @@
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_feed_dict</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">impression_id_list</span><span class="p">,</span> <span class="n">cnt</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert data into numpy arrays that are good for further operation.</span>
 
 <span class="sd">        Args:</span>
@@ -560,7 +560,7 @@
 
 <div class="viewcode-block" id="FFMTextIterator.gen_feed_dict">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.iterator.FFMTextIterator.gen_feed_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">gen_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a dictionary that maps graph elements to values.</span>
 
 <span class="sd">        Args:</span>

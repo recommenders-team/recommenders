@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,17 +318,17 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.timer</span> <span class="kn">import</span> <span class="n">Timer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.timer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timer</span>
 
 
 <div class="viewcode-block" id="MultiHeadAttention">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.MultiHeadAttention">[docs]</a>
-<span class="k">class</span> <span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    - Q (query), K (key) and V (value) are split into multiple heads (num_heads)</span>
 <span class="sd">    - each tuple (q, k, v) are fed to scaled_dot_product_attention</span>
@@ -337,7 +337,7 @@
 
 <div class="viewcode-block" id="MultiHeadAttention.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.MultiHeadAttention.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attention_dim</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attention_dim</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
 
 <span class="sd">        Args:</span>
@@ -361,7 +361,7 @@
 
 <div class="viewcode-block" id="MultiHeadAttention.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.MultiHeadAttention.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queries</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queries</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -447,14 +447,14 @@
 
 <div class="viewcode-block" id="PointWiseFeedForward">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.PointWiseFeedForward">[docs]</a>
-<span class="k">class</span> <span class="nc">PointWiseFeedForward</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointWiseFeedForward</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convolution layers with residual connection</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PointWiseFeedForward.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.PointWiseFeedForward.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_dims</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_dims</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
 
 <span class="sd">        Args:</span>
@@ -475,7 +475,7 @@
 
 <div class="viewcode-block" id="PointWiseFeedForward.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.PointWiseFeedForward.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -501,7 +501,7 @@
 
 <div class="viewcode-block" id="EncoderLayer">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer">[docs]</a>
-<span class="k">class</span> <span class="nc">EncoderLayer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EncoderLayer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transformer based encoder layer</span>
 
@@ -509,7 +509,7 @@
 
 <div class="viewcode-block" id="EncoderLayer.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">seq_max_len</span><span class="p">,</span>
         <span class="n">embedding_dim</span><span class="p">,</span>
@@ -549,7 +549,7 @@
 
 <div class="viewcode-block" id="EncoderLayer.call_">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer.call_">[docs]</a>
-    <span class="k">def</span> <span class="nf">call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -580,7 +580,7 @@
 
 <div class="viewcode-block" id="EncoderLayer.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.EncoderLayer.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -604,7 +604,7 @@
 
 <div class="viewcode-block" id="Encoder">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.Encoder">[docs]</a>
-<span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Encoder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Invokes Transformer based encoder with user defined number of layers</span>
 
@@ -612,7 +612,7 @@
 
 <div class="viewcode-block" id="Encoder.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.Encoder.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_layers</span><span class="p">,</span>
         <span class="n">seq_max_len</span><span class="p">,</span>
@@ -654,7 +654,7 @@
 
 <div class="viewcode-block" id="Encoder.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.Encoder.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -676,7 +676,7 @@
 
 <div class="viewcode-block" id="LayerNormalization">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.LayerNormalization">[docs]</a>
-<span class="k">class</span> <span class="nc">LayerNormalization</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LayerNormalization</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Layer normalization using mean and variance</span>
 <span class="sd">    gamma and beta are the learnable parameters</span>
@@ -684,7 +684,7 @@
 
 <div class="viewcode-block" id="LayerNormalization.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.LayerNormalization.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_max_len</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_max_len</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters.</span>
 
 <span class="sd">        Args:</span>
@@ -711,7 +711,7 @@
 
 <div class="viewcode-block" id="LayerNormalization.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.LayerNormalization.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -730,7 +730,7 @@
 
 <div class="viewcode-block" id="SASREC">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC">[docs]</a>
-<span class="k">class</span> <span class="nc">SASREC</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SASREC</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SAS Rec model</span>
 <span class="sd">    Self-Attentive Sequential Recommendation Using Transformer</span>
 
@@ -747,7 +747,7 @@
 
 <div class="viewcode-block" id="SASREC.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model initialization.</span>
 
 <span class="sd">        Args:</span>
@@ -807,7 +807,7 @@
 
 <div class="viewcode-block" id="SASREC.embedding">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.embedding">[docs]</a>
-    <span class="k">def</span> <span class="nf">embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sequence and positional embeddings.</span>
 
 <span class="sd">        Args:</span>
@@ -832,7 +832,7 @@
 
 <div class="viewcode-block" id="SASREC.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -903,7 +903,7 @@
 
 <div class="viewcode-block" id="SASREC.predict">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the logits for the test items.</span>
 
 <span class="sd">        Args:</span>
@@ -944,7 +944,7 @@
 
 <div class="viewcode-block" id="SASREC.loss_function">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.loss_function">[docs]</a>
-    <span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">istarget</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">istarget</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Losses are calculated separately for the positive and negative</span>
 <span class="sd">        items based on the corresponding logits. A mask is included to</span>
 <span class="sd">        take care of the zero items (added for padding).</span>
@@ -987,7 +987,7 @@
 
 <div class="viewcode-block" id="SASREC.create_combined_dataset">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.create_combined_dataset">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_combined_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_combined_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        function to create model inputs from sampled batch data.</span>
 <span class="sd">        This function is used only during training.</span>
@@ -1021,7 +1021,7 @@
 
 <div class="viewcode-block" id="SASREC.train">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.train">[docs]</a>
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        High level function for model training as well as</span>
 <span class="sd">        evaluation on the validation and test dataset</span>
@@ -1058,7 +1058,7 @@
         <span class="p">]</span>
 
         <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">input_signature</span><span class="o">=</span><span class="n">train_step_signature</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
             <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
                 <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">loss_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">loss_mask</span><span class="p">)</span>
@@ -1111,7 +1111,7 @@
 
 <div class="viewcode-block" id="SASREC.evaluate">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.evaluate">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluation on the test users (users with at least 3 items)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1176,7 +1176,7 @@
 
 <div class="viewcode-block" id="SASREC.evaluate_valid">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.model.SASREC.evaluate_valid">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluation on the validation users</span>
 <span class="sd">        &quot;&quot;&quot;</span>

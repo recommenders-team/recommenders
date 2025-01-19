@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,10 +318,10 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">mean_squared_error</span><span class="p">,</span>
     <span class="n">mean_absolute_error</span><span class="p">,</span>
     <span class="n">r2_score</span><span class="p">,</span>
@@ -330,7 +330,7 @@
     <span class="n">log_loss</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
@@ -342,7 +342,7 @@
     <span class="n">DEFAULT_K</span><span class="p">,</span>
     <span class="n">DEFAULT_THRESHOLD</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">recommenders.datasets.pandas_df_utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.datasets.pandas_df_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">has_columns</span><span class="p">,</span>
     <span class="n">has_same_base_dtype</span><span class="p">,</span>
     <span class="n">lru_cache_df</span><span class="p">,</span>
@@ -351,7 +351,7 @@
 
 <div class="viewcode-block" id="ColumnMismatchError">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ColumnMismatchError">[docs]</a>
-<span class="k">class</span> <span class="nc">ColumnMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when there is a mismatch in columns.</span>
 
 <span class="sd">    This exception is raised when an operation involving columns</span>
@@ -367,7 +367,7 @@
 
 <div class="viewcode-block" id="ColumnTypeMismatchError">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ColumnTypeMismatchError">[docs]</a>
-<span class="k">class</span> <span class="nc">ColumnTypeMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnTypeMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when there is a mismatch in column types.</span>
 
 <span class="sd">    This exception is raised when an operation involving column types</span>
@@ -381,7 +381,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_check_column_dtypes</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_column_dtypes</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks columns of DataFrame inputs</span>
 
 <span class="sd">    This includes the checks on:</span>
@@ -397,7 +397,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">check_column_dtypes_wrapper</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_column_dtypes_wrapper</span><span class="p">(</span>
         <span class="n">rating_true</span><span class="p">,</span>
         <span class="n">rating_pred</span><span class="p">,</span>
         <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -450,7 +450,7 @@
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.merge_rating_true_pred">[docs]</a>
 <span class="nd">@_check_column_dtypes</span>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">merge_rating_true_pred</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_rating_true_pred</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -490,7 +490,7 @@
 
 <div class="viewcode-block" id="rmse">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.rmse">[docs]</a>
-<span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rmse</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -526,7 +526,7 @@
 
 <div class="viewcode-block" id="mae">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.mae">[docs]</a>
-<span class="k">def</span> <span class="nf">mae</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mae</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -562,7 +562,7 @@
 
 <div class="viewcode-block" id="rsquared">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.rsquared">[docs]</a>
-<span class="k">def</span> <span class="nf">rsquared</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rsquared</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -598,7 +598,7 @@
 
 <div class="viewcode-block" id="exp_var">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.exp_var">[docs]</a>
-<span class="k">def</span> <span class="nf">exp_var</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">exp_var</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -634,7 +634,7 @@
 
 <div class="viewcode-block" id="auc">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.auc">[docs]</a>
-<span class="k">def</span> <span class="nf">auc</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">auc</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -680,7 +680,7 @@
 
 <div class="viewcode-block" id="logloss">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.logloss">[docs]</a>
-<span class="k">def</span> <span class="nf">logloss</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logloss</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -722,7 +722,7 @@
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.merge_ranking_true_pred">[docs]</a>
 <span class="nd">@_check_column_dtypes</span>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">merge_ranking_true_pred</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_ranking_true_pred</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="p">,</span>
@@ -794,7 +794,7 @@
 
 <div class="viewcode-block" id="precision_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.precision_at_k">[docs]</a>
-<span class="k">def</span> <span class="nf">precision_at_k</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">precision_at_k</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -848,7 +848,7 @@
 
 <div class="viewcode-block" id="recall_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.recall_at_k">[docs]</a>
-<span class="k">def</span> <span class="nf">recall_at_k</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">recall_at_k</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -896,7 +896,7 @@
 
 <div class="viewcode-block" id="r_precision_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.r_precision_at_k">[docs]</a>
-<span class="k">def</span> <span class="nf">r_precision_at_k</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">r_precision_at_k</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -956,7 +956,7 @@
 
 <div class="viewcode-block" id="ndcg_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.ndcg_at_k">[docs]</a>
-<span class="k">def</span> <span class="nf">ndcg_at_k</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ndcg_at_k</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1056,7 +1056,7 @@
 
 
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_get_reciprocal_rank</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_reciprocal_rank</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1092,7 +1092,7 @@
 
 <div class="viewcode-block" id="map">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.map">[docs]</a>
-<span class="k">def</span> <span class="nf">map</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1149,7 +1149,7 @@
 
 <div class="viewcode-block" id="map_at_k">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.map_at_k">[docs]</a>
-<span class="k">def</span> <span class="nf">map_at_k</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_at_k</span><span class="p">(</span>
     <span class="n">rating_true</span><span class="p">,</span>
     <span class="n">rating_pred</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1201,7 +1201,7 @@
 
 <div class="viewcode-block" id="get_top_k_items">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.get_top_k_items">[docs]</a>
-<span class="k">def</span> <span class="nf">get_top_k_items</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_top_k_items</span><span class="p">(</span>
     <span class="n">dataframe</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_rating</span><span class="o">=</span><span class="n">DEFAULT_RATING_COL</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">DEFAULT_K</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the input customer-item-rating tuple in the format of Pandas</span>
@@ -1257,7 +1257,7 @@
 
 
 <span class="c1"># diversity metrics</span>
-<span class="k">def</span> <span class="nf">_check_column_dtypes_diversity_serendipity</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_column_dtypes_diversity_serendipity</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks columns of DataFrame inputs</span>
 
 <span class="sd">    This includes the checks on:</span>
@@ -1276,7 +1276,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">check_column_dtypes_diversity_serendipity_wrapper</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_column_dtypes_diversity_serendipity_wrapper</span><span class="p">(</span>
         <span class="n">train_df</span><span class="p">,</span>
         <span class="n">reco_df</span><span class="p">,</span>
         <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1360,7 +1360,7 @@
     <span class="k">return</span> <span class="n">check_column_dtypes_diversity_serendipity_wrapper</span>
 
 
-<span class="k">def</span> <span class="nf">_check_column_dtypes_novelty_coverage</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_column_dtypes_novelty_coverage</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks columns of DataFrame inputs</span>
 
 <span class="sd">    This includes the checks on:</span>
@@ -1377,7 +1377,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">check_column_dtypes_novelty_coverage_wrapper</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_column_dtypes_novelty_coverage_wrapper</span><span class="p">(</span>
         <span class="n">train_df</span><span class="p">,</span>
         <span class="n">reco_df</span><span class="p">,</span>
         <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1426,7 +1426,7 @@
 
 
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_get_pairwise_items</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_pairwise_items</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -1447,7 +1447,7 @@
 
 
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_get_cosine_similarity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_cosine_similarity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">item_sim_measure</span><span class="o">=</span><span class="n">DEFAULT_ITEM_SIM_MEASURE</span><span class="p">,</span>
@@ -1474,7 +1474,7 @@
 
 
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_get_cooccurrence_similarity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_cooccurrence_similarity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -1531,7 +1531,7 @@
 
 
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_get_item_feature_similarity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_item_feature_similarity</span><span class="p">(</span>
     <span class="n">item_feature_df</span><span class="p">,</span>
     <span class="n">col_item_features</span><span class="o">=</span><span class="n">DEFAULT_ITEM_FEATURES_COL</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1567,7 +1567,7 @@
 
 <span class="c1"># Diversity metrics</span>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_get_intralist_similarity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_intralist_similarity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1614,7 +1614,7 @@
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.user_diversity">[docs]</a>
 <span class="nd">@_check_column_dtypes_diversity_serendipity</span>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">user_diversity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">user_diversity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1677,7 +1677,7 @@
 <div class="viewcode-block" id="diversity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.diversity">[docs]</a>
 <span class="nd">@_check_column_dtypes_diversity_serendipity</span>
-<span class="k">def</span> <span class="nf">diversity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">diversity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1728,7 +1728,7 @@
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.historical_item_novelty">[docs]</a>
 <span class="nd">@_check_column_dtypes_novelty_coverage</span>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">historical_item_novelty</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">historical_item_novelty</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -1780,7 +1780,7 @@
 <div class="viewcode-block" id="novelty">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.novelty">[docs]</a>
 <span class="nd">@_check_column_dtypes_novelty_coverage</span>
-<span class="k">def</span> <span class="nf">novelty</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">novelty</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the average novelty in a list of recommended items (this assumes that the recommendation list</span>
 <span class="sd">    is already computed). Follows section 5 from</span>
 
@@ -1822,7 +1822,7 @@
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.user_item_serendipity">[docs]</a>
 <span class="nd">@_check_column_dtypes_diversity_serendipity</span>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">user_item_serendipity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">user_item_serendipity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1923,7 +1923,7 @@
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.user_serendipity">[docs]</a>
 <span class="nd">@lru_cache_df</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@_check_column_dtypes_diversity_serendipity</span>
-<span class="k">def</span> <span class="nf">user_serendipity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">user_serendipity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1982,7 +1982,7 @@
 <div class="viewcode-block" id="serendipity">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.serendipity">[docs]</a>
 <span class="nd">@_check_column_dtypes_diversity_serendipity</span>
-<span class="k">def</span> <span class="nf">serendipity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">serendipity</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span>
     <span class="n">reco_df</span><span class="p">,</span>
     <span class="n">item_feature_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -2033,7 +2033,7 @@
 <div class="viewcode-block" id="catalog_coverage">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.catalog_coverage">[docs]</a>
 <span class="nd">@_check_column_dtypes_novelty_coverage</span>
-<span class="k">def</span> <span class="nf">catalog_coverage</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">catalog_coverage</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate catalog coverage for recommendations across all users.</span>
@@ -2070,7 +2070,7 @@
 <div class="viewcode-block" id="distributional_coverage">
 <a class="viewcode-back" href="../../../evaluation.html#recommenders.evaluation.python_evaluation.distributional_coverage">[docs]</a>
 <span class="nd">@_check_column_dtypes_novelty_coverage</span>
-<span class="k">def</span> <span class="nf">distributional_coverage</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">distributional_coverage</span><span class="p">(</span>
     <span class="n">train_df</span><span class="p">,</span> <span class="n">reco_df</span><span class="p">,</span> <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate distributional coverage for recommendations across all users.</span>

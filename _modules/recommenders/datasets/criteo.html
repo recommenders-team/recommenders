@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -319,17 +319,17 @@
 <span class="c1"># Licensed under the MIT License.</span>
 
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tarfile</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>  <span class="c1"># so the environment without spark doesn&#39;t break</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span><span class="p">,</span> <span class="n">download_path</span>
-<span class="kn">from</span> <span class="nn">recommenders.utils.notebook_utils</span> <span class="kn">import</span> <span class="n">is_databricks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.datasets.download_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">maybe_download</span><span class="p">,</span> <span class="n">download_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.notebook_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_databricks</span>
 
 
 <span class="n">CRITEO_URL</span> <span class="o">=</span> <span class="p">{</span>
@@ -345,7 +345,7 @@
 
 <div class="viewcode-block" id="load_pandas_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.load_pandas_df">[docs]</a>
-<span class="k">def</span> <span class="nf">load_pandas_df</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_pandas_df</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the Criteo DAC dataset as `pandas.DataFrame`. This function download, untar, and load the dataset.</span>
 
 <span class="sd">    The dataset consists of a portion of Criteo’s traffic over a period</span>
@@ -383,7 +383,7 @@
 
 <div class="viewcode-block" id="load_spark_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.load_spark_df">[docs]</a>
-<span class="k">def</span> <span class="nf">load_spark_df</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_spark_df</span><span class="p">(</span>
     <span class="n">spark</span><span class="p">,</span>
     <span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
     <span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">,</span>
@@ -448,7 +448,7 @@
 
 <div class="viewcode-block" id="download_criteo">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.download_criteo">[docs]</a>
-<span class="k">def</span> <span class="nf">download_criteo</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_criteo</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download criteo dataset as a compressed file.</span>
 
 <span class="sd">    Args:</span>
@@ -466,7 +466,7 @@
 
 <div class="viewcode-block" id="extract_criteo">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.extract_criteo">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">compressed_file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_criteo</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">compressed_file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Criteo dataset tar.</span>
 
 <span class="sd">    Args:</span>
@@ -486,7 +486,7 @@
 
     <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">compressed_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
 
-        <span class="k">def</span> <span class="nf">is_within_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">is_within_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
 
             <span class="n">abs_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
             <span class="n">abs_target</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
@@ -495,7 +495,7 @@
 
             <span class="k">return</span> <span class="n">prefix</span> <span class="o">==</span> <span class="n">abs_directory</span>
 
-        <span class="k">def</span> <span class="nf">safe_extract</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">members</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">numeric_owner</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">safe_extract</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">members</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">numeric_owner</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
             <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">getmembers</span><span class="p">():</span>
                 <span class="n">member_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -513,7 +513,7 @@
 
 <div class="viewcode-block" id="get_spark_schema">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.criteo.get_spark_schema">[docs]</a>
-<span class="k">def</span> <span class="nf">get_spark_schema</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spark_schema</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">DEFAULT_HEADER</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get Spark schema from header.</span>
 
 <span class="sd">    Args:</span>

@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,13 +318,13 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.sasrec.model</span> <span class="kn">import</span> <span class="n">SASREC</span><span class="p">,</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">LayerNormalization</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.sasrec.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">SASREC</span><span class="p">,</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">LayerNormalization</span>
 
 
 <div class="viewcode-block" id="SSEPT">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT">[docs]</a>
-<span class="k">class</span> <span class="nc">SSEPT</span><span class="p">(</span><span class="n">SASREC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SSEPT</span><span class="p">(</span><span class="n">SASREC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SSE-PT Model</span>
 
@@ -338,7 +338,7 @@
 
 <div class="viewcode-block" id="SSEPT.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model initialization.</span>
 
 <span class="sd">        Args:</span>
@@ -399,7 +399,7 @@
 
 <div class="viewcode-block" id="SSEPT.call">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Model forward pass.</span>
 
 <span class="sd">        Args:</span>
@@ -494,7 +494,7 @@
 
 <div class="viewcode-block" id="SSEPT.predict">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Model prediction for candidate (negative) items</span>
 
@@ -550,7 +550,7 @@
 
 <div class="viewcode-block" id="SSEPT.loss_function">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.sasrec.ssept.SSEPT.loss_function">[docs]</a>
-    <span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">istarget</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_logits</span><span class="p">,</span> <span class="n">neg_logits</span><span class="p">,</span> <span class="n">istarget</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Losses are calculated separately for the positive and negative</span>
 <span class="sd">        items based on the corresponding logits. A mask is included to</span>
 <span class="sd">        take care of the zero items (added for padding).</span>

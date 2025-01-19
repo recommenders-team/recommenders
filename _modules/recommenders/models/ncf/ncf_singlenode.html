@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">tf_slim</span> <span class="k">as</span> <span class="nn">slim</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tf_slim</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">slim</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 
 <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">disable_eager_execution</span><span class="p">()</span>
@@ -333,7 +333,7 @@
 
 <div class="viewcode-block" id="NCF">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF">[docs]</a>
-<span class="k">class</span> <span class="nc">NCF</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NCF</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Neural Collaborative Filtering (NCF) implementation</span>
 
 <span class="sd">    :Citation:</span>
@@ -345,7 +345,7 @@
 
 <div class="viewcode-block" id="NCF.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_users</span><span class="p">,</span>
         <span class="n">n_items</span><span class="p">,</span>
@@ -412,7 +412,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># reset graph</span>
@@ -594,7 +594,7 @@
 
 <div class="viewcode-block" id="NCF.save">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.save">[docs]</a>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dir_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dir_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save model parameters in `dir_name`</span>
 
 <span class="sd">        Args:</span>
@@ -610,7 +610,7 @@
 
 <div class="viewcode-block" id="NCF.load">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmf_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neumf_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmf_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neumf_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load model parameters for further use.</span>
 
 <span class="sd">        GMF model --&gt; load parameters in `gmf_dir`</span>
@@ -650,7 +650,7 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_load_neumf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmf_dir</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_neumf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmf_dir</span><span class="p">,</span> <span class="n">mlp_dir</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load gmf and mlp model parameters for further use in NeuMF.</span>
 <span class="sd">        NeuMF model --&gt; load parameters in `gmf_dir` and `mlp_dir`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -696,7 +696,7 @@
 
 <div class="viewcode-block" id="NCF.fit">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit model with training data</span>
 
 <span class="sd">        Args:</span>
@@ -746,7 +746,7 @@
 
 <div class="viewcode-block" id="NCF.predict">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.ncf.ncf_singlenode.NCF.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">,</span> <span class="n">is_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">,</span> <span class="n">is_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict function of this trained model</span>
 
 <span class="sd">        Args:</span>
@@ -768,7 +768,7 @@
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">item_input</span><span class="p">):</span>
 
         <span class="c1"># index converting</span>
         <span class="n">user_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">user2id</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">user_input</span><span class="p">])</span>

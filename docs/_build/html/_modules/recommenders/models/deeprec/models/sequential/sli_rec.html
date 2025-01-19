@@ -29,7 +29,7 @@
   <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.sequential.sequential_base_model</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.models.sequential.sequential_base_model</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SequentialBaseModel</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">tensorflow.compat.v1.nn</span> <span class="kn">import</span> <span class="n">dynamic_rnn</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.sequential.rnn_cell_implement</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">dynamic_rnn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.models.sequential.rnn_cell_implement</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Time4LSTMCell</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -332,7 +332,7 @@
 
 <div class="viewcode-block" id="SLI_RECModel">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.sli_rec.SLI_RECModel">[docs]</a>
-<span class="k">class</span> <span class="nc">SLI_RECModel</span><span class="p">(</span><span class="n">SequentialBaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SLI_RECModel</span><span class="p">(</span><span class="n">SequentialBaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SLI Rec model</span>
 
 <span class="sd">    :Citation:</span>
@@ -343,7 +343,7 @@
 <span class="sd">        Pages 4213-4219, AAAI Press, 2019.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_build_seq_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_seq_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create sli_rec model.</span>
 
 <span class="sd">        Returns:</span>
@@ -414,7 +414,7 @@
             <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;model_output&quot;</span><span class="p">,</span> <span class="n">model_output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">model_output</span>
 
-    <span class="k">def</span> <span class="nf">_attention_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">user_embedding</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_attention_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">user_embedding</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply attention by fully connected layers.</span>
 
 <span class="sd">        Args:</span>

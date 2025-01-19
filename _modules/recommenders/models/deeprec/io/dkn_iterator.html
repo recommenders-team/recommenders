@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,10 +318,10 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.io.iterator</span> <span class="kn">import</span> <span class="n">BaseIterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.io.iterator</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseIterator</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DKNTextIterator&quot;</span><span class="p">]</span>
@@ -329,7 +329,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator">[docs]</a>
-<span class="k">class</span> <span class="nc">DKNTextIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DKNTextIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data loader for the DKN model.</span>
 <span class="sd">    DKN requires a special type of data format, where each instance contains a label, the candidate news article,</span>
 <span class="sd">    and user&#39;s clicked news article. Articles are represented by title words and title entities. Words and entities</span>
@@ -341,7 +341,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">ID_spliter</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an iterator. Create necessary placeholders for the model.</span>
 
 <span class="sd">        Args:</span>
@@ -412,7 +412,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator.parser_one_line">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator.parser_one_line">[docs]</a>
-    <span class="k">def</span> <span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse one string line into feature values.</span>
 
 <span class="sd">        Args:</span>
@@ -451,7 +451,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator.load_data_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator.load_data_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse data from a file.</span>
 
 <span class="sd">        Args:</span>
@@ -539,7 +539,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator.load_infer_data_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator.load_infer_data_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_infer_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_infer_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse data from a file for infer document embedding.</span>
 
 <span class="sd">        Args:</span>
@@ -597,7 +597,7 @@
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_infer_feed_dict</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">newsid_list</span><span class="p">,</span> <span class="n">data_size</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label_list</span><span class="p">,</span>
         <span class="n">candidate_news_index_batch</span><span class="p">,</span>
@@ -636,7 +636,7 @@
         <span class="n">res</span><span class="p">[</span><span class="s2">&quot;impression_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">impression_id_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">def</span> <span class="nf">_convert_infer_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_infer_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">candidate_news_index_batch</span><span class="p">,</span> <span class="n">candidate_news_entity_index_batch</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert data into numpy arrays that are good for further model operation.</span>
@@ -658,7 +658,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator.gen_feed_dict">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator.gen_feed_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">gen_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a dictionary that maps graph elements to values.</span>
 
 <span class="sd">        Args:</span>
@@ -688,7 +688,7 @@
 
 <div class="viewcode-block" id="DKNTextIterator.gen_infer_feed_dict">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.dkn_iterator.DKNTextIterator.gen_infer_feed_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">gen_infer_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_infer_feed_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a dictionary that maps graph elements to values.</span>
 
 <span class="sd">        Args:</span>

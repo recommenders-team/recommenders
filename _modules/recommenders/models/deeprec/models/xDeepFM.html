@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,10 +318,10 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.models.base_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;XDeepFMModel&quot;</span><span class="p">]</span>
@@ -329,7 +329,7 @@
 
 <div class="viewcode-block" id="XDeepFMModel">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.xDeepFM.XDeepFMModel">[docs]</a>
-<span class="k">class</span> <span class="nc">XDeepFMModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XDeepFMModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;xDeepFM model</span>
 
 <span class="sd">    :Citation:</span>
@@ -340,7 +340,7 @@
 <span class="sd">        KDD 2018, London, 2018.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create xdeepfm&#39;s logic.</span>
 
 <span class="sd">        Returns:</span>
@@ -389,7 +389,7 @@
 
             <span class="k">return</span> <span class="n">logit</span>
 
-    <span class="k">def</span> <span class="nf">_build_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The field embedding layer. MLP requires fixed-length vectors as input.</span>
 <span class="sd">        This function makes sum pooling of feature embeddings for each field.</span>
 
@@ -420,7 +420,7 @@
         <span class="n">embedding_size</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">FIELD_COUNT</span> <span class="o">*</span> <span class="n">hparams</span><span class="o">.</span><span class="n">dim</span>
         <span class="k">return</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">embedding_size</span>
 
-    <span class="k">def</span> <span class="nf">_build_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the linear part for the model.</span>
 <span class="sd">        This is a linear regression.</span>
 
@@ -451,7 +451,7 @@
             <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;linear_part/b&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">linear_output</span>
 
-    <span class="k">def</span> <span class="nf">_build_fm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_fm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the factorization machine part for the model.</span>
 <span class="sd">        This is a traditional 2-order FM module.</span>
 
@@ -477,7 +477,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">fm_output</span>
 
-    <span class="k">def</span> <span class="nf">_build_CIN</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_CIN</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nn_input</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_masked</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the compressed interaction network.</span>
@@ -611,7 +611,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">exFM_out</span>
 
-    <span class="k">def</span> <span class="nf">_build_fast_CIN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nn_input</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_fast_CIN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nn_input</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the compressed interaction network with reduced parameters.</span>
 <span class="sd">        This component provides explicit and vector-wise higher-order feature interactions.</span>
 <span class="sd">        Parameters from the filters are reduced via a matrix decomposition method.</span>
@@ -769,7 +769,7 @@
 
         <span class="k">return</span> <span class="n">exFM_out</span>
 
-    <span class="k">def</span> <span class="nf">_build_dnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_out</span><span class="p">,</span> <span class="n">embed_layer_size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_dnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_out</span><span class="p">,</span> <span class="n">embed_layer_size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the MLP part for the model.</span>
 <span class="sd">        This components provides implicit higher-order feature interactions.</span>
 

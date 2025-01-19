@@ -29,7 +29,7 @@
   <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,26 +318,26 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">recommenders.evaluation.python_evaluation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.evaluation.python_evaluation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">map_at_k</span><span class="p">,</span>
     <span class="n">ndcg_at_k</span><span class="p">,</span>
     <span class="n">precision_at_k</span><span class="p">,</span>
     <span class="n">recall_at_k</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">recommenders.utils.python_utils</span> <span class="kn">import</span> <span class="n">get_top_k_scored_items</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.python_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_top_k_scored_items</span>
 
 <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">disable_eager_execution</span><span class="p">()</span>  <span class="c1"># need to disable eager in TF2.x</span>
 
 
 <div class="viewcode-block" id="LightGCN">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN">[docs]</a>
-<span class="k">class</span> <span class="nc">LightGCN</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LightGCN</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;LightGCN model</span>
 
 <span class="sd">    :Citation:</span>
@@ -349,7 +349,7 @@
 
 <div class="viewcode-block" id="LightGCN.__init__">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializing the model. Create parameters, placeholders, embeddings and loss function.</span>
 
 <span class="sd">        Args:</span>
@@ -440,7 +440,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_init_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize user and item embeddings.</span>
 
 <span class="sd">        Returns:</span>
@@ -462,7 +462,7 @@
 
         <span class="k">return</span> <span class="n">all_weights</span>
 
-    <span class="k">def</span> <span class="nf">_create_lightgcn_embed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_lightgcn_embed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the average embeddings of users and items after every layer of the model.</span>
 
 <span class="sd">        Returns:</span>
@@ -489,7 +489,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">u_g_embeddings</span><span class="p">,</span> <span class="n">i_g_embeddings</span>
 
-    <span class="k">def</span> <span class="nf">_create_bpr_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">,</span> <span class="n">pos_items</span><span class="p">,</span> <span class="n">neg_items</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_bpr_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">,</span> <span class="n">pos_items</span><span class="p">,</span> <span class="n">neg_items</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate BPR loss.</span>
 
 <span class="sd">        Args:</span>
@@ -516,7 +516,7 @@
         <span class="n">emb_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decay</span> <span class="o">*</span> <span class="n">regularizer</span>
         <span class="k">return</span> <span class="n">mf_loss</span><span class="p">,</span> <span class="n">emb_loss</span>
 
-    <span class="k">def</span> <span class="nf">_convert_sp_mat_to_sp_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_sp_mat_to_sp_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a scipy sparse matrix to tf.SparseTensor.</span>
 
 <span class="sd">        Returns:</span>
@@ -529,7 +529,7 @@
 
 <div class="viewcode-block" id="LightGCN.fit">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model on self.data.train. If eval_epoch is not -1, evaluate the model on `self.data.test`</span>
 <span class="sd">        every `eval_epoch` epoch to observe the training status.</span>
 
@@ -597,7 +597,7 @@
 
 <div class="viewcode-block" id="LightGCN.load">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load an existing model.</span>
 
 <span class="sd">        Args:</span>
@@ -617,7 +617,7 @@
 
 <div class="viewcode-block" id="LightGCN.run_eval">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.run_eval">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run evaluation on self.data.test.</span>
 
 <span class="sd">        Returns:</span>
@@ -641,7 +641,7 @@
 
 <div class="viewcode-block" id="LightGCN.score">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.score">[docs]</a>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score all items for test users.</span>
 
 <span class="sd">        Args:</span>
@@ -676,7 +676,7 @@
 
 <div class="viewcode-block" id="LightGCN.recommend_k_items">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.recommend_k_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">recommend_k_items</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recommend_k_items</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort_top_k</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_id</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recommend top K items for all users in the test set.</span>
@@ -718,7 +718,7 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">output_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idmapper</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">user_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idmapper</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">user_file</span><span class="p">):</span>
         <span class="n">embeddings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="p">))</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">user_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wt</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
@@ -730,7 +730,7 @@
 
 <div class="viewcode-block" id="LightGCN.infer_embedding">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.infer_embedding">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_file</span><span class="p">,</span> <span class="n">item_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_file</span><span class="p">,</span> <span class="n">item_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Export user and item embeddings to csv files.</span>
 
 <span class="sd">        Args:</span>

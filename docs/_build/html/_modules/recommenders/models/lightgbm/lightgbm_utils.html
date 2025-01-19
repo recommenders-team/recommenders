@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,17 +318,17 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">category_encoders</span> <span class="k">as</span> <span class="nn">ce</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">category_encoders</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ce</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
 
 
 <div class="viewcode-block" id="unpackbits">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightgbm.lightgbm_utils.unpackbits">[docs]</a>
-<span class="k">def</span> <span class="nf">unpackbits</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">num_bits</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpackbits</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">num_bits</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a decimal value numpy.ndarray into multi-binary value numpy.ndarray ([1,2]-&gt;[[0,1],[1,0]])</span>
 
 <span class="sd">    Args:</span>
@@ -344,12 +344,12 @@
 
 <div class="viewcode-block" id="NumEncoder">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightgbm.lightgbm_utils.NumEncoder">[docs]</a>
-<span class="k">class</span> <span class="nc">NumEncoder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NumEncoder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode all the categorical features into numerical ones by sequential label encoding, sequential count encoding,</span>
 <span class="sd">    and binary encoding. Additionally, it also filters the low-frequency categories and fills the missing values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cate_cols</span><span class="p">,</span> <span class="n">nume_cols</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">thresrate</span><span class="o">=</span><span class="mf">0.99</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cate_cols</span><span class="p">,</span> <span class="n">nume_cols</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">thresrate</span><span class="o">=</span><span class="mf">0.99</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        Args:</span>
@@ -382,7 +382,7 @@
 
 <div class="viewcode-block" id="NumEncoder.fit_transform">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightgbm.lightgbm_utils.NumEncoder.fit_transform">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Input a training set (pandas.DataFrame) and return the converted 2 numpy.ndarray (x,y).</span>
 
 <span class="sd">        Args:</span>
@@ -473,7 +473,7 @@
     <span class="c1"># for test dataset</span>
 <div class="viewcode-block" id="NumEncoder.transform">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.lightgbm.lightgbm_utils.NumEncoder.transform">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Input a testing / validation set (pandas.DataFrame) and return the converted 2 numpy.ndarray (x,y).</span>
 
 <span class="sd">        Args:</span>

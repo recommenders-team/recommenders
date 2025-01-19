@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,10 +318,10 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">tensorflow_estimator.python.estimator.export.export</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow_estimator.python.estimator.export.export</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">build_supervised_input_receiver_fn_from_input_fn</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -341,7 +341,7 @@
 
 <div class="viewcode-block" id="pandas_input_fn_for_saved_model">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.pandas_input_fn_for_saved_model">[docs]</a>
-<span class="k">def</span> <span class="nf">pandas_input_fn_for_saved_model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">feat_name_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pandas_input_fn_for_saved_model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">feat_name_type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas input function for TensorFlow SavedModel.</span>
 
 <span class="sd">    Args:</span>
@@ -356,7 +356,7 @@
     <span class="k">for</span> <span class="n">feat_type</span> <span class="ow">in</span> <span class="n">feat_name_type</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">assert</span> <span class="n">feat_type</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">input_fn</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_fn</span><span class="p">():</span>
         <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
             <span class="n">ex</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Example</span><span class="p">()</span>
@@ -377,7 +377,7 @@
 
 <div class="viewcode-block" id="pandas_input_fn">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.pandas_input_fn">[docs]</a>
-<span class="k">def</span> <span class="nf">pandas_input_fn</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pandas_input_fn</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas input function for TensorFlow high-level API Estimator.</span>
@@ -423,7 +423,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_dataset</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_dataset</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -434,7 +434,7 @@
             <span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">reshuffle_each_iteration</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># buffer size = 1000</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Seed was set but `shuffle=False`. Seed will be ignored.&quot;</span><span class="p">)</span>
 
@@ -443,7 +443,7 @@
 
 <div class="viewcode-block" id="build_optimizer">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.build_optimizer">[docs]</a>
-<span class="k">def</span> <span class="nf">build_optimizer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_optimizer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an optimizer for TensorFlow high-level API Estimator.</span>
 
 <span class="sd">    Available options are: `adadelta`, `adagrad`, `adam`, `ftrl`, `momentum`, `rmsprop` or `sgd`.</span>
@@ -481,7 +481,7 @@
 
 <div class="viewcode-block" id="export_model">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.export_model">[docs]</a>
-<span class="k">def</span> <span class="nf">export_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_input_fn</span><span class="p">,</span> <span class="n">eval_input_fn</span><span class="p">,</span> <span class="n">tf_feat_cols</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_input_fn</span><span class="p">,</span> <span class="n">eval_input_fn</span><span class="p">,</span> <span class="n">tf_feat_cols</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Export TensorFlow estimator (model).</span>
 
 <span class="sd">    Args:</span>
@@ -515,7 +515,7 @@
 
 <div class="viewcode-block" id="evaluation_log_hook">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.evaluation_log_hook">[docs]</a>
-<span class="k">def</span> <span class="nf">evaluation_log_hook</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluation_log_hook</span><span class="p">(</span>
     <span class="n">estimator</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">,</span>
     <span class="n">true_df</span><span class="p">,</span>
@@ -569,8 +569,8 @@
 
 
 
-<span class="k">class</span> <span class="nc">_TrainLogHook</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">SessionRunHook</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TrainLogHook</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">SessionRunHook</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">estimator</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">,</span>
@@ -599,7 +599,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">FileWriterCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span>
@@ -608,14 +608,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_context</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">before_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_context</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">requests</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;global_step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span><span class="p">}</span>
             <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">SessionRunArgs</span><span class="p">(</span><span class="n">requests</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_context</span><span class="p">,</span> <span class="n">run_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">after_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_context</span><span class="p">,</span> <span class="n">run_values</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_step_tensor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">run_values</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;global_step&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -651,11 +651,11 @@
 
             <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">_prev_log_level</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary_writer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">summary</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">Summary</span><span class="p">(</span>
@@ -666,19 +666,19 @@
 
 <div class="viewcode-block" id="MetricsLogger">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger">[docs]</a>
-<span class="k">class</span> <span class="nc">MetricsLogger</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MetricsLogger</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Metrics logger&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MetricsLogger.__init__">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializer&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log</span> <span class="o">=</span> <span class="p">{}</span></div>
 
 
 <div class="viewcode-block" id="MetricsLogger.log">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger.log">[docs]</a>
-    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Log metrics. Each metric&#39;s log will be stored in the corresponding list.</span>
 
 <span class="sd">        Args:</span>
@@ -692,7 +692,7 @@
 
 <div class="viewcode-block" id="MetricsLogger.get_log">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.tf_utils.MetricsLogger.get_log">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter</span>
 
 <span class="sd">        Returns:</span>

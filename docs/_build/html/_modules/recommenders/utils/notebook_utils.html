@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,11 +318,11 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">nbformat</span>
-<span class="kn">from</span> <span class="nn">nbconvert.preprocessors</span> <span class="kn">import</span> <span class="n">ExecutePreprocessor</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nbformat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nbconvert.preprocessors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutePreprocessor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 
 
 <span class="n">NOTEBOOK_OUTPUT_CONTENT_TYPE</span> <span class="o">=</span> <span class="s2">&quot;application/notebook_utils.json+json&quot;</span>
@@ -330,7 +330,7 @@
 
 <div class="viewcode-block" id="is_jupyter">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_utils.is_jupyter">[docs]</a>
-<span class="k">def</span> <span class="nf">is_jupyter</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_jupyter</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the module is running on Jupyter notebook/console.</span>
 
 <span class="sd">    Returns:</span>
@@ -350,7 +350,7 @@
 
 <div class="viewcode-block" id="is_databricks">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_utils.is_databricks">[docs]</a>
-<span class="k">def</span> <span class="nf">is_databricks</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_databricks</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the module is running on Databricks.</span>
 
 <span class="sd">    Returns:</span>
@@ -367,7 +367,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_update_parameters</span><span class="p">(</span><span class="n">parameter_cell_source</span><span class="p">,</span> <span class="n">new_parameters</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_update_parameters</span><span class="p">(</span><span class="n">parameter_cell_source</span><span class="p">,</span> <span class="n">new_parameters</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Replace parameter values in the cell source code.&quot;&quot;&quot;</span>
     <span class="n">modified_cell_source</span> <span class="o">=</span> <span class="n">parameter_cell_source</span>
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">new_value</span> <span class="ow">in</span> <span class="n">new_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -388,7 +388,7 @@
 
 <div class="viewcode-block" id="execute_notebook">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_utils.execute_notebook">[docs]</a>
-<span class="k">def</span> <span class="nf">execute_notebook</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_notebook</span><span class="p">(</span>
     <span class="n">input_notebook</span><span class="p">,</span> <span class="n">output_notebook</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">kernel_name</span><span class="o">=</span><span class="s2">&quot;python3&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2200</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute a notebook while passing parameters to it.</span>
@@ -436,7 +436,7 @@
 
 <div class="viewcode-block" id="store_metadata">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_utils.store_metadata">[docs]</a>
-<span class="k">def</span> <span class="nf">store_metadata</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_metadata</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Store data in the notebook&#39;s output source code.</span>
 
 <span class="sd">    Args:</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="read_notebook">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.notebook_utils.read_notebook">[docs]</a>
-<span class="k">def</span> <span class="nf">read_notebook</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_notebook</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the metadata stored in the notebook&#39;s output source code.</span>
 
 <span class="sd">    Args:</span>

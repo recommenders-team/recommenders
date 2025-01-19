@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,14 +318,14 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 
 <div class="viewcode-block" id="load_pandas_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.covid_utils.load_pandas_df">[docs]</a>
-<span class="k">def</span> <span class="nf">load_pandas_df</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_pandas_df</span><span class="p">(</span>
     <span class="n">azure_storage_account_name</span><span class="o">=</span><span class="s2">&quot;azureopendatastorage&quot;</span><span class="p">,</span>
     <span class="n">azure_storage_sas_token</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">container_name</span><span class="o">=</span><span class="s2">&quot;covid19temp&quot;</span><span class="p">,</span>
@@ -358,7 +358,7 @@
 
 <div class="viewcode-block" id="remove_duplicates">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.covid_utils.remove_duplicates">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_duplicates</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_duplicates</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove duplicated entries.</span>
 
 <span class="sd">    Args:</span>
@@ -385,7 +385,7 @@
 
 <div class="viewcode-block" id="remove_nan">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.covid_utils.remove_nan">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_nan</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_nan</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove rows with NaN values in specified column.</span>
 
 <span class="sd">    Args:</span>
@@ -409,7 +409,7 @@
 
 <div class="viewcode-block" id="clean_dataframe">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.covid_utils.clean_dataframe">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean up the dataframe.</span>
 
 <span class="sd">    Args:</span>
@@ -433,7 +433,7 @@
 
 <div class="viewcode-block" id="retrieve_text">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.covid_utils.retrieve_text">[docs]</a>
-<span class="k">def</span> <span class="nf">retrieve_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">retrieve_text</span><span class="p">(</span>
     <span class="n">entry</span><span class="p">,</span>
     <span class="n">container_name</span><span class="p">,</span>
     <span class="n">azure_storage_account_name</span><span class="o">=</span><span class="s2">&quot;azureopendatastorage&quot;</span><span class="p">,</span>
@@ -474,7 +474,7 @@
 
 <div class="viewcode-block" id="get_public_domain_text">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.covid_utils.get_public_domain_text">[docs]</a>
-<span class="k">def</span> <span class="nf">get_public_domain_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_public_domain_text</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span>
     <span class="n">container_name</span><span class="p">,</span>
     <span class="n">azure_storage_account_name</span><span class="o">=</span><span class="s2">&quot;azureopendatastorage&quot;</span><span class="p">,</span>

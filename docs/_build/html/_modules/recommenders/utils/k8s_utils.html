@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,15 +318,15 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">floor</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">floor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="qps_to_replicas">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.k8s_utils.qps_to_replicas">[docs]</a>
-<span class="k">def</span> <span class="nf">qps_to_replicas</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">qps_to_replicas</span><span class="p">(</span>
     <span class="n">target_qps</span><span class="p">,</span> <span class="n">processing_time</span><span class="p">,</span> <span class="n">max_qp_replica</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_utilization</span><span class="o">=</span><span class="mf">0.7</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide a rough estimate of the number of replicas to support a given</span>
@@ -355,7 +355,7 @@
 
 <div class="viewcode-block" id="replicas_to_qps">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.k8s_utils.replicas_to_qps">[docs]</a>
-<span class="k">def</span> <span class="nf">replicas_to_qps</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">replicas_to_qps</span><span class="p">(</span>
     <span class="n">num_replicas</span><span class="p">,</span> <span class="n">processing_time</span><span class="p">,</span> <span class="n">max_qp_replica</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_utilization</span><span class="o">=</span><span class="mf">0.7</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide a rough estimate of the queries per second supported by a number of replicas</span>
@@ -381,7 +381,7 @@
 
 <div class="viewcode-block" id="nodes_to_replicas">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.k8s_utils.nodes_to_replicas">[docs]</a>
-<span class="k">def</span> <span class="nf">nodes_to_replicas</span><span class="p">(</span><span class="n">n_cores_per_node</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cpu_cores_per_replica</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">nodes_to_replicas</span><span class="p">(</span><span class="n">n_cores_per_node</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cpu_cores_per_replica</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide a rough estimate of the number of replicas supported by a</span>
 <span class="sd">    given number of nodes with n_cores_per_node cores each</span>
 

@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,17 +318,17 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZipFile</span>
-<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="n">maybe_download</span><span class="p">,</span> <span class="n">download_path</span>
-<span class="kn">from</span> <span class="nn">recommenders.utils.notebook_utils</span> <span class="kn">import</span> <span class="n">is_databricks</span>
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zipfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZipFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.datasets.download_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">maybe_download</span><span class="p">,</span> <span class="n">download_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.notebook_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_databricks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_HEADER</span><span class="p">,</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -339,7 +339,7 @@
 <span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">StructType</span><span class="p">,</span>
         <span class="n">StructField</span><span class="p">,</span>
         <span class="n">StringType</span><span class="p">,</span>
@@ -350,14 +350,14 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>  <span class="c1"># so the environment without spark doesn&#39;t break</span>
 
-<span class="kn">import</span> <span class="nn">pandera</span> <span class="k">as</span> <span class="nn">pa</span>
-<span class="kn">import</span> <span class="nn">pandera.extensions</span> <span class="k">as</span> <span class="nn">extensions</span>
-<span class="kn">from</span> <span class="nn">pandera</span> <span class="kn">import</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">pandera.typing</span> <span class="kn">import</span> <span class="n">Series</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandera</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandera.extensions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">extensions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandera.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Series</span>
 
 
-<span class="k">class</span> <span class="nc">_DataFormat</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_DataFormat</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sep</span><span class="p">,</span>
         <span class="n">path</span><span class="p">,</span>
@@ -389,27 +389,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_has_header</span> <span class="o">=</span> <span class="n">item_has_header</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sep</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">item_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">item_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_sep</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">item_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">item_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_path</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">item_has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">item_has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_has_header</span>
 
 
@@ -468,7 +468,7 @@
 
 <div class="viewcode-block" id="load_pandas_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.load_pandas_df">[docs]</a>
-<span class="k">def</span> <span class="nf">load_pandas_df</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_pandas_df</span><span class="p">(</span>
     <span class="n">size</span><span class="o">=</span><span class="s2">&quot;100k&quot;</span><span class="p">,</span>
     <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -573,7 +573,7 @@
 
 <div class="viewcode-block" id="load_item_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.load_item_df">[docs]</a>
-<span class="k">def</span> <span class="nf">load_item_df</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_item_df</span><span class="p">(</span>
     <span class="n">size</span><span class="o">=</span><span class="s2">&quot;100k&quot;</span><span class="p">,</span>
     <span class="n">local_cache_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">movie_col</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -611,7 +611,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_load_item_df</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">item_datapath</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="n">title_col</span><span class="p">,</span> <span class="n">genres_col</span><span class="p">,</span> <span class="n">year_col</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_item_df</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">item_datapath</span><span class="p">,</span> <span class="n">movie_col</span><span class="p">,</span> <span class="n">title_col</span><span class="p">,</span> <span class="n">genres_col</span><span class="p">,</span> <span class="n">year_col</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads Movie info&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">title_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">genres_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">year_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -659,7 +659,7 @@
     <span class="c1"># Note, there are very few records that are missing the year info.</span>
     <span class="k">if</span> <span class="n">year_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-        <span class="k">def</span> <span class="nf">parse_year</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">parse_year</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
             <span class="n">parsed</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;[()]&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parsed</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isdecimal</span><span class="p">():</span>
                 <span class="k">return</span> <span class="n">parsed</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
@@ -678,7 +678,7 @@
 
 <div class="viewcode-block" id="load_spark_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.load_spark_df">[docs]</a>
-<span class="k">def</span> <span class="nf">load_spark_df</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_spark_df</span><span class="p">(</span>
     <span class="n">spark</span><span class="p">,</span>
     <span class="n">size</span><span class="o">=</span><span class="s2">&quot;100k&quot;</span><span class="p">,</span>
     <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -820,7 +820,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_schema</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Use header to generate schema</span>
         <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -850,7 +850,7 @@
     <span class="k">return</span> <span class="n">schema</span>
 
 
-<span class="k">def</span> <span class="nf">_maybe_download_and_extract</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_maybe_download_and_extract</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads and extracts MovieLens rating and item datafiles if they don’t already exist&quot;&quot;&quot;</span>
     <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirs</span><span class="p">):</span>
@@ -870,7 +870,7 @@
 
 <div class="viewcode-block" id="download_movielens">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.download_movielens">[docs]</a>
-<span class="k">def</span> <span class="nf">download_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads MovieLens datafile.</span>
 
 <span class="sd">    Args:</span>
@@ -888,7 +888,7 @@
 
 <div class="viewcode-block" id="extract_movielens">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.extract_movielens">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">rating_path</span><span class="p">,</span> <span class="n">item_path</span><span class="p">,</span> <span class="n">zip_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_movielens</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">rating_path</span><span class="p">,</span> <span class="n">item_path</span><span class="p">,</span> <span class="n">zip_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract MovieLens rating and item datafiles from the MovieLens raw zip file.</span>
 
 <span class="sd">    To extract all files instead of just rating and item datafiles,</span>
@@ -910,13 +910,13 @@
 
 <span class="c1"># For more information on data synthesis, see https://pandera.readthedocs.io/en/latest/data_synthesis_strategies.html</span>
 <span class="nd">@extensions</span><span class="o">.</span><span class="n">register_check_method</span><span class="p">(</span><span class="n">statistics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">],</span> <span class="n">supported_types</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">unique_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unique_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="MockMovielensSchema">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.MockMovielensSchema">[docs]</a>
-<span class="k">class</span> <span class="nc">MockMovielensSchema</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrameModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MockMovielensSchema</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrameModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mock dataset schema to generate fake data for testing purpose.</span>
 <span class="sd">    This schema is configured to mimic the Movielens dataset</span>
@@ -948,7 +948,7 @@
 <div class="viewcode-block" id="MockMovielensSchema.get_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.MockMovielensSchema.get_df">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_df</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
@@ -988,7 +988,7 @@
 <div class="viewcode-block" id="MockMovielensSchema.get_spark_df">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.movielens.MockMovielensSchema.get_spark_df">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_spark_df</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_spark_df</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">spark</span><span class="p">,</span>
         <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
@@ -1036,7 +1036,7 @@
 
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_get_spark_deserialization_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_spark_deserialization_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">StructType</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">StructField</span><span class="p">(</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>

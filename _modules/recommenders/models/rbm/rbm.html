@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,11 +318,11 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">disable_eager_execution</span><span class="p">()</span>
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -330,12 +330,12 @@
 
 <div class="viewcode-block" id="RBM">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM">[docs]</a>
-<span class="k">class</span> <span class="nc">RBM</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RBM</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Restricted  Boltzmann Machine&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RBM.__init__">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">possible_ratings</span><span class="p">,</span>
         <span class="n">visible_units</span><span class="p">,</span>
@@ -456,7 +456,7 @@
 
 <div class="viewcode-block" id="RBM.binomial_sampling">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.binomial_sampling">[docs]</a>
-    <span class="k">def</span> <span class="nf">binomial_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">binomial_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Binomial sampling of hidden units activations using a rejection method.</span>
 
 <span class="sd">        Basic mechanics:</span>
@@ -488,7 +488,7 @@
 
 <div class="viewcode-block" id="RBM.multinomial_sampling">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.multinomial_sampling">[docs]</a>
-    <span class="k">def</span> <span class="nf">multinomial_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multinomial_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Multinomial Sampling of ratings</span>
 
 <span class="sd">        Basic mechanics:</span>
@@ -529,7 +529,7 @@
 
 <div class="viewcode-block" id="RBM.multinomial_distribution">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.multinomial_distribution">[docs]</a>
-    <span class="k">def</span> <span class="nf">multinomial_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multinomial_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Probability that unit v has value l given phi: P(v=l|phi)</span>
 
 <span class="sd">        Args:</span>
@@ -556,7 +556,7 @@
 
 <div class="viewcode-block" id="RBM.free_energy">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.free_energy">[docs]</a>
-    <span class="k">def</span> <span class="nf">free_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">free_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Free energy of the visible units given the hidden units. Since the sum is over the hidden units&#39;</span>
 <span class="sd">        states, the functional form of the visible units Free energy is the same as the one for the binary model.</span>
 
@@ -579,7 +579,7 @@
 
 <div class="viewcode-block" id="RBM.placeholder">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.placeholder">[docs]</a>
-    <span class="k">def</span> <span class="nf">placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the placeholders for the visible units&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span>
             <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_visible</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span>
@@ -588,7 +588,7 @@
 
 <div class="viewcode-block" id="RBM.init_parameters">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.init_parameters">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the parameters of the model.</span>
 
 <span class="sd">        This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and</span>
@@ -632,7 +632,7 @@
 
 <div class="viewcode-block" id="RBM.sample_hidden_units">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.sample_hidden_units">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample_hidden_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vv</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_hidden_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vv</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sampling: In RBM we use Contrastive divergence to sample the parameter space. In order to do that we need</span>
 <span class="sd">        to initialize the two conditional probabilities:</span>
 
@@ -667,7 +667,7 @@
 
 <div class="viewcode-block" id="RBM.sample_visible_units">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.sample_visible_units">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample_visible_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_visible_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN</span>
 <span class="sd">        (negative phase). Each visible unit can take values in [1,rating], while the zero is reserved</span>
 <span class="sd">        for missing data; as such the value of the hidden unit is sampled from a multinomial distribution.</span>
@@ -715,7 +715,7 @@
 
 <div class="viewcode-block" id="RBM.gibbs_sampling">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.gibbs_sampling">[docs]</a>
-    <span class="k">def</span> <span class="nf">gibbs_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gibbs_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary</span>
 <span class="sd">        RBM we need to impose that unseen movies stay as such, i.e. the sampling phase should not modify</span>
 <span class="sd">        the elements where v=0.</span>
@@ -746,7 +746,7 @@
 
 <div class="viewcode-block" id="RBM.losses">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.losses">[docs]</a>
-    <span class="k">def</span> <span class="nf">losses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vv</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">losses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vv</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate contrastive divergence, which is the difference between</span>
 <span class="sd">        the free energy clamped on the data (v) and the model Free energy (v_k).</span>
 
@@ -765,7 +765,7 @@
 
 <div class="viewcode-block" id="RBM.gibbs_protocol">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.gibbs_protocol">[docs]</a>
-    <span class="k">def</span> <span class="nf">gibbs_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gibbs_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gibbs protocol.</span>
 
 <span class="sd">        Basic mechanics:</span>
@@ -799,7 +799,7 @@
 
 <div class="viewcode-block" id="RBM.data_pipeline">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.data_pipeline">[docs]</a>
-    <span class="k">def</span> <span class="nf">data_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the data pipeline&quot;&quot;&quot;</span>
 
         <span class="c1"># placeholder for the batch_size</span>
@@ -821,7 +821,7 @@
 
 <div class="viewcode-block" id="RBM.init_metrics">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.init_metrics">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize metrics&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_metrics</span><span class="p">:</span>  <span class="c1"># if true (default) returns evaluation metrics</span>
@@ -834,7 +834,7 @@
 
 <div class="viewcode-block" id="RBM.generate_graph">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.generate_graph">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the different RBM modules to generate the computational graph&quot;&quot;&quot;</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating the computational graph&quot;</span><span class="p">)</span>
@@ -864,7 +864,7 @@
 
 <div class="viewcode-block" id="RBM.init_gpu">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.init_gpu">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_gpu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_gpu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Config GPU memory&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config_gpu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">ConfigProto</span><span class="p">(</span>
@@ -875,7 +875,7 @@
 
 <div class="viewcode-block" id="RBM.init_training_session">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.init_training_session">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_training_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_training_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the TF session on training data</span>
 
 <span class="sd">        Args:</span>
@@ -892,7 +892,7 @@
 
 <div class="viewcode-block" id="RBM.batch_training">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.batch_training">[docs]</a>
-    <span class="k">def</span> <span class="nf">batch_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_minibatches</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_minibatches</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform training over input minibatches. If `self.with_metrics` is False,</span>
 <span class="sd">        no online metrics are evaluated.</span>
 
@@ -922,7 +922,7 @@
 
 <div class="viewcode-block" id="RBM.fit">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit method</span>
 
 <span class="sd">        Training in generative models takes place in two steps:</span>
@@ -968,7 +968,7 @@
 
 <div class="viewcode-block" id="RBM.eval_out">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.eval_out">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement multinomial sampling from a trained model&quot;&quot;&quot;</span>
 
         <span class="c1"># Sampling</span>
@@ -989,7 +989,7 @@
 
 <div class="viewcode-block" id="RBM.recommend_k_items">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.recommend_k_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recommend_k_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">remove_seen</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the top-k items ordered by a relevancy score.</span>
 
 <span class="sd">        Basic mechanics:</span>
@@ -1057,7 +1057,7 @@
 
 <div class="viewcode-block" id="RBM.predict">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the inferred ratings. This method is similar to recommend_k_items() with the</span>
 <span class="sd">        exceptions that it returns all the inferred ratings</span>
 
@@ -1086,7 +1086,7 @@
 
 <div class="viewcode-block" id="RBM.save">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.save">[docs]</a>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./rbm_model.ckpt&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./rbm_model.ckpt&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save model parameters to `file_path`</span>
 
 <span class="sd">        This function saves the current tensorflow session to a specified path.</span>
@@ -1109,7 +1109,7 @@
 
 <div class="viewcode-block" id="RBM.load">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.rbm.rbm.RBM.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./rbm_model.ckpt&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./rbm_model.ckpt&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load model parameters for further use.</span>
 
 <span class="sd">        This function loads a saved tensorflow session.</span>

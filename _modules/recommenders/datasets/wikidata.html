@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,10 +318,10 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">retrying</span> <span class="kn">import</span> <span class="n">retry</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">retrying</span><span class="w"> </span><span class="kn">import</span> <span class="n">retry</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -334,7 +334,7 @@
 
 <div class="viewcode-block" id="get_session">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.get_session">[docs]</a>
-<span class="k">def</span> <span class="nf">get_session</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get session object</span>
 
 <span class="sd">    Args:</span>
@@ -357,7 +357,7 @@
 <div class="viewcode-block" id="find_wikidata_id">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.find_wikidata_id">[docs]</a>
 <span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">find_wikidata_id</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_wikidata_id</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the entity ID in wikidata from a title string.</span>
 
 <span class="sd">    Args:</span>
@@ -413,7 +413,7 @@
 <div class="viewcode-block" id="query_entity_links">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.query_entity_links">[docs]</a>
 <span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">query_entity_links</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_entity_links</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Query all linked pages from a wikidata entityID</span>
 
 <span class="sd">    Args:</span>
@@ -473,7 +473,7 @@
 
 <div class="viewcode-block" id="read_linked_entities">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.read_linked_entities">[docs]</a>
-<span class="k">def</span> <span class="nf">read_linked_entities</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_linked_entities</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtain lists of liken entities (IDs and names) from dictionary</span>
 
 <span class="sd">    Args:</span>
@@ -498,7 +498,7 @@
 <div class="viewcode-block" id="query_entity_description">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.query_entity_description">[docs]</a>
 <span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">query_entity_description</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_entity_description</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Query entity wikidata description from entityID</span>
 
 <span class="sd">    Args:</span>
@@ -540,7 +540,7 @@
 
 <div class="viewcode-block" id="search_wikidata">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.search_wikidata">[docs]</a>
-<span class="k">def</span> <span class="nf">search_wikidata</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">describe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_wikidata</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">describe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create DataFrame of Wikidata search results</span>
 
 <span class="sd">    Args:</span>

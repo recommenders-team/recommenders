@@ -1,5 +1,4 @@
 category-encoders<3,>=2.6.0
-cornac<3,>=1.15.2
 hyperopt<1,>=0.2.7
 lightgbm<5,>=4.0.0
 locust<3,>=2.12.2
@@ -15,25 +14,27 @@ seaborn<1,>=0.13.0
 transformers<5,>=4.27.0
 
 [:python_version <= "3.8"]
+cornac<=2.2.2,>=1.15.2
 pandera[strategies]<0.18,>=0.6.5
 statsmodels<=0.14.1
 
 [:python_version >= "3.9"]
+cornac<3,>=2.3.0
 pandera[strategies]>=0.15.0
 statsmodels>=0.14.4
 
 [all]
-tf-slim>=1.1.0
-pytest-cov>=4.1.0
 tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4
-nvidia-ml-py>=11.525.84
-pytest>=7.2.1
-pytest-mock>=3.10.0
 fastai<3,>=2.7.11
 black>=23.3.0
-pyarrow>=10.0.1
+pytest-cov>=4.1.0
+tf-slim>=1.1.0
+pytest>=7.2.1
 torch<3,>=2.0.1
+nvidia-ml-py>=11.525.84
+pyarrow>=10.0.1
 pyspark<=4,>=3.3.0
+pytest-mock>=3.10.0
 
 [all:python_version <= "3.8"]
 spacy<=3.7.5

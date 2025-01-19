@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -319,19 +319,19 @@
 <span class="c1"># Licensed under the MIT License.</span>
 
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">fastai</span>
-<span class="kn">import</span> <span class="nn">fastprogress</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">fastprogress.fastprogress</span> <span class="kn">import</span> <span class="n">force_console_behavior</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fastai</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fastprogress</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastprogress.fastprogress</span><span class="w"> </span><span class="kn">import</span> <span class="n">force_console_behavior</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">cc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">cc</span>
 
 
 <div class="viewcode-block" id="cartesian_product">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.fastai.fastai_utils.cartesian_product">[docs]</a>
-<span class="k">def</span> <span class="nf">cartesian_product</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cartesian_product</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Cartesian product in fastai algo. This is a helper function.</span>
 
 <span class="sd">    Args:</span>
@@ -352,7 +352,7 @@
 
 <div class="viewcode-block" id="score">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.fastai.fastai_utils.score">[docs]</a>
-<span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span>
     <span class="n">learner</span><span class="p">,</span>
     <span class="n">test_df</span><span class="p">,</span>
     <span class="n">user_col</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
@@ -406,7 +406,7 @@
 
 <div class="viewcode-block" id="hide_fastai_progress_bar">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.fastai.fastai_utils.hide_fastai_progress_bar">[docs]</a>
-<span class="k">def</span> <span class="nf">hide_fastai_progress_bar</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hide_fastai_progress_bar</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Hide fastai progress bar&quot;&quot;&quot;</span>
     <span class="n">fastprogress</span><span class="o">.</span><span class="n">fastprogress</span><span class="o">.</span><span class="n">NO_BAR</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">fastprogress</span><span class="o">.</span><span class="n">fastprogress</span><span class="o">.</span><span class="n">WRITER_FN</span> <span class="o">=</span> <span class="nb">str</span>

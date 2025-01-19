@@ -29,7 +29,7 @@
   <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,8 +318,8 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.sequential.sequential_base_model</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.models.sequential.sequential_base_model</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SequentialBaseModel</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -328,7 +328,7 @@
 
 <div class="viewcode-block" id="CaserModel">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.caser.CaserModel">[docs]</a>
-<span class="k">class</span> <span class="nc">CaserModel</span><span class="p">(</span><span class="n">SequentialBaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CaserModel</span><span class="p">(</span><span class="n">SequentialBaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Caser Model</span>
 
 <span class="sd">    :Citation:</span>
@@ -340,7 +340,7 @@
 
 <div class="viewcode-block" id="CaserModel.__init__">
 <a class="viewcode-back" href="../../../../../../models.html#recommenders.models.deeprec.models.sequential.caser.CaserModel.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization of variables for caser</span>
 
 <span class="sd">        Args:</span>
@@ -358,7 +358,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_build_seq_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_seq_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create caser model.</span>
 
 <span class="sd">        Returns:</span>
@@ -370,7 +370,7 @@
             <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;model_output&quot;</span><span class="p">,</span> <span class="n">model_output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">model_output</span>
 
-    <span class="k">def</span> <span class="nf">_add_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hist_matrix</span><span class="p">,</span> <span class="n">vertical_dim</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hist_matrix</span><span class="p">,</span> <span class="n">vertical_dim</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to use CNN at both vertical and horizonal aspects.</span>
 
 <span class="sd">        Args:</span>
@@ -397,7 +397,7 @@
                 <span class="n">out_h</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">out_hs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">out_v</span><span class="p">,</span> <span class="n">out_h</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_caser_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_caser_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to use CNN at both item and category aspects.</span>
 
 <span class="sd">        Returns:</span>
@@ -415,7 +415,7 @@
         <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;cnn_output&quot;</span><span class="p">,</span> <span class="n">cnn_output</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cnn_output</span>
 
-    <span class="k">def</span> <span class="nf">_build_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history_matrix</span><span class="p">,</span> <span class="n">nums</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history_matrix</span><span class="p">,</span> <span class="n">nums</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call a CNN layer.</span>
 
 <span class="sd">        Returns:</span>

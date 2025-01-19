@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.io.sequential_iterator</span> <span class="kn">import</span> <span class="n">SequentialIterator</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.deeprec_utils</span> <span class="kn">import</span> <span class="n">load_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.io.sequential_iterator</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialIterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.deeprec_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dict</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NextItNetIterator&quot;</span><span class="p">]</span>
@@ -331,7 +331,7 @@
 
 <div class="viewcode-block" id="NextItNetIterator">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.nextitnet_iterator.NextItNetIterator">[docs]</a>
-<span class="k">class</span> <span class="nc">NextItNetIterator</span><span class="p">(</span><span class="n">SequentialIterator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NextItNetIterator</span><span class="p">(</span><span class="n">SequentialIterator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data loader for the NextItNet model.</span>
 
 <span class="sd">    NextItNet requires a special type of data format. In training stage, each instance will</span>
@@ -341,7 +341,7 @@
 
 <div class="viewcode-block" id="NextItNetIterator.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.io.nextitnet_iterator.NextItNetIterator.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">col_spliter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an iterator. Create necessary placeholders for the model.</span>
 <span class="sd">        Different from sequential iterator</span>
 
@@ -391,7 +391,7 @@
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label_list</span><span class="p">,</span>
         <span class="n">user_list</span><span class="p">,</span>

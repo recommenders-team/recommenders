@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,12 +318,12 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">cuda</span>
-<span class="kn">from</span> <span class="nn">numba.cuda.cudadrv.error</span> <span class="kn">import</span> <span class="n">CudaSupportError</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">cuda</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numba.cuda.cudadrv.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">CudaSupportError</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -334,19 +334,19 @@
 
 <div class="viewcode-block" id="get_number_gpus">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.gpu_utils.get_number_gpus">[docs]</a>
-<span class="k">def</span> <span class="nf">get_number_gpus</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_number_gpus</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of GPUs in the system.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        int: Number of GPUs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">torch</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">numba</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numba</span>
 
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">numba</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">gpus</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># numba.cuda.cudadrv.error.CudaSupportError:</span>
@@ -356,7 +356,7 @@
 
 <div class="viewcode-block" id="get_gpu_info">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.gpu_utils.get_gpu_info">[docs]</a>
-<span class="k">def</span> <span class="nf">get_gpu_info</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_gpu_info</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get information of GPUs.</span>
 
 <span class="sd">    Returns:</span>
@@ -383,7 +383,7 @@
 
 <div class="viewcode-block" id="clear_memory_all_gpus">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.gpu_utils.clear_memory_all_gpus">[docs]</a>
-<span class="k">def</span> <span class="nf">clear_memory_all_gpus</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_memory_all_gpus</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear memory of all GPUs.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">gpu</span> <span class="ow">in</span> <span class="n">cuda</span><span class="o">.</span><span class="n">gpus</span><span class="p">:</span>
@@ -396,14 +396,14 @@
 
 <div class="viewcode-block" id="get_cuda_version">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.gpu_utils.get_cuda_version">[docs]</a>
-<span class="k">def</span> <span class="nf">get_cuda_version</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cuda_version</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get CUDA version</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Version of the library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">torch</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">cuda</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
@@ -431,14 +431,14 @@
 
 <div class="viewcode-block" id="get_cudnn_version">
 <a class="viewcode-back" href="../../../utils.html#recommenders.utils.gpu_utils.get_cudnn_version">[docs]</a>
-<span class="k">def</span> <span class="nf">get_cudnn_version</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cudnn_version</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the CuDNN version</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Version of the library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">find_cudnn_in_headers</span><span class="p">(</span><span class="n">candiates</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_cudnn_in_headers</span><span class="p">(</span><span class="n">candiates</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
             <span class="n">file</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">file</span><span class="p">:</span>
@@ -461,7 +461,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">torch</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">version</span><span class="p">())</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>

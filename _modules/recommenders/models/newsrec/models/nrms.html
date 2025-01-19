@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,19 +318,19 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow.keras</span> <span class="k">as</span> <span class="nn">keras</span>
-<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow.keras</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">keras</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.keras</span><span class="w"> </span><span class="kn">import</span> <span class="n">layers</span>
 
 
-<span class="kn">from</span> <span class="nn">recommenders.models.newsrec.models.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.newsrec.models.layers</span> <span class="kn">import</span> <span class="n">AttLayer2</span><span class="p">,</span> <span class="n">SelfAttention</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.newsrec.models.base_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.newsrec.models.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttLayer2</span><span class="p">,</span> <span class="n">SelfAttention</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NRMSModel&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="NRMSModel">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.nrms.NRMSModel">[docs]</a>
-<span class="k">class</span> <span class="nc">NRMSModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NRMSModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;NRMS model(Neural News Recommendation with Multi-Head Self-Attention)</span>
 
 <span class="sd">    Chuhan Wu, Fangzhao Wu, Suyu Ge, Tao Qi, Yongfeng Huang,and Xing Xie, &quot;Neural News</span>
@@ -345,7 +345,7 @@
 
 <div class="viewcode-block" id="NRMSModel.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.nrms.NRMSModel.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hparams</span><span class="p">,</span>
         <span class="n">iterator_creator</span><span class="p">,</span>
@@ -369,7 +369,7 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_input_label_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_input_label_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get input and labels for trainning from iterator</span>
 
 <span class="sd">        Args:</span>
@@ -386,7 +386,7 @@
         <span class="n">input_label</span> <span class="o">=</span> <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">input_feat</span><span class="p">,</span> <span class="n">input_label</span>
 
-    <span class="k">def</span> <span class="nf">_get_user_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_user_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get input of user encoder</span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch_data: input batch data from user iterator</span>
@@ -396,7 +396,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;clicked_title_batch&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_news_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_news_feature_from_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get input of news encoder</span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch_data: input batch data from news iterator</span>
@@ -406,7 +406,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">batch_data</span><span class="p">[</span><span class="s2">&quot;candidate_title_batch&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build NRMS model and scorer.</span>
 
 <span class="sd">        Returns:</span>
@@ -416,7 +416,7 @@
         <span class="n">model</span><span class="p">,</span> <span class="n">scorer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_nrms</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">scorer</span>
 
-    <span class="k">def</span> <span class="nf">_build_userencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">titleencoder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_userencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">titleencoder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create user encoder of NRMS.</span>
 
 <span class="sd">        Args:</span>
@@ -439,7 +439,7 @@
         <span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">his_input_title</span><span class="p">,</span> <span class="n">user_present</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;user_encoder&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-    <span class="k">def</span> <span class="nf">_build_newsencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_newsencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create news encoder of NRMS.</span>
 
 <span class="sd">        Args:</span>
@@ -461,7 +461,7 @@
         <span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">sequences_input_title</span><span class="p">,</span> <span class="n">pred_title</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;news_encoder&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-    <span class="k">def</span> <span class="nf">_build_nrms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_nrms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create NRMS&#39;s logic. The core of NRMS</span>
 <span class="sd">        is a user encoder and a news encoder.</span>
 

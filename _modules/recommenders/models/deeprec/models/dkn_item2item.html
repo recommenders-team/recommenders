@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,10 +318,10 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.dkn</span> <span class="kn">import</span> <span class="n">DKN</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.deeprec_utils</span> <span class="kn">import</span> <span class="n">cal_metric</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.models.dkn</span><span class="w"> </span><span class="kn">import</span> <span class="n">DKN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.deeprec_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">cal_metric</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This new model adapts DKN&#39;s structure for item-to-item recommendations.</span>
@@ -331,16 +331,16 @@
 
 <div class="viewcode-block" id="DKNItem2Item">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn_item2item.DKNItem2Item">[docs]</a>
-<span class="k">class</span> <span class="nc">DKNItem2Item</span><span class="p">(</span><span class="n">DKN</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DKNItem2Item</span><span class="p">(</span><span class="n">DKN</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for item-to-item recommendations using DKN.</span>
 <span class="sd">    See https://github.com/microsoft/recommenders/blob/main/examples/07_tutorials/KDD2020-tutorial/step4_run_dkn_item2item.ipynb&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_compute_data_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_data_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred</span>
         <span class="n">data_loss</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">input_tensor</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">data_loss</span>
 
-    <span class="k">def</span> <span class="nf">_build_dkn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_dkn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create DKN&#39;s logic.</span>
 
 <span class="sd">        Returns:</span>
@@ -378,10 +378,10 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_logits</span>
 
-    <span class="k">def</span> <span class="nf">_get_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logit</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logit</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_build_doc_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidate_word_batch</span><span class="p">,</span> <span class="n">candidate_entity_batch</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_doc_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidate_word_batch</span><span class="p">,</span> <span class="n">candidate_entity_batch</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        To make the document embedding be dense, we add one tanh layer on top of the `kims_cnn` module.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -406,7 +406,7 @@
 
 <div class="viewcode-block" id="DKNItem2Item.eval">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn_item2item.DKNItem2Item.eval">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sess</span><span class="p">,</span> <span class="n">feed_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sess</span><span class="p">,</span> <span class="n">feed_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the data in `feed_dict` with current model.</span>
 
 <span class="sd">        Args:</span>
@@ -426,7 +426,7 @@
 
 <div class="viewcode-block" id="DKNItem2Item.run_eval">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn_item2item.DKNItem2Item.run_eval">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the given file and returns some evaluation metrics.</span>
 
 <span class="sd">        Args:</span>

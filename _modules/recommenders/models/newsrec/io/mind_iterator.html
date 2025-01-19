@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,19 +318,19 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.io.iterator</span> <span class="kn">import</span> <span class="n">BaseIterator</span>
-<span class="kn">from</span> <span class="nn">recommenders.models.newsrec.newsrec_utils</span> <span class="kn">import</span> <span class="n">word_tokenize</span><span class="p">,</span> <span class="n">newsample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.io.iterator</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseIterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.newsrec.newsrec_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">word_tokenize</span><span class="p">,</span> <span class="n">newsample</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MINDIterator&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="MINDIterator">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator">[docs]</a>
-<span class="k">class</span> <span class="nc">MINDIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MINDIterator</span><span class="p">(</span><span class="n">BaseIterator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Train data loader for NAML model.</span>
 <span class="sd">    The model require a special type of data format, where each instance contains a label, impresion id, user id,</span>
 <span class="sd">    the candidate news articles and user&#39;s clicked news article. Articles are represented by title words,</span>
@@ -350,7 +350,7 @@
 
 <div class="viewcode-block" id="MINDIterator.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hparams</span><span class="p">,</span>
         <span class="n">npratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
@@ -378,7 +378,7 @@
 
 <div class="viewcode-block" id="MINDIterator.load_dict">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;load pickle file</span>
 
 <span class="sd">        Args:</span>
@@ -393,7 +393,7 @@
 
 <div class="viewcode-block" id="MINDIterator.init_news">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.init_news">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_news</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_news</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;init news information given news file, such as news_title_index and nid2index.</span>
 <span class="sd">        Args:</span>
 <span class="sd">            news_file: path of news file</span>
@@ -430,7 +430,7 @@
 
 <div class="viewcode-block" id="MINDIterator.init_behaviors">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.init_behaviors">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_behaviors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaviors_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_behaviors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaviors_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;init behavior logs given behaviors file.</span>
 
 <span class="sd">        Args:</span>
@@ -466,7 +466,7 @@
 
 <div class="viewcode-block" id="MINDIterator.parser_one_line">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.parser_one_line">[docs]</a>
-    <span class="k">def</span> <span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser_one_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse one behavior sample into feature values.</span>
 <span class="sd">        if npratio is larger than 0, return negtive sampled result.</span>
 
@@ -536,7 +536,7 @@
 
 <div class="viewcode-block" id="MINDIterator.load_data_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_data_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">,</span> <span class="n">behavior_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">,</span> <span class="n">behavior_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse data from news file and behavior file.</span>
 
 <span class="sd">        Args:</span>
@@ -605,7 +605,7 @@
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_convert_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label_list</span><span class="p">,</span>
         <span class="n">imp_indexes</span><span class="p">,</span>
@@ -643,7 +643,7 @@
 
 <div class="viewcode-block" id="MINDIterator.load_user_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_user_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_user_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">,</span> <span class="n">behavior_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_user_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">,</span> <span class="n">behavior_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse user data from news file and behavior file.</span>
 
 <span class="sd">        Args:</span>
@@ -690,7 +690,7 @@
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_convert_user_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_user_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user_indexes</span><span class="p">,</span>
         <span class="n">impr_indexes</span><span class="p">,</span>
@@ -718,7 +718,7 @@
 
 <div class="viewcode-block" id="MINDIterator.load_news_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_news_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_news_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_news_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">news_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse user data from news file.</span>
 
 <span class="sd">        Args:</span>
@@ -755,7 +755,7 @@
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_convert_news_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_news_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">news_indexes</span><span class="p">,</span>
         <span class="n">candidate_title_indexes</span><span class="p">,</span>
@@ -782,7 +782,7 @@
 
 <div class="viewcode-block" id="MINDIterator.load_impression_from_file">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.io.mind_iterator.MINDIterator.load_impression_from_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_impression_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaivors_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_impression_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaivors_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse impression data from behaivors file.</span>
 
 <span class="sd">        Args:</span>

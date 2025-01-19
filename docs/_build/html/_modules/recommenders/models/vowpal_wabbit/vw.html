@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -324,12 +324,12 @@
 <span class="sd">repository or pip or the command line can be used. This is merely to demonstrate vw usage in the example notebooks.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">run</span>
-<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">subprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.utils.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
     <span class="n">DEFAULT_RATING_COL</span><span class="p">,</span>
@@ -340,10 +340,10 @@
 
 <div class="viewcode-block" id="VW">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW">[docs]</a>
-<span class="k">class</span> <span class="nc">VW</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VW</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vowpal Wabbit Class&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">col_user</span><span class="o">=</span><span class="n">DEFAULT_USER_COL</span><span class="p">,</span>
         <span class="n">col_item</span><span class="o">=</span><span class="n">DEFAULT_ITEM_COL</span><span class="p">,</span>
@@ -383,7 +383,7 @@
 <div class="viewcode-block" id="VW.to_vw_cmd">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.to_vw_cmd">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">to_vw_cmd</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_vw_cmd</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert dictionary of parameters to vw command line.</span>
 
 <span class="sd">        Args:</span>
@@ -410,7 +410,7 @@
 
 <div class="viewcode-block" id="VW.parse_train_params">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.parse_train_params">[docs]</a>
-    <span class="k">def</span> <span class="nf">parse_train_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_train_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse input hyper-parameters to build vw train commands</span>
 
 <span class="sd">        Args:</span>
@@ -452,7 +452,7 @@
 
 <div class="viewcode-block" id="VW.parse_test_params">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.parse_test_params">[docs]</a>
-    <span class="k">def</span> <span class="nf">parse_test_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_test_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse input hyper-parameters to build vw test commands</span>
 
 <span class="sd">        Args:</span>
@@ -516,7 +516,7 @@
 
 <div class="viewcode-block" id="VW.to_vw_file">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.to_vw_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_vw_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_vw_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert Pandas DataFrame to vw input format file</span>
 
 <span class="sd">        Args:</span>
@@ -559,7 +559,7 @@
 
 <div class="viewcode-block" id="VW.fit">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model</span>
 
 <span class="sd">        Args:</span>
@@ -575,7 +575,7 @@
 
 <div class="viewcode-block" id="VW.predict">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.vowpal_wabbit.vw.VW.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict results</span>
 
 <span class="sd">        Args:</span>
@@ -599,7 +599,7 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tempdir</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span></div>
 
 </pre></div>

@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,17 +318,17 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.models.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.models.base_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DKN&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="DKN">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn.DKN">[docs]</a>
-<span class="k">class</span> <span class="nc">DKN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DKN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;DKN model (Deep Knowledge-Aware Network)</span>
 
 <span class="sd">    :Citation:</span>
@@ -340,7 +340,7 @@
 
 <div class="viewcode-block" id="DKN.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn.DKN.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization steps for DKN.</span>
 <span class="sd">        Compared with the BaseModel, DKN requires two different pre-computed embeddings,</span>
 <span class="sd">        i.e. word embedding and entity embedding.</span>
@@ -399,7 +399,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">hparams</span><span class="p">,</span> <span class="n">iterator_creator</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_init_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load pre-trained embeddings as a constant tensor.</span>
 
 <span class="sd">        Args:</span>
@@ -410,7 +410,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_l2_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_l2_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
         <span class="n">l2_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="c1"># embedding_layer l2 loss</span>
@@ -434,7 +434,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">l2_loss</span>
 
-    <span class="k">def</span> <span class="nf">_l1_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_l1_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
         <span class="n">l1_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="c1"># embedding_layer l2 loss</span>
@@ -463,7 +463,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">l1_loss</span>
 
-    <span class="k">def</span> <span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hparams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_prob_train</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_prob_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span>
@@ -471,7 +471,7 @@
             <span class="n">logit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_dkn</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">logit</span>
 
-    <span class="k">def</span> <span class="nf">_build_dkn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_dkn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The main function to create DKN&#39;s logic.</span>
 
 <span class="sd">        Returns:</span>
@@ -542,7 +542,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">nn_output</span>
 
-    <span class="k">def</span> <span class="nf">_build_pair_attention</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_pair_attention</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">candidate_word_batch</span><span class="p">,</span>
         <span class="n">candidate_entity_batch</span><span class="p">,</span>
@@ -668,7 +668,7 @@
 
         <span class="k">return</span> <span class="n">click_field_embed_final_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">news_field_embed_final_batch</span>
 
-    <span class="k">def</span> <span class="nf">_kims_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">hparams</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_kims_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">hparams</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The KCNN module. KCNN is an extension of traditional CNN that incorporates symbolic knowledge from</span>
 <span class="sd">        a knowledge graph into sentence representation learning.</span>
 <span class="sd">        Args:</span>
@@ -763,7 +763,7 @@
 
 <div class="viewcode-block" id="DKN.infer_embedding">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn.DKN.infer_embedding">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sess</span><span class="p">,</span> <span class="n">feed_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sess</span><span class="p">,</span> <span class="n">feed_dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer document embedding in feed_dict with current model.</span>
 
 <span class="sd">        Args:</span>
@@ -780,7 +780,7 @@
 
 <div class="viewcode-block" id="DKN.run_get_embedding">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.deeprec.models.dkn.DKN.run_get_embedding">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_get_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile_name</span><span class="p">,</span> <span class="n">outfile_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_get_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile_name</span><span class="p">,</span> <span class="n">outfile_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;infer document embedding with current model.</span>
 
 <span class="sd">        Args:</span>

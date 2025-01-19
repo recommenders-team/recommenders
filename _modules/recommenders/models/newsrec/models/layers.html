@@ -29,7 +29,7 @@
   <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -318,15 +318,15 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">tensorflow.compat.v1.keras</span> <span class="k">as</span> <span class="nn">keras</span>
-<span class="kn">from</span> <span class="nn">tensorflow.compat.v1.linalg</span> <span class="kn">import</span> <span class="n">einsum</span>
-<span class="kn">from</span> <span class="nn">tensorflow.compat.v1.keras</span> <span class="kn">import</span> <span class="n">layers</span>
-<span class="kn">from</span> <span class="nn">tensorflow.compat.v1.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.keras</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">keras</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">einsum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.keras</span><span class="w"> </span><span class="kn">import</span> <span class="n">layers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow.compat.v1.keras</span><span class="w"> </span><span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
 
 
 <div class="viewcode-block" id="AttLayer2">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.AttLayer2">[docs]</a>
-<span class="k">class</span> <span class="nc">AttLayer2</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttLayer2</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Soft alignment attention implement.</span>
 
 <span class="sd">    Attributes:</span>
@@ -335,7 +335,7 @@
 
 <div class="viewcode-block" id="AttLayer2.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.AttLayer2.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization steps for AttLayer2.</span>
 
 <span class="sd">        Args:</span>
@@ -349,7 +349,7 @@
 
 <div class="viewcode-block" id="AttLayer2.build">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.AttLayer2.build">[docs]</a>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization for variables in AttLayer2</span>
 <span class="sd">        There are there variables in AttLayer2, i.e. W, b and q.</span>
 
@@ -382,7 +382,7 @@
 
 <div class="viewcode-block" id="AttLayer2.call">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.AttLayer2.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Core implementation of soft attention.</span>
 
 <span class="sd">        Args:</span>
@@ -413,7 +413,7 @@
 
 <div class="viewcode-block" id="AttLayer2.compute_mask">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.AttLayer2.compute_mask">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">input_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">input_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compte output mask value.</span>
 
 <span class="sd">        Args:</span>
@@ -428,7 +428,7 @@
 
 <div class="viewcode-block" id="AttLayer2.compute_output_shape">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.AttLayer2.compute_output_shape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute shape of output tensor.</span>
 
 <span class="sd">        Args:</span>
@@ -444,7 +444,7 @@
 
 <div class="viewcode-block" id="SelfAttention">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention">[docs]</a>
-<span class="k">class</span> <span class="nc">SelfAttention</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SelfAttention</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-head self attention implement.</span>
 
 <span class="sd">    Args:</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="SelfAttention.__init__">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiheads</span><span class="p">,</span> <span class="n">head_dim</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask_right</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiheads</span><span class="p">,</span> <span class="n">head_dim</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask_right</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization steps for AttLayer2.</span>
 
 <span class="sd">        Args:</span>
@@ -477,7 +477,7 @@
 
 <div class="viewcode-block" id="SelfAttention.compute_output_shape">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention.compute_output_shape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute shape of output tensor.</span>
 
 <span class="sd">        Returns:</span>
@@ -489,7 +489,7 @@
 
 <div class="viewcode-block" id="SelfAttention.build">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention.build">[docs]</a>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization for variables in SelfAttention.</span>
 <span class="sd">        There are three variables in SelfAttention, i.e. WQ, WK ans WV.</span>
 <span class="sd">        WQ is used for linear transformation of query.</span>
@@ -523,7 +523,7 @@
 
 <div class="viewcode-block" id="SelfAttention.Mask">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention.Mask">[docs]</a>
-    <span class="k">def</span> <span class="nf">Mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Mask operation used in multi-head self attention</span>
 
 <span class="sd">        Args:</span>
@@ -551,7 +551,7 @@
 
 <div class="viewcode-block" id="SelfAttention.call">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QKVs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QKVs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Core logic of multi-head self attention.</span>
 
 <span class="sd">        Args:</span>
@@ -610,7 +610,7 @@
 
 <div class="viewcode-block" id="SelfAttention.get_config">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.SelfAttention.get_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;add multiheads, multiheads and mask_right into layer config.</span>
 
 <span class="sd">        Returns:</span>
@@ -631,7 +631,7 @@
 
 <div class="viewcode-block" id="PersonalizedAttentivePooling">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.PersonalizedAttentivePooling">[docs]</a>
-<span class="k">def</span> <span class="nf">PersonalizedAttentivePooling</span><span class="p">(</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">dim3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">PersonalizedAttentivePooling</span><span class="p">(</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">dim3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Soft alignment attention implement.</span>
 
 <span class="sd">    Attributes:</span>
@@ -663,19 +663,19 @@
 
 <div class="viewcode-block" id="ComputeMasking">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.ComputeMasking">[docs]</a>
-<span class="k">class</span> <span class="nc">ComputeMasking</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComputeMasking</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute if inputs contains zero value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        bool tensor: True for values not equal to zero.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ComputeMasking</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ComputeMasking.call">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.ComputeMasking.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call method for ComputeMasking.</span>
 
 <span class="sd">        Args:</span>
@@ -690,7 +690,7 @@
 
 <div class="viewcode-block" id="ComputeMasking.compute_output_shape">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.ComputeMasking.compute_output_shape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">input_shape</span></div>
 </div>
 
@@ -698,7 +698,7 @@
 
 <div class="viewcode-block" id="OverwriteMasking">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.OverwriteMasking">[docs]</a>
-<span class="k">class</span> <span class="nc">OverwriteMasking</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OverwriteMasking</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set values at specific positions to zero.</span>
 
 <span class="sd">    Args:</span>
@@ -708,18 +708,18 @@
 <span class="sd">        object: tensor after setting values to zero.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OverwriteMasking</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OverwriteMasking.build">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.OverwriteMasking.build">[docs]</a>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OverwriteMasking</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OverwriteMasking.call">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.OverwriteMasking.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call method for OverwriteMasking.</span>
 
 <span class="sd">        Args:</span>
@@ -733,7 +733,7 @@
 
 <div class="viewcode-block" id="OverwriteMasking.compute_output_shape">
 <a class="viewcode-back" href="../../../../../models.html#recommenders.models.newsrec.models.layers.OverwriteMasking.compute_output_shape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">input_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 </div>
 

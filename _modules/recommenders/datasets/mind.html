@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -318,16 +318,16 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">RegexpTokenizer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nltk.tokenize</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexpTokenizer</span>
 
-<span class="kn">from</span> <span class="nn">recommenders.datasets.download_utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.datasets.download_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">maybe_download</span><span class="p">,</span>
     <span class="n">download_path</span><span class="p">,</span>
     <span class="n">unzip_file</span><span class="p">,</span>
@@ -378,7 +378,7 @@
 
 <div class="viewcode-block" id="download_mind">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.download_mind">[docs]</a>
-<span class="k">def</span> <span class="nf">download_mind</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">dest_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_mind</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">dest_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download MIND dataset</span>
 
 <span class="sd">    Args:</span>
@@ -401,7 +401,7 @@
 
 <div class="viewcode-block" id="extract_mind">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.extract_mind">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_mind</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_mind</span><span class="p">(</span>
     <span class="n">train_zip</span><span class="p">,</span>
     <span class="n">valid_zip</span><span class="p">,</span>
     <span class="n">train_folder</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
@@ -430,7 +430,7 @@
 
 <div class="viewcode-block" id="read_clickhistory">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.read_clickhistory">[docs]</a>
-<span class="k">def</span> <span class="nf">read_clickhistory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_clickhistory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read click history file</span>
 
 <span class="sd">    Args:</span>
@@ -463,7 +463,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_newsample</span><span class="p">(</span><span class="n">nnn</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_newsample</span><span class="p">(</span><span class="n">nnn</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">nnn</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">nnn</span> <span class="o">*</span> <span class="p">(</span><span class="n">ratio</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">nnn</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ratio</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -472,7 +472,7 @@
 
 <div class="viewcode-block" id="get_train_input">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_train_input">[docs]</a>
-<span class="k">def</span> <span class="nf">get_train_input</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">train_file_path</span><span class="p">,</span> <span class="n">npratio</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_train_input</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">train_file_path</span><span class="p">,</span> <span class="n">npratio</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate train file.</span>
 
 <span class="sd">    Args:</span>
@@ -500,7 +500,7 @@
 
 <div class="viewcode-block" id="get_valid_input">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_valid_input">[docs]</a>
-<span class="k">def</span> <span class="nf">get_valid_input</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">valid_file_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_valid_input</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">valid_file_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate validation file.</span>
 
 <span class="sd">    Args:</span>
@@ -528,7 +528,7 @@
 
 <div class="viewcode-block" id="get_user_history">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_user_history">[docs]</a>
-<span class="k">def</span> <span class="nf">get_user_history</span><span class="p">(</span><span class="n">train_history</span><span class="p">,</span> <span class="n">valid_history</span><span class="p">,</span> <span class="n">user_history_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_user_history</span><span class="p">(</span><span class="n">train_history</span><span class="p">,</span> <span class="n">valid_history</span><span class="p">,</span> <span class="n">user_history_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate user history file.</span>
 
 <span class="sd">    Args:</span>
@@ -553,7 +553,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_read_news</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_news</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">news_words</span><span class="p">,</span> <span class="n">news_entities</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
@@ -569,7 +569,7 @@
 
 <div class="viewcode-block" id="get_words_and_entities">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.get_words_and_entities">[docs]</a>
-<span class="k">def</span> <span class="nf">get_words_and_entities</span><span class="p">(</span><span class="n">train_news</span><span class="p">,</span> <span class="n">valid_news</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_words_and_entities</span><span class="p">(</span><span class="n">train_news</span><span class="p">,</span> <span class="n">valid_news</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load words and entities</span>
 
 <span class="sd">    Args:</span>
@@ -594,7 +594,7 @@
 
 <div class="viewcode-block" id="download_and_extract_glove">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.download_and_extract_glove">[docs]</a>
-<span class="k">def</span> <span class="nf">download_and_extract_glove</span><span class="p">(</span><span class="n">dest_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_and_extract_glove</span><span class="p">(</span><span class="n">dest_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download and extract the Glove embedding</span>
 
 <span class="sd">    Args:</span>
@@ -614,7 +614,7 @@
 
 <div class="viewcode-block" id="generate_embeddings">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.generate_embeddings">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_embeddings</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_embeddings</span><span class="p">(</span>
     <span class="n">data_path</span><span class="p">,</span>
     <span class="n">news_words</span><span class="p">,</span>
     <span class="n">news_entities</span><span class="p">,</span>
@@ -752,7 +752,7 @@
 
 <div class="viewcode-block" id="load_glove_matrix">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.load_glove_matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">load_glove_matrix</span><span class="p">(</span><span class="n">path_emb</span><span class="p">,</span> <span class="n">word_dict</span><span class="p">,</span> <span class="n">word_embedding_dim</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_glove_matrix</span><span class="p">(</span><span class="n">path_emb</span><span class="p">,</span> <span class="n">word_dict</span><span class="p">,</span> <span class="n">word_embedding_dim</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load pretrained embedding metrics of words in word_dict</span>
 
 <span class="sd">    Args:</span>
@@ -784,7 +784,7 @@
 
 <div class="viewcode-block" id="word_tokenize">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.mind.word_tokenize">[docs]</a>
-<span class="k">def</span> <span class="nf">word_tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">word_tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tokenize a sententence</span>
 
 <span class="sd">    Args:</span>

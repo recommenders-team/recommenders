@@ -29,7 +29,7 @@
   <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -319,18 +319,18 @@
 <span class="c1"># Licensed under the MIT License.</span>
 
 
-<span class="kn">from</span> <span class="nn">recommenders.models.deeprec.deeprec_utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">recommenders.models.deeprec.deeprec_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">flat_config</span><span class="p">,</span>
     <span class="n">HParams</span><span class="p">,</span>
     <span class="n">load_yaml</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
 
 <div class="viewcode-block" id="check_type">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.check_type">[docs]</a>
-<span class="k">def</span> <span class="nf">check_type</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_type</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the config parameters are the correct type</span>
 
 <span class="sd">    Args:</span>
@@ -401,7 +401,7 @@
 
 <div class="viewcode-block" id="check_nn_config">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.check_nn_config">[docs]</a>
-<span class="k">def</span> <span class="nf">check_nn_config</span><span class="p">(</span><span class="n">f_config</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_nn_config</span><span class="p">(</span><span class="n">f_config</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check neural networks configuration.</span>
 
 <span class="sd">    Args:</span>
@@ -529,7 +529,7 @@
 
 <div class="viewcode-block" id="create_hparams">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.create_hparams">[docs]</a>
-<span class="k">def</span> <span class="nf">create_hparams</span><span class="p">(</span><span class="n">flags</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_hparams</span><span class="p">(</span><span class="n">flags</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the model hyperparameters.</span>
 
 <span class="sd">    Args:</span>
@@ -572,7 +572,7 @@
 
 <div class="viewcode-block" id="prepare_hparams">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.prepare_hparams">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_hparams</span><span class="p">(</span><span class="n">yaml_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_hparams</span><span class="p">(</span><span class="n">yaml_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare the model hyperparameters and check that all have the correct value.</span>
 
 <span class="sd">    Args:</span>
@@ -596,7 +596,7 @@
 
 <div class="viewcode-block" id="word_tokenize">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.word_tokenize">[docs]</a>
-<span class="k">def</span> <span class="nf">word_tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">word_tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split sentence into word list using regex.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        sent (str): Input sentence</span>
@@ -614,7 +614,7 @@
 
 <div class="viewcode-block" id="newsample">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.newsample">[docs]</a>
-<span class="k">def</span> <span class="nf">newsample</span><span class="p">(</span><span class="n">news</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">newsample</span><span class="p">(</span><span class="n">news</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample ratio samples from news list.</span>
 <span class="sd">    If length of news is less than ratio, pad zeros.</span>
 
@@ -634,7 +634,7 @@
 
 <div class="viewcode-block" id="get_mind_data_set">
 <a class="viewcode-back" href="../../../../models.html#recommenders.models.newsrec.newsrec_utils.get_mind_data_set">[docs]</a>
-<span class="k">def</span> <span class="nf">get_mind_data_set</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mind_data_set</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get MIND dataset address</span>
 
 <span class="sd">    Args:</span>
