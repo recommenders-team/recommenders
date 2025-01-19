@@ -28,7 +28,8 @@ if HASH is not None:
 
 install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
-    "cornac>=1.15.2,<3",  # requires packaging, tqdm
+    "cornac>=1.15.2,<=2.2.2;python_version<='3.8'",
+    "cornac>=2.3.0,<3;python_version>='3.9'",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
