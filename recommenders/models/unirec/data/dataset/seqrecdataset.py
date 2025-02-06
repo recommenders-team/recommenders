@@ -40,18 +40,12 @@ class SeqRecDataset(BaseDataset):
 
     def __getitem__(self, index):
         _type = self.config["data_format"]
-        elements = super(SeqRecDataset, self).__getitem__(
-            index
-        )  # user_id, item_id, label, ...
+        elements = super(SeqRecDataset, self).__getitem__(index)  # user_id, item_id, label, ...
         if _type == DataFileFormat.T1_1.value:
             # elements is (user_id, item_id, label, max_len, ...)
-            item_seq, item_seq_len, time_seq = self.add_seq_transform(
-                (elements[0], elements[1], elements[3])
-            )
+            item_seq, item_seq_len, time_seq = self.add_seq_transform((elements[0], elements[1], elements[3]))
         else:
-            item_seq, item_seq_len, time_seq = self.add_seq_transform(
-                (elements[0], elements[1])
-            )
+            item_seq, item_seq_len, time_seq = self.add_seq_transform((elements[0], elements[1]))
         item_seq = self._padding(item_seq)
         item_seq_len = min(item_seq_len, self.config["max_seq_len"])
 
