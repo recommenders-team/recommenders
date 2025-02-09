@@ -12,6 +12,7 @@ The list of scenarios are:
 * [Ads](ads)
 * [Food and restaurants](food_and_restaurants)
 * [Gaming](gaming)
+* [Media and entertainment](media_and_entertainment)
 * [News and Documents](news)
 * [Retail](retail)
 * [Travel](travel)
