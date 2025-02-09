@@ -31,7 +31,7 @@ This scenario involves recommending live content (streams, events, broadcasts) b
 
 Key data includes user profiles, content metadata (genre, actors, duration), viewing/listening history, and engagement metrics (watch time, ratings, shares).
 
-Common evaluation metrics include engagement time, retention rate, and user satisfaction. For music and video platforms, metrics like [stream time](../../GLOSSARY.md) and [completion rate](../../GLOSSARY.md) are particularly important. [A/B testing](../../GLOSSARY.md) is standard practice for evaluating recommendations.
+Common evaluation metrics include engagement time, retention rate, and user satisfaction. For music and video platforms, metrics like [CTR](../../GLOSSARY.md) and [MAU](../../GLOSSARY.md) are particularly important. [A/B testing](../../GLOSSARY.md) is standard practice for evaluating recommendations.
 
 ## Other considerations
 
