@@ -5,7 +5,7 @@ Licensed under the MIT License.
 
 # Recommendation systems for Travel
 
-Recommendation systems are vital in the modern travel industry, helping users navigate through countless options for destinations, accommodations, and activities. Studies show that personalized recommendations can increase booking conversion rates by [up to 26%](https://www.phocuswire.com/Personalization-in-travel-getting-to-the-how) in travel platforms.
+Recommendation systems are vital in the modern travel industry, helping users navigate through countless options for destinations, accommodations, and activities. Studies show that personalized recommendations can increase customer engagement by [up to 30%](https://mize.tech/blog/ai-in-tourism-marketing-hyper-personalization-and-more-bookings/) in travel platforms.
 
 ## Scenarios
 
