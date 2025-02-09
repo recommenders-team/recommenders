@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Recommendation Systems for Gaming
 
 Gaming is one of the first industries that adopted AI, popularized by the development and adoption of arcade games during the 80s. The AI component was usually generated via the non-player characters (NPCs), that had to act intelligently and react to the player's actions. However, it is not until recently that recommendation systems have been applied to computer games. 

@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Recommender Systems for Retail
 
 Recommender systems have become a key growth and revenue driver for modern retail.  For example, recommendation was estimated to [account for 35% of customer purchases on Amazon](https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers#). In addition, recommenders have been applied by retailers to delight and retain customers and improve staff productivity. 

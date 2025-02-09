@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Recommendation Systems for News
 
 While online news services have become a major source of information for millions of people, the massive amount of continuously generated content brings heavy information overload to users. Personalized news recommendation, which predicts which news articles a user is likely to read, can help reduce information overload and improve user experience. 
