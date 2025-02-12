@@ -5,7 +5,7 @@ Licensed under the MIT License.
 
 # Recommendation systems for Media and Entertainment
 
-Recommendation systems are fundamental to modern media and entertainment platforms. For example, Netflix reports that their recommendation system [saves them $1 billion per year](https://www.netflix.com/tudum/articles/netflix-recommendations) in customer retention.
+Recommendation systems are fundamental to modern media and entertainment platforms. For example, Netflix credits recommendation systems for [75% of the content viewed](https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers) on the platform. It is the same with YouTube, with [60% of views](https://emerj.com/use-cases-recommendation-systems/) coming from recommendation systems. In TikTok, [90% of views](https://dl.acm.org/doi/pdf/10.1145/3613904.3642433) come from reco, and for Spotify, the personalization service is estimated to make [10% of their revenue](https://routenote.com/blog/spotifys-algorithms-drives-3-4-of-industry-revenue/). A modern platform without recommendation systems would likely struggle to engage users and drive revenue.
 
 ## Scenarios
 
