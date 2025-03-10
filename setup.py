@@ -36,6 +36,7 @@ install_requires = [
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
+    "ipython<9",
     "numba>=0.57.0,<1",
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
