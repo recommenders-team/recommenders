@@ -7,6 +7,7 @@ from setuptools import setup, find_packages
 import site
 import sys
 import time
+import os
 
 # Workaround for enabling editable user pip installs
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
