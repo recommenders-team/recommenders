@@ -71,7 +71,7 @@ def load_spark_df(
 ):
     """Loads the Criteo DAC dataset as `pySpark.DataFrame`.
 
-    The dataset consists of a portion of Criteo’s traffic over a period
+    The dataset consists of a portion of Criteo's traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
     column is indicates whether this ad has been clicked or not.
 
