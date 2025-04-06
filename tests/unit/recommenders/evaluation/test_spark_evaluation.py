@@ -515,3 +515,37 @@ def test_serendipity_item_feature_vector(spark_diversity_data):
         col_relevance="Relevance",
     )
     assert evaluator.serendipity() == pytest.approx(0.4028, TOL)
+
+
+@pytest.mark.spark
+def test_spark_r_precision(spark_data):
+    df_true, df_pred = spark_data
+
+    # Test perfect prediction (R-Precision should be 1.0)
+    evaluator_perfect = SparkRankingEvaluation(df_true, df_true, col_prediction="rating")
+    assert evaluator_perfect.r_precision() == pytest.approx(1.0, TOL)
+
+    # Test with sample prediction data
+    evaluator = SparkRankingEvaluation(df_true, df_pred)
+    # Expected value calculation:
+    # User 1: R=3 relevant items (1, 2, 3). Top 3 predictions: (1, 0.8), (5, 0.6), (2, 0.4). Relevant in top 3: (1, 2). R-Prec = 2/3
+    # User 2: R=2 relevant items (1, 4). Top 2 predictions: (1, 0.9), (4, 0.7). Relevant in top 2: (1, 4). R-Prec = 2/2 = 1.0
+    # User 3: R=1 relevant item (2). Top 1 prediction: (2, 0.7). Relevant in top 1: (2). R-Prec = 1/1 = 1.0
+    # Mean R-Precision = (2/3 + 1.0 + 1.0) / 3 = (0.6666... + 1 + 1) / 3 = 2.6666... / 3 = 0.8888...
+    expected_r_precision = (2/3 + 1.0 + 1.0) / 3
+    assert evaluator.r_precision() == pytest.approx(expected_r_precision, TOL)
+
+    # Test case where a user has no relevant items (ensure they are ignored)
+    # Add a user 4 with only predictions, no ground truth
+    spark = df_pred.sql_ctx.sparkSession
+    new_pred_row = spark.createDataFrame([(4, 1, 0.9), (4, 2, 0.8)], df_pred.columns)
+    df_pred_extra_user = df_pred.union(new_pred_row)
+    evaluator_extra = SparkRankingEvaluation(df_true, df_pred_extra_user)
+    # Result should be the same as before, ignoring user 4
+    assert evaluator_extra.r_precision() == pytest.approx(expected_r_precision, TOL)
+
+    # Test case where NO users have relevant items (R=0 for all)
+    empty_true = df_true.filter("userID > 10") # Create empty ground truth
+    with pytest.warns(UserWarning, match="No users with relevant items found"): # Check for warning
+      evaluator_no_relevant = SparkRankingEvaluation(empty_true, df_pred)
+      assert evaluator_no_relevant.r_precision() == 0.0
