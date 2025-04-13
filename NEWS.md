@@ -5,6 +5,10 @@ Licensed under the MIT License.
 
 # What's New
 
+## Update April 12, 2025
+
+We reached 20,000 stars!!
+
 ## Update December 23, 2024
 
 We have a new release [Recommenders 1.2.1](https://github.com/recommenders-team/recommenders/releases/tag/1.2.1)!
