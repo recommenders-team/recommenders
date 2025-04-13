@@ -21,7 +21,6 @@ We have a new release [Recommenders 1.2.0](https://github.com/microsoft/recommen
 
 So many changes since our last release. We have full tests on Python 3.8 to 3.11 (around 1800 tests), upgraded performance in many algorithms, reviewed notebooks, and many more improvements.
 
-
 ## Update October 10, 2023
 
 We are pleased to announce that this repository (formerly known as Microsoft Recommenders, https://github.com/microsoft/recommenders), has joined the [Linux Foundation of AI and Data](https://lfaidata.foundation/) (LF AI & Data)! The new organization, `recommenders-team`, reflects this change.
