@@ -9,6 +9,10 @@ Licensed under the MIT License.
 
 * **Average Order Value (AOV)**: The average order value is the average amount of money spent per order. It is a measure of the user engagement.
 
+* **Average Revenue Per User (ARPU)**: A measure used primarily by consumer communications, digital media, and networking companies, defined as the total revenue divided by the number of users. It is used to understand the revenue generated per user.
+
+* **Average Revenue Per Paying User (ARPPU)**: A measure used to understand the revenue generated per paying user. It is calculated by dividing the total revenue by the number of paying users. This metric is particularly useful in freemium business models where only a subset of users are paying customers.
+
 * **Click-through rate (CTR)**: Ratio of the number of users who click on a link over the total number of users that visited the page. CTR is a measure of the user engagement.
 
 * **Cold-start problem**: The cold start problem concerns the recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for collaborative filtering models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using content-based filtering models. These models use auxiliary information like user or item metadata to overcome the cold start problem.
