@@ -535,6 +535,27 @@ def test_spark_r_precision(spark_data):
     expected_r_precision = (2/3 + 1.0 + 1.0) / 3
     assert evaluator.r_precision() == pytest.approx(expected_r_precision, TOL)
 
+    # Test with different k values
+    # Using k=3
+    evaluator_k3 = SparkRankingEvaluation(df_true, df_pred, k=3)
+    # When k=3, we're still getting the same top R predictions for each user since all users have R ≤ 3
+    assert evaluator_k3.r_precision() == pytest.approx(expected_r_precision, TOL)
+
+    # Using k=5
+    evaluator_k5 = SparkRankingEvaluation(df_true, df_pred, k=5)
+    # When k=5, we're still getting the same top R predictions for each user
+    assert evaluator_k5.r_precision() == pytest.approx(expected_r_precision, TOL)
+
+    # Test that r_precision is equivalent to precision when R is the same for all users
+    # and equal to k (comparing to precision_at_k test)
+    # We limit the data to users with the same number of relevant items
+    # and set k to that number
+    same_r_df_true = df_true.filter("userID = 1") # User 1 has R=3
+    k_value = 3  # Same as R for user 1
+    r_precision_evaluator = SparkRankingEvaluation(same_r_df_true, df_pred, k=k_value)
+    precision_evaluator = SparkRankingEvaluation(same_r_df_true, df_pred, k=k_value)
+    assert r_precision_evaluator.r_precision() == pytest.approx(precision_evaluator.precision_at_k(), TOL)
+
     # Test case where a user has no relevant items (ensure they are ignored)
     # Add a user 4 with only predictions, no ground truth
     spark = df_pred.sql_ctx.sparkSession

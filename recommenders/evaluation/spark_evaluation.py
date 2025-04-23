@@ -214,7 +214,6 @@ class SparkRankingEvaluation:
         self.col_rating = col_rating
         self.col_prediction = col_prediction
         self.threshold = threshold
-        self.rating_pred_raw = rating_pred # Store raw predictions before processing
 
         # Check if inputs are Spark DataFrames.
         if not isinstance(self.rating_true, DataFrame):
@@ -382,11 +381,9 @@ class SparkRankingEvaluation:
             warnings.warn("No users with relevant items found (R > 0). R-Precision is 0.")
             return 0.0
 
-
         # Rank predictions per user
         window_spec = Window.partitionBy(self.col_user).orderBy(F.col(self.col_prediction).desc())
-        # Use rating_pred_raw which has user, item, prediction score
-        ranked_preds = self.rating_pred_raw.select(
+        ranked_preds = self.rating_pred.select(
             self.col_user, self.col_item, self.col_prediction
         ).withColumn("rank", F.row_number().over(window_spec))
 
