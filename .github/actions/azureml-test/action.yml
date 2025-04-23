@@ -55,7 +55,7 @@ runs:
         python-version: "3.10"
     - name: Install AzureML Python SDK
       shell: bash
-      run: pip install "azure-ai-ml>1,<=1.26.3" "azureml-mlflow>1,<2" "marshmallow>3,<5"
+      run: pip install "azure-ai-ml>1,<2" "azureml-mlflow>1,<2"
     - name: Log in to Azure
       uses: azure/login@v2
       with:
