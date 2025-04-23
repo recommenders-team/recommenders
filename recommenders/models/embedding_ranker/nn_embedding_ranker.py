@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
+import itertools
 
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
@@ -207,7 +208,7 @@ class NNEmbeddingRanker:
         logger.info(f"Number of unique items: {self.n_items}")
         
         # Create mapped dataframes
-        train_mapped_df = train_df.copy()
+        train_mapped_df = train_df
         train_mapped_df[col_user] = train_mapped_df[col_user].map(self.user_id_map)
         train_mapped_df[col_item] = train_mapped_df[col_item].map(self.item_id_map)
         
@@ -402,19 +403,15 @@ class NNEmbeddingRanker:
         
         # Get all items
         all_items = list(self.item_id_map.keys())
-        
+
         # Generate all possible user-item pairs for prediction
-        user_item_pairs = []
-        users = []
-        items = []
-        for user in test_users:
-            for item in all_items:
-                users.append(user)
-                items.append(item)
-        
+        users_list, items_list = zip(*itertools.product(test_users, all_items))
+        users = list(users_list) # Changed variable name to avoid conflict if users was used before
+        items = list(items_list) # Changed variable name
+
         # Get predictions for all pairs
         predictions = self.predict(users, items, is_list=True)
-        
+
         # Create result dataframe
         result_df = pd.DataFrame({
             col_user: users,
