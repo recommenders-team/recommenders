@@ -90,7 +90,6 @@ def find_wikidata_id(name, limit=1, session=None):
         except (KeyError, IndexError):
             logger.warning(f"Entity '{name}' not found (search)")
             return "entityNotFound"
-        
     except Exception as e:
         logger.warning(f"REQUEST FAILED or unexpected error during search for {name}: {e}")
         raise  # Re-raise for retry
@@ -261,20 +260,22 @@ def search_wikidata(names, extras=None, describe=True):
         pandas.DataFrame: Wikipedia results for all names with found entities
 
     """
-
     results = []
     for idx, name in enumerate(names):
-        entity_id = find_wikidata_id(name)
-        logger.info(
-            "name: {name}, entity_id: {id}".format(name=name, id=entity_id)
-        )
-
-        if entity_id == "entityNotFound":
+        try:
+            entity_id = find_wikidata_id(name)
+            logger.info(f"Name: {name}, entity_id: {id}")
+        except Exception as e:
+            logger.warning(f"Error finding entity ID for '{name}': {e}")
             continue
 
-        json_links = query_entity_links(entity_id)
-        related_links = read_linked_entities(json_links)
-        description = query_entity_description(entity_id) if describe else ""
+        try:
+            json_links = query_entity_links(entity_id)
+            related_links = read_linked_entities(json_links)
+            description = query_entity_description(entity_id) if describe else ""
+        except Exception as e:
+            logger.warning(f"Error querying entity links or description for '{entity_id}': {e}")
+            continue
 
         for related_entity, related_name in related_links:
             result = dict(
