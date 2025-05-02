@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 import logging
 from retrying import retry
+import functools
 
 
 logger = logging.getLogger(__name__)
@@ -13,6 +14,48 @@ logger = logging.getLogger(__name__)
 API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
 API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
 SESSION = None
+
+
+def retry_with_logging(**kwargs):
+    """Custom retry decorator that logs retry attempts
+    
+    Args:
+        **kwargs: Arguments to pass to the retry decorator
+        
+    Returns:
+        Decorator function that adds logging to retries
+    """
+    retry_decorator = retry(**kwargs)
+    
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            attempt = [0]
+            
+            def on_retry(retry_state):
+                attempt[0] += 1
+                logger.warning(
+                    f"Retrying {func.__name__}: attempt {attempt[0]} after {retry_state.retry_object.statistics['delay_since_first_attempt_ms']/1000:.2f}s"
+                )
+                return True
+                
+            # Apply the retry decorator with our custom on_retry callback
+            wrapped = retry(
+                wait_func=kwargs.get('wait_func', None),
+                wait_random_min=kwargs.get('wait_random_min', 1000),
+                wait_random_max=kwargs.get('wait_random_max', 5000),
+                stop_max_attempt_number=kwargs.get('stop_max_attempt_number', 5),
+                retry_on_result=kwargs.get('retry_on_result', None),
+                retry_on_exception=kwargs.get('retry_on_exception', None),
+                wrap_exception=kwargs.get('wrap_exception', False),
+                stop_func=kwargs.get('stop_func', None),
+                wait_jitter_max=kwargs.get('wait_jitter_max', None),
+                on_retry=on_retry
+            )(func)
+            
+            return wrapped(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 def get_session(session=None):
@@ -34,7 +77,7 @@ def get_session(session=None):
     return session
 
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry_with_logging(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def find_wikidata_id(name, limit=1, session=None):
     """Find the entity ID in wikidata from a title string.
 
@@ -87,7 +130,7 @@ def find_wikidata_id(name, limit=1, session=None):
     return entity_id
 
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry_with_logging(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def query_entity_links(entity_id, session=None):
     """Query all linked pages from a wikidata entityID
 
@@ -166,7 +209,7 @@ def read_linked_entities(data):
     ]
 
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry_with_logging(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def query_entity_description(entity_id, session=None):
     """Query entity wikidata description from entityID
 
