@@ -68,9 +68,7 @@ def find_wikidata_id(name, limit=1, session=None):
     Returns:
         str: wikidata entityID corresponding to the title string. 'entityNotFound' will be returned if no page is found
     """
-
     session = get_session(session=session)
-
     params = dict(
         action="query",
         list="search",
