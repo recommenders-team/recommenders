@@ -51,10 +51,11 @@ def test_query_entity_description(q):
 
 
 def test_search_wikidata_correct(q):
-    result = search_wikidata(q["correct"])
+    result = search_wikidata([q["correct"]])
     assert result.shape[0] >= 1
     assert "The Lord of the Rings" in result["name_linked_entities"].values
 
+
 def test_search_wikidata_incorrect(q):
-    result = search_wikidata(q["incorrect"])
+    result = search_wikidata([q["not_correct"]])
     assert result.empty
