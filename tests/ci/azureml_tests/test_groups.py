@@ -167,7 +167,7 @@ pr_gate_test_groups = {
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id_correct",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id_incorrect",
-        "test/data_validation/recommenders/datasets/test_wikidata.py::test_query_entity_links",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_query_entity_links",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_read_linked_entities",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_query_entity_description",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_search_wikidata_correct",
