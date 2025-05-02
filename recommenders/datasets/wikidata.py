@@ -228,14 +228,13 @@ def query_entity_description(entity_id, session=None):
         logger.warning(f"DESCRIPTION NOT FOUND for {entity_id} or failed request: {e}")
         raise  # Re-raise the exception so @retry can catch it
 
-def search_wikidata(names, extras=None, describe=True, verbose=False):
+def search_wikidata(names, extras=None, describe=True):
     """Create DataFrame of Wikidata search results
 
     Args:
         names (list[str]): List of names to search for
         extras (dict(str: list)): Optional extra items to assign to results for corresponding name
         describe (bool): Optional flag to include description of entity
-        verbose (bool): Optional flag to print out intermediate data
 
     Returns:
         pandas.DataFrame: Wikipedia results for all names with found entities
@@ -245,8 +244,9 @@ def search_wikidata(names, extras=None, describe=True, verbose=False):
     results = []
     for idx, name in enumerate(names):
         entity_id = find_wikidata_id(name)
-        if verbose:
-            print("name: {name}, entity_id: {id}".format(name=name, id=entity_id))
+        logger.info(
+            "name: {name}, entity_id: {id}".format(name=name, id=entity_id)
+        )
 
         if entity_id == "entityNotFound":
             continue
