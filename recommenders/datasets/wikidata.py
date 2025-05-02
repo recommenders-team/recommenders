@@ -6,6 +6,7 @@ import requests
 import logging
 from retrying import retry
 import functools
+from functools import lru_cache
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,7 @@ def get_session(session=None):
     return session
 
 
+@lru_cache(maxsize=1024)
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 @log_retries
 def find_wikidata_id(name, limit=1, session=None):
@@ -119,6 +121,8 @@ def find_wikidata_id(name, limit=1, session=None):
 
     return entity_id
 
+
+@lru_cache(maxsize=1024)
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 @log_retries
 def query_entity_links(entity_id, session=None):
@@ -201,6 +205,8 @@ def read_linked_entities(data):
         for c in data.get("results", {}).get("bindings", [])
     ]
 
+
+@lru_cache(maxsize=1024)
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 @log_retries
 def query_entity_description(entity_id, session=None):
