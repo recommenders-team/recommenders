@@ -89,7 +89,7 @@ def find_wikidata_id(name, limit=1, session=None):
         try:
             search_results = response_json["query"]["search"]
         except KeyError:
-            logger.warning(f"Entity {name} not found (search)")
+            logger.warning(f"Entity '{name}' not found (search)")
             return "entityNotFound"
         page_id = search_results[0]["pageid"]
     except Exception as e:
@@ -111,7 +111,7 @@ def find_wikidata_id(name, limit=1, session=None):
         try:
             entity_id = response_json["query"]["pages"][str(page_id)]["pageprops"]["wikibase_item"]
         except KeyError:
-            logger.warning(f"Entity {name} not found (pageprops)")
+            logger.warning(f"Entity '{name}' not found (pageprops)")
             return "entityNotFound"
     except Exception as e:
         logger.warning(f"REQUEST FAILED or unexpected error during pageprops fetch for {name}: {e}")
