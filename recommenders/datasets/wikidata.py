@@ -7,56 +7,34 @@ import logging
 from retrying import retry
 import functools
 
-
 logger = logging.getLogger(__name__)
-
 
 API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
 API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
 SESSION = None
 
 
-def retry_with_logging(**kwargs):
-    """Custom retry decorator that logs retry attempts
+def log_retries(func):
+    """Decorator that logs retry attempts.
+    Must be applied BEFORE the @retry decorator."""
     
-    Args:
-        **kwargs: Arguments to pass to the retry decorator
-        
-    Returns:
-        Decorator function that adds logging to retries
-    """
-    retry_decorator = retry(**kwargs)
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        # Initialize or get the attempt counter
+        if not hasattr(wrapper, 'attempt'):
+            wrapper.attempt = 0
+            
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            # Increment counter and log the retry
+            wrapper.attempt += 1
+            logger.warning(f"Retrying {func.__name__}: attempt {wrapper.attempt} due to {e}")
+            raise
     
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            attempt = [0]
-            
-            def on_retry(retry_state):
-                attempt[0] += 1
-                logger.warning(
-                    f"Retrying {func.__name__}: attempt {attempt[0]} after {retry_state.retry_object.statistics['delay_since_first_attempt_ms']/1000:.2f}s"
-                )
-                return True
-                
-            # Apply the retry decorator with our custom on_retry callback
-            wrapped = retry(
-                wait_func=kwargs.get('wait_func', None),
-                wait_random_min=kwargs.get('wait_random_min', 1000),
-                wait_random_max=kwargs.get('wait_random_max', 5000),
-                stop_max_attempt_number=kwargs.get('stop_max_attempt_number', 5),
-                retry_on_result=kwargs.get('retry_on_result', None),
-                retry_on_exception=kwargs.get('retry_on_exception', None),
-                wrap_exception=kwargs.get('wrap_exception', False),
-                stop_func=kwargs.get('stop_func', None),
-                wait_jitter_max=kwargs.get('wait_jitter_max', None),
-                on_retry=on_retry
-            )(func)
-            
-            return wrapped(*args, **kwargs)
-        return wrapper
-    return decorator
-
+    # Initialize counter 
+    wrapper.attempt = 0
+    return wrapper
 
 def get_session(session=None):
     """Get session object
@@ -77,7 +55,8 @@ def get_session(session=None):
     return session
 
 
-@retry_with_logging(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@log_retries
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def find_wikidata_id(name, limit=1, session=None):
     """Find the entity ID in wikidata from a title string.
 
@@ -129,8 +108,8 @@ def find_wikidata_id(name, limit=1, session=None):
 
     return entity_id
 
-
-@retry_with_logging(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@log_retries
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def query_entity_links(entity_id, session=None):
     """Query all linked pages from a wikidata entityID
 
@@ -187,7 +166,6 @@ def query_entity_links(entity_id, session=None):
 
     return data
 
-
 def read_linked_entities(data):
     """Obtain lists of liken entities (IDs and names) from dictionary
 
@@ -208,8 +186,8 @@ def read_linked_entities(data):
         for c in data.get("results", {}).get("bindings", [])
     ]
 
-
-@retry_with_logging(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@log_retries
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def query_entity_description(entity_id, session=None):
     """Query entity wikidata description from entityID
 
@@ -241,13 +219,12 @@ def query_entity_description(entity_id, session=None):
 
     try:
         r = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
+        r.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
         description = r.json()["results"]["bindings"][0]["o"]["value"]
-    except Exception as e:  # noqa: F841
-        logger.warning("DESCRIPTION NOT FOUND")
-        return "descriptionNotFound"
-
-    return description
-
+        return description
+    except Exception as e:  # Catch broader exceptions including JSONDecodeError, IndexError, HTTPError
+        logger.warning(f"DESCRIPTION NOT FOUND for {entity_id} or failed request: {e}")
+        raise  # Re-raise the exception so @retry can catch it
 
 def search_wikidata(names, extras=None, describe=True, verbose=False):
     """Create DataFrame of Wikidata search results
