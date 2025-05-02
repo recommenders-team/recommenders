@@ -163,7 +163,7 @@ def query_entity_links(entity_id, session=None):
             API_URL_WIKIDATA, params=dict(query=query, format="json")
         ).json()
     except Exception as e:  # noqa: F841
-        logger.warning("ENTITY NOT FOUND")
+        logger.warning(f"Entity {entity_id} not found or failed request: {e}")
         return {}
 
     return data
