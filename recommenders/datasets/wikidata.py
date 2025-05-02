@@ -25,17 +25,12 @@ def log_retries(func):
             # Function implementation
             pass
     """
-    @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if not hasattr(wrapper, 'attempt'):
-            wrapper.attempt = 0            
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            wrapper.attempt += 1
-            logger.warning(f"Retrying {func.__name__}: attempt {wrapper.attempt} due to {e}")
+            logger.warning(f"Retrying {func.__name__} due to: {e}")
             raise
-    wrapper.attempt = 0
     return wrapper
 
 
