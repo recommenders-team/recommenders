@@ -18,7 +18,7 @@ def log_retries(func):
     """Decorator that logs retry attempts. Must be applied AFTER the @retry decorator.
     
     Example usage:
-        @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+        @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
         @log_retries
         def my_function():
             # Function implementation
@@ -57,7 +57,7 @@ def get_session(session=None):
     return session
 
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 @log_retries
 def find_wikidata_id(name, limit=1, session=None):
     """Find the entity ID in wikidata from a title string.
@@ -119,7 +119,7 @@ def find_wikidata_id(name, limit=1, session=None):
 
     return entity_id
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 @log_retries
 def query_entity_links(entity_id, session=None):
     """Query all linked pages from a wikidata entityID
@@ -201,7 +201,7 @@ def read_linked_entities(data):
         for c in data.get("results", {}).get("bindings", [])
     ]
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 @log_retries
 def query_entity_description(entity_id, session=None):
     """Query entity wikidata description from entityID
