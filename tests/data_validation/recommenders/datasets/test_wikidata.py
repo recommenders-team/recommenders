@@ -22,8 +22,11 @@ def q():
     }
 
 
-def test_find_wikidata_id(q):
+def test_find_wikidata_id_correct(q):
     assert find_wikidata_id(q["correct"]) == "Q15228"
+
+
+def test_find_wikidata_id_incorrect(q):
     assert find_wikidata_id(q["not_correct"]) == "entityNotFound"
 
 
@@ -47,8 +50,11 @@ def test_query_entity_description(q):
     assert desc == "1954–1955 fantasy novel trilogy by J. R. R. Tolkien"
 
 
-def test_search_wikidata():
-    names = ["the lord of the rings"]
-    result = search_wikidata(names)
-    assert hasattr(result, 'head')  # Should be a DataFrame-like object
-    assert "Title" in result.columns or "name" in result.columns
+def test_search_wikidata_correct(q):
+    result = search_wikidata(q["correct"])
+    assert result.shape[0] >= 1
+    assert "The Lord of the Rings" in result["name_linked_entities"].values
+
+def test_search_wikidata_incorrect(q):
+    result = search_wikidata(q["incorrect"])
+    assert result.shape[0] == 0
