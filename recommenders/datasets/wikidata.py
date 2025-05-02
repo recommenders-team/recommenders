@@ -84,11 +84,17 @@ def find_wikidata_id(name, limit=1, session=None):
 
     try:
         response = session.get(API_URL_WIKIPEDIA, params=params)
-        page_id = response.json()["query"]["search"][0]["pageid"]
-    except Exception:
-        # TODO: distinguish between connection error and entity not found
-        logger.warning("ENTITY NOT FOUND")
-        return "entityNotFound"
+        response.raise_for_status()  # Raise HTTPError for bad responses
+        response_json = response.json()
+        try:
+            search_results = response_json["query"]["search"]
+        except KeyError:
+            logger.warning(f"Entity {name} not found (search)")
+            return "entityNotFound"
+        page_id = search_results[0]["pageid"]
+    except Exception as e:
+        logger.warning(f"REQUEST FAILED or unexpected error during search for {name}: {e}")
+        raise  # Re-raise for retry
 
     params = dict(
         action="query",
@@ -100,13 +106,16 @@ def find_wikidata_id(name, limit=1, session=None):
 
     try:
         response = session.get(API_URL_WIKIPEDIA, params=params)
-        entity_id = response.json()["query"]["pages"][str(page_id)]["pageprops"][
-            "wikibase_item"
-        ]
-    except Exception:
-        # TODO: distinguish between connection error and entity not found
-        logger.warning("ENTITY NOT FOUND")
-        return "entityNotFound"
+        response.raise_for_status()
+        response_json = response.json()
+        try:
+            entity_id = response_json["query"]["pages"][str(page_id)]["pageprops"]["wikibase_item"]
+        except KeyError:
+            logger.warning(f"Entity {name} not found (pageprops)")
+            return "entityNotFound"
+    except Exception as e:
+        logger.warning(f"REQUEST FAILED or unexpected error during pageprops fetch for {name}: {e}")
+        raise  # Re-raise for retry
 
     return entity_id
 
@@ -159,12 +168,16 @@ def query_entity_links(entity_id, session=None):
     session = get_session(session=session)
 
     try:
-        data = session.get(
-            API_URL_WIKIDATA, params=dict(query=query, format="json")
-        ).json()
-    except Exception as e:  # noqa: F841
-        logger.warning(f"Entity {entity_id} not found or failed request: {e}")
-        return {}
+        response = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
+        response.raise_for_status()
+        data = response.json()
+        # Check if bindings exist and are not empty
+        if not data.get("results", {}).get("bindings"):
+            logger.warning(f"ENTITY LINKS NOT FOUND: {entity_id}")
+            return {}  # Return empty dict, do not retry
+    except Exception as e:
+        logger.warning(f"REQUEST FAILED or unexpected error querying links for {entity_id}: {e}")
+        raise  # Re-raise for retry
 
     return data
 
@@ -221,12 +234,16 @@ def query_entity_description(entity_id, session=None):
 
     try:
         r = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
-        r.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-        description = r.json()["results"]["bindings"][0]["o"]["value"]
+        r.raise_for_status()
+        bindings = r.json().get("results", {}).get("bindings", [])
+        if not bindings:
+            logger.warning(f"DESCRIPTION NOT FOUND for {entity_id}")
+            return "descriptionNotFound"  # Return specific string, do not retry
+        description = bindings[0]["o"]["value"]
         return description
-    except Exception as e:  # Catch broader exceptions including JSONDecodeError, IndexError, HTTPError
-        logger.warning(f"DESCRIPTION NOT FOUND for {entity_id} or failed request: {e}")
-        raise  # Re-raise the exception so @retry can catch it
+    except Exception as e:
+        logger.warning(f"REQUEST FAILED or unexpected error querying description for {entity_id}: {e}")
+        raise  # Re-raise for retry
 
 def search_wikidata(names, extras=None, describe=True):
     """Create DataFrame of Wikidata search results
