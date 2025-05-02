@@ -57,4 +57,4 @@ def test_search_wikidata_correct(q):
 
 def test_search_wikidata_incorrect(q):
     result = search_wikidata(q["incorrect"])
-    assert result.shape[0] == 0
+    assert result.empty
