@@ -86,10 +86,11 @@ def find_wikidata_id(name, limit=1, session=None):
         response_json = response.json()
         try:
             search_results = response_json["query"]["search"]
-        except KeyError:
+            page_id = search_results[0]["pageid"]
+        except (KeyError, IndexError):
             logger.warning(f"Entity '{name}' not found (search)")
             return "entityNotFound"
-        page_id = search_results[0]["pageid"]
+        
     except Exception as e:
         logger.warning(f"REQUEST FAILED or unexpected error during search for {name}: {e}")
         raise  # Re-raise for retry
@@ -239,7 +240,7 @@ def query_entity_description(entity_id, session=None):
         response_json = response.json()
         try:
             description = response_json["results"]["bindings"][0]["o"]["value"]
-        except KeyError:
+        except (KeyError, IndexError):
             logger.warning(f"Description for '{entity_id}' not found")
             return "descriptionNotFound"
     except Exception as e:
