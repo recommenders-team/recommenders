@@ -1,14 +1,15 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import pandas as pd
-import requests
 import logging
+import requests
+import pandas as pd
 from retrying import retry
-import functools
 from functools import lru_cache
 
+
 logger = logging.getLogger(__name__)
+
 
 API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
 API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
