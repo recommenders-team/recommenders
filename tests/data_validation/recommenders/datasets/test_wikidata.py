@@ -9,6 +9,7 @@ from recommenders.datasets.wikidata import (
     query_entity_links,
     read_linked_entities,
     query_entity_description,
+    search_wikidata,
 )
 
 
@@ -47,5 +48,7 @@ def test_query_entity_description(q):
 
 
 def test_search_wikidata():
-    # TODO
-    pass
+    names = ["the lord of the rings"]
+    result = search_wikidata(names)
+    assert hasattr(result, 'head')  # Should be a DataFrame-like object
+    assert "Title" in result.columns or "name" in result.columns
