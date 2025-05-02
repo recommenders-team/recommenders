@@ -15,26 +15,28 @@ SESSION = None
 
 
 def log_retries(func):
-    """Decorator that logs retry attempts.
-    Must be applied BEFORE the @retry decorator."""
+    """Decorator that logs retry attempts. Must be applied AFTER the @retry decorator.
     
+    Example usage:
+        @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+        @log_retries
+        def my_function():
+            # Function implementation
+            pass
+    """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # Initialize or get the attempt counter
         if not hasattr(wrapper, 'attempt'):
-            wrapper.attempt = 0
-            
+            wrapper.attempt = 0            
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            # Increment counter and log the retry
             wrapper.attempt += 1
             logger.warning(f"Retrying {func.__name__}: attempt {wrapper.attempt} due to {e}")
             raise
-    
-    # Initialize counter 
     wrapper.attempt = 0
     return wrapper
+
 
 def get_session(session=None):
     """Get session object
@@ -55,8 +57,8 @@ def get_session(session=None):
     return session
 
 
-@log_retries
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@log_retries
 def find_wikidata_id(name, limit=1, session=None):
     """Find the entity ID in wikidata from a title string.
 
@@ -108,8 +110,8 @@ def find_wikidata_id(name, limit=1, session=None):
 
     return entity_id
 
-@log_retries
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@log_retries
 def query_entity_links(entity_id, session=None):
     """Query all linked pages from a wikidata entityID
 
@@ -186,8 +188,8 @@ def read_linked_entities(data):
         for c in data.get("results", {}).get("bindings", [])
     ]
 
-@log_retries
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@log_retries
 def query_entity_description(entity_id, session=None):
     """Query entity wikidata description from entityID
 
