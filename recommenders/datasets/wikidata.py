@@ -269,6 +269,9 @@ def search_wikidata(names, extras=None, describe=True):
             logger.warning(f"Error finding entity ID for '{name}': {e}")
             continue
 
+        if entity_id == "entityNotFound":
+            continue
+
         try:
             json_links = query_entity_links(entity_id)
             related_links = read_linked_entities(json_links)
