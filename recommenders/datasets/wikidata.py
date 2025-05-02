@@ -170,10 +170,10 @@ def query_entity_links(entity_id, session=None):
     try:
         response = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
         response.raise_for_status()
-        data = response.json()
-        # Check if bindings exist and are not empty
-        if not data.get("results", {}).get("bindings"):
-            logger.warning(f"ENTITY LINKS NOT FOUND: {entity_id}")
+        try:
+            data = response.json()  
+        except ValueError as e:  
+            logger.warning(f"ENTITY LINKS NOT FOUND (missing keys): {entity_id}")
             return {}  # Return empty dict, do not retry
     except Exception as e:
         logger.warning(f"REQUEST FAILED or unexpected error querying links for {entity_id}: {e}")
@@ -231,19 +231,20 @@ def query_entity_description(entity_id, session=None):
     )
 
     session = get_session(session=session)
-
     try:
-        r = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
-        r.raise_for_status()
-        bindings = r.json().get("results", {}).get("bindings", [])
-        if not bindings:
-            logger.warning(f"DESCRIPTION NOT FOUND for {entity_id}")
-            return "descriptionNotFound"  # Return specific string, do not retry
-        description = bindings[0]["o"]["value"]
-        return description
+        response = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
+        response.raise_for_status()
+        response_json = response.json()
+        try:
+            description = response_json["results"]["bindings"][0]["o"]["value"]
+        except KeyError:
+            logger.warning(f"Description for '{entity_id}' not found")
+            return "descriptionNotFound"
     except Exception as e:
         logger.warning(f"REQUEST FAILED or unexpected error querying description for {entity_id}: {e}")
         raise  # Re-raise for retry
+    
+    return description
 
 def search_wikidata(names, extras=None, describe=True):
     """Create DataFrame of Wikidata search results
