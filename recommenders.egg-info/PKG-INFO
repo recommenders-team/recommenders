@@ -1,4 +1,4 @@
-Metadata-Version: 2.2
+Metadata-Version: 2.4
 Name: recommenders
 Version: 1.2.1
 Summary: Recommenders - Python utilities for building recommendation systems
@@ -34,6 +34,7 @@ Requires-Dist: memory-profiler<1,>=0.61.0
 Requires-Dist: nltk<4,>=3.8.1
 Requires-Dist: notebook<8,>=6.5.5
 Requires-Dist: numba<1,>=0.57.0
+Requires-Dist: numpy<2.0.0
 Requires-Dist: pandas<3.0.0,>2.0.0
 Requires-Dist: pandera[strategies]<0.18,>=0.6.5; python_version <= "3.8"
 Requires-Dist: pandera[strategies]>=0.15.0; python_version >= "3.9"
@@ -61,19 +62,19 @@ Requires-Dist: pytest>=7.2.1; extra == "dev"
 Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
 Requires-Dist: pytest-mock>=3.10.0; extra == "dev"
 Provides-Extra: all
+Requires-Dist: pyspark<=4,>=3.3.0; extra == "all"
+Requires-Dist: fastai<3,>=2.7.11; extra == "all"
+Requires-Dist: nvidia-ml-py>=11.525.84; extra == "all"
+Requires-Dist: numpy<1.25.0; python_version <= "3.8" and extra == "all"
+Requires-Dist: tf-slim>=1.1.0; extra == "all"
+Requires-Dist: torch<3,>=2.0.1; extra == "all"
 Requires-Dist: spacy<=3.7.5; python_version <= "3.8" and extra == "all"
 Requires-Dist: tensorflow!=2.10.0.*,!=2.9.0.*,!=2.9.1,!=2.9.2,<2.16,>=2.8.4; extra == "all"
-Requires-Dist: fastai<3,>=2.7.11; extra == "all"
-Requires-Dist: black>=23.3.0; extra == "all"
-Requires-Dist: pytest-cov>=4.1.0; extra == "all"
-Requires-Dist: tf-slim>=1.1.0; extra == "all"
-Requires-Dist: numpy<1.25.0; python_version <= "3.8" and extra == "all"
-Requires-Dist: pytest>=7.2.1; extra == "all"
-Requires-Dist: torch<3,>=2.0.1; extra == "all"
-Requires-Dist: nvidia-ml-py>=11.525.84; extra == "all"
-Requires-Dist: pyarrow>=10.0.1; extra == "all"
-Requires-Dist: pyspark<=4,>=3.3.0; extra == "all"
 Requires-Dist: pytest-mock>=3.10.0; extra == "all"
+Requires-Dist: pytest-cov>=4.1.0; extra == "all"
+Requires-Dist: pytest>=7.2.1; extra == "all"
+Requires-Dist: pyarrow>=10.0.1; extra == "all"
+Requires-Dist: black>=23.3.0; extra == "all"
 Provides-Extra: experimental
 Requires-Dist: xlearn==0.40a1; extra == "experimental"
 Requires-Dist: vowpalwabbit<9,>=8.9.0; extra == "experimental"
@@ -87,6 +88,7 @@ Dynamic: description
 Dynamic: description-content-type
 Dynamic: home-page
 Dynamic: keywords
+Dynamic: license-file
 Dynamic: project-url
 Dynamic: provides-extra
 Dynamic: requires-dist

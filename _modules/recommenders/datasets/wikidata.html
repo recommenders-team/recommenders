@@ -15,33 +15,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
-  <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
@@ -66,7 +63,6 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -82,8 +78,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="../../../search.html"
       method="get">
@@ -91,6 +98,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -98,8 +106,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -117,8 +125,7 @@
       
         
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -148,17 +155,21 @@
     
     
     <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-light" alt="Recommenders documentation - Home"/>
-    <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark pst-js-only" alt="Recommenders documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" class="logo__image only-dark" alt="Recommenders documentation - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Recommenders API Documentation</span></p>
@@ -176,14 +187,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -279,16 +285,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 
 </div></div>
       
@@ -318,10 +332,11 @@
 <span></span><span class="c1"># Copyright (c) Recommenders contributors.</span>
 <span class="c1"># Licensed under the MIT License.</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">retrying</span><span class="w"> </span><span class="kn">import</span> <span class="n">retry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -330,6 +345,28 @@
 <span class="n">API_URL_WIKIPEDIA</span> <span class="o">=</span> <span class="s2">&quot;https://en.wikipedia.org/w/api.php&quot;</span>
 <span class="n">API_URL_WIKIDATA</span> <span class="o">=</span> <span class="s2">&quot;https://query.wikidata.org/sparql&quot;</span>
 <span class="n">SESSION</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="log_retries">
+<a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.log_retries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_retries</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator that logs retry attempts. Must be applied AFTER the @retry decorator.</span>
+<span class="sd">    </span>
+<span class="sd">    Example usage:</span>
+<span class="sd">        @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)</span>
+<span class="sd">        @log_retries</span>
+<span class="sd">        def my_function():</span>
+<span class="sd">            # Function implementation</span>
+<span class="sd">            pass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrying </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> due to: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
 
 
 <div class="viewcode-block" id="get_session">
@@ -354,9 +391,9 @@
 
 
 
-<div class="viewcode-block" id="find_wikidata_id">
-<a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.find_wikidata_id">[docs]</a>
-<span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="nd">@log_retries</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_wikidata_id</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the entity ID in wikidata from a title string.</span>
 
@@ -368,9 +405,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: wikidata entityID corresponding to the title string. &#39;entityNotFound&#39; will be returned if no page is found</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
-
     <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;query&quot;</span><span class="p">,</span>
         <span class="nb">list</span><span class="o">=</span><span class="s2">&quot;search&quot;</span><span class="p">,</span>
@@ -382,11 +417,17 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL_WIKIPEDIA</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">page_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;query&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;pageid&quot;</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="c1"># TODO: distinguish between connection error and entity not found</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ENTITY NOT FOUND&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;entityNotFound&quot;</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># Raise HTTPError for bad responses</span>
+        <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">search_results</span> <span class="o">=</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">]</span>
+            <span class="n">page_id</span> <span class="o">=</span> <span class="n">search_results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;pageid&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entity &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found (search)&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;entityNotFound&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REQUEST FAILED or unexpected error during search for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>  <span class="c1"># Re-raise for retry</span>
 
     <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;query&quot;</span><span class="p">,</span>
@@ -398,21 +439,23 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL_WIKIPEDIA</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">entity_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;query&quot;</span><span class="p">][</span><span class="s2">&quot;pages&quot;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">page_id</span><span class="p">)][</span><span class="s2">&quot;pageprops&quot;</span><span class="p">][</span>
-            <span class="s2">&quot;wikibase_item&quot;</span>
-        <span class="p">]</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="c1"># TODO: distinguish between connection error and entity not found</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ENTITY NOT FOUND&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;entityNotFound&quot;</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">entity_id</span> <span class="o">=</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">][</span><span class="s2">&quot;pages&quot;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">page_id</span><span class="p">)][</span><span class="s2">&quot;pageprops&quot;</span><span class="p">][</span><span class="s2">&quot;wikibase_item&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entity &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found (pageprops)&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;entityNotFound&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REQUEST FAILED or unexpected error during pageprops fetch for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>  <span class="c1"># Re-raise for retry</span>
 
-    <span class="k">return</span> <span class="n">entity_id</span></div>
+    <span class="k">return</span> <span class="n">entity_id</span>
 
 
-
-<div class="viewcode-block" id="query_entity_links">
-<a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.query_entity_links">[docs]</a>
-<span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="nd">@log_retries</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">query_entity_links</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Query all linked pages from a wikidata entityID</span>
 
@@ -460,16 +503,18 @@
     <span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="n">API_URL_WIKIDATA</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ENTITY NOT FOUND&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL_WIKIDATA</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">))</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>  
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ENTITY LINKS NOT FOUND (missing keys): </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{}</span>  <span class="c1"># Return empty dict, do not retry</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REQUEST FAILED or unexpected error querying links for </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>  <span class="c1"># Re-raise for retry</span>
 
-    <span class="k">return</span> <span class="n">data</span></div>
-
-
+    <span class="k">return</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="read_linked_entities">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.read_linked_entities">[docs]</a>
@@ -495,9 +540,9 @@
 
 
 
-<div class="viewcode-block" id="query_entity_description">
-<a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.query_entity_description">[docs]</a>
-<span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="nd">@retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="nd">@log_retries</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">query_entity_description</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Query entity wikidata description from entityID</span>
 
@@ -526,46 +571,54 @@
     <span class="p">)</span>
 
     <span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
-
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL_WIKIDATA</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">))</span>
-        <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;bindings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;o&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: F841</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;DESCRIPTION NOT FOUND&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;descriptionNotFound&quot;</span>
-
-    <span class="k">return</span> <span class="n">description</span></div>
-
-
+        <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL_WIKIDATA</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">))</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;bindings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;o&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Description for &#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;descriptionNotFound&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REQUEST FAILED or unexpected error querying description for </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>  <span class="c1"># Re-raise for retry</span>
+    
+    <span class="k">return</span> <span class="n">description</span>
 
 <div class="viewcode-block" id="search_wikidata">
 <a class="viewcode-back" href="../../../datasets.html#recommenders.datasets.wikidata.search_wikidata">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">search_wikidata</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">describe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_wikidata</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">describe</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create DataFrame of Wikidata search results</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        names (list[str]): List of names to search for</span>
 <span class="sd">        extras (dict(str: list)): Optional extra items to assign to results for corresponding name</span>
 <span class="sd">        describe (bool): Optional flag to include description of entity</span>
-<span class="sd">        verbose (bool): Optional flag to print out intermediate data</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pandas.DataFrame: Wikipedia results for all names with found entities</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
-        <span class="n">entity_id</span> <span class="o">=</span> <span class="n">find_wikidata_id</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;name: </span><span class="si">{name}</span><span class="s2">, entity_id: </span><span class="si">{id}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">entity_id</span> <span class="o">=</span> <span class="n">find_wikidata_id</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, entity_id: </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error finding entity ID for &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
 
         <span class="k">if</span> <span class="n">entity_id</span> <span class="o">==</span> <span class="s2">&quot;entityNotFound&quot;</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="n">json_links</span> <span class="o">=</span> <span class="n">query_entity_links</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span>
-        <span class="n">related_links</span> <span class="o">=</span> <span class="n">read_linked_entities</span><span class="p">(</span><span class="n">json_links</span><span class="p">)</span>
-        <span class="n">description</span> <span class="o">=</span> <span class="n">query_entity_description</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">describe</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json_links</span> <span class="o">=</span> <span class="n">query_entity_links</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span>
+            <span class="n">related_links</span> <span class="o">=</span> <span class="n">read_linked_entities</span><span class="p">(</span><span class="n">json_links</span><span class="p">)</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">query_entity_description</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">describe</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error querying entity links or description for &#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
 
         <span class="k">for</span> <span class="n">related_entity</span><span class="p">,</span> <span class="n">related_name</span> <span class="ow">in</span> <span class="n">related_links</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -645,8 +698,8 @@ By Recommenders contributors
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
