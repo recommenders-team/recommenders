@@ -15,9 +15,13 @@ Licensed under the MIT License.
 
 <br>
 
-## What's New (Dec, 2024)
+## What's New (April, 2025)
 
-We have a new release [Recommenders 1.2.1](https://github.com/recommenders-team/recommenders/releases/tag/1.2.1)!
+We reached 20,000 stars!!
+
+We are happy to announce that we have reached 20,000 stars on GitHub! Thank you for your support and contributions to the Recommenders project. We are excited to continue building and improving this project with your help.
+
+Check out the release [Recommenders 1.2.1](https://github.com/recommenders-team/recommenders/releases/tag/1.2.1)!
 
 We fixed a lot of bugs due to dependencies, improved security, reviewed the notebooks and the libraries.
 

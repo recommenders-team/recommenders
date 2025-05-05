@@ -17,7 +17,7 @@ from recommenders.utils.notebook_utils import is_databricks
 
 CRITEO_URL = {
     "full": "https://ndownloader.figshare.com/files/10082655",
-    "sample": "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz",
+    "sample": "https://github.com/recommenders-team/datasets/raw/main/Criteo/dac_sample.tar.gz",
 }
 DEFAULT_HEADER = (
     ["label"]
@@ -29,7 +29,7 @@ DEFAULT_HEADER = (
 def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     """Loads the Criteo DAC dataset as `pandas.DataFrame`. This function download, untar, and load the dataset.
 
-    The dataset consists of a portion of Criteo’s traffic over a period
+    The dataset consists of a portion of Criteo's traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
     column indicates whether this ad has been clicked or not.
 
@@ -71,7 +71,7 @@ def load_spark_df(
 ):
     """Loads the Criteo DAC dataset as `pySpark.DataFrame`.
 
-    The dataset consists of a portion of Criteo’s traffic over a period
+    The dataset consists of a portion of Criteo's traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
     column is indicates whether this ad has been clicked or not.
 
