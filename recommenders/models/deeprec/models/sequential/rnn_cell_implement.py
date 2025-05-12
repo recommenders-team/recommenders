@@ -61,13 +61,13 @@ class Time4LSTMCell(RNNCell):
     ):
         super(Time4LSTMCell, self).__init__(_reuse=reuse)
         if not state_is_tuple:
-            logging.warn(
+            logging.warning(
                 "%s: Using a concatenated state is slower and will soon be "
                 "deprecated.  Use state_is_tuple=True.",
                 self,
             )
         if num_unit_shards is not None or num_proj_shards is not None:
-            logging.warn(
+            logging.warning(
                 "%s: The num_unit_shards and proj_unit_shards parameters are "
                 "deprecated and will be removed in Jan 2017.  "
                 "Use a variable scope with a partitioner instead.",
@@ -326,13 +326,13 @@ class Time4ALSTMCell(RNNCell):
     ):
         super(Time4ALSTMCell, self).__init__(_reuse=reuse)
         if not state_is_tuple:
-            logging.warn(
+            logging.warning(
                 "%s: Using a concatenated state is slower and will soon be "
                 "deprecated.  Use state_is_tuple=True.",
                 self,
             )
         if num_unit_shards is not None or num_proj_shards is not None:
-            logging.warn(
+            logging.warning(
                 "%s: The num_unit_shards and proj_unit_shards parameters are "
                 "deprecated and will be removed in Jan 2017.  "
                 "Use a variable scope with a partitioner instead.",
