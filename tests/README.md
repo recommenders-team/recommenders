@@ -24,6 +24,7 @@ In this document we show our test infrastructure and how to contribute tests to 
     - [How to add tests to the AzureML pipeline](#how-to-add-tests-to-the-azureml-pipeline)
     - [Setup GitHub Actions with AzureML compute clusters](#setup-github-actions-with-azureml-compute-clusters)
 - [How to execute tests in your local environment](#how-to-execute-tests-in-your-local-environment)
+- [Other relevant information](#other-relevant-information)
 
 ## Test workflows
 
@@ -331,4 +332,29 @@ Example:
     @pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
     def test_to_skip():
         assert False
+
+## Other relevant information
+
+### Remove old container registry images
+First make sure that you have the role of `Container Registry Repository Contributor`. 
+
+To [delete](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-delete) a specific repository: 
+
+```bash
+az acr repository delete --name myregistry --repository acr-helloworld
+```
+
+To list all images older than a specific date (without deleting) with the name `azureml/azureml_XXXXXXXX`. (See [more details](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-auto-purge)):
+
+```bash
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 30d --dry-run" --registry myregistry /dev/null
+```
+
+To delete all the images older than a specific date with the name `azureml/azureml_XXXXXXXX`:
+
+```bash
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 30d" --registry myregistry --timeout 3600 /dev/null
+```
+
+*NOTE: the default timeout is 600s.*
 
