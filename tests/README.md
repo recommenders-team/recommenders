@@ -363,3 +363,12 @@ To schedule the purge command, you can use the `--schedule` parameter. The task 
 ```bash
 az acr task create --name purge_images_15dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
 ```
+
+To delete all the empty repositories (repositories without tags):
+
+```bash
+az acr repository list --name myregistry --output tsv | while read repo; do if [ -z "$(az acr repository show-tags --name myregistry --repository "$repo" --output tsv 2>/dev/null)" ]; then az acr repository delete --name myregistry --repository "$repo" --yes; echo "Deleted empty repository: $repo"; else echo "Repository $repo is not empty, skipping..."; fi; done
+```
+
+
+
