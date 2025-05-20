@@ -1,0 +1,30 @@
+[project]
+name = "master_reco"
+version = "0.1.0"
+description = "Master Reco"
+dependencies = [
+    # Add your dependencies here, e.g., "requests>=2.20"
+    "semantic-kernel",
+    "requests",
+    "notebook",
+    "ipykernel",
+    "pandas",
+    "matplotlib",
+    "openai",
+    "python-dotenv",
+    "pydantic",
+    "rich",
+    "tenacity",
+    "pillow",
+    "click",
+    "asyncclick",
+    "json_repair",
+    "tiktoken",
+    "fastmcp"
+    ]
+
+[project.optional-dependencies]
+dev = [
+    # Add development dependencies here, e.g., "pytest"
+]
+
