@@ -361,5 +361,5 @@ az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myreg
 To schedule the purge command, you can use the `--schedule` parameter. For example, to schedule the purge command to run every day at 12:00 PM UTC:
 
 ```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
+az acr task create --name purge_images_15dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
 ```
