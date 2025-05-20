@@ -353,8 +353,13 @@ az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 30d --dry-run" --regi
 To delete all the images older than a specific date with the name `azureml/azureml_XXXXXXXX`:
 
 ```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 30d" --registry myregistry --timeout 3600 /dev/null
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --timeout 3600 /dev/null
 ```
 
 *NOTE: the default timeout is 600s.*
 
+To schedule the purge command, you can use the `--schedule` parameter. For example, to schedule the purge command to run every day at 12:00 PM UTC:
+
+```bash
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
+```
