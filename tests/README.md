@@ -370,5 +370,6 @@ To delete all the empty repositories (repositories without tags):
 az acr repository list --name myregistry --output tsv | while read repo; do if [ -z "$(az acr repository show-tags --name myregistry --repository "$repo" --output tsv 2>/dev/null)" ]; then az acr repository delete --name myregistry --repository "$repo" --yes; echo "Deleted empty repository: $repo"; else echo "Repository $repo is not empty, skipping..."; fi; done
 ```
 
+To schedule a task to delete all the empty repositories:
 
 
