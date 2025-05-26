@@ -35,7 +35,7 @@ Based on the suggested candidate recommender algorithms above, please generate t
 · TF-IDF on product titles & descriptions for cold SKUs (hourly)  
 
 # 2 · Re-Ranker / Final Model
-· xDeepFM combining ID embeddings + price + brand + dense CTR features  
+· LightGBM combining ID embeddings + price + brand + dense CTR features  
 · Objective: binary add-to-cart, AUCPR optimised, 50 ms budget
 
 # 3 · Training Stack
@@ -44,10 +44,10 @@ Based on the suggested candidate recommender algorithms above, please generate t
 
 # 4 · Serving Path
 · Feature Store (Redis) → Faiss HNSW recall (≤20 ms)  
-· ONNX-Runtime on AKS for xDeepFM (≤30 ms)  
+· ONNX-Runtime on AKS for LightGBM (≤30 ms)  
 
 # 5 · Metrics & Roll-out
-· Offline: nDCG@20, MAP@20; Online: ATC rate, GMV lift  
+· Offline: nDCG@20, MAP@20; Online: add-to-cart rate, revenue lift  
 · Progressive rollout 1% ➔ 5% ➔ 25% over 2 weeks with sequential testing
 
 # 6 · Docs & IaC

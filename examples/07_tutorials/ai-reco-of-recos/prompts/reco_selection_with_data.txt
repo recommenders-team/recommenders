@@ -23,7 +23,7 @@ Step 1 — From the above, you will have a description for all or most of the be
   "time_span_days":   int,              // coverage of the log window
   "avg_events_per_u": float,            // sparsity indicator
   "cold_item_ratio":  float,            // fraction of items with <5 events
-  "feature_richness": "ids_only" | "rich_context" | "text_KG" | "geo",
+  "feature_richness": "ids_only" | "rich_context" | "text_KG",
   "storage_format":   "parquet" | "csv" | "json" | "delta" | ...,
   "file_size_gb":     float
 }}
@@ -38,12 +38,11 @@ Apply the same decision-tree logic as before *but now weight decisions by*:
 * compute constraints inferred from `file_size_gb` and `storage_format`.
 
 **Table A – Canonical Algorithms**
-• Explicit-rating CF  ……  ALS, Surprise-SVD, LightFM, Wide&Deep, xDeepFM  
+• Explicit-rating CF  ……  ALS, Surprise-SVD, LightFM, Wide&Deep, xDeepFM, SAR
 • Implicit-feedback CF ……  BPR, SAR, LightGCN, NCF, RBM, ALS-implicit, xDeepFM, LightFM  
 • Sequential / session  ……  SASRec, Caser, GRU, NextItNet, A2SVD, SLi-Rec, SUM, SSEPT  
 • Content / hybrid      ……  LightGBM-GBT, TF-IDF, DKN, NAML, NPA, NRMS, LSTUR, VW, Wide&Deep, xDeepFM, LightFM  
 • Generative / VAE      ……  BiVAE, Multinomial-VAE, Standard-VAE  
-• Geo / Riemannian      ……  GeoIMC, RLRMC  
 
 
 Step 3 — Output a **RankedAlgosResponse** JSON that conforms to the Pydantic schema:
