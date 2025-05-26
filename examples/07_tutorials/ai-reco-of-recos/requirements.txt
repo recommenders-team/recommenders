@@ -1,8 +1,8 @@
 semantic-kernel
 requests
-notebook
+notebook>=6.5.5,<8
 ipykernel
-pandas
+pandas>2.0.0,<3.0.0
 matplotlib
 openai
 python-dotenv
