@@ -187,7 +187,7 @@ The system consists of several components:
 
 ## Credits
 
-This project uses the [Recommenders](https://github.com/microsoft/recommenders) library as a reference for recommendation algorithms.
+This project uses the [Recommenders](https://github.com/recommenders-team/recommenders) library as a reference for recommendation algorithms.
 
 ## License
 
