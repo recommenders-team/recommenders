@@ -30,14 +30,20 @@ Output a short, ordered list (`ranked_algos`) plus a 2-sentence rationale for ea
    * `sequential_events` (time-ordered)
    * `content_driven` (news, ads, cold items)
 2. **Cold\_Start\_Severity** (`high` | `medium` | `low`)
-3. **Scale\_and\_Latency**
+3. **Architecture**
 
-   * `1 B events` → prefer Spark/graph models (ALS-Spark, SARplus)
-   * `online_<100 ms` → prefer lightweight or two-stage (TF-IDF, VW, SAR similarities)
-4. **Business\_Metric** (`CVR` | `CTR` | `WatchTime` | `ARPU` | `Engagement`)
-5. **Regulatory\_or\_Explainability\_Needed** (`yes` | `no`)
-6. **Available\_Features** (`ids_only` | `rich_context` | `text_KG` )
-7. **Compute\_Budget** (`cpu_only` | `gpu_ok` | `distributed_spark`)
+   * `batch` → lowest latency (5ms-20ms), cheaper, trained once a day (it doesn't capture real-time interactions), look-up to a quick database (Redis, SQL Server)
+   * `real_time` → high latency (100ms-200ms), model deployed and score in real-time
+   * `hybrid` → Also called recall-rerank architecture or 2 step recommender, mid latency (20ms-100ms), candidate generation, real-time reranking
+4. **Scale\_and\_Latency**
+
+   * `1 B events` → prefer Spark or lightweight models (ALS-Spark, SARplus, xLearn)
+   * `<20ms`  → prefer batch with heavy models (SASRec, BiVAE, LightGCN)
+   * `online_<100 ms` →  prefer hybrid architecture with heavy models for candidate generation with high recall (SASRec, BiVAE, LightGCN) and lightweight models for real-time reranking (VW, LightGBM)
+5. **Business\_Metric** (`CVR` | `CTR` | `WatchTime` | `ARPU` | `Engagement`)
+6. **Regulatory\_or\_Explainability\_Needed** (`yes` | `no`)
+7. **Available\_Features** (`ids_only` | `rich_context` | `text_KG` )
+8. **Compute\_Budget** (`cpu_only` | `gpu_ok` | `distributed_spark`)
 
 ---
 
