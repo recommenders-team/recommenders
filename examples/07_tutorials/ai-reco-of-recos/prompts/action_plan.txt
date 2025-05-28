@@ -18,11 +18,11 @@ This action plan will be recommended to run on Azure, please propose an Azure st
 
 **Sections to Produce (exact headers)**
 Based on the suggested candidate recommender algorithms above, please generate the following:
-1. **Candidate Generators** – list 1-3 recall models; include data needed & batch cadence.
-2. **Re-Ranker / Final Model** – architecture, loss, label definition, and latency target.
-3. **Training Stack** – ETL tech, framework (PyTorch Lightning / Spark / LightGBM), HPO strategy, expected hardware.
+1. **Architecture** - select the architecture (batch, real-time, hybrid), justify it with data usage, latency requirements
+2. **Model selection** - select a model within Recommenders library, include features needed, loss, label definition, objective and latency target
+3. **Training Stack** – ETL tech, expected hardware (CPU, GPU or Spark), HPO strategy, training time.
 4. **Serving Path** – storage (Feature Store / Redis / Cosmos DB), ANN / cache layer, model runtime (ONNX-RT, Triton, etc.), P99 latency.
-5. **Metrics & Roll-out** – offline metrics, guard-rail KPIs, A/B or bandit schedule, traffic % ramp.
+5. **Metrics & Roll-out** – offline metrics, online metrics, guard-rail KPIs, A/B or bandit schedule, traffic % ramp.
 6. **Docs & IaC** – artifacts to generate (README, dashboards), IaC spec (Bicep / Terraform), monitoring hooks.
 
 ---
@@ -30,24 +30,27 @@ Based on the suggested candidate recommender algorithms above, please generate t
 **Output Example - the below is an example ONLY**
 
 ```
-# 1 · Candidate Generators
-· ALS-Spark on last-90-day interactions (nightly)  
-· TF-IDF on product titles & descriptions for cold SKUs (hourly)  
+# 1 · Architecture
+· Hybrid architecture with candidate generation with high recall and real-time reranking with high precision
+· Useful for a large dataset of 20M interactions daily and a latency requirement of <100ms
+· Retraining cadence (e.g., hourly, daily)
 
-# 2 · Re-Ranker / Final Model
-· LightGBM combining ID embeddings + price + brand + dense CTR features  
+# 2 · Model selection
+· SASRec with user-item-interaction together with LightGBM combining text embeddings + price + brand + dense CTR features
+· VW with logistic regression for real-time reranking
 · Objective: binary add-to-cart, AUCPR optimised, 50 ms budget
 
 # 3 · Training Stack
-· Azure Databricks → Delta Lake → PyTorch Lightning on 4×A100  
+· Azure Databricks → Delta Lake → AzureML with multi-GPU server with 4x NVIDIA A100  
 · Hyperdrive Bayesian sweep (LR, layer dims)  
 
 # 4 · Serving Path
 · Feature Store (Redis) → Faiss HNSW recall (≤20 ms)  
-· ONNX-Runtime on AKS for LightGBM (≤30 ms)  
+· ONNX-Runtime on AKS for real-time (≤30 ms)  
 
 # 5 · Metrics & Roll-out
-· Offline: nDCG@20, MAP@20; Online: add-to-cart rate, revenue lift  
+· Offline: nDCG@20, MAP@20
+· Online: add-to-cart rate, revenue lift  
 · Progressive rollout 1% ➔ 5% ➔ 25% over 2 weeks with sequential testing
 
 # 6 · Docs & IaC
@@ -59,29 +62,27 @@ Fill each section thoroughly; bullet form is fine.
 **Expected JSON Response**
 
 {{
-  "candidate_generators": [
+  "architecture": [
     {{
-      /* Name and flavour of the recall model that surfaces a
-         *large* pool of items (e.g., "Spark-ALS (implicit, 90-day)",
-         "Popularity-biased TF-IDF", "LightGCN Graph Recall").          */
-      "model": "Recommendation model name/type used for generating initial candidates",
+      /* Name and flavour of the architecture (e.g., "Batch architecture",
+         "Real-time architecture", "Hybrid architecture (recall-rerank)").          */
+      "type": "Recommendation architecture used",
 
-      /* All raw sources this generator needs—IDs, interaction logs,
+      /* All raw sources this architecture needs: IDs, interaction logs,
          catalogue metadata, embeddings store paths, etc.
          Mention format + retention window if relevant.                */
-      "data_needed": "Data sources and types required for this generator",
+      "data_needed": "Data sources and types required for this architecture",
 
-      /* How often the recall index or scores are refreshed.
+      /* How often the models are retrained.
          Typical values: 'hourly', 'nightly', 'near-real-time (Kafka stream)'. */
-      "batch_cadence": "How frequently this generator runs (e.g., hourly, daily)"
+      "retraining_cadence": "How frequently this generator runs (e.g., hourly, daily)"
     }}
   ],
 
-  "reranker": {{
-    /* Architecture that scores the relatively small candidate set
-       returned by the generator(s)—e.g., 'xDeepFM', 'Transformer
-       cross-encoder', 'Wide & Deep + price/brand features'.            */
-    "architecture": "Model architecture used for reranking candidates",
+  "models": {{
+    /* Algorithm selection from Recommeders library—e.g., 'xDeepFM', 'Transformer
+       cross-encoder', 'Wide & Deep + price/brand features', 'SASRec', 'BPR'.            */
+    "algorithms": "Algorithm or algorithm combinations",
 
     /* Training objective—point-wise BCE, pair-wise hinge, listwise
        LambdaRank, AUCPR, etc.                                          */
@@ -101,16 +102,12 @@ Fill each section thoroughly; bullet form is fine.
        'PySpark → Delta Lake', 'Azure Data Factory', 'dbt + Snowpark', etc. */
     "etl": "Data extraction, transformation, loading technology",
 
-    /* Core model-training framework(s):
-       'PyTorch Lightning', 'LightGBM-CLI', 'TensorFlow-Keras', etc.    */
-    "framework": "ML framework used for model development",
-
     /* Hyper-parameter search strategy:
        'AzureML HyperDrive (Bayesian)', 'Optuna + ASHA', 'manual grid'. */
     "hpo_strategy": "Hyperparameter optimization approach",
 
     /* Compute requested for a *single* full training run—
-       node type / count / GPUs, or 'CPU-only', etc.                    */
+       node type / count / GPUs, Spark, or 'CPU-only', etc.                    */
     "hardware": "Compute resources required for training"
   }},
 
