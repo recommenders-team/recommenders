@@ -12,12 +12,11 @@ Output a short, ordered list (`ranked_algos`) plus a 2-sentence rationale for ea
 **Table A – Canonical Algorithms**
 
 ```
-• Explicit-rating CF  ……  ALS, Surprise-SVD, LightFM, Wide&Deep, xDeepFM  
+• Explicit-rating CF  ……  ALS, Surprise-SVD, LightFM, Wide&Deep, xDeepFM, SAR
 • Implicit-feedback CF ……  BPR, SAR, LightGCN, NCF, RBM, ALS-implicit, xDeepFM, LightFM  
 • Sequential / session  ……  SASRec, Caser, GRU, NextItNet, A2SVD, SLi-Rec, SUM, SSEPT  
 • Content / hybrid      ……  LightGBM-GBT, TF-IDF, DKN, NAML, NPA, NRMS, LSTUR, VW, Wide&Deep, xDeepFM, LightFM  
 • Generative / VAE      ……  BiVAE, Multinomial-VAE, Standard-VAE  
-• Geo / Riemannian      ……  GeoIMC, RLRMC  
 ```
 
 ---
@@ -26,32 +25,37 @@ Output a short, ordered list (`ranked_algos`) plus a 2-sentence rationale for ea
 
 1. **Interaction\_Type**
 
-   * `explicit_ratings`
+   * `explicit_ratings` (ratings)
    * `implicit_events` (clicks, views, purchases)
    * `sequential_events` (time-ordered)
    * `content_driven` (news, ads, cold items)
 2. **Cold\_Start\_Severity** (`high` | `medium` | `low`)
-3. **Scale\_and\_Latency**
+3. **Architecture**
 
-   * `1 B events` → prefer Spark/graph models (ALS-Spark, LightGCN)
-   * `online_<100 ms` → prefer lightweight or two-stage (TF-IDF, VW, SAR similarities)
-4. **Business\_Metric** (`CVR` | `WatchTime` | `ARPU` | `Engagement`)
-5. **Regulatory\_or\_Explainability\_Needed** (`yes` | `no`)
-6. **Available\_Features** (`ids_only` | `rich_context` | `text_KG` | `geo`)
-7. **Compute\_Budget** (`cpu_only` | `gpu_ok` | `distributed_spark`)
+   * `batch` → lowest latency (5ms-20ms), cheaper, trained once a day (it doesn't capture real-time interactions), look-up to a quick database (Redis, SQL Server)
+   * `real_time` → high latency (100ms-200ms), model deployed and score in real-time
+   * `hybrid` → Also called recall-rerank architecture or 2 step recommender, mid latency (20ms-100ms), candidate generation, real-time reranking
+4. **Scale\_and\_Latency**
+
+   * `1 B events` → prefer Spark or lightweight models (ALS-Spark, SARplus, xLearn)
+   * `<20ms`  → prefer batch with heavy models (SASRec, BiVAE, LightGCN)
+   * `online_<100 ms` →  prefer hybrid architecture with heavy models for candidate generation with high recall (SASRec, BiVAE, LightGCN) and lightweight models for real-time reranking (VW, LightGBM)
+5. **Business\_Metric** (`CVR` | `CTR` | `WatchTime` | `ARPU` | `Engagement`)
+6. **Regulatory\_or\_Explainability\_Needed** (`yes` | `no`)
+7. **Available\_Features** (`ids_only` | `rich_context` | `text_KG` )
+8. **Compute\_Budget** (`cpu_only` | `gpu_ok` | `distributed_spark`)
 
 ---
 
 **Selection Rules (compressed)**
 
-* *Explicit + ids\_only* → ALS / SVD.
+* *Explicit + ids\_only* → ALS, SVD, SAR (similarity).
 * *Implicit + ids\_only* → BPR (pairwise), SAR (similarity), LightGCN (graph), NCF (deep).
-* *Sequential* → Transformer (SASRec/SSEPT) if gpu\_ok, else Caser/GRU.
+* *Sequential* → Transformer (SASRec/SSEPT) or Caser/GRU if gpu\_ok, else LightGBM.
 * *Content\_driven & high\_cold\_start* → LightGBM-GBT, TF-IDF, DKN/NRMS/LSTUR family.
 * *Need\_CVR / ROI* → point-wise GBT (LightGBM) or xDeepFM / Wide\&Deep.
 * *Need\_Interpretability* → GBT, TF-IDF, attention-based (DKN, NRMS), VW with per-feature weights.
-* *Geo features* → GeoIMC, RLRMC.
-* *Massive\_scale* → Spark-ALS, SAR-Plus, LightGCN with mini-batch sampling.
+* *Massive\_scale* → Spark-ALS, SAR-Plus, LightGBM-Spark, LightGCN with mini-batch sampling.
 * *Real-time bandit / low\_latency* → pre-compute candidates + VW or LightGBM re-rank.
 
 ---
