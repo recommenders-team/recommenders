@@ -138,7 +138,7 @@ Fill each section thoroughly; bullet form is fine.
     "offline_metrics": ["Metrics used to evaluate model quality offline"],
 
     /* Business KPIs tracked in production:
-       ['CTR','GMV','Watch Time','Add-to-Cart Rate'], etc.              */
+       ['CTR','GMV','Watch Time','Add-to-Cart Rate', 'ARPU'], etc.              */
     "online_kpis": ["Business KPIs monitored during deployment"],
 
     /* Roll-out pattern:
