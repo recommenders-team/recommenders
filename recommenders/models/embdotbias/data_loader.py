@@ -23,8 +23,8 @@ class CollabDataset(Dataset):
 
     def __getitem__(self, idx):
         user_item_tensor = torch.stack((self.users[idx], self.items[idx]))
-        rating_tensor = self.ratings[idx].unsqueeze(0)  # Use .unsqueeze(0)
-        return user_item_tensor, rating_tensor  # Return the shaped tensor
+        rating_tensor = self.ratings[idx].unsqueeze(0)
+        return user_item_tensor, rating_tensor
 
 
 class CollabDataLoaders:
@@ -115,16 +115,11 @@ class CollabDataLoaders:
             np.float32
         )  # Ensure rating is float
 
-        # No need to remove rows where mapping failed if using '#na#' index for fillna
-        # but keep this if you want to strictly remove unseen IDs.
-        # For now, mapping to '#na#' index (usually 0) is more like standard categorization.
-
         # Split into train and validation
         n = len(ratings)
         n_valid = int(n * valid_pct)
 
         if n_valid >= n:
-            # Adjusted error message to be more precise
             if n == 0:
                 raise ValueError(
                     "Input DataFrame was empty or contained no valid rows after cleaning."
@@ -177,7 +172,7 @@ class CollabDataLoaders:
                     min(valid_batch_size, len(valid_ds))
                     if valid_ds and len(valid_ds) > 0
                     else (1 if valid_ds else None)
-                ),  # Safe batch size for valid
+                ),
                 shuffle=False,
                 **kwargs,
             )
@@ -209,9 +204,8 @@ class CollabDataLoaders:
             users = user_item_batch[:, 0]  # Shape [bs]
             items = user_item_batch[:, 1]  # Shape [bs]
 
-            # Now take the first n elements as intended by the original code
-            users = users[:n].numpy()  # Shape [n]
-            items = items[:n].numpy()  # Shape [n]
+            users = users[:n].numpy()
+            items = items[:n].numpy()
             # Squeeze the ratings numpy array to remove the dimension of size 1
             ratings = ratings_batch[:n].numpy().squeeze()  # Shape [n]
 
@@ -224,5 +218,5 @@ class CollabDataLoaders:
             )
 
             print(f"Showing {n} examples from a batch:")
-            print(df)  # This line prints the DataFrame
+            print(df)
             break

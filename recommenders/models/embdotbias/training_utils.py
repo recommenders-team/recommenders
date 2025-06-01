@@ -123,7 +123,6 @@ def predict_rating(model, user_id, item_id):
 
     with torch.no_grad():
         try:
-            # Assuming model has a _get_idx method as seen in the notebook
             user_idx = model._get_idx([user_id], is_item=False)
             item_idx = model._get_idx([item_id], is_item=True)
 
