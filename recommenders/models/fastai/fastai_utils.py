@@ -28,7 +28,7 @@ def cartesian_product(*arrays):
     return arr.reshape(-1, la)
 
 
-def scoreV2(
+def score(
     learner,
     data,
     test_df,

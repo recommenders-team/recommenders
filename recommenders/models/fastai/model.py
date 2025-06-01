@@ -4,18 +4,13 @@ from torch.nn import Embedding
 from torch.nn import Module
 import torch.nn.init as init
 
-"""
-def trunc_normal(x, mean=0., std=1.):
-    "Truncated normal initialization (approximation)"
-    # From https://discuss.pytorch.org/t/implementing-truncated-normal-initializer/4778/12
-    return x.normal_().fmod_(2).mul_(std).add_(mean)
-"""
 
 class EmbeddingDotBias(Module):
     "Base dot model for collaborative filtering."
     def __init__(self, n_factors, n_users, n_items, y_range=None):
         
         super().__init__()
+        self.classes = None
         self.y_range = y_range
         (self.u_weight, self.i_weight, self.u_bias, self.i_bias) = [Embedding(*o) for o in [
             (n_users, n_factors), (n_items, n_factors), (n_users,1), (n_items,1)
@@ -55,12 +50,10 @@ class EmbeddingDotBias(Module):
         "Bias for item or user (based on `is_item`) for all in `arr`"
         idx = self._get_idx(arr, is_item)
         layer = (self.i_bias if is_item else self.u_bias).eval().cpu()
-        #return to_detach(layer(idx).squeeze(),gather=False)
         return layer(idx).squeeze().detach()
 
     def weight(self, arr, is_item=True):
         "Weight for item or user (based on `is_item`) for all in `arr`"
         idx = self._get_idx(arr, is_item)
         layer = (self.i_weight if is_item else self.u_weight).eval().cpu()
-        #return to_detach(layer(idx),gather=False)
         return layer(idx).detach()

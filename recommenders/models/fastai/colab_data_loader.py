@@ -7,7 +7,7 @@ import pandas as pd
 from pathlib import Path
 import random
 
-class CollabDatasetV3(Dataset):
+class CollabDataset(Dataset):
     def __init__(self, users, items, ratings):
         # Convert to numpy arrays first and ensure correct types
         users = np.array(users, dtype=np.int64)
@@ -28,7 +28,7 @@ class CollabDatasetV3(Dataset):
         return user_item_tensor, rating_tensor # Return the shaped tensor
 
 
-class CollabDataLoadersV3:
+class CollabDataLoaders:
     def __init__(self, train_dl, valid_dl=None):
         """Initialize the dataloaders.
 
@@ -38,6 +38,7 @@ class CollabDataLoadersV3:
         """
         self.train = train_dl
         self.valid = valid_dl
+        self.classes = {}
 
     @classmethod
     def from_df(cls, ratings, valid_pct=0.2, user_name=None, item_name=None,
@@ -115,13 +116,13 @@ class CollabDataLoadersV3:
             raise ValueError("Training set is empty after split. Reduce valid_pct.")
 
         # Create datasets using the index-mapped values
-        train_ds = CollabDatasetV3(
+        train_ds = CollabDataset(
             ratings.iloc[train_idx][user_name].values,
             ratings.iloc[train_idx][item_name].values,
             ratings.iloc[train_idx][rating_name].values
         )
 
-        valid_ds = CollabDatasetV3(
+        valid_ds = CollabDataset(
             ratings.iloc[valid_idx][user_name].values,
             ratings.iloc[valid_idx][item_name].values,
             ratings.iloc[valid_idx][rating_name].values
