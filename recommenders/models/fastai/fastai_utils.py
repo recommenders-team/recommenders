@@ -4,8 +4,6 @@
 
 import numpy as np
 import pandas as pd
-import fastai
-import fastprogress
 import torch
 from fastprogress.fastprogress import force_console_behavior
 
@@ -30,8 +28,9 @@ def cartesian_product(*arrays):
     return arr.reshape(-1, la)
 
 
-def score(
+def scoreV2(
     learner,
+    data,
     test_df,
     user_col=cc.DEFAULT_USER_COL,
     item_col=cc.DEFAULT_ITEM_COL,
@@ -52,7 +51,7 @@ def score(
         pandas.DataFrame: Result of recommendation
     """
     # replace values not known to the model with NaN
-    total_users, total_items = learner.dls.classes.values()
+    total_users, total_items = data.classes.values()
     test_df.loc[~test_df[user_col].isin(total_users), user_col] = np.nan
     test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 
@@ -65,9 +64,9 @@ def score(
 
     if torch.cuda.is_available():
         x = x.to("cuda")
-        learner.model = learner.model.to("cuda")
+        learner = learner.to("cuda")
 
-    pred = learner.model.forward(x).detach().cpu().numpy()
+    pred = learner.forward(x).detach().cpu().numpy()
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
@@ -79,14 +78,3 @@ def score(
         top_scores = scores
 
     return top_scores
-
-
-def hide_fastai_progress_bar():
-    """Hide fastai progress bar"""
-    fastprogress.fastprogress.NO_BAR = True
-    fastprogress.fastprogress.WRITER_FN = str
-    master_bar, progress_bar = force_console_behavior()
-    fastai.callback.progress.master_bar, fastai.callback.progress.progress_bar = (
-        master_bar,
-        progress_bar,
-    )
