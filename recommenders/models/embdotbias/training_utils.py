@@ -2,13 +2,19 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.nn import MSELoss
+import logging
+
 from recommenders.utils.constants import (
-    DEFAULT_USER_COL as USER, 
-    DEFAULT_ITEM_COL as ITEM, 
-    DEFAULT_RATING_COL as RATING, 
-    DEFAULT_TIMESTAMP_COL as TIMESTAMP, 
-    DEFAULT_PREDICTION_COL as PREDICTION
+    DEFAULT_USER_COL as USER,
+    DEFAULT_ITEM_COL as ITEM,
+    DEFAULT_RATING_COL as RATING,
+    DEFAULT_TIMESTAMP_COL as TIMESTAMP,
+    DEFAULT_PREDICTION_COL as PREDICTION,
 )
+
+# Set up logger
+logger = logging.getLogger(__name__)
+
 
 class Trainer:
     def __init__(self, model, learning_rate=1e-3, weight_decay=0.01):
@@ -20,13 +26,15 @@ class Trainer:
             learning_rate (float): The learning rate for the optimizer.
             weight_decay (float): The weight decay for the optimizer.
         """
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = model.to(self.device)
-        self.optimizer = optim.AdamW(self.model.parameters(),
-                                     lr=learning_rate,
-                                     betas=(0.9, 0.99),
-                                     eps=1e-5,
-                                     weight_decay=weight_decay)
+        self.optimizer = optim.AdamW(
+            self.model.parameters(),
+            lr=learning_rate,
+            betas=(0.9, 0.99),
+            eps=1e-5,
+            weight_decay=weight_decay,
+        )
         self.loss_fn = MSELoss()
 
     def train_epoch(self, train_dl):
@@ -93,9 +101,9 @@ class Trainer:
         for epoch in range(n_epochs):
             train_loss = self.train_epoch(train_dl)
             valid_loss = self.validate(valid_dl)
-            print(f'Epoch {epoch+1}/{n_epochs}:')
-            print(f'Train Loss: {train_loss}')
-            print(f'Valid Loss: {valid_loss}')
+            logger.info(f"Epoch {epoch+1}/{n_epochs}:")
+            logger.info(f"Train Loss: {train_loss}")
+            logger.info(f"Valid Loss: {valid_loss}")
 
 
 def predict_rating(model, user_id, item_id):
@@ -111,7 +119,7 @@ def predict_rating(model, user_id, item_id):
     """
     model.eval()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     with torch.no_grad():
         try:
@@ -124,5 +132,5 @@ def predict_rating(model, user_id, item_id):
             pred = model(x)
             return pred.item()
         except Exception as e:
-            print(f"Error in prediction: {str(e)}")
-            return None 
+            logger.error(f"Error in prediction: {str(e)}")
+            return None

@@ -29,7 +29,7 @@ def cartesian_product(*arrays):
 
 
 def score(
-    learner,
+    model,
     data,
     test_df,
     user_col=cc.DEFAULT_USER_COL,
@@ -40,7 +40,7 @@ def score(
     """Score all users+items provided and reduce to top_k items per user if top_k>0
 
     Args:
-        learner (object): Model.
+        model (object): Model.
         test_df (pandas.DataFrame): Test dataframe.
         user_col (str): User column name.
         item_col (str): Item column name.
@@ -56,17 +56,17 @@ def score(
     test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 
     # map ids to embedding ids
-    u = learner._get_idx(test_df[user_col], is_item=False)
-    m = learner._get_idx(test_df[item_col], is_item=True)
+    u = model._get_idx(test_df[user_col], is_item=False)
+    m = model._get_idx(test_df[item_col], is_item=True)
 
     # score the pytorch model
     x = torch.column_stack((u, m))
 
     if torch.cuda.is_available():
         x = x.to("cuda")
-        learner = learner.to("cuda")
+        model = model.to("cuda")
 
-    pred = learner.forward(x).detach().cpu().numpy()
+    pred = model.forward(x).detach().cpu().numpy()
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
