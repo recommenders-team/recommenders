@@ -96,6 +96,57 @@ def predict(
 #         return all_predictions
 
 
+# def predict_ranking(
+#     model,
+#     data,
+#     usercol=DEFAULT_USER_COL,
+#     itemcol=DEFAULT_ITEM_COL,
+#     predcol=DEFAULT_PREDICTION_COL,
+#     remove_seen=False,
+# ):
+#     """Computes predictions of recommender model from Cornac on all users and items in data.
+#     It can be used for computing ranking metrics like NDCG.
+
+#     Args:
+#         model (cornac.models.Recommender): A recommender model from Cornac
+#         data (pandas.DataFrame): The data from which to get the users and items
+#         usercol (str): Name of the user column
+#         itemcol (str): Name of the item column
+#         predcol (str): Name of the prediction column
+#         remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
+
+#     Returns:
+#         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
+#     """
+#     # Precompute items and users
+#     items = list(model.train_set.iid_map.keys())
+#     users = list(model.train_set.uid_map.keys())
+#     n_items = len(items)
+    
+#     # Preallocate arrays
+#     user_array = np.repeat(users, n_items)
+#     item_array = np.tile(items, len(users))
+    
+#     # Compute predictions
+#     preds = np.concatenate([
+#         model.score(user_idx) for user_idx in model.train_set.uid_map.values()
+#     ])
+    
+#     # Create DataFrame
+#     all_predictions = pd.DataFrame({
+#         usercol: user_array,
+#         itemcol: item_array,
+#         predcol: preds
+#     })
+    
+#     if remove_seen:
+#         seen = data[[usercol, itemcol]].drop_duplicates()
+#         merged = all_predictions.merge(seen, on=[usercol, itemcol], how='left', indicator=True)
+#         return merged[merged['_merge'] == 'left_only'].drop(columns=['_merge'])
+#     return all_predictions
+
+
+
 def predict_ranking(
     model,
     data,
@@ -121,24 +172,28 @@ def predict_ranking(
     # Precompute items and users
     items = list(model.train_set.iid_map.keys())
     users = list(model.train_set.uid_map.keys())
+    n_users = len(users)
     n_items = len(items)
-    
-    # Preallocate arrays
+
+    # Compute full score matrix in one go
+    user_indices = [model.train_set.uid_map[u] for u in users]
+    item_indices = [model.train_set.iid_map[i] for i in items]
+    U = model.u_factors[user_indices]
+    V = model.i_factors[item_indices]
+    B = model.i_biases[item_indices]
+
+    # Matrix multiplication for all user-item pairs
+    preds_matrix = U @ V.T + B
     user_array = np.repeat(users, n_items)
-    item_array = np.tile(items, len(users))
-    
-    # Compute predictions
-    preds = np.concatenate([
-        model.score(user_idx) for user_idx in model.train_set.uid_map.values()
-    ])
-    
-    # Create DataFrame
+    item_array = np.tile(items, n_users)
+    preds = preds_matrix.flatten()
+
     all_predictions = pd.DataFrame({
         usercol: user_array,
         itemcol: item_array,
         predcol: preds
     })
-    
+
     if remove_seen:
         seen = data[[usercol, itemcol]].drop_duplicates()
         merged = all_predictions.merge(seen, on=[usercol, itemcol], how='left', indicator=True)
