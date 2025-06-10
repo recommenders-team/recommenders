@@ -94,3 +94,58 @@ def predict_ranking(
         return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1)
     else:
         return all_predictions
+
+
+def predict_ranking(
+    model,
+    data,
+    usercol=DEFAULT_USER_COL,
+    itemcol=DEFAULT_ITEM_COL,
+    predcol=DEFAULT_PREDICTION_COL,
+    remove_seen=False,
+):
+    """Computes predictions of recommender model from Cornac on all users and items in data.
+    It can be used for computing ranking metrics like NDCG.
+
+    Args:
+        model (cornac.models.Recommender): A recommender model from Cornac
+        data (pandas.DataFrame): The data from which to get the users and items
+        usercol (str): Name of the user column
+        itemcol (str): Name of the item column
+        predcol (str): Name of the prediction column
+        remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
+
+    Returns:
+        pandas.DataFrame: Dataframe with usercol, itemcol, predcol
+    """
+    # Precompute items and users
+    items = list(model.train_set.iid_map.keys())
+    users = list(model.train_set.uid_map.keys())
+    n_items = len(items)
+    
+    # Preallocate arrays
+    user_array = np.repeat(users, n_items)
+    item_array = np.tile(items, len(users))
+    
+    # Compute predictions
+    preds = np.concatenate([
+        model.score(user_idx) for user_idx in model.train_set.uid_map.values()
+    ])
+    
+    # Create DataFrame
+    all_predictions = pd.DataFrame({
+        usercol: user_array,
+        itemcol: item_array,
+        predcol: preds
+    })
+    
+    if remove_seen:
+        # Create set of seen (user, item) pairs for efficient lookup
+        seen_pairs = set(data[[usercol, itemcol]].itertuples(index=False, name=None))
+        # Filter out seen pairs using boolean indexing
+        mask = ~all_predictions[[usercol, itemcol]].apply(
+            lambda x: (x[usercol], x[itemcol]) in seen_pairs, axis=1
+        )
+        return all_predictions[mask]
+    
+    return all_predictions
