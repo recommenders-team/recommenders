@@ -47,53 +47,53 @@ def predict(
     return predictions
 
 
-def predict_ranking(
-    model,
-    data,
-    usercol=DEFAULT_USER_COL,
-    itemcol=DEFAULT_ITEM_COL,
-    predcol=DEFAULT_PREDICTION_COL,
-    remove_seen=False,
-):
-    """Computes predictions of recommender model from Cornac on all users and items in data.
-    It can be used for computing ranking metrics like NDCG.
+# def predict_ranking(
+#     model,
+#     data,
+#     usercol=DEFAULT_USER_COL,
+#     itemcol=DEFAULT_ITEM_COL,
+#     predcol=DEFAULT_PREDICTION_COL,
+#     remove_seen=False,
+# ):
+#     """Computes predictions of recommender model from Cornac on all users and items in data.
+#     It can be used for computing ranking metrics like NDCG.
 
-    Args:
-        model (cornac.models.Recommender): A recommender model from Cornac
-        data (pandas.DataFrame): The data from which to get the users and items
-        usercol (str): Name of the user column
-        itemcol (str): Name of the item column
-        remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
+#     Args:
+#         model (cornac.models.Recommender): A recommender model from Cornac
+#         data (pandas.DataFrame): The data from which to get the users and items
+#         usercol (str): Name of the user column
+#         itemcol (str): Name of the item column
+#         remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
 
-    Returns:
-        pandas.DataFrame: Dataframe with usercol, itemcol, predcol
-    """
-    users, items, preds = [], [], []
-    item = list(model.train_set.iid_map.keys())
-    for uid, user_idx in model.train_set.uid_map.items():
-        user = [uid] * len(item)
-        users.extend(user)
-        items.extend(item)
-        preds.extend(model.score(user_idx).tolist())
+#     Returns:
+#         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
+#     """
+#     users, items, preds = [], [], []
+#     item = list(model.train_set.iid_map.keys())
+#     for uid, user_idx in model.train_set.uid_map.items():
+#         user = [uid] * len(item)
+#         users.extend(user)
+#         items.extend(item)
+#         preds.extend(model.score(user_idx).tolist())
 
-    all_predictions = pd.DataFrame(
-        data={usercol: users, itemcol: items, predcol: preds}
-    )
+#     all_predictions = pd.DataFrame(
+#         data={usercol: users, itemcol: items, predcol: preds}
+#     )
 
-    if remove_seen:
-        tempdf = pd.concat(
-            [
-                data[[usercol, itemcol]],
-                pd.DataFrame(
-                    data=np.ones(data.shape[0]), columns=["dummycol"], index=data.index
-                ),
-            ],
-            axis=1,
-        )
-        merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
-        return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1)
-    else:
-        return all_predictions
+#     if remove_seen:
+#         tempdf = pd.concat(
+#             [
+#                 data[[usercol, itemcol]],
+#                 pd.DataFrame(
+#                     data=np.ones(data.shape[0]), columns=["dummycol"], index=data.index
+#                 ),
+#             ],
+#             axis=1,
+#         )
+#         merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
+#         return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1)
+#     else:
+#         return all_predictions
 
 
 def predict_ranking(
@@ -140,12 +140,7 @@ def predict_ranking(
     })
     
     if remove_seen:
-        # Create set of seen (user, item) pairs for efficient lookup
-        seen_pairs = set(data[[usercol, itemcol]].itertuples(index=False, name=None))
-        # Filter out seen pairs using boolean indexing
-        mask = ~all_predictions[[usercol, itemcol]].apply(
-            lambda x: (x[usercol], x[itemcol]) in seen_pairs, axis=1
-        )
-        return all_predictions[mask]
-    
+        seen = data[[usercol, itemcol]].drop_duplicates()
+        merged = all_predictions.merge(seen, on=[usercol, itemcol], how='left', indicator=True)
+        return merged[merged['_merge'] == 'left_only'].drop(columns=['_merge'])
     return all_predictions
