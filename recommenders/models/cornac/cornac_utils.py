@@ -118,26 +118,27 @@ def predict_ranking(
     Returns:
         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
+    # Precompute items and users
     items = list(model.train_set.iid_map.keys())
     users = list(model.train_set.uid_map.keys())
-    n_users = len(users)
     n_items = len(items)
-
+    
     # Preallocate arrays
     user_array = np.repeat(users, n_items)
-    item_array = np.tile(items, n_users)
-
-    # Efficiently fill predictions array
-    preds = np.empty(n_users * n_items, dtype=np.float32)
-    for idx, user_idx in enumerate(model.train_set.uid_map.values()):
-        preds[idx * n_items : (idx + 1) * n_items] = model.score(user_idx)
-
+    item_array = np.tile(items, len(users))
+    
+    # Compute predictions
+    preds = np.concatenate([
+        model.score(user_idx) for user_idx in model.train_set.uid_map.values()
+    ])
+    
+    # Create DataFrame
     all_predictions = pd.DataFrame({
         usercol: user_array,
         itemcol: item_array,
         predcol: preds
     })
-
+    
     if remove_seen:
         seen = data[[usercol, itemcol]].drop_duplicates()
         merged = all_predictions.merge(seen, on=[usercol, itemcol], how='left', indicator=True)
