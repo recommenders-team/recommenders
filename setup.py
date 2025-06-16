@@ -43,7 +43,6 @@ install_requires = [
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
-    "scikit-surprise>=1.1.3",
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "statsmodels<=0.14.1;python_version<='3.8'",
     "statsmodels>=0.14.4;python_version>='3.9'",
@@ -85,6 +84,8 @@ extras_require["experimental"] = [
     "nni==1.5",
     "pymanopt>=0.2.5",
     "lightfm>=1.17,<2",
+    "scikit-surprise>=1.1.3", # Put back in core deps when #2224 is fixed
+
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
