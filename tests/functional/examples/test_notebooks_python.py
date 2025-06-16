@@ -268,7 +268,8 @@ def test_xlearn_fm_functional(notebooks, output_notebook, kernel_name):
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [
-        (["100k"], ["svd", "sar", "bpr"], [0.094444, 0.393818, 0.444990]),
+        (["100k"], ["sar", "bpr"], [0.393818, 0.444990]),
+        # (["100k"], ["svd", "sar", "bpr"], [0.094444, 0.393818, 0.444990]), # Put SVD surprise back in core deps when #2224 is fixed
     ],
 )
 def test_benchmark_movielens_cpu(

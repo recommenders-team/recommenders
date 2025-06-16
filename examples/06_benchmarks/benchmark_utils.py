@@ -5,7 +5,6 @@ import os
 import numpy as np
 import pandas as pd
 from tempfile import TemporaryDirectory
-import surprise
 import cornac
 
 try:
@@ -18,6 +17,10 @@ try:
     from fastai.collab import collab_learner, CollabDataLoaders
 except ImportError:
     pass  # skip this import if we are not in a GPU environment
+try:
+    import surprise # Put SVD surprise back in core deps when #2224 is fixed
+except:
+    pass 
 
 from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
