@@ -82,6 +82,7 @@ def test_baseline_deep_dive_functional(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.skip(reason="Put back in core deps when #2224 is fixed")
 @pytest.mark.notebooks
 @pytest.mark.parametrize(
     "size, expected_values",

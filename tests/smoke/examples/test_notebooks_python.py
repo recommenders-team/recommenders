@@ -49,6 +49,7 @@ def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.108826, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.skip(reason="Put back in core deps when #2224 is fixed")
 @pytest.mark.notebooks
 def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["surprise_svd_deep_dive"]
