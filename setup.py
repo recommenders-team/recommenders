@@ -62,7 +62,7 @@ extras_require = {
     ],
     "spark": [
         "pyarrow>=10.0.1",
-        "pyspark>=3.3.0,<=4",
+        "pyspark>=3.3.0,<4",
     ],
     "dev": [
         "black>=23.3.0",
@@ -84,8 +84,7 @@ extras_require["experimental"] = [
     "nni==1.5",
     "pymanopt>=0.2.5",
     "lightfm>=1.17,<2",
-    "scikit-surprise>=1.1.3", # Put back in core deps when #2224 is fixed
-
+    "scikit-surprise>=1.1.3",  # Put back in core deps when #2224 is fixed
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
