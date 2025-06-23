@@ -6,7 +6,7 @@ from pathlib import Path
 import random
 
 
-class CollabDataset(Dataset):
+class RecoDataset(Dataset):
     def __init__(self, users, items, ratings):
         # Convert to numpy arrays first and ensure correct types
         users = np.array(users, dtype=np.int64)
@@ -27,7 +27,7 @@ class CollabDataset(Dataset):
         return user_item_tensor, rating_tensor
 
 
-class CollabDataLoaders:
+class RecoDataLoader:
     def __init__(self, train_dl, valid_dl=None):
         """Initialize the dataloaders.
 
@@ -138,14 +138,14 @@ class CollabDataLoaders:
             raise ValueError("Training set is empty after split. Reduce valid_pct.")
 
         # Create datasets using the index-mapped values
-        train_ds = CollabDataset(
+        train_ds = RecoDataset(
             ratings.iloc[train_idx][user_name].values,
             ratings.iloc[train_idx][item_name].values,
             ratings.iloc[train_idx][rating_name].values,
         )
 
         valid_ds = (
-            CollabDataset(
+            RecoDataset(
                 ratings.iloc[valid_idx][user_name].values,
                 ratings.iloc[valid_idx][item_name].values,
                 ratings.iloc[valid_idx][rating_name].values,
@@ -200,7 +200,9 @@ class CollabDataLoaders:
         # Get one batch from the training dataloader
         # Unpack the two elements from the batch: user_item_batch (tensor of shape [bs, 2]) and ratings_batch (tensor of shape [bs, 1])
         for user_item_batch, ratings_batch in self.train:
-            # Extract users and items from the user_item_batch tensor
+            batch_size = user_item_batch.shape[0]
+            if n > batch_size:
+                raise ValueError(f"n ({n}) rows cannot be greater than the batch size ({batch_size})")
             users = user_item_batch[:, 0]  # Shape [bs]
             items = user_item_batch[:, 1]  # Shape [bs]
 
@@ -213,7 +215,7 @@ class CollabDataLoaders:
                 {
                     self.user: [self.classes[self.user][u] for u in users],
                     self.item: [self.classes[self.item][i] for i in items],
-                    "rating": ratings,  # Now 'ratings' is a 1D array
+                    "rating": ratings,
                 }
             )
 
