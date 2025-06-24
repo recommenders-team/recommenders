@@ -11,7 +11,7 @@ from recommenders.utils import constants as cc
 
 
 def cartesian_product(*arrays):
-    """Compute the Cartesian product in fastai algo. This is a helper function.
+    """Compute the Cartesian product. This is a helper function.
 
     Args:
         arrays (tuple of numpy.ndarray): Input arrays

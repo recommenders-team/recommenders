@@ -53,7 +53,6 @@ install_requires = [
 # shared dependencies
 extras_require = {
     "gpu": [
-        "fastai>=2.7.11,<3",
         "numpy<1.25.0;python_version<='3.8'",
         "nvidia-ml-py>=11.525.84",
         "spacy<=3.7.5;python_version<='3.8'",
