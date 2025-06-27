@@ -41,8 +41,8 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke",  # 15.98s
         "tests/functional/examples/test_notebooks_python.py::test_baseline_deep_dive_functional",  # 170.73s
         #
-        "tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke",  # 45.88s
-        "tests/functional/examples/test_notebooks_python.py::test_surprise_svd_functional",  # 503.54s
+        # "tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke",  # 45.88s # Put back in core deps when #2224 is fixed
+        # "tests/functional/examples/test_notebooks_python.py::test_surprise_svd_functional",  # 503.54s # Put back in core deps when #2224 is fixed
         #
         "tests/functional/examples/test_notebooks_python.py::test_geoimc_functional",  # 1006.19s
         #
@@ -248,8 +248,8 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_get_topk_most_similar_users",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_item_frequencies",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_user_frequencies",
-        "tests/unit/recommenders/models/test_surprise_utils.py::test_predict",
-        "tests/unit/recommenders/models/test_surprise_utils.py::test_recommend_k_items",
+        # "tests/unit/recommenders/models/test_surprise_utils.py::test_predict", # Put back in core deps when #2224 is fixed
+        # "tests/unit/recommenders/models/test_surprise_utils.py::test_recommend_k_items", # Put back in core deps when #2224 is fixed
         "tests/unit/recommenders/models/test_vowpal_wabbit.py::test_vw_init_del",
         "tests/unit/recommenders/models/test_vowpal_wabbit.py::test_to_vw_cmd",
         "tests/unit/recommenders/models/test_vowpal_wabbit.py::test_parse_train_cmd",
@@ -313,7 +313,7 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_notebook_execution",
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_notebook_execution_with_parameters",
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_notebook_execution_value_error_fails",
-        "tests/unit/examples/test_notebooks_python.py::test_surprise_deep_dive_runs",
+        # "tests/unit/examples/test_notebooks_python.py::test_surprise_deep_dive_runs", # Put back in core deps when #2224 is fixed
         "tests/unit/examples/test_notebooks_python.py::test_lightgbm",
         "tests/unit/examples/test_notebooks_python.py::test_cornac_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs",

@@ -46,6 +46,7 @@ def test_baseline_deep_dive_runs(notebooks, output_notebook, kernel_name):
     execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 
 
+@pytest.mark.skip(reason="Put back in core deps when #2224 is fixed")
 @pytest.mark.notebooks
 def test_surprise_deep_dive_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["surprise_svd_deep_dive"]
