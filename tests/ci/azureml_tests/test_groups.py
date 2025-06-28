@@ -90,8 +90,8 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
         #
-        "tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke",  # 33.22s
-        "tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional",  # 667.88s
+        "tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke",  # 30.99s
+        "tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional",  # 29.10s
     ],
     "group_gpu_003": [  # Total group time: 2072.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)

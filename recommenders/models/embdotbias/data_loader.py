@@ -164,7 +164,7 @@ class RecoDataLoader:
             **kwargs,
         )
 
-        valid_batch_size = batch_size * 2
+        valid_batch_size = batch_size
         valid_dl = (
             DataLoader(
                 valid_ds,
