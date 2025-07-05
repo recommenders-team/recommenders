@@ -190,13 +190,13 @@ def test_trainer_validate(sample_ratings_data):
 def test_predict_rating(sample_classes):
     """Test predict_rating function."""
     model = EmbeddingDotBias.from_classes(
-        n_factors=10, classes=sample_classes, y_range=(1.0, 5.5)
+        n_factors=10, classes=sample_classes, y_range=(1.0, 5.0)
     )
 
     prediction = predict_rating(model, "1", "1")
 
     assert isinstance(prediction, float)
-    assert 1.0 <= prediction <= 5.5  # Should be within y_range
+    assert 1.0 <= prediction <= 5.0  # Should be within y_range
 
 
 @pytest.mark.gpu
@@ -228,4 +228,4 @@ def test_full_pipeline(sample_ratings_data):
     assert isinstance(prediction, float)
     assert train_loss >= 0
     assert valid_loss >= 0
-    assert 1.0 <= prediction <= 5.5
+    assert 1.0 <= prediction <= 5.0
