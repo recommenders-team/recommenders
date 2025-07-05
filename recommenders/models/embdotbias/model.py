@@ -43,27 +43,28 @@ class EmbeddingDotBias(Module):
         res.classes, res.user, res.item = classes, user, item
         return res
 
-    def _get_idx(self, arr, is_item=True):
-        "Fetch item or user (based on `is_item`) for all in `arr`"
+    def _get_idx(self, entity_ids, is_item=True):
+        "Fetch item or user (based on `is_item`) for all in `entity_ids`"
         assert hasattr(
             self, "classes"
         ), "Build your model with `EmbeddingDotBias.from_classes` to use this functionality."
         classes = self.classes[self.item] if is_item else self.classes[self.user]
-        c2i = {v: k for k, v in enumerate(classes)}
+        # Create a mapping from entity ID (user or item) to its integer index in the embedding matrix
+        entity_id_to_index = {entity_id: idx for idx, entity_id in enumerate(classes)}
         try:
-            return torch.tensor([c2i[o] for o in arr])
+            return torch.tensor([entity_id_to_index[o] for o in entity_ids])
         except KeyError as e:
             message = f"You're trying to access {'an item' if is_item else 'a user'} that isn't in the training data. If it was in your original data, it may have been split such that it's only in the validation set now."
             raise KeyError(message)
 
-    def bias(self, arr, is_item=True):
-        "Bias for item or user (based on `is_item`) for all in `arr`"
-        idx = self._get_idx(arr, is_item)
+    def bias(self, entity_ids, is_item=True):
+        "Bias for item or user (based on `is_item`) for all in `entity_ids`"
+        idx = self._get_idx(entity_ids, is_item)
         layer = (self.i_bias if is_item else self.u_bias).eval().cpu()
         return layer(idx).squeeze().detach()
 
-    def weight(self, arr, is_item=True):
-        "Weight for item or user (based on `is_item`) for all in `arr`"
-        idx = self._get_idx(arr, is_item)
+    def weight(self, entity_ids, is_item=True):
+        "Weight for item or user (based on `is_item`) for all in `entity_ids`"
+        idx = self._get_idx(entity_ids, is_item)
         layer = (self.i_weight if is_item else self.u_weight).eval().cpu()
         return layer(idx).detach()
