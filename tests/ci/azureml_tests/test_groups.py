@@ -90,6 +90,8 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
         #
+        "tests/unit/recommenders/models/test_embdotbias_model.py", 
+        "tests/unit/recommenders/models/test_embdotbias_utils.py",
         "tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke",  # 30.99s
         "tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional",  # 29.10s
     ],
