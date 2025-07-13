@@ -120,6 +120,7 @@ def predict_rating(model, user_id, item_id):
     model.eval()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)  # Ensure model is on the same device as input
 
     with torch.no_grad():
         try:
