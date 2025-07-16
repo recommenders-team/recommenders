@@ -90,8 +90,10 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
         #
-        "tests/smoke/examples/test_notebooks_gpu.py::test_fastai_smoke",  # 33.22s
-        "tests/functional/examples/test_notebooks_gpu.py::test_fastai_functional",  # 667.88s
+        "tests/unit/recommenders/models/test_embdotbias_model.py", 
+        "tests/unit/recommenders/models/test_embdotbias_utils.py",
+        "tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke",  # 30.99s
+        "tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional",  # 483.73s
     ],
     "group_gpu_003": [  # Total group time: 2072.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
@@ -435,7 +437,7 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart",
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf",
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive",
-        "tests/unit/examples/test_notebooks_gpu.py::test_fastai",
+        "tests/unit/examples/test_notebooks_gpu.py::test_embdotbias",
     ],
     "group_notebooks_gpu_002": [  # Total group time: 241.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
