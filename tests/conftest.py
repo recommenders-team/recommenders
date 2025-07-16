@@ -226,8 +226,8 @@ def notebooks():
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_movielens.ipynb"
         ),
-        "fastai": os.path.join(
-            folder_notebooks, "00_quick_start", "fastai_movielens.ipynb"
+        "embdotbias": os.path.join(
+            folder_notebooks, "00_quick_start", "embdotbias_movielens.ipynb"
         ),
         "xdeepfm_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "xdeepfm_criteo.ipynb"

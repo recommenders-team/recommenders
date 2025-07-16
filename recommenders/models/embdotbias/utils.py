@@ -4,8 +4,6 @@
 
 import numpy as np
 import pandas as pd
-import fastai
-import fastprogress
 import torch
 from fastprogress.fastprogress import force_console_behavior
 
@@ -13,7 +11,7 @@ from recommenders.utils import constants as cc
 
 
 def cartesian_product(*arrays):
-    """Compute the Cartesian product in fastai algo. This is a helper function.
+    """Compute the Cartesian product. This is a helper function.
 
     Args:
         arrays (tuple of numpy.ndarray): Input arrays
@@ -31,7 +29,8 @@ def cartesian_product(*arrays):
 
 
 def score(
-    learner,
+    model,
+    data,
     test_df,
     user_col=cc.DEFAULT_USER_COL,
     item_col=cc.DEFAULT_ITEM_COL,
@@ -41,7 +40,7 @@ def score(
     """Score all users+items provided and reduce to top_k items per user if top_k>0
 
     Args:
-        learner (object): Model.
+        model (object): Model.
         test_df (pandas.DataFrame): Test dataframe.
         user_col (str): User column name.
         item_col (str): Item column name.
@@ -52,22 +51,22 @@ def score(
         pandas.DataFrame: Result of recommendation
     """
     # replace values not known to the model with NaN
-    total_users, total_items = learner.dls.classes.values()
+    total_users, total_items = data.classes.values()
     test_df.loc[~test_df[user_col].isin(total_users), user_col] = np.nan
     test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 
     # map ids to embedding ids
-    u = learner._get_idx(test_df[user_col], is_item=False)
-    m = learner._get_idx(test_df[item_col], is_item=True)
+    u = model._get_idx(test_df[user_col], is_item=False)
+    m = model._get_idx(test_df[item_col], is_item=True)
 
     # score the pytorch model
     x = torch.column_stack((u, m))
 
     if torch.cuda.is_available():
         x = x.to("cuda")
-        learner.model = learner.model.to("cuda")
+        model = model.to("cuda")
 
-    pred = learner.model.forward(x).detach().cpu().numpy()
+    pred = model.forward(x).detach().cpu().numpy()
     scores = pd.DataFrame(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
@@ -79,14 +78,3 @@ def score(
         top_scores = scores
 
     return top_scores
-
-
-def hide_fastai_progress_bar():
-    """Hide fastai progress bar"""
-    fastprogress.fastprogress.NO_BAR = True
-    fastprogress.fastprogress.WRITER_FN = str
-    master_bar, progress_bar = force_console_behavior()
-    fastai.callback.progress.master_bar, fastai.callback.progress.progress_bar = (
-        master_bar,
-        progress_bar,
-    )
