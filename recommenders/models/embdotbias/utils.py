@@ -5,7 +5,6 @@
 import numpy as np
 import pandas as pd
 import torch
-from fastprogress.fastprogress import force_console_behavior
 
 from recommenders.utils import constants as cc
 
