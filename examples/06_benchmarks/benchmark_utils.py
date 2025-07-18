@@ -14,9 +14,9 @@ try:
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
-    import surprise # Put SVD surprise back in core deps when #2224 is fixed
+    import surprise  # Put SVD surprise back in core deps when #2224 is fixed
 except:
-    pass 
+    pass
 
 from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
@@ -173,40 +173,55 @@ def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
-def prepare_training_fastai(train, test):
-    data = train.copy()
-    data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
-    data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
-    data = CollabDataLoaders.from_df(
-        data,
+def prepare_training_embdotbias(train, test):
+    train_df = train.copy()
+    train_df[DEFAULT_USER_COL] = train_df[DEFAULT_USER_COL].astype("str")
+    train_df[DEFAULT_ITEM_COL] = train_df[DEFAULT_ITEM_COL].astype("str")
+    data = data_loader.RecoDataLoader.from_df(
+        train_df,
         user_name=DEFAULT_USER_COL,
         item_name=DEFAULT_ITEM_COL,
         rating_name=DEFAULT_RATING_COL,
-        valid_pct=0,
+        valid_pct=0.1,
     )
     return data
 
 
-def train_fastai(params, data):
-    model = collab_learner(
-        data, n_factors=params["n_factors"], y_range=params["y_range"], wd=params["wd"]
+def train_embdotbias(params, data):
+    model = EmbdotBias.from_classes(
+        n_factors=params["n_factors"],
+        classes=data.classes,
+        user=DEFAULT_USER_COL,
+        item=DEFAULT_ITEM_COL,
+        y_range=params.get("y_range", [0, 5.5]),
     )
+    from recommenders.models.embdotbias.training_utils import Trainer
+
     with Timer() as t:
-        model.fit_one_cycle(params["epochs"], lr_max=params["lr_max"])
+        trainer = Trainer(model=model)
+        trainer.fit(data.train, data.valid, params["epochs"])
     return model, t
 
 
-def prepare_metrics_fastai(train, test):
-    data = test.copy()
-    data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
-    data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
-    return train, data
+def prepare_metrics_embdotbias(train, test):
+    train_df = train.copy()
+    train_df[DEFAULT_USER_COL] = train_df[DEFAULT_USER_COL].astype("str")
+    train_df[DEFAULT_ITEM_COL] = train_df[DEFAULT_ITEM_COL].astype("str")
+    test_df = test.copy()
+    test_df[DEFAULT_USER_COL] = test_df[DEFAULT_USER_COL].astype("str")
+    test_df[DEFAULT_ITEM_COL] = test_df[DEFAULT_ITEM_COL].astype("str")
+    return train_df, test_df
 
 
-def predict_fastai(model, test):
+def predict_embdotbias(model, test):
+    from recommenders.models.embdotbias.utils import score
+
+    # Assume 'data' is available in the calling context, or pass as needed
+    # Here, we use test_df only for prediction
     with Timer() as t:
         preds = score(
             model,
+            model.data if hasattr(model, "data") else None,  # If model stores data
             test_df=test,
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
@@ -215,28 +230,32 @@ def predict_fastai(model, test):
     return preds, t
 
 
-def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+    from recommenders.models.embdotbias.utils import cartesian_product, score
+
+    # Get all users/items known to the model
+    total_users = model.classes[DEFAULT_USER_COL][1:]
+    total_items = model.classes[DEFAULT_ITEM_COL][1:]
+    test_users = test[DEFAULT_USER_COL].unique()
+    test_users = np.intersect1d(test_users, total_users)
+    users_items = cartesian_product(np.array(test_users), np.array(total_items))
+    users_items = pd.DataFrame(
+        users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
+    )
+    # Remove seen items
+    training_removed = pd.merge(
+        users_items,
+        train.astype(str),
+        on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+        how="left",
+    )
+    training_removed = training_removed[training_removed[DEFAULT_RATING_COL].isna()][
+        [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
+    ]
     with Timer() as t:
-        total_users, total_items = model.dls.classes.values()
-        total_items = np.array(total_items[1:])
-        total_users = np.array(total_users[1:])
-        test_users = test[DEFAULT_USER_COL].unique()
-        test_users = np.intersect1d(test_users, total_users)
-        users_items = cartesian_product(test_users, total_items)
-        users_items = pd.DataFrame(
-            users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
-        )
-        training_removed = pd.merge(
-            users_items,
-            train.astype(str),
-            on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
-            how="left",
-        )
-        training_removed = training_removed[
-            training_removed[DEFAULT_RATING_COL].isna()
-        ][[DEFAULT_USER_COL, DEFAULT_ITEM_COL]]
         topk_scores = score(
             model,
+            model.data if hasattr(model, "data") else None,
             test_df=training_removed,
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
