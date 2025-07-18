@@ -265,10 +265,10 @@ def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True
 
 
 def prepare_training_ncf(df_train, df_test):
-    train = df_train.sort_values(["userID"], axis=0, ascending=[True])
-    test = df_test.sort_values(["userID"], axis=0, ascending=[True])
-    test = test[df_test["userID"].isin(train["userID"].unique())]
-    test = test[test["itemID"].isin(train["itemID"].unique())]
+    train = df_train.sort_values([DEFAULT_USER_COL], axis=0, ascending=[True])
+    test = df_test.sort_values([DEFAULT_USER_COL], axis=0, ascending=[True])
+    test = test[df_test[DEFAULT_USER_COL].isin(train[DEFAULT_USER_COL].unique())]
+    test = test[test[DEFAULT_ITEM_COL].isin(train[DEFAULT_ITEM_COL].unique())]
     train.to_csv(TRAIN_FILE, index=False)
     test.to_csv(TEST_FILE, index=False)
     return NCFDataset(
