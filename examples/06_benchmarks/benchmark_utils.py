@@ -218,13 +218,9 @@ def prepare_metrics_embdotbias(train, test):
 
 
 def predict_embdotbias(model, test):
-
-    # Assume 'data' is available in the calling context, or pass as needed
-    # Here, we use test_df only for prediction
     with Timer() as t:
         preds = score(
             model,
-            model.data if hasattr(model, "data") else None,  # If model stores data
             test_df=test,
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
@@ -256,7 +252,6 @@ def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True
     with Timer() as t:
         topk_scores = score(
             model,
-            model.data if hasattr(model, "data") else None,
             test_df=training_removed,
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
