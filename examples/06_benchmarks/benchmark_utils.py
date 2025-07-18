@@ -14,10 +14,6 @@ try:
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
-    from fastai.collab import collab_learner, CollabDataLoaders
-except ImportError:
-    pass  # skip this import if we are not in a GPU environment
-try:
     import surprise # Put SVD surprise back in core deps when #2224 is fixed
 except:
     pass 
@@ -57,14 +53,11 @@ except (ImportError, NameError):
     pass  # skip this import if we are not in a Spark environment
 try:
     from recommenders.models.deeprec.deeprec_utils import prepare_hparams
-    from recommenders.models.fastai.fastai_utils import (
-        cartesian_product,
-        score,
-    )
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
     from recommenders.models.ncf.ncf_singlenode import NCF
     from recommenders.models.ncf.dataset import Dataset as NCFDataset
+    from recommenders.models.embdotbias import EmbdotBias, data_loader
 except ImportError:
     pass  # skip this import if we are not in a GPU environment
 
