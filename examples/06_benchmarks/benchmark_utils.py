@@ -239,20 +239,23 @@ def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True
     users_items = pd.DataFrame(
         users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
     )
-    # Remove seen items
-    training_removed = pd.merge(
-        users_items,
-        train.astype(str),
-        on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
-        how="left",
-    )
-    training_removed = training_removed[training_removed[DEFAULT_RATING_COL].isna()][
-        [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
-    ]
+    if remove_seen:
+        # Remove seen items
+        training_removed = pd.merge(
+            users_items,
+            train.astype(str),
+            on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+            how="left",
+        )
+        candidates = training_removed[training_removed[DEFAULT_RATING_COL].isna()][
+            [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
+        ]
+    else:
+        candidates = users_items
     with Timer() as t:
         topk_scores = score(
             model,
-            test_df=training_removed,
+            test_df=candidates,
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
             prediction_col=DEFAULT_PREDICTION_COL,
