@@ -1,5 +1,7 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
 import torch
-import torch.nn as nn
 from torch.nn import Embedding
 from torch.nn import Module
 import torch.nn.init as init

@@ -51,13 +51,18 @@ try:
     )
 except (ImportError, NameError):
     pass  # skip this import if we are not in a Spark environment
+
 try:
     from recommenders.models.deeprec.deeprec_utils import prepare_hparams
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
     from recommenders.models.ncf.ncf_singlenode import NCF
     from recommenders.models.ncf.dataset import Dataset as NCFDataset
-    from recommenders.models.embdotbias import EmbdotBias, data_loader
+    from recommenders.models.embdotbias.model import EmbeddingDotBias
+    from recommenders.models.embdotbias.data_loader import RecoDataLoader
+    from recommenders.models.embdotbias.training_utils import Trainer
+    from recommenders.models.embdotbias.utils import cartesian_product, score
+
 except ImportError:
     pass  # skip this import if we are not in a GPU environment
 
@@ -177,7 +182,7 @@ def prepare_training_embdotbias(train, test):
     train_df = train.copy()
     train_df[DEFAULT_USER_COL] = train_df[DEFAULT_USER_COL].astype("str")
     train_df[DEFAULT_ITEM_COL] = train_df[DEFAULT_ITEM_COL].astype("str")
-    data = data_loader.RecoDataLoader.from_df(
+    data = RecoDataLoader.from_df(
         train_df,
         user_name=DEFAULT_USER_COL,
         item_name=DEFAULT_ITEM_COL,
@@ -188,14 +193,13 @@ def prepare_training_embdotbias(train, test):
 
 
 def train_embdotbias(params, data):
-    model = EmbdotBias.from_classes(
+    model = EmbeddingDotBias.from_classes(
         n_factors=params["n_factors"],
         classes=data.classes,
         user=DEFAULT_USER_COL,
         item=DEFAULT_ITEM_COL,
         y_range=params.get("y_range", [0, 5.5]),
     )
-    from recommenders.models.embdotbias.training_utils import Trainer
 
     with Timer() as t:
         trainer = Trainer(model=model)
@@ -214,7 +218,6 @@ def prepare_metrics_embdotbias(train, test):
 
 
 def predict_embdotbias(model, test):
-    from recommenders.models.embdotbias.utils import score
 
     # Assume 'data' is available in the calling context, or pass as needed
     # Here, we use test_df only for prediction
@@ -231,8 +234,6 @@ def predict_embdotbias(model, test):
 
 
 def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True):
-    from recommenders.models.embdotbias.utils import cartesian_product, score
-
     # Get all users/items known to the model
     total_users = model.classes[DEFAULT_USER_COL][1:]
     total_items = model.classes[DEFAULT_ITEM_COL][1:]

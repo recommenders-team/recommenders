@@ -1,9 +1,12 @@
-from torch.utils.data import Dataset, DataLoader
-import torch
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+import random
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import random
+
+import torch
+from torch.utils.data import Dataset, DataLoader
 
 
 class RecoDataset(Dataset):
