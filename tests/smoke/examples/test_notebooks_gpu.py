@@ -60,8 +60,8 @@ def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
-def test_fastai_smoke(notebooks, output_notebook, kernel_name):
-    notebook_path = notebooks["fastai"]
+def test_embdotbias_smoke(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["embdotbias"]
     execute_notebook(
         notebook_path,
         output_notebook,
