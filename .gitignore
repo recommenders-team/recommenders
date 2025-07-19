@@ -126,7 +126,7 @@ spark-warehouse/
 .~*
 Untitled*.ipynb
 *-Copy*.ipynb
-*copy.ipynb
+*copy*.ipynb
 ~$*
 output.ipynb
 Playground*.ipynb
