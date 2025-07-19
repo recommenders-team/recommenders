@@ -56,7 +56,7 @@ class EmbeddingDotBias(Module):
         try:
             return torch.tensor([entity_id_to_index[o] for o in entity_ids])
         except KeyError as e:
-            message = f"You're trying to access {'an item' if is_item else 'a user'} that isn't in the training data. If it was in your original data, it may have been split such that it's only in the validation set now."
+            message = f"You're trying to access {'item' if is_item else 'user'} {entity_ids} that isn't in the training data. If it was in your original data, it may have been split such that it's only in the validation set now."
             raise KeyError(message)
 
     def bias(self, entity_ids, is_item=True):
