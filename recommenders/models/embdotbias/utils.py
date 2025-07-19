@@ -5,7 +5,6 @@
 import numpy as np
 import pandas as pd
 import torch
-from fastprogress.fastprogress import force_console_behavior
 
 from recommenders.utils import constants as cc
 
@@ -30,7 +29,6 @@ def cartesian_product(*arrays):
 
 def score(
     model,
-    data,
     test_df,
     user_col=cc.DEFAULT_USER_COL,
     item_col=cc.DEFAULT_ITEM_COL,
@@ -51,7 +49,7 @@ def score(
         pandas.DataFrame: Result of recommendation
     """
     # replace values not known to the model with NaN
-    total_users, total_items = data.classes.values()
+    total_users, total_items = model.classes.values()
     test_df.loc[~test_df[user_col].isin(total_users), user_col] = np.nan
     test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 

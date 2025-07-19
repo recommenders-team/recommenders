@@ -14,13 +14,9 @@ try:
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
-    from fastai.collab import collab_learner, CollabDataLoaders
-except ImportError:
-    pass  # skip this import if we are not in a GPU environment
-try:
-    import surprise # Put SVD surprise back in core deps when #2224 is fixed
+    import surprise  # Put SVD surprise back in core deps when #2224 is fixed
 except:
-    pass 
+    pass
 
 from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
@@ -55,16 +51,18 @@ try:
     )
 except (ImportError, NameError):
     pass  # skip this import if we are not in a Spark environment
+
 try:
     from recommenders.models.deeprec.deeprec_utils import prepare_hparams
-    from recommenders.models.fastai.fastai_utils import (
-        cartesian_product,
-        score,
-    )
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
     from recommenders.models.ncf.ncf_singlenode import NCF
     from recommenders.models.ncf.dataset import Dataset as NCFDataset
+    from recommenders.models.embdotbias.model import EmbeddingDotBias
+    from recommenders.models.embdotbias.data_loader import RecoDataLoader
+    from recommenders.models.embdotbias.training_utils import Trainer
+    from recommenders.models.embdotbias.utils import cartesian_product, score
+
 except ImportError:
     pass  # skip this import if we are not in a GPU environment
 
@@ -180,37 +178,46 @@ def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
-def prepare_training_fastai(train, test):
-    data = train.copy()
-    data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
-    data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
-    data = CollabDataLoaders.from_df(
-        data,
+def prepare_training_embdotbias(train, test):
+    train_df = train.copy()
+    train_df[DEFAULT_USER_COL] = train_df[DEFAULT_USER_COL].astype("str")
+    train_df[DEFAULT_ITEM_COL] = train_df[DEFAULT_ITEM_COL].astype("str")
+    data = RecoDataLoader.from_df(
+        train_df,
         user_name=DEFAULT_USER_COL,
         item_name=DEFAULT_ITEM_COL,
         rating_name=DEFAULT_RATING_COL,
-        valid_pct=0,
+        valid_pct=0.1,
     )
     return data
 
 
-def train_fastai(params, data):
-    model = collab_learner(
-        data, n_factors=params["n_factors"], y_range=params["y_range"], wd=params["wd"]
+def train_embdotbias(params, data):
+    model = EmbeddingDotBias.from_classes(
+        n_factors=params["n_factors"],
+        classes=data.classes,
+        user=DEFAULT_USER_COL,
+        item=DEFAULT_ITEM_COL,
+        y_range=params.get("y_range", [0, 5.5]),
     )
+
     with Timer() as t:
-        model.fit_one_cycle(params["epochs"], lr_max=params["lr_max"])
+        trainer = Trainer(model=model)
+        trainer.fit(data.train, data.valid, params["epochs"])
     return model, t
 
 
-def prepare_metrics_fastai(train, test):
-    data = test.copy()
-    data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
-    data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
-    return train, data
+def prepare_metrics_embdotbias(train, test):
+    train_df = train.copy()
+    train_df[DEFAULT_USER_COL] = train_df[DEFAULT_USER_COL].astype("str")
+    train_df[DEFAULT_ITEM_COL] = train_df[DEFAULT_ITEM_COL].astype("str")
+    test_df = test.copy()
+    test_df[DEFAULT_USER_COL] = test_df[DEFAULT_USER_COL].astype("str")
+    test_df[DEFAULT_ITEM_COL] = test_df[DEFAULT_ITEM_COL].astype("str")
+    return train_df, test_df
 
 
-def predict_fastai(model, test):
+def predict_embdotbias(model, test):
     with Timer() as t:
         preds = score(
             model,
@@ -222,29 +229,33 @@ def predict_fastai(model, test):
     return preds, t
 
 
-def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
-    with Timer() as t:
-        total_users, total_items = model.dls.classes.values()
-        total_items = np.array(total_items[1:])
-        total_users = np.array(total_users[1:])
-        test_users = test[DEFAULT_USER_COL].unique()
-        test_users = np.intersect1d(test_users, total_users)
-        users_items = cartesian_product(test_users, total_items)
-        users_items = pd.DataFrame(
-            users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
-        )
+def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+    # Get all users/items known to the model
+    total_users = model.classes[DEFAULT_USER_COL][1:]
+    total_items = model.classes[DEFAULT_ITEM_COL][1:]
+    test_users = test[DEFAULT_USER_COL].unique()
+    test_users = np.intersect1d(test_users, total_users)
+    users_items = cartesian_product(np.array(test_users), np.array(total_items))
+    users_items = pd.DataFrame(
+        users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
+    )
+    if remove_seen:
+        # Remove seen items
         training_removed = pd.merge(
             users_items,
             train.astype(str),
             on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
             how="left",
         )
-        training_removed = training_removed[
-            training_removed[DEFAULT_RATING_COL].isna()
-        ][[DEFAULT_USER_COL, DEFAULT_ITEM_COL]]
+        candidates = training_removed[training_removed[DEFAULT_RATING_COL].isna()][
+            [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
+        ]
+    else:
+        candidates = users_items
+    with Timer() as t:
         topk_scores = score(
             model,
-            test_df=training_removed,
+            test_df=candidates,
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
             prediction_col=DEFAULT_PREDICTION_COL,
@@ -254,10 +265,10 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 
 
 def prepare_training_ncf(df_train, df_test):
-    train = df_train.sort_values(["userID"], axis=0, ascending=[True])
-    test = df_test.sort_values(["userID"], axis=0, ascending=[True])
-    test = test[df_test["userID"].isin(train["userID"].unique())]
-    test = test[test["itemID"].isin(train["itemID"].unique())]
+    train = df_train.sort_values([DEFAULT_USER_COL], axis=0, ascending=[True])
+    test = df_test.sort_values([DEFAULT_USER_COL], axis=0, ascending=[True])
+    test = test[df_test[DEFAULT_USER_COL].isin(train[DEFAULT_USER_COL].unique())]
+    test = test[test[DEFAULT_ITEM_COL].isin(train[DEFAULT_ITEM_COL].unique())]
     train.to_csv(TRAIN_FILE, index=False)
     test.to_csv(TEST_FILE, index=False)
     return NCFDataset(

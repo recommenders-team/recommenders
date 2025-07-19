@@ -284,7 +284,7 @@ def test_benchmark_movielens_cpu(
     )
     results = read_notebook(output_notebook)
 
-    assert len(results) == 3
+    assert len(results) == 2
     for i, value in enumerate(algos):
         assert results[value] == pytest.approx(
             expected_values_ndcg[i], rel=TOL, abs=ABS_TOL

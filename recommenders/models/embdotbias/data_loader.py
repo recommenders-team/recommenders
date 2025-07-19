@@ -1,9 +1,12 @@
-from torch.utils.data import Dataset, DataLoader
-import torch
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+import random
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import random
+
+import torch
+from torch.utils.data import Dataset, DataLoader
 
 
 class RecoDataset(Dataset):
@@ -202,7 +205,9 @@ class RecoDataLoader:
         for user_item_batch, ratings_batch in self.train:
             batch_size = user_item_batch.shape[0]
             if n > batch_size:
-                raise ValueError(f"n ({n}) rows cannot be greater than the batch size ({batch_size})")
+                raise ValueError(
+                    f"n ({n}) rows cannot be greater than the batch size ({batch_size})"
+                )
             users = user_item_batch[:, 0]  # Shape [bs]
             items = user_item_batch[:, 1]  # Shape [bs]
 

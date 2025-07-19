@@ -1,5 +1,7 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from torch.nn import MSELoss
 import logging
