@@ -20,7 +20,7 @@ class BPR(CBPR):
     def recommend_k_items(
         self,
         data,
-        top_k=10,
+        top_k=None,
         remove_seen=False,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
@@ -45,6 +45,7 @@ class BPR(CBPR):
         users = np.array(list(self.train_set.uid_map.keys()))
         n_users = len(users)
         n_items = len(items)
+        top_k = n_items if top_k is None else min(top_k, n_items) 
 
         # Compute user and item indices
         user_indices = np.array([self.train_set.uid_map[u] for u in users])
