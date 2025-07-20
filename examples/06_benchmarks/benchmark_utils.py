@@ -30,11 +30,12 @@ from recommenders.utils.constants import (
     SEED,
 )
 from recommenders.models.sar import SAR
+from recommenders.models.cornac.bpr import BPR
+from recommenders.models.cornac.cornac_utils import predict_ranking
 from recommenders.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )
-from recommenders.models.cornac.cornac_utils import predict_ranking
 from recommenders.evaluation.python_evaluation import (
     map,
     ndcg_at_k,
@@ -319,7 +320,34 @@ def prepare_training_cornac(train, test):
     )
 
 
-def recommend_k_cornac(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+
+
+
+def train_bpr(params, data):
+    model = BPR(**params)
+    with Timer() as t:
+        model.fit(data)
+    return model, t
+
+def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+    with Timer() as t:
+        topk_scores = model.recommend_k_items(
+            train,
+            col_user=DEFAULT_USER_COL,
+            col_item=DEFAULT_ITEM_COL,
+            col_prediction=DEFAULT_PREDICTION_COL,
+            remove_seen=remove_seen,
+        )
+    return topk_scores, t
+
+def train_bivae(params, data):
+    model = cornac.models.BiVAECF(**params)
+    with Timer() as t:
+        model.fit(data)
+    return model, t
+
+
+def recommend_k_bivae(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         topk_scores = predict_ranking(
             model,
@@ -330,20 +358,6 @@ def recommend_k_cornac(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             remove_seen=remove_seen,
         )
     return topk_scores, t
-
-
-def train_bpr(params, data):
-    model = cornac.models.BPR(**params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-
-
-def train_bivae(params, data):
-    model = cornac.models.BiVAECF(**params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
 
 
 def prepare_training_sar(train, test):
