@@ -63,39 +63,34 @@ def predict_ranking(
         data (pandas.DataFrame): The data from which to get the users and items
         usercol (str): Name of the user column
         itemcol (str): Name of the item column
-        predcol (str): Name of the prediction column
         remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
 
     Returns:
         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
-    # Precompute items and users
-    items = list(model.train_set.iid_map.keys())
-    users = list(model.train_set.uid_map.keys())
-    n_users = len(users)
-    n_items = len(items)
+    users, items, preds = [], [], []
+    item = list(model.train_set.iid_map.keys())
+    for uid, user_idx in model.train_set.uid_map.items():
+        user = [uid] * len(item)
+        users.extend(user)
+        items.extend(item)
+        preds.extend(model.score(user_idx).tolist())
 
-    # Compute full score matrix in one go
-    user_indices = [model.train_set.uid_map[u] for u in users]
-    item_indices = [model.train_set.iid_map[i] for i in items]
-    U = model.u_factors[user_indices]
-    V = model.i_factors[item_indices]
-    B = model.i_biases[item_indices]
-
-    # Matrix multiplication for all user-item pairs
-    preds_matrix = U @ V.T + B
-    user_array = np.repeat(users, n_items)
-    item_array = np.tile(items, n_users)
-    preds = preds_matrix.flatten()
-
-    all_predictions = pd.DataFrame({
-        usercol: user_array,
-        itemcol: item_array,
-        predcol: preds
-    })
+    all_predictions = pd.DataFrame(
+        data={usercol: users, itemcol: items, predcol: preds}
+    )
 
     if remove_seen:
-        seen = data[[usercol, itemcol]].drop_duplicates()
-        merged = all_predictions.merge(seen, on=[usercol, itemcol], how='left', indicator=True)
-        return merged[merged['_merge'] == 'left_only'].drop(columns=['_merge'])
-    return all_predictions
+        tempdf = pd.concat(
+            [
+                data[[usercol, itemcol]],
+                pd.DataFrame(
+                    data=np.ones(data.shape[0]), columns=["dummycol"], index=data.index
+                ),
+            ],
+            axis=1,
+        )
+        merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
+        return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1)
+    else:
+        return all_predictions
