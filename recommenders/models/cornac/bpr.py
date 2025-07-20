@@ -8,7 +8,7 @@ from cornac.models import BPR as CBPR
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
+    DEFAULT_PREDICTION_COL
 )
 
 class BPR(CBPR):
@@ -24,7 +24,7 @@ class BPR(CBPR):
         remove_seen=False,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
     ):
         """Computes top-k predictions of recommender model from Cornac on all users in data.
         It can be used for computing ranking metrics like NDCG.
@@ -53,23 +53,24 @@ class BPR(CBPR):
         # Get latent factors and biases
         U = self.u_factors[user_indices]
         V = self.i_factors[item_indices]
-        B = self.i_biases[item_indices] if hasattr(self, 'i_biases') else np.zeros(n_items)
+        B = self.i_biases[item_indices] if hasattr(self, "i_biases") else np.zeros(n_items)
 
         # Compute score matrix for all user-item pairs
         preds_matrix = U @ V.T + B  # Shape: (n_users, n_items)
 
         # Select top-k items per user
-        top_k_indices = np.argpartition(preds_matrix, -top_k, axis=1)[:, -top_k:]  # Partial sort
-        top_k_indices = top_k_indices[:, np.argsort(-preds_matrix[np.arange(n_users)[:, None], top_k_indices])]  # Sort top-k
+        top_k_indices = np.argpartition(preds_matrix, -top_k, axis=1)[:, -top_k:]  # Shape: (n_users, top_k)
+        sorted_indices = np.argsort(-preds_matrix[np.arange(n_users)[:, None], top_k_indices], axis=1)
+        top_k_indices = top_k_indices[np.arange(n_users)[:, None], sorted_indices]  # Shape: (n_users, top_k)
 
-        # Flatten arrays for DataFrame
-        user_array = np.repeat(users, top_k)
-        item_array = items[top_k_indices].flatten()
-        pred_array = preds_matrix[np.arange(n_users)[:, None], top_k_indices].flatten()
+        # Extract items and scores
+        user_array = np.repeat(users, top_k)  # Shape: (n_users * top_k,)
+        item_array = items[top_k_indices].flatten()  # Shape: (n_users * top_k,)
+        pred_array = np.take_along_axis(preds_matrix, top_k_indices, axis=1).flatten()  # Shape: (n_users * top_k,)
 
         # Create DataFrame
         all_predictions = pd.DataFrame(
-            {col_user: user_array, col_item: item_array, col_rating: pred_array}
+            {col_user: user_array, col_item: item_array, col_prediction: pred_array}
         )
 
         if remove_seen:
