@@ -1,15 +1,17 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
+import pytest
+import tempfile
 import numpy as np
 import pandas as pd
-import pytest
 import torch
-from torch.utils.data import DataLoader
 
 from recommenders.models.embdotbias.data_loader import RecoDataLoader, RecoDataset
 from recommenders.models.embdotbias.model import EmbeddingDotBias
 from recommenders.models.embdotbias.training_utils import Trainer, predict_rating
+from recommenders.models.embdotbias.utils import cartesian_product, score
 from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -252,3 +254,17 @@ def test_get_idx_edge_cases(sample_classes, entity_ids, is_item, expected_except
         result = model._get_idx(entity_ids, is_item=is_item)
         assert isinstance(result, torch.Tensor)
         assert result.shape[0] == 0
+
+
+@pytest.mark.gpu
+def test_model_serialization(sample_model_params):
+    """Test saving and loading of EmbeddingDotBias model."""
+
+    model = EmbeddingDotBias(**sample_model_params)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = f"{tmpdir}/model.pt"
+        torch.save(model.state_dict(), path)
+        loaded_model = EmbeddingDotBias(**sample_model_params)
+        loaded_model.load_state_dict(torch.load(path))
+        for p1, p2 in zip(model.parameters(), loaded_model.parameters()):
+            assert torch.allclose(p1, p2)
