@@ -89,9 +89,11 @@ class EmbeddingDotBias(Module):
         Returns:
             torch.Tensor: Tensor of indices for embedding lookup.
         """
-        assert hasattr(
-            self, "classes"
-        ), "Build your model with `EmbeddingDotBias.from_classes` to use this functionality."
+        if not hasattr(self, "classes"):
+            raise RuntimeError(
+                "Build your model with `EmbeddingDotBias.from_classes` to use this functionality."
+            )
+
         classes = self.classes[self.item] if is_item else self.classes[self.user]
 
         # Create a mapping from entity ID (user or item) to its integer index in the embedding matrix
