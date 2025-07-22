@@ -9,7 +9,9 @@ Cornac utilities
 ******************************
 .. automodule:: recommenders.models.cornac.cornac_utils
     :members:
-
+.. automodule:: recommenders.models.cornac.bpr
+    :members:
+    :special-members: __init__
 
 DeepRec utilities
 ******************************
