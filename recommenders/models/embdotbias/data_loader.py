@@ -10,6 +10,17 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class RecoDataset(Dataset):
+    """
+    PyTorch Dataset for collaborative filtering tasks.
+
+    Stores user, item, and rating data as tensors for efficient batching.
+
+    Args:
+        users (array-like): User IDs or indices.
+        items (array-like): Item IDs or indices.
+        ratings (array-like): Ratings or interactions.
+    """
+
     def __init__(self, users, items, ratings):
         # Convert to numpy arrays first and ensure correct types
         users = np.array(users, dtype=np.int64)
@@ -22,15 +33,36 @@ class RecoDataset(Dataset):
         self.ratings = torch.tensor(ratings, dtype=torch.float)
 
     def __len__(self):
+        """
+        Returns the number of samples in the dataset.
+
+        Returns:
+            int: Number of ratings.
+        """
         return len(self.ratings)
 
     def __getitem__(self, idx):
+        """
+        Retrieves a single sample from the dataset.
+
+        Args:
+            idx (int): Index of the sample to retrieve.
+
+        Returns:
+            tuple: (user_item_tensor, rating_tensor)
+        """
         user_item_tensor = torch.stack((self.users[idx], self.items[idx]))
         rating_tensor = self.ratings[idx].unsqueeze(0)
         return user_item_tensor, rating_tensor
 
 
 class RecoDataLoader:
+    """
+    Utility class for managing training and validation DataLoaders for collaborative filtering.
+
+    Stores metadata about users/items and provides helper methods for data preparation and inspection.
+    """
+
     def __init__(self, train_dl, valid_dl=None):
         """Initialize the dataloaders.
 
@@ -54,7 +86,22 @@ class RecoDataLoader:
         batch_size=64,
         **kwargs,
     ):
-        """Create DataLoaders from a pandas DataFrame for collaborative filtering."""
+        """
+        Create DataLoaders from a pandas DataFrame for collaborative filtering.
+
+        Args:
+            ratings (pd.DataFrame): DataFrame containing user, item, and rating columns.
+            valid_pct (float): Fraction of data to use for validation.
+            user_name (str, optional): Name of the user column.
+            item_name (str, optional): Name of the item column.
+            rating_name (str, optional): Name of the rating column.
+            seed (int): Random seed for reproducibility.
+            batch_size (int): Batch size for DataLoaders.
+            **kwargs: Additional DataLoader arguments.
+
+        Returns:
+            RecoDataLoader: Instance with train/valid DataLoaders and metadata.
+        """
         # Validate input
         if ratings is None or len(ratings) == 0:
             raise ValueError("Input DataFrame is empty")
@@ -198,8 +245,12 @@ class RecoDataLoader:
         return dl
 
     def show_batch(self, n=5):
-        """Show a batch of data."""
-        print("Showing a sample batch:")
+        """
+        Display a sample batch from the training DataLoader.
+
+        Args:
+            n (int): Number of examples to show from the batch.
+        """
         # Get one batch from the training dataloader
         # Unpack the two elements from the batch: user_item_batch (tensor of shape [bs, 2]) and ratings_batch (tensor of shape [bs, 1])
         for user_item_batch, ratings_batch in self.train:
