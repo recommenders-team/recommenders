@@ -8,10 +8,28 @@ import torch.nn.init as init
 
 
 class EmbeddingDotBias(Module):
-    "Base dot model for collaborative filtering."
+    """
+    Base dot-product model for collaborative filtering.
+
+    This model learns user and item embeddings and biases, and predicts ratings via dot product and bias terms.
+
+    Args:
+        n_factors (int): Number of latent factors.
+        n_users (int): Number of users.
+        n_items (int): Number of items.
+        y_range (tuple, optional): Range for output normalization (min, max).
+    """
 
     def __init__(self, n_factors, n_users, n_items, y_range=None):
+        """
+        Initialize the EmbeddingDotBias model.
 
+        Args:
+            n_factors (int): Number of latent factors.
+            n_users (int): Number of users.
+            n_items (int): Number of items.
+            y_range (tuple, optional): Range for output normalization (min, max).
+        """
         super().__init__()
         self.classes = None
         self.y_range = y_range
@@ -25,6 +43,15 @@ class EmbeddingDotBias(Module):
             init.trunc_normal_(emb.weight, std=0.01)
 
     def forward(self, x):
+        """
+        Forward pass for the model.
+
+        Args:
+            x (torch.Tensor): Tensor of shape (batch_size, 2) with user and item indices.
+
+        Returns:
+            torch.Tensor: Predicted ratings for each user-item pair.
+        """
         users, items = x[:, 0], x[:, 1]
         dot = self.u_weight(users) * self.i_weight(items)
         res = dot.sum(1) + self.u_bias(users).squeeze() + self.i_bias(items).squeeze()
@@ -36,7 +63,19 @@ class EmbeddingDotBias(Module):
 
     @classmethod
     def from_classes(cls, n_factors, classes, user=None, item=None, y_range=None):
-        "Build a model with `n_factors` by inferring `n_users` and  `n_items` from `classes`"
+        """
+        Build a model with `n_factors` by inferring `n_users` and `n_items` from `classes`.
+
+        Args:
+            n_factors (int): Number of latent factors.
+            classes (dict): Dictionary mapping entity names to lists of IDs.
+            user (str, optional): Key for user IDs in `classes`.
+            item (str, optional): Key for item IDs in `classes`.
+            y_range (tuple, optional): Range for output normalization.
+
+        Returns:
+            EmbeddingDotBias: Instantiated model.
+        """
         if user is None:
             user = list(classes.keys())[0]
         if item is None:
@@ -46,7 +85,16 @@ class EmbeddingDotBias(Module):
         return res
 
     def _get_idx(self, entity_ids, is_item=True):
-        "Fetch item or user (based on `is_item`) for all in `entity_ids`"
+        """
+        Fetch item or user indices for all in `entity_ids`.
+
+        Args:
+            entity_ids (list): List of user or item IDs.
+            is_item (bool): If True, fetch item indices; else user indices.
+
+        Returns:
+            torch.Tensor: Tensor of indices for embedding lookup.
+        """
         assert hasattr(
             self, "classes"
         ), "Build your model with `EmbeddingDotBias.from_classes` to use this functionality."
@@ -60,13 +108,31 @@ class EmbeddingDotBias(Module):
             raise KeyError(message)
 
     def bias(self, entity_ids, is_item=True):
-        "Bias for item or user (based on `is_item`) for all in `entity_ids`"
+        """
+        Get bias values for items or users in `entity_ids`.
+
+        Args:
+            entity_ids (list): List of user or item IDs.
+            is_item (bool): If True, fetch item bias; else user bias.
+
+        Returns:
+            torch.Tensor: Bias values for the given entities.
+        """
         idx = self._get_idx(entity_ids, is_item)
         layer = (self.i_bias if is_item else self.u_bias).eval().cpu()
         return layer(idx).squeeze().detach()
 
     def weight(self, entity_ids, is_item=True):
-        "Weight for item or user (based on `is_item`) for all in `entity_ids`"
+        """
+        Get embedding weights for items or users in `entity_ids`.
+
+        Args:
+            entity_ids (list): List of user or item IDs.
+            is_item (bool): If True, fetch item weights; else user weights.
+
+        Returns:
+            torch.Tensor: Embedding weights for the given entities.
+        """
         idx = self._get_idx(entity_ids, is_item)
         layer = (self.i_weight if is_item else self.u_weight).eval().cpu()
         return layer(idx).detach()
