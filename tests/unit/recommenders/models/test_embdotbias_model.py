@@ -7,14 +7,14 @@ import pytest
 import torch
 from torch.utils.data import DataLoader
 
-from recommenders.models.embdotbias.data_loader import (RecoDataLoader,
-                                                        RecoDataset)
+from recommenders.models.embdotbias.data_loader import RecoDataLoader, RecoDataset
 from recommenders.models.embdotbias.model import EmbeddingDotBias
-from recommenders.models.embdotbias.training_utils import (Trainer,
-                                                           predict_rating)
-from recommenders.models.embdotbias.utils import cartesian_product, score
-from recommenders.utils.constants import (DEFAULT_ITEM_COL, DEFAULT_RATING_COL,
-                                          DEFAULT_USER_COL)
+from recommenders.models.embdotbias.training_utils import Trainer, predict_rating
+from recommenders.utils.constants import (
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_USER_COL,
+)
 
 
 @pytest.fixture(scope="module")
@@ -229,3 +229,26 @@ def test_full_pipeline(sample_ratings_data):
     assert train_loss >= 0
     assert valid_loss >= 0
     assert 1.0 <= prediction <= 5.0
+
+
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "entity_ids,is_item,expected_exception",
+    [
+        (["999"], True, KeyError),  # Non-existent item
+        (["999"], False, KeyError),  # Non-existent user
+        ([], True, None),  # Empty list
+        ([], False, None),  # Empty list
+    ],
+)
+def test_get_idx_edge_cases(sample_classes, entity_ids, is_item, expected_exception):
+    model = EmbeddingDotBias.from_classes(
+        n_factors=10, classes=sample_classes, y_range=(1.0, 5.0)
+    )
+    if expected_exception:
+        with pytest.raises(expected_exception):
+            model._get_idx(entity_ids, is_item=is_item)
+    else:
+        result = model._get_idx(entity_ids, is_item=is_item)
+        assert isinstance(result, torch.Tensor)
+        assert result.shape[0] == 0
