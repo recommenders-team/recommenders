@@ -14,14 +14,15 @@ class RecoDataset(Dataset):
     PyTorch Dataset for collaborative filtering tasks.
 
     Stores user, item, and rating data as tensors for efficient batching.
-
-    Args:
-        users (array-like): User IDs or indices.
-        items (array-like): Item IDs or indices.
-        ratings (array-like): Ratings or interactions.
     """
 
     def __init__(self, users, items, ratings):
+        """
+        Args:
+            users (array-like): User IDs or indices.
+            items (array-like): Item IDs or indices.
+            ratings (array-like): Ratings or interactions.
+        """
         # Convert to numpy arrays first and ensure correct types
         users = np.array(users, dtype=np.int64)
         items = np.array(items, dtype=np.int64)

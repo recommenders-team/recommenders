@@ -12,12 +12,6 @@ class EmbeddingDotBias(Module):
     Base dot-product model for collaborative filtering.
 
     This model learns user and item embeddings and biases, and predicts ratings via dot product and bias terms.
-
-    Args:
-        n_factors (int): Number of latent factors.
-        n_users (int): Number of users.
-        n_items (int): Number of items.
-        y_range (tuple, optional): Range for output normalization (min, max).
     """
 
     def __init__(self, n_factors, n_users, n_items, y_range=None):
@@ -28,7 +22,7 @@ class EmbeddingDotBias(Module):
             n_factors (int): Number of latent factors.
             n_users (int): Number of users.
             n_items (int): Number of items.
-            y_range (tuple, optional): Range for output normalization (min, max).
+            y_range (tuple): Range for output normalization (min, max).
         """
         super().__init__()
         self.classes = None
@@ -69,9 +63,9 @@ class EmbeddingDotBias(Module):
         Args:
             n_factors (int): Number of latent factors.
             classes (dict): Dictionary mapping entity names to lists of IDs.
-            user (str, optional): Key for user IDs in `classes`.
-            item (str, optional): Key for item IDs in `classes`.
-            y_range (tuple, optional): Range for output normalization.
+            user (str): Key for user IDs in `classes`.
+            item (str): Key for item IDs in `classes`.
+            y_range (tuple): Range for output normalization.
 
         Returns:
             EmbeddingDotBias: Instantiated model.
@@ -99,6 +93,7 @@ class EmbeddingDotBias(Module):
             self, "classes"
         ), "Build your model with `EmbeddingDotBias.from_classes` to use this functionality."
         classes = self.classes[self.item] if is_item else self.classes[self.user]
+
         # Create a mapping from entity ID (user or item) to its integer index in the embedding matrix
         entity_id_to_index = {entity_id: idx for idx, entity_id in enumerate(classes)}
         try:
