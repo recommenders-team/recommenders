@@ -3,13 +3,11 @@ import pandas as pd
 import pytest
 import torch
 
-from recommenders.models.embdotbias.model import EmbeddingDotBias
 from recommenders.models.embdotbias.utils import cartesian_product, score
 from recommenders.utils.constants import (
-    DEFAULT_ITEM_COL,
-    DEFAULT_PREDICTION_COL,
-    DEFAULT_RATING_COL,
     DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
 )
 
 
@@ -95,6 +93,9 @@ def test_score(sample_ratings_data):
 
         def forward(self, x):
             return torch.ones(x.shape[0])
+
+        def to(self, device):
+            return self
 
     classes = {
         DEFAULT_USER_COL: list(sample_ratings_data[DEFAULT_USER_COL].unique()),
