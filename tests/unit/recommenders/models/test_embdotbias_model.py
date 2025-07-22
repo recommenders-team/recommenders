@@ -11,7 +11,6 @@ import torch
 from recommenders.models.embdotbias.data_loader import RecoDataLoader, RecoDataset
 from recommenders.models.embdotbias.model import EmbeddingDotBias
 from recommenders.models.embdotbias.training_utils import Trainer, predict_rating
-from recommenders.models.embdotbias.utils import cartesian_product, score
 from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -254,6 +253,43 @@ def test_get_idx_edge_cases(sample_classes, entity_ids, is_item, expected_except
         result = model._get_idx(entity_ids, is_item=is_item)
         assert isinstance(result, torch.Tensor)
         assert result.shape[0] == 0
+
+
+def test_reco_dataset(sample_ratings_data):
+    """Test RecoDataset `__len__` and `__getitem__`."""
+    users = sample_ratings_data[DEFAULT_USER_COL].values
+    items = sample_ratings_data[DEFAULT_ITEM_COL].values
+    ratings = sample_ratings_data[DEFAULT_RATING_COL].values
+
+    dataset = RecoDataset(users, items, ratings)
+
+    assert len(dataset) == len(ratings)
+
+    user_item_tensor, rating_tensor = dataset[0]
+    assert user_item_tensor.shape == (2,)
+    assert rating_tensor.shape == (1,)
+    assert user_item_tensor[0] == users[0]
+    assert user_item_tensor[1] == items[0]
+    assert rating_tensor[0] == ratings[0]
+
+
+@pytest.mark.gpu
+def test_reco_dataset(sample_ratings_data):
+    """Test RecoDataset `__len__` and `__getitem__`."""
+    users = sample_ratings_data[DEFAULT_USER_COL].values
+    items = sample_ratings_data[DEFAULT_ITEM_COL].values
+    ratings = sample_ratings_data[DEFAULT_RATING_COL].values
+
+    dataset = RecoDataset(users, items, ratings)
+
+    assert len(dataset) == len(ratings)
+
+    user_item_tensor, rating_tensor = dataset[0]
+    assert user_item_tensor.shape == (2,)
+    assert rating_tensor.shape == (1,)
+    assert user_item_tensor[0] == users[0]
+    assert user_item_tensor[1] == items[0]
+    assert rating_tensor[0] == ratings[0]
 
 
 @pytest.mark.gpu
