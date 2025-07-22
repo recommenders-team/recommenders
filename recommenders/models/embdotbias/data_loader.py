@@ -92,9 +92,9 @@ class RecoDataLoader:
         Args:
             ratings (pd.DataFrame): DataFrame containing user, item, and rating columns.
             valid_pct (float): Fraction of data to use for validation.
-            user_name (str, optional): Name of the user column.
-            item_name (str, optional): Name of the item column.
-            rating_name (str, optional): Name of the rating column.
+            user_name (str): Name of the user column.
+            item_name (str): Name of the item column.
+            rating_name (str): Name of the rating column.
             seed (int): Random seed for reproducibility.
             batch_size (int): Batch size for DataLoaders.
             **kwargs: Additional DataLoader arguments.
