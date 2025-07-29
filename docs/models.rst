@@ -136,9 +136,18 @@ SLIRec
     :special-members: __init__
 
 
-FastAI utilities
+EmbDotBias utilities
 ******************************
-.. automodule:: recommenders.models.fastai.fastai_utils
+.. automodule:: recommenders.models.embdotbias.data_loader
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.embdotbias.model
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.embdotbias.training_utils
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.embdotbias.utils
     :members:
 
 

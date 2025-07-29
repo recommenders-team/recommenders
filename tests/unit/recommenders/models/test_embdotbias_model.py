@@ -1,20 +1,21 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
+import pytest
+import tempfile
 import numpy as np
 import pandas as pd
-import pytest
 import torch
-from torch.utils.data import DataLoader
 
-from recommenders.models.embdotbias.data_loader import (RecoDataLoader,
-                                                        RecoDataset)
+from recommenders.models.embdotbias.data_loader import RecoDataLoader, RecoDataset
 from recommenders.models.embdotbias.model import EmbeddingDotBias
-from recommenders.models.embdotbias.training_utils import (Trainer,
-                                                           predict_rating)
-from recommenders.models.embdotbias.utils import cartesian_product, score
-from recommenders.utils.constants import (DEFAULT_ITEM_COL, DEFAULT_RATING_COL,
-                                          DEFAULT_USER_COL)
+from recommenders.models.embdotbias.training_utils import Trainer, predict_rating
+from recommenders.utils.constants import (
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_USER_COL,
+)
 
 
 @pytest.fixture(scope="module")
@@ -229,3 +230,77 @@ def test_full_pipeline(sample_ratings_data):
     assert train_loss >= 0
     assert valid_loss >= 0
     assert 1.0 <= prediction <= 5.0
+
+
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "entity_ids,is_item,expected_exception",
+    [
+        (["999"], True, KeyError),  # Non-existent item
+        (["999"], False, KeyError),  # Non-existent user
+        ([], True, None),  # Empty list
+        ([], False, None),  # Empty list
+    ],
+)
+def test_get_idx_edge_cases(sample_classes, entity_ids, is_item, expected_exception):
+    model = EmbeddingDotBias.from_classes(
+        n_factors=10, classes=sample_classes, y_range=(1.0, 5.0)
+    )
+    if expected_exception:
+        with pytest.raises(expected_exception):
+            model._get_idx(entity_ids, is_item=is_item)
+    else:
+        result = model._get_idx(entity_ids, is_item=is_item)
+        assert isinstance(result, torch.Tensor)
+        assert result.shape[0] == 0
+
+
+def test_reco_dataset(sample_ratings_data):
+    """Test RecoDataset `__len__` and `__getitem__`."""
+    users = sample_ratings_data[DEFAULT_USER_COL].values
+    items = sample_ratings_data[DEFAULT_ITEM_COL].values
+    ratings = sample_ratings_data[DEFAULT_RATING_COL].values
+
+    dataset = RecoDataset(users, items, ratings)
+
+    assert len(dataset) == len(ratings)
+
+    user_item_tensor, rating_tensor = dataset[0]
+    assert user_item_tensor.shape == (2,)
+    assert rating_tensor.shape == (1,)
+    assert user_item_tensor[0] == users[0]
+    assert user_item_tensor[1] == items[0]
+    assert rating_tensor[0] == ratings[0]
+
+
+@pytest.mark.gpu
+def test_reco_dataset(sample_ratings_data):
+    """Test RecoDataset `__len__` and `__getitem__`."""
+    users = sample_ratings_data[DEFAULT_USER_COL].values
+    items = sample_ratings_data[DEFAULT_ITEM_COL].values
+    ratings = sample_ratings_data[DEFAULT_RATING_COL].values
+
+    dataset = RecoDataset(users, items, ratings)
+
+    assert len(dataset) == len(ratings)
+
+    user_item_tensor, rating_tensor = dataset[0]
+    assert user_item_tensor.shape == (2,)
+    assert rating_tensor.shape == (1,)
+    assert user_item_tensor[0] == users[0]
+    assert user_item_tensor[1] == items[0]
+    assert rating_tensor[0] == ratings[0]
+
+
+@pytest.mark.gpu
+def test_model_serialization(sample_model_params):
+    """Test saving and loading of EmbeddingDotBias model."""
+
+    model = EmbeddingDotBias(**sample_model_params)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = f"{tmpdir}/model.pt"
+        torch.save(model.state_dict(), path)
+        loaded_model = EmbeddingDotBias(**sample_model_params)
+        loaded_model.load_state_dict(torch.load(path))
+        for p1, p2 in zip(model.parameters(), loaded_model.parameters()):
+            assert torch.allclose(p1, p2)
