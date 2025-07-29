@@ -54,11 +54,11 @@ jobs:
     needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 120 
+    timeout-minutes: 180 # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
     permissions:
       id-token: write # This is required for requesting the JWT
     strategy:
-      max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
+      max-parallel: 100 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
