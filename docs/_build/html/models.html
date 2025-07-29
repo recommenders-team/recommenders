@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -380,6 +380,11 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.cornac.cornac_utils">Cornac utilities</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.cornac_utils.predict"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.cornac_utils.predict_ranking"><code class="docutils literal notranslate"><span class="pre">predict_ranking()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.bpr.BPR"><code class="docutils literal notranslate"><span class="pre">BPR</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.bpr.BPR.__init__"><code class="docutils literal notranslate"><span class="pre">BPR.__init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.bpr.BPR.recommend_k_items"><code class="docutils literal notranslate"><span class="pre">BPR.recommend_k_items()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deeprec-utilities">DeepRec utilities</a><ul class="nav section-nav flex-column">
@@ -554,12 +559,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sli_rec.SLI_RECModel"><code class="docutils literal notranslate"><span class="pre">SLI_RECModel</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.fastai.fastai_utils">FastAI utilities</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.fastai.fastai_utils.cartesian_product"><code class="docutils literal notranslate"><span class="pre">cartesian_product()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.fastai.fastai_utils.hide_fastai_progress_bar"><code class="docutils literal notranslate"><span class="pre">hide_fastai_progress_bar()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.fastai.fastai_utils.score"><code class="docutils literal notranslate"><span class="pre">score()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embdotbias-utilities">EmbDotBias utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.lightfm.lightfm_utils">LightFM utilities</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.lightfm.lightfm_utils.compare_metric"><code class="docutils literal notranslate"><span class="pre">compare_metric()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.lightfm.lightfm_utils.model_perf_plots"><code class="docutils literal notranslate"><span class="pre">model_perf_plots()</span></code></a></li>
@@ -1038,6 +1038,42 @@ It can be used for computing ranking metrics like NDCG.</p>
 <dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class" id="module-recommenders.models.cornac.bpr">
+<dt class="sig sig-object py" id="recommenders.models.cornac.bpr.BPR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">recommenders.models.cornac.bpr.</span></span><span class="sig-name descname"><span class="pre">BPR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/cornac/bpr.html#BPR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.cornac.bpr.BPR" title="Link to this definition">#</a></dt>
+<dd><p>Custom BPR class extending Cornac’s BPR model with a recommend_k_items method.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.models.cornac.bpr.BPR.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/cornac/bpr.html#BPR.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.cornac.bpr.BPR.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="recommenders.models.cornac.bpr.BPR.recommend_k_items">
+<span class="sig-name descname"><span class="pre">recommend_k_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_seen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_prediction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prediction'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/cornac/bpr.html#BPR.recommend_k_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.cornac.bpr.BPR.recommend_k_items" title="Link to this definition">#</a></dt>
+<dd><p>Computes top-k predictions of recommender model from Cornac on all users in data.
+It can be used for computing ranking metrics like NDCG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – The data from which to get the users and items.</p></li>
+<li><p><strong>top_k</strong> (<em>int</em>) – Number of items to recommend per user.</p></li>
+<li><p><strong>remove_seen</strong> (<em>bool</em>) – Flag to remove (user, item) pairs seen in the training data.</p></li>
+<li><p><strong>col_user</strong> (<em>str</em>) – Name of the user column.</p></li>
+<li><p><strong>col_item</strong> (<em>str</em>) – Name of the item column.</p></li>
+<li><p><strong>col_rating</strong> (<em>str</em>) – Name of the prediction column.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dataframe with col_user, col_item, col_rating for top-k items per user.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -2527,55 +2563,8 @@ Pages 4213-4219, AAAI Press, 2019.</p>
 </dd></dl>
 
 </section>
-<section id="module-recommenders.models.fastai.fastai_utils">
-<span id="fastai-utilities"></span><h2>FastAI utilities<a class="headerlink" href="#module-recommenders.models.fastai.fastai_utils" title="Link to this heading">#</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="recommenders.models.fastai.fastai_utils.cartesian_product">
-<span class="sig-prename descclassname"><span class="pre">recommenders.models.fastai.fastai_utils.</span></span><span class="sig-name descname"><span class="pre">cartesian_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">arrays</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/fastai/fastai_utils.html#cartesian_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.fastai.fastai_utils.cartesian_product" title="Link to this definition">#</a></dt>
-<dd><p>Compute the Cartesian product in fastai algo. This is a helper function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>arrays</strong> (<em>tuple</em><em> of </em><em>numpy.ndarray</em>) – Input arrays</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>product</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="recommenders.models.fastai.fastai_utils.hide_fastai_progress_bar">
-<span class="sig-prename descclassname"><span class="pre">recommenders.models.fastai.fastai_utils.</span></span><span class="sig-name descname"><span class="pre">hide_fastai_progress_bar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/fastai/fastai_utils.html#hide_fastai_progress_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.fastai.fastai_utils.hide_fastai_progress_bar" title="Link to this definition">#</a></dt>
-<dd><p>Hide fastai progress bar</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="recommenders.models.fastai.fastai_utils.score">
-<span class="sig-prename descclassname"><span class="pre">recommenders.models.fastai.fastai_utils.</span></span><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">learner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prediction'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recommenders/models/fastai/fastai_utils.html#score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recommenders.models.fastai.fastai_utils.score" title="Link to this definition">#</a></dt>
-<dd><p>Score all users+items provided and reduce to top_k items per user if top_k&gt;0</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>learner</strong> (<em>object</em>) – Model.</p></li>
-<li><p><strong>test_df</strong> (<em>pandas.DataFrame</em>) – Test dataframe.</p></li>
-<li><p><strong>user_col</strong> (<em>str</em>) – User column name.</p></li>
-<li><p><strong>item_col</strong> (<em>str</em>) – Item column name.</p></li>
-<li><p><strong>prediction_col</strong> (<em>str</em>) – Prediction column name.</p></li>
-<li><p><strong>top_k</strong> (<em>int</em>) – Number of top items to recommend.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Result of recommendation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="embdotbias-utilities">
+<h2>EmbDotBias utilities<a class="headerlink" href="#embdotbias-utilities" title="Link to this heading">#</a></h2>
 </section>
 <section id="module-recommenders.models.lightfm.lightfm_utils">
 <span id="lightfm-utilities"></span><h2>LightFM utilities<a class="headerlink" href="#module-recommenders.models.lightfm.lightfm_utils" title="Link to this heading">#</a></h2>
@@ -6689,6 +6678,11 @@ To generate wide_deep model, pass both wide_columns and deep_columns.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.cornac.cornac_utils">Cornac utilities</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.cornac_utils.predict"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.cornac_utils.predict_ranking"><code class="docutils literal notranslate"><span class="pre">predict_ranking()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.bpr.BPR"><code class="docutils literal notranslate"><span class="pre">BPR</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.bpr.BPR.__init__"><code class="docutils literal notranslate"><span class="pre">BPR.__init__()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.cornac.bpr.BPR.recommend_k_items"><code class="docutils literal notranslate"><span class="pre">BPR.recommend_k_items()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deeprec-utilities">DeepRec utilities</a><ul class="nav section-nav flex-column">
@@ -6863,12 +6857,7 @@ To generate wide_deep model, pass both wide_columns and deep_columns.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.deeprec.models.sequential.sli_rec.SLI_RECModel"><code class="docutils literal notranslate"><span class="pre">SLI_RECModel</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.fastai.fastai_utils">FastAI utilities</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.fastai.fastai_utils.cartesian_product"><code class="docutils literal notranslate"><span class="pre">cartesian_product()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.fastai.fastai_utils.hide_fastai_progress_bar"><code class="docutils literal notranslate"><span class="pre">hide_fastai_progress_bar()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.fastai.fastai_utils.score"><code class="docutils literal notranslate"><span class="pre">score()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embdotbias-utilities">EmbDotBias utilities</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-recommenders.models.lightfm.lightfm_utils">LightFM utilities</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.lightfm.lightfm_utils.compare_metric"><code class="docutils literal notranslate"><span class="pre">compare_metric()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommenders.models.lightfm.lightfm_utils.model_perf_plots"><code class="docutils literal notranslate"><span class="pre">model_perf_plots()</span></code></a></li>

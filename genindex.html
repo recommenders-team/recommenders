@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -368,6 +368,8 @@ document.write(`
 </li>
         <li><a href="evaluation.html#recommenders.evaluation.spark_evaluation.SparkRatingEvaluation.__init__">(recommenders.evaluation.spark_evaluation.SparkRatingEvaluation method)</a>
 </li>
+        <li><a href="models.html#recommenders.models.cornac.bpr.BPR.__init__">(recommenders.models.cornac.bpr.BPR method)</a>
+</li>
         <li><a href="models.html#recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF.__init__">(recommenders.models.deeprec.DataModel.ImplicitCF.ImplicitCF method)</a>
 </li>
         <li><a href="models.html#recommenders.models.deeprec.deeprec_utils.HParams.__init__">(recommenders.models.deeprec.deeprec_utils.HParams method)</a>
@@ -513,6 +515,8 @@ document.write(`
 </li>
       <li><a href="models.html#recommenders.models.newsrec.io.mind_all_iterator.MINDAllIterator.body_size">body_size (recommenders.models.newsrec.io.mind_all_iterator.MINDAllIterator attribute)</a>
 </li>
+      <li><a href="models.html#recommenders.models.cornac.bpr.BPR">BPR (class in recommenders.models.cornac.bpr)</a>
+</li>
       <li><a href="models.html#recommenders.models.newsrec.models.layers.AttLayer2.build">build() (recommenders.models.newsrec.models.layers.AttLayer2 method)</a>
 
       <ul>
@@ -565,8 +569,6 @@ document.write(`
       </ul></li>
       <li><a href="models.html#recommenders.models.sasrec.model.EncoderLayer.call_">call_() (recommenders.models.sasrec.model.EncoderLayer method)</a>
 </li>
-      <li><a href="models.html#recommenders.models.fastai.fastai_utils.cartesian_product">cartesian_product() (in module recommenders.models.fastai.fastai_utils)</a>
-</li>
       <li><a href="models.html#recommenders.models.deeprec.models.sequential.caser.CaserModel">CaserModel (class in recommenders.models.deeprec.models.sequential.caser)</a>
 </li>
       <li><a href="evaluation.html#recommenders.evaluation.python_evaluation.catalog_coverage">catalog_coverage() (in module recommenders.evaluation.python_evaluation)</a>
@@ -587,14 +589,14 @@ document.write(`
         <li><a href="models.html#recommenders.models.newsrec.newsrec_utils.check_type">(in module recommenders.models.newsrec.newsrec_utils)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="datasets.html#recommenders.datasets.covid_utils.clean_dataframe">clean_dataframe() (in module recommenders.datasets.covid_utils)</a>
 
       <ul>
         <li><a href="models.html#recommenders.models.tfidf.tfidf_utils.TfidfRecommender.clean_dataframe">(recommenders.models.tfidf.tfidf_utils.TfidfRecommender method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#recommenders.utils.gpu_utils.clear_memory_all_gpus">clear_memory_all_gpus() (in module recommenders.utils.gpu_utils)</a>
 </li>
       <li><a href="models.html#recommenders.models.sasrec.util.SASRecDataSet.col_sep">col_sep (recommenders.models.sasrec.util.SASRecDataSet attribute)</a>
@@ -945,8 +947,6 @@ document.write(`
 </li>
       <li><a href="datasets.html#recommenders.datasets.pandas_df_utils.has_same_base_dtype">has_same_base_dtype() (in module recommenders.datasets.pandas_df_utils)</a>
 </li>
-      <li><a href="models.html#recommenders.models.fastai.fastai_utils.hide_fastai_progress_bar">hide_fastai_progress_bar() (in module recommenders.models.fastai.fastai_utils)</a>
-</li>
       <li><a href="models.html#recommenders.models.newsrec.io.mind_all_iterator.MINDAllIterator.his_size">his_size (recommenders.models.newsrec.io.mind_all_iterator.MINDAllIterator attribute)</a>
 
       <ul>
@@ -1267,6 +1267,8 @@ document.write(`
 </li>
         <li><a href="evaluation.html#module-recommenders.evaluation.spark_evaluation">recommenders.evaluation.spark_evaluation</a>
 </li>
+        <li><a href="models.html#module-recommenders.models.cornac.bpr">recommenders.models.cornac.bpr</a>
+</li>
         <li><a href="models.html#module-recommenders.models.cornac.cornac_utils">recommenders.models.cornac.cornac_utils</a>
 </li>
         <li><a href="models.html#module-recommenders.models.deeprec.DataModel.ImplicitCF">recommenders.models.deeprec.DataModel.ImplicitCF</a>
@@ -1304,8 +1306,6 @@ document.write(`
         <li><a href="models.html#module-recommenders.models.deeprec.models.sequential.sli_rec">recommenders.models.deeprec.models.sequential.sli_rec</a>
 </li>
         <li><a href="models.html#module-recommenders.models.deeprec.models.xDeepFM">recommenders.models.deeprec.models.xDeepFM</a>
-</li>
-        <li><a href="models.html#module-recommenders.models.fastai.fastai_utils">recommenders.models.fastai.fastai_utils</a>
 </li>
         <li><a href="models.html#module-recommenders.models.lightfm.lightfm_utils">recommenders.models.lightfm.lightfm_utils</a>
 </li>
@@ -1632,9 +1632,11 @@ document.write(`
         <li><a href="evaluation.html#recommenders.evaluation.spark_evaluation.SparkRankingEvaluation.recall_at_k">(recommenders.evaluation.spark_evaluation.SparkRankingEvaluation method)</a>
 </li>
       </ul></li>
-      <li><a href="models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.recommend_k_items">recommend_k_items() (recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN method)</a>
+      <li><a href="models.html#recommenders.models.cornac.bpr.BPR.recommend_k_items">recommend_k_items() (recommenders.models.cornac.bpr.BPR method)</a>
 
       <ul>
+        <li><a href="models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.recommend_k_items">(recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN method)</a>
+</li>
         <li><a href="models.html#recommenders.models.rbm.rbm.RBM.recommend_k_items">(recommenders.models.rbm.rbm.RBM method)</a>
 </li>
         <li><a href="models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.recommend_k_items">(recommenders.models.sar.sar_singlenode.SARSingleNode method)</a>
@@ -1746,6 +1748,13 @@ document.write(`
 
       <ul>
         <li><a href="evaluation.html#module-recommenders.evaluation.spark_evaluation">module</a>
+</li>
+      </ul></li>
+      <li>
+    recommenders.models.cornac.bpr
+
+      <ul>
+        <li><a href="models.html#module-recommenders.models.cornac.bpr">module</a>
 </li>
       </ul></li>
       <li>
@@ -1879,13 +1888,6 @@ document.write(`
 
       <ul>
         <li><a href="models.html#module-recommenders.models.deeprec.models.xDeepFM">module</a>
-</li>
-      </ul></li>
-      <li>
-    recommenders.models.fastai.fastai_utils
-
-      <ul>
-        <li><a href="models.html#module-recommenders.models.fastai.fastai_utils">module</a>
 </li>
       </ul></li>
       <li>
@@ -2204,11 +2206,9 @@ document.write(`
         <li><a href="models.html#recommenders.models.rbm.rbm.RBM.save">(recommenders.models.rbm.rbm.RBM method)</a>
 </li>
       </ul></li>
-      <li><a href="models.html#recommenders.models.fastai.fastai_utils.score">score() (in module recommenders.models.fastai.fastai_utils)</a>
+      <li><a href="models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.score">score() (recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN method)</a>
 
       <ul>
-        <li><a href="models.html#recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN.score">(recommenders.models.deeprec.models.graphrec.lightgcn.LightGCN method)</a>
-</li>
         <li><a href="models.html#recommenders.models.sar.sar_singlenode.SARSingleNode.score">(recommenders.models.sar.sar_singlenode.SARSingleNode method)</a>
 </li>
       </ul></li>

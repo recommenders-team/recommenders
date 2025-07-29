@@ -30,6 +30,7 @@ recommenders/evaluation/python_evaluation.py
 recommenders/evaluation/spark_evaluation.py
 recommenders/models/__init__.py
 recommenders/models/cornac/__init__.py
+recommenders/models/cornac/bpr.py
 recommenders/models/cornac/cornac_utils.py
 recommenders/models/deeprec/__init__.py
 recommenders/models/deeprec/deeprec_utils.py
@@ -58,8 +59,6 @@ recommenders/models/deeprec/models/sequential/sequential_base_model.py
 recommenders/models/deeprec/models/sequential/sli_rec.py
 recommenders/models/deeprec/models/sequential/sum.py
 recommenders/models/deeprec/models/sequential/sum_cells.py
-recommenders/models/fastai/__init__.py
-recommenders/models/fastai/fastai_utils.py
 recommenders/models/geoimc/__init__.py
 recommenders/models/geoimc/geoimc_algorithm.py
 recommenders/models/geoimc/geoimc_data.py
@@ -198,6 +197,8 @@ tests/unit/recommenders/models/__init__.py
 tests/unit/recommenders/models/test_cornac_utils.py
 tests/unit/recommenders/models/test_deeprec_model.py
 tests/unit/recommenders/models/test_deeprec_utils.py
+tests/unit/recommenders/models/test_embdotbias_model.py
+tests/unit/recommenders/models/test_embdotbias_utils.py
 tests/unit/recommenders/models/test_geoimc.py
 tests/unit/recommenders/models/test_lightfm_utils.py
 tests/unit/recommenders/models/test_ncf_dataset.py

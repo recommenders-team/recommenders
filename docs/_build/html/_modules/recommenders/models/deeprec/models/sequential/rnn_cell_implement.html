@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -394,13 +394,13 @@ document.write(`
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Time4LSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_reuse</span><span class="o">=</span><span class="n">reuse</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">state_is_tuple</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Using a concatenated state is slower and will soon be &quot;</span>
                 <span class="s2">&quot;deprecated.  Use state_is_tuple=True.&quot;</span><span class="p">,</span>
                 <span class="bp">self</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">num_unit_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">num_proj_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: The num_unit_shards and proj_unit_shards parameters are &quot;</span>
                 <span class="s2">&quot;deprecated and will be removed in Jan 2017.  &quot;</span>
                 <span class="s2">&quot;Use a variable scope with a partitioner instead.&quot;</span><span class="p">,</span>
@@ -665,13 +665,13 @@ document.write(`
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Time4ALSTMCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_reuse</span><span class="o">=</span><span class="n">reuse</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">state_is_tuple</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Using a concatenated state is slower and will soon be &quot;</span>
                 <span class="s2">&quot;deprecated.  Use state_is_tuple=True.&quot;</span><span class="p">,</span>
                 <span class="bp">self</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">num_unit_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">num_proj_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: The num_unit_shards and proj_unit_shards parameters are &quot;</span>
                 <span class="s2">&quot;deprecated and will be removed in Jan 2017.  &quot;</span>
                 <span class="s2">&quot;Use a variable scope with a partitioner instead.&quot;</span><span class="p">,</span>
