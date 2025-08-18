@@ -28,7 +28,8 @@ if HASH is not None:
 
 install_requires = [
     "category-encoders>=2.6.0,<3",  # requires packaging
-    "cornac>=1.15.2,<3",  # requires packaging, tqdm
+    "cornac>=1.15.2,<=2.2.2;python_version<='3.8'",
+    "cornac>=2.3.0,<3;python_version>='3.9'",  # requires packaging, tqdm
     "hyperopt>=0.2.7,<1",
     "lightgbm>=4.0.0,<5",
     "locust>=2.12.2,<3",  # requires jinja2
@@ -37,12 +38,12 @@ install_requires = [
     "numpy>=1.26.4;python_version>='3.12'", # https://stackoverflow.com/a/77364602/4505998
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numba>=0.57.0,<1",
+    "numpy<2.0.0",  # See https://github.com/recommenders-team/recommenders/issues/2224
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "pandera[strategies]>=0.6.5,<0.18;python_version<='3.8'",  # For generating fake datasets
     "pandera[strategies]>=0.15.0;python_version>='3.9'",
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
-    "scikit-surprise>=1.1.3",
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "statsmodels<=0.14.1;python_version<='3.8'",
     "statsmodels>=0.14.4;python_version>='3.9'",
@@ -52,7 +53,6 @@ install_requires = [
 # shared dependencies
 extras_require = {
     "gpu": [
-        "fastai>=2.7.11,<3",
         "numpy<1.25.0;python_version<='3.8'",
         "nvidia-ml-py>=11.525.84",
         "spacy<=3.7.5;python_version<='3.8'",
@@ -66,7 +66,7 @@ extras_require = {
     ],
     "spark": [
         "pyarrow>=10.0.1",
-        "pyspark>=3.3.0,<=4",
+        "pyspark>=3.3.0,<4",
     ],
     "dev": [
         "black>=23.3.0",
@@ -88,6 +88,7 @@ extras_require["experimental"] = [
     "nni==1.5",
     "pymanopt>=0.2.5",
     "lightfm>=1.17,<2",
+    "scikit-surprise>=1.1.3",  # Put back in core deps when #2224 is fixed
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.

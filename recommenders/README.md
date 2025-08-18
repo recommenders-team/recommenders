@@ -155,7 +155,7 @@ The models submodule contains implementations of various algorithms that can be 
   *  Next Item Recommendation (NextItNet)
   *  Short-term and Long-term Preference Integrated Recommender (SLi-Rec)
   *  Multi-Interest-Aware Sequential User Modeling (SUM)
-* FastAI
+* embdotbias
 * GeoIMC
 * LightFM
 * LightGBM

@@ -62,6 +62,10 @@ RUN wget -qO /tmp/conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-lates
     /root/conda/bin/conda init bash && \
     /root/conda/bin/conda config --set auto_activate_base false 
 
+# Accept Conda Terms of Service for required channels
+RUN /root/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+RUN /root/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
 # Create Conda environment
 RUN /root/conda/bin/conda create -n Recommenders -c conda-forge -y python=${PYTHON_VERSION} pip
 

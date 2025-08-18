@@ -41,8 +41,8 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke",  # 15.98s
         "tests/functional/examples/test_notebooks_python.py::test_baseline_deep_dive_functional",  # 170.73s
         #
-        "tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke",  # 45.88s
-        "tests/functional/examples/test_notebooks_python.py::test_surprise_svd_functional",  # 503.54s
+        # "tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke",  # 45.88s # Put back in core deps when #2224 is fixed
+        # "tests/functional/examples/test_notebooks_python.py::test_surprise_svd_functional",  # 503.54s # Put back in core deps when #2224 is fixed
         #
         "tests/functional/examples/test_notebooks_python.py::test_geoimc_functional",  # 1006.19s
         #
@@ -90,8 +90,10 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
         #
-        "tests/smoke/examples/test_notebooks_gpu.py::test_fastai_smoke",  # 33.22s
-        "tests/functional/examples/test_notebooks_gpu.py::test_fastai_functional",  # 667.88s
+        "tests/unit/recommenders/models/test_embdotbias_model.py", 
+        "tests/unit/recommenders/models/test_embdotbias_utils.py",
+        "tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke",  # 30.99s
+        "tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional",  # 483.73s
     ],
     "group_gpu_003": [  # Total group time: 2072.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
@@ -165,7 +167,13 @@ pr_gate_test_groups = {
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_data__no_name_collision",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
-        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id_correct",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id_incorrect",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_query_entity_links",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_read_linked_entities",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_query_entity_description",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_search_wikidata_correct",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_search_wikidata_incorrect",
         "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download",
         "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_wrong_bytes",
         "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_maybe",
@@ -242,8 +250,8 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_get_topk_most_similar_users",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_item_frequencies",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_user_frequencies",
-        "tests/unit/recommenders/models/test_surprise_utils.py::test_predict",
-        "tests/unit/recommenders/models/test_surprise_utils.py::test_recommend_k_items",
+        # "tests/unit/recommenders/models/test_surprise_utils.py::test_predict", # Put back in core deps when #2224 is fixed
+        # "tests/unit/recommenders/models/test_surprise_utils.py::test_recommend_k_items", # Put back in core deps when #2224 is fixed
         "tests/unit/recommenders/models/test_vowpal_wabbit.py::test_vw_init_del",
         "tests/unit/recommenders/models/test_vowpal_wabbit.py::test_to_vw_cmd",
         "tests/unit/recommenders/models/test_vowpal_wabbit.py::test_parse_train_cmd",
@@ -307,7 +315,7 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_notebook_execution",
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_notebook_execution_with_parameters",
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_notebook_execution_value_error_fails",
-        "tests/unit/examples/test_notebooks_python.py::test_surprise_deep_dive_runs",
+        # "tests/unit/examples/test_notebooks_python.py::test_surprise_deep_dive_runs", # Put back in core deps when #2224 is fixed
         "tests/unit/examples/test_notebooks_python.py::test_lightgbm",
         "tests/unit/examples/test_notebooks_python.py::test_cornac_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs",
@@ -429,7 +437,7 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart",
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf",
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive",
-        "tests/unit/examples/test_notebooks_gpu.py::test_fastai",
+        "tests/unit/examples/test_notebooks_gpu.py::test_embdotbias",
     ],
     "group_notebooks_gpu_002": [  # Total group time: 241.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)

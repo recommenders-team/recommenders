@@ -68,16 +68,25 @@ def predict_ranking(
     Returns:
         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
-    users, items, preds = [], [], []
-    item = list(model.train_set.iid_map.keys())
-    for uid, user_idx in model.train_set.uid_map.items():
-        user = [uid] * len(item)
-        users.extend(user)
-        items.extend(item)
-        preds.extend(model.score(user_idx).tolist())
+        # Get user and item mappings
+    items = np.array(list(model.train_set.iid_map.keys()))
+    users = np.array(list(model.train_set.uid_map.keys()))
+    n_users = len(users)
+    n_items = len(items)
 
+    # Initialize arrays
+    user_array = np.repeat(users, n_items)
+    item_array = np.tile(items, n_users)
+    pred_array = np.zeros(n_users * n_items, dtype=np.float32)
+
+    # Compute scores
+    for i, user_idx in enumerate(model.train_set.uid_map.values()):
+        scores = model.score(user_idx, None)  # Batch scoring for all items
+        pred_array[i * n_items:(i + 1) * n_items] = scores
+
+    # Create DataFrame
     all_predictions = pd.DataFrame(
-        data={usercol: users, itemcol: items, predcol: preds}
+        data={usercol: user_array, itemcol: item_array, predcol: pred_array}
     )
 
     if remove_seen:
@@ -91,6 +100,6 @@ def predict_ranking(
             axis=1,
         )
         merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
-        return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1)
-    else:
-        return all_predictions
+        return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1).reset_index(drop=True)
+    
+    return all_predictions
