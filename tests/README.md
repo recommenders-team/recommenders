@@ -391,4 +391,9 @@ To delete all repositories older than a specific date, using parallel jobs `-P` 
 az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 5d --untagged" --registry $ACR_NAME /dev/null
 ```
 
+To schedule a purge of all repositories older than a specific date:
+
+```bash
+az acr task create --name purge_all_repos_5dago --cmd "acr purge --filter '.*:.*' --ago 5d --untagged" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
+```
 
