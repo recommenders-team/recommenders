@@ -338,42 +338,52 @@ Example:
 ### Remove old container registry images
 First make sure that you have the role of `Container Registry Repository Contributor`. 
 
-To [delete](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-delete) a specific repository: 
-
-```bash
-az acr repository delete --name myregistry --repository acr-helloworld
-```
+When we compute a test on an AzureML compute, we generate a container image that is stored in the Azure Container Registry (ACR). Each image is stored in a repository. We need to periodically erase the images.
 
 To verify the usage of the container registry:
 
 ```bash
-az acr show-usage --name myregistry
+export ACR_NAME="<your_acr_name>"
+az acr show-usage --name "$ACR_NAME"
 ```
 
-To list all images older than a specific date (without deleting) with the name `azureml/azureml_XXXXXXXX`. (See [more details](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-auto-purge)):
+*NOTE: After purging images, it can take a couple of hours to reflect the changes because the ACR garbage collector runs asynchronously.*
+
+To list all images older than a specific date (without deleting) with the name pattern `azureml/azureml_XXXXXXXX`. (See [more details](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-auto-purge)):
 
 ```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d --dry-run" --registry myregistry /dev/null
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d --dry-run" --registry "$ACR_NAME" /dev/null
 ```
 
-To delete all the images older than a specific date with the name `azureml/azureml_XXXXXXXX`:
+To delete all the images older than a specific date with the name pattern `azureml/azureml_XXXXXXXX`:
 
 ```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry myregistry --timeout 3600 /dev/null
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry "$ACR_NAME" --timeout 3600 /dev/null
 ```
 *NOTE: the default timeout is 600s.*
-
 
 To schedule the purge command, you can use the `--schedule` parameter. The task will appear in the Services/Tasks menu. For example, to schedule the purge command to run every day at 12:00 PM UTC:
 
 ```bash
-az acr task create --name purge_images_5dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
+az acr task create --name purge_images_5dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
+```
+
+To [delete](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-delete) a specific repository: 
+
+```bash
+az acr repository delete --name "$ACR_NAME" --repository acr-helloworld
 ```
 
 To delete all the empty repositories (repositories without tags):
 
 ```bash
-az acr repository list --name myregistry --output tsv | while read repo; do if [ -z "$(az acr repository show-tags --name myregistry --repository "$repo" --output tsv 2>/dev/null)" ]; then az acr repository delete --name myregistry --repository "$repo" --yes; echo "Deleted empty repository: $repo"; else echo "Repository $repo is not empty, skipping..."; fi; done
+az acr repository list --name "$ACR_NAME" --output tsv | while read repo; do \
+    if [ -z "$(az acr repository show-tags --name "$ACR_NAME" --repository "$repo" --output tsv 2>/dev/null)" ]; then \
+        az acr repository delete --name "$ACR_NAME" --repository "$repo" --yes; echo "Deleted empty repository: $repo"; \
+    else \
+        echo "Repository $repo is not empty, skipping..."; \
+    fi; \
+done
 ```
 
 To schedule a task to delete all the empty repositories:
