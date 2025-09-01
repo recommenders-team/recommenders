@@ -335,7 +335,8 @@ Example:
 
 ## Other relevant information
 
-### Remove old container registry images
+### Remove old container registry images and repositories
+
 First make sure that you have the role of `Container Registry Repository Contributor`. 
 
 When we compute a test on an AzureML compute, we generate a container image that is stored in the Azure Container Registry (ACR). Each image is stored in a repository. We need to periodically erase the images and repositories.
