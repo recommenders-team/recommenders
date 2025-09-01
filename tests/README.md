@@ -344,6 +344,12 @@ To [delete](https://learn.microsoft.com/en-us/azure/container-registry/container
 az acr repository delete --name myregistry --repository acr-helloworld
 ```
 
+To verify the usage of the container registry:
+
+```bash
+az acr show-usage --name myregistry
+```
+
 To list all images older than a specific date (without deleting) with the name `azureml/azureml_XXXXXXXX`. (See [more details](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-auto-purge)):
 
 ```bash
@@ -355,8 +361,8 @@ To delete all the images older than a specific date with the name `azureml/azure
 ```bash
 az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --timeout 3600 /dev/null
 ```
-
 *NOTE: the default timeout is 600s.*
+
 
 To schedule the purge command, you can use the `--schedule` parameter. The task will appear in the Services/Tasks menu. For example, to schedule the purge command to run every day at 12:00 PM UTC:
 
