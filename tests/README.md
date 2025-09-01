@@ -380,3 +380,4 @@ To schedule a purge of all repositories older than a specific date, running ever
 az acr task create --name purge_all_repos_3dago --cmd "acr purge --filter '.*:.*' --ago 3d --untagged" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
 ```
 
+
