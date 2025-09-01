@@ -353,13 +353,13 @@ az acr show-usage --name myregistry
 To list all images older than a specific date (without deleting) with the name `azureml/azureml_XXXXXXXX`. (See [more details](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-auto-purge)):
 
 ```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d --dry-run" --registry myregistry /dev/null
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d --dry-run" --registry myregistry /dev/null
 ```
 
 To delete all the images older than a specific date with the name `azureml/azureml_XXXXXXXX`:
 
 ```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --timeout 3600 /dev/null
+az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry myregistry --timeout 3600 /dev/null
 ```
 *NOTE: the default timeout is 600s.*
 
@@ -367,7 +367,7 @@ az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myreg
 To schedule the purge command, you can use the `--schedule` parameter. The task will appear in the Services/Tasks menu. For example, to schedule the purge command to run every day at 12:00 PM UTC:
 
 ```bash
-az acr task create --name purge_images_15dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 15d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
+az acr task create --name purge_images_5dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry myregistry --schedule "0 12 * * *" --context /dev/null
 ```
 
 To delete all the empty repositories (repositories without tags):
