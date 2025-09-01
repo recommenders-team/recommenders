@@ -368,24 +368,27 @@ To schedule the purge command, you can use the `--schedule` parameter. The task 
 az acr task create --name purge_images_5dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
 ```
 
+To list all repositories:
+```bash
+az acr repository list --name $ACR_NAME -o tsv 
+```
+
 To [delete](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-delete) a specific repository: 
 
 ```bash
 az acr repository delete --name "$ACR_NAME" --repository acr-helloworld
 ```
 
-To delete all the empty repositories (repositories without tags):
+To list all repositories older than a specific date (without deleting), using parallel jobs `-P` and a per repo timeout (for long jobs):
 
 ```bash
-az acr repository list --name "$ACR_NAME" --output tsv | while read repo; do \
-    if [ -z "$(az acr repository show-tags --name "$ACR_NAME" --repository "$repo" --output tsv 2>/dev/null)" ]; then \
-        az acr repository delete --name "$ACR_NAME" --repository "$repo" --yes; echo "Deleted empty repository: $repo"; \
-    else \
-        echo "Repository $repo is not empty, skipping..."; \
-    fi; \
-done
+az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 5d --untagged --dry-run" --registry $ACR_NAME /dev/null
 ```
 
-To schedule a task to delete all the empty repositories:
+To delete all repositories older than a specific date, using parallel jobs `-P` and a per repo timeout (for long jobs):
+
+```bash
+az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 5d --untagged" --registry $ACR_NAME /dev/null
+```
 
 
