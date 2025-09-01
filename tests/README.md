@@ -338,7 +338,7 @@ Example:
 ### Remove old container registry images
 First make sure that you have the role of `Container Registry Repository Contributor`. 
 
-When we compute a test on an AzureML compute, we generate a container image that is stored in the Azure Container Registry (ACR). Each image is stored in a repository. We need to periodically erase the images.
+When we compute a test on an AzureML compute, we generate a container image that is stored in the Azure Container Registry (ACR). Each image is stored in a repository. We need to periodically erase the images and repositories.
 
 To verify the usage of the container registry:
 
@@ -347,28 +347,10 @@ export ACR_NAME="<your_acr_name>"
 az acr show-usage --name "$ACR_NAME"
 ```
 
-*NOTE: After purging images, it can take a couple of hours to reflect the changes because the ACR garbage collector runs asynchronously.*
-
-To list all images older than a specific date (without deleting) with the name pattern `azureml/azureml_XXXXXXXX`. (See [more details](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-auto-purge)):
-
-```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d --dry-run" --registry "$ACR_NAME" /dev/null
-```
-
-To delete all the images older than a specific date with the name pattern `azureml/azureml_XXXXXXXX`:
-
-```bash
-az acr run --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry "$ACR_NAME" --timeout 3600 /dev/null
-```
-*NOTE: the default timeout is 600s.*
-
-To schedule the purge command, you can use the `--schedule` parameter. The task will appear in the Services/Tasks menu. For example, to schedule the purge command to run every day at 12:00 PM UTC:
-
-```bash
-az acr task create --name purge_images_5dago --cmd "acr purge --filter 'azureml/.*:.*' --ago 5d" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
-```
+*NOTE: After purging the repositories, it can take a couple of hours to reflect the changes because the ACR garbage collector runs asynchronously.*
 
 To list all repositories:
+
 ```bash
 az acr repository list --name $ACR_NAME -o tsv 
 ```
@@ -391,7 +373,7 @@ To delete all repositories older than a specific date, using parallel jobs `-P` 
 az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 5d --untagged" --registry $ACR_NAME /dev/null
 ```
 
-To schedule a purge of all repositories older than a specific date:
+To schedule a purge of all repositories older than a specific date, running every day at 12:00 PM UTC
 
 ```bash
 az acr task create --name purge_all_repos_5dago --cmd "acr purge --filter '.*:.*' --ago 5d --untagged" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
