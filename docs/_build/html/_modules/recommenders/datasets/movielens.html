@@ -492,7 +492,7 @@ document.write(`
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the MovieLens dataset as pd.DataFrame.</span>
 
-<span class="sd">    Download the dataset from https://files.grouplens.org/datasets/movielens, unzip, and load.</span>
+<span class="sd">    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load.</span>
 <span class="sd">    To load movie information only, you can use load_item_df function.</span>
 
 <span class="sd">    Args:</span>
@@ -641,7 +641,7 @@ document.write(`
     <span class="n">genres_header_100k</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">genres_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># 100k data&#39;s movie genres are encoded as a binary array (the last 19 fields)</span>
-        <span class="c1"># For details, see https://files.grouplens.org/datasets/movielens/ml-100k-README.txt</span>
+        <span class="c1"># For details, see http://files.grouplens.org/datasets/movielens/ml-100k-README.txt</span>
         <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="s2">&quot;100k&quot;</span><span class="p">:</span>
             <span class="n">genres_header_100k</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">19</span><span class="p">))]</span>
             <span class="n">item_header</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genres_header_100k</span><span class="p">)</span>
@@ -705,7 +705,7 @@ document.write(`
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the MovieLens dataset as `pyspark.sql.DataFrame`.</span>
 
-<span class="sd">    Download the dataset from https://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.</span>
+<span class="sd">    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.</span>
 
 <span class="sd">    To load movie information only, you can use `load_item_df` function.</span>
 
@@ -894,7 +894,7 @@ document.write(`
     <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DATA_FORMAT</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">. &quot;</span> <span class="o">+</span> <span class="n">ERROR_MOVIE_LENS_SIZE</span><span class="p">)</span>
 
-    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://files.grouplens.org/datasets/movielens/ml-&quot;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://files.grouplens.org/datasets/movielens/ml-&quot;</span> <span class="o">+</span> <span class="n">size</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
     <span class="n">dirs</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
     <span class="n">maybe_download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">work_directory</span><span class="o">=</span><span class="n">dirs</span><span class="p">)</span></div>
 
@@ -935,7 +935,7 @@ document.write(`
 <span class="sd">    Mock dataset schema to generate fake data for testing purpose.</span>
 <span class="sd">    This schema is configured to mimic the Movielens dataset</span>
 
-<span class="sd">    https://files.grouplens.org/datasets/movielens/ml-100k/</span>
+<span class="sd">    http://files.grouplens.org/datasets/movielens/ml-100k/</span>
 
 <span class="sd">    Dataset schema and generation is configured using pandera.</span>
 <span class="sd">    Please see https://pandera.readthedocs.io/en/latest/schema_models.html</span>
