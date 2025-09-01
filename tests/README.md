@@ -365,18 +365,18 @@ az acr repository delete --name "$ACR_NAME" --repository acr-helloworld
 To list all repositories older than a specific date (without deleting), using parallel jobs `-P` and a per repo timeout (for long jobs):
 
 ```bash
-az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 5d --untagged --dry-run" --registry $ACR_NAME /dev/null
+az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 3d --untagged --dry-run" --registry $ACR_NAME /dev/null
 ```
 
 To delete all repositories older than a specific date, using parallel jobs `-P` and a per repo timeout (for long jobs):
 
 ```bash
-az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 5d --untagged" --registry $ACR_NAME /dev/null
+az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 3d --untagged" --registry $ACR_NAME /dev/null
 ```
 
 To schedule a purge of all repositories older than a specific date, running every day at 12:00 PM UTC
 
 ```bash
-az acr task create --name purge_all_repos_5dago --cmd "acr purge --filter '.*:.*' --ago 5d --untagged" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
+az acr task create --name purge_all_repos_3dago --cmd "acr purge --filter '.*:.*' --ago 3d --untagged" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
 ```
 
