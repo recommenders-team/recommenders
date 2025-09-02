@@ -24,6 +24,7 @@ In this document we show our test infrastructure and how to contribute tests to 
     - [How to add tests to the AzureML pipeline](#how-to-add-tests-to-the-azureml-pipeline)
     - [Setup GitHub Actions with AzureML compute clusters](#setup-github-actions-with-azureml-compute-clusters)
 - [How to execute tests in your local environment](#how-to-execute-tests-in-your-local-environment)
+- [Other relevant information](#other-relevant-information)
 
 ## Test workflows
 
@@ -331,4 +332,52 @@ Example:
     @pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
     def test_to_skip():
         assert False
+
+## Other relevant information
+
+### Remove old container registry images and repositories
+
+First make sure that you have the role of `Container Registry Repository Contributor`. 
+
+When we compute a test on an AzureML compute, we generate a container image that is stored in the Azure Container Registry (ACR). Each image is stored in a repository. We need to periodically erase the images and repositories.
+
+To verify the usage of the container registry:
+
+```bash
+export ACR_NAME="<your_acr_name>"
+az acr show-usage --name "$ACR_NAME"
+```
+
+*NOTE: After purging the repositories, it can take a couple of hours to reflect the changes because the ACR garbage collector runs asynchronously.*
+
+To list all repositories:
+
+```bash
+az acr repository list --name $ACR_NAME -o tsv 
+```
+
+To [delete](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-delete) a specific repository: 
+
+```bash
+az acr repository delete --name "$ACR_NAME" --repository acr-helloworld
+```
+
+To list all repositories older than a specific date (without deleting), using parallel jobs `-P` and a per repo timeout (for long jobs):
+
+```bash
+az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 2d --untagged --dry-run" --registry $ACR_NAME /dev/null
+```
+
+To delete all repositories older than a specific date, using parallel jobs `-P` and a per repo timeout (for long jobs):
+
+```bash
+az acr repository list --name $ACR_NAME -o tsv | xargs -P 5 -I {} timeout 15m az acr run --cmd "acr purge --filter '{}:.*' --ago 2d --untagged" --registry $ACR_NAME /dev/null
+```
+
+To schedule a purge of all repositories older than a specific date, running every day at 12:00 PM UTC
+
+```bash
+az acr task create --name purge_all_repos_2dago --cmd "acr purge --filter '.*:.*' --ago 2d --untagged" --registry "$ACR_NAME" --schedule "0 12 * * *" --context /dev/null
+```
+
 
