@@ -66,7 +66,7 @@ Build Arg|Description|
 `COMPUTE`|Compute to use, options: `cpu`, `gpu` (defaults to `cpu`)|
 `EXTRAS`|Extra dependencies to use, options: `dev`, `gpu`, `spark` (defaults to none ("")); For example, `[gpu,spark]`|
 `GIT_REF`|Git ref of Recommenders to install, options: `main`, `staging`, etc (defaults to `main`); Empty value means editable installation of current clone|
-`JDK_VERSION`|OpenJDK version to use (defaults to `21`)|
+`JDK_VERSION`|OpenJDK version to use (defaults to `>=21`)|
 `PYTHON_VERSION`|Python version to use (defaults to `3.11`)|
 `RECO_DIR`|Path to the copy of Recommenders in the container when `GIT_REF` is empty (defaults to `/root/Recommenders`)|
 
