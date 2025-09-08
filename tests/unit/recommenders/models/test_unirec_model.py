@@ -100,6 +100,7 @@ def test_sasrec_train(base_config, unirec_config_path):
     import datetime
     from recommenders.models.unirec.main import main
 
+    # TODO: Change this test by removing the config with main process and replace it with individual steps
     GLOBAL_CONF = {
         # "config_dir": f"{os.path.join(unirec_config_path, 'unirec', 'config')}",
         "config_dir": unirec_config_path,
