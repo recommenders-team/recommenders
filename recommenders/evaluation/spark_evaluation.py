@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import numpy as np
+import warnings # Added for R-Precision warning
 
 try:
     from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
@@ -213,6 +214,7 @@ class SparkRankingEvaluation:
         self.col_rating = col_rating
         self.col_prediction = col_prediction
         self.threshold = threshold
+        self.rating_pred_raw = rating_pred # Store raw predictions before processing
 
         # Check if inputs are Spark DataFrames.
         if not isinstance(self.rating_true, DataFrame):
@@ -831,7 +833,7 @@ class SparkDiversityEvaluation:
             Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
             introducing serendipity into music recommendation, WSDM 2012
 
-            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+            Eugene Yan, Serendipity's unpopular best friend in Recommender Systems,
             eugeneyan.com, April 2020
 
         Returns:
