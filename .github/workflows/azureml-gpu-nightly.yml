@@ -6,30 +6,31 @@
 name: azureml-gpu-nightly
 
 on:
-  #          ┌───────────── minute (0 - 59)
-  #          │ ┌───────────── hour (0 - 23)
-  #          │ │  ┌───────────── day of the month (1 - 31)
-  #          │ │  │  ┌───────────── month (1 - 12 or JAN-DEC)
-  #          │ │  │  │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
-  #          │ │  │  │ │
-  #          │ │  │  │ │
-  schedule: 
-    - cron: '0 0 */5 * *'  # running every 5 days at 12AM
-    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  # Stopped AzureML MLOps. See #2251
+  # #          ┌───────────── minute (0 - 59)
+  # #          │ ┌───────────── hour (0 - 23)
+  # #          │ │  ┌───────────── day of the month (1 - 31)
+  # #          │ │  │  ┌───────────── month (1 - 12 or JAN-DEC)
+  # #          │ │  │  │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  # #          │ │  │  │ │
+  # #          │ │  │  │ │
+  # schedule: 
+  #   - cron: '0 0 */5 * *'  # running every 5 days at 12AM
+  #   # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
-  push:
-    # Because we can't schedule runs for non-main branches,
-    # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [staging]
-    paths:
-      # Tests will be run only when there are changes in the code:
-      - examples/**
-      - '!examples/**/*.md'
-      - recommenders/**
-      - '!recommenders/**/*.md'
-      - tests/**
-      - '!tests/**/*.md'
-      - setup.py
+  # push:
+  #   # Because we can't schedule runs for non-main branches,
+  #   # to ensure we are running the build on the staging branch, we can add push policy for it
+  #   branches: [staging]
+  #   paths:
+  #     # Tests will be run only when there are changes in the code:
+  #     - examples/**
+  #     - '!examples/**/*.md'
+  #     - recommenders/**
+  #     - '!recommenders/**/*.md'
+  #     - tests/**
+  #     - '!tests/**/*.md'
+  #     - setup.py
 
 
   # Enable manual trigger

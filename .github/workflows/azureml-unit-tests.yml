@@ -6,21 +6,22 @@
 name: azureml-unit-tests
 
 on:
-  pull_request:
-    branches:
-      - 'staging'
-      - 'main'
-    paths:
-      # Tests will be run only when there are changes in the code:
-      - examples/**
-      - '!examples/**/*.md'
-      - recommenders/**
-      - '!recommenders/**/*.md'
-      - tests/**
-      - '!tests/**/*.md'
-      - setup.py
-      - .github/**
-    types: [opened, synchronize, reopened, ready_for_review]
+  # Stopped AzureML MLOps. See #2251
+  # pull_request:
+  #   branches:
+  #     - 'staging'
+  #     - 'main'
+  #   paths:
+  #     # Tests will be run only when there are changes in the code:
+  #     - examples/**
+  #     - '!examples/**/*.md'
+  #     - recommenders/**
+  #     - '!recommenders/**/*.md'
+  #     - tests/**
+  #     - '!tests/**/*.md'
+  #     - setup.py
+  #     - .github/**
+  #   types: [opened, synchronize, reopened, ready_for_review]
 
   # Enable manual trigger
   workflow_dispatch:
