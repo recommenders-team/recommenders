@@ -16,8 +16,8 @@ from recommenders.utils.notebook_utils import is_databricks
 
 
 CRITEO_URL = {
-    "full": "https://ndownloader.figshare.com/files/10082655",
-    "sample": "https://github.com/recommenders-team/datasets/raw/main/Criteo/dac_sample.tar.gz",
+    "full": "https://huggingface.co/datasets/Recommenders/Criteo/resolve/main/dac.tar.gz",
+    "sample": "https://huggingface.co/datasets/Recommenders/Criteo/resolve/main/dac_sample.tar.gz",
 }
 DEFAULT_HEADER = (
     ["label"]
