@@ -62,7 +62,7 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
-        shell: bash -el {0}
+        shell: bash -li {0}
     strategy:
       matrix:
         python-version:
