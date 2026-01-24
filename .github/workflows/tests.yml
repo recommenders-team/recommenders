@@ -74,34 +74,22 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
-      - name: Set up base environment
-        run: |
-          # Install Conda
-          if ! command -v conda &> /dev/null; then
-            wget -qO conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-            bash conda.sh -bf -p ~/conda
-            ~/conda/bin/conda init bash
-            ~/conda/bin/conda config --set auto_activate false
-            ~/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-            ~/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-          fi
-
-          # Install yq
-          if ! command -v yq &> /dev/null; then
-            wget https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz -O - | tar xz && sudo mv yq_linux_amd64 /usr/local/bin/yq
-          fi
       - name: Install dependencies and execute tests
         run: |
-          TIMESTAMP=$(date +%Y%m%d%H%M%S)
-          # Create Conda environment
-          conda create -n Recommenders-${TIMESTAMP}-${GITHUB_SHA} -c conda-forge -y python=${{ matrix.python-version }} pip
+          uv venv --python ${{ matrix.python-version }}
+          source .venv/bin/activate
 
           # Install Recommenders and its dependencies
-          conda activate Recommenders-${TIMESTAMP}-${GITHUB_SHA}
-          if [[ "${{ matrix.group }}" =~ spark ]]; then conda install -c conda-forge -y "openjdk>=21,<23"; fi
-          if [[ ! "${{ matrix.group }}" =~ gpu ]]; then pip install pytest-xdist; fi
+          if [[ "${{ matrix.group }}" =~ spark ]]; then
+            sdk use java 21.0.2-open
+          fi
+
+          if [[ ! "${{ matrix.group }}" =~ gpu ]]; then
+            uv pip install pytest-xdist
+          fi
+
           EXTRAS=dev${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}${{ contains(matrix.group, 'spark') && ',spark' || '' }}
-          pip install .["${EXTRAS}"]
+          uv pip install "recommenders @ .[${EXTRAS}]"
 
           # Execute tests
           pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
