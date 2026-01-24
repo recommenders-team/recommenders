@@ -60,6 +60,9 @@ jobs:
     needs: get-test-groups
     runs-on: ${{ contains(matrix.group, 'gpu') && 'self-hosted' || 'ubuntu-24.04' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
+    defaults:
+      run:
+        shell: bash -el {0}
     strategy:
       matrix:
         python-version:
@@ -72,7 +75,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v5
       - name: Set up base environment
-        shell: bash
         run: |
           # Install Conda
           if ! command -v conda &> /dev/null; then
@@ -89,15 +91,12 @@ jobs:
             wget https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz -O - | tar xz && sudo mv yq_linux_amd64 /usr/local/bin/yq
           fi
       - name: Install dependencies and execute tests
-        shell: bash
         run: |
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
-          CONDA_DIR=$(which conda)
           # Create Conda environment
           conda create -n Recommenders-${TIMESTAMP}-${GITHUB_SHA} -c conda-forge -y python=${{ matrix.python-version }} pip
 
           # Install Recommenders and its dependencies
-          source ${CONDA_DIR%/condabin/conda}/bin/activate
           conda activate Recommenders-${TIMESTAMP}-${GITHUB_SHA}
           if [[ "${{ matrix.group }}" =~ spark ]]; then conda install -c conda-forge -y "openjdk>=21,<23"; fi
           if [[ ! "${{ matrix.group }}" =~ gpu ]]; then pip install pytest-xdist; fi
@@ -105,6 +104,4 @@ jobs:
           pip install .["${EXTRAS}"]
 
           # Execute tests
-          source ${CONDA_DIR%/condabin/conda}/bin/activate
-          conda activate Recommenders-${TIMESTAMP}-${GITHUB_SHA}
           pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
