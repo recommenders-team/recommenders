@@ -88,26 +88,23 @@ jobs:
           if ! command -v yq &> /dev/null; then
             wget https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz -O - | tar xz && sudo mv yq_linux_amd64 /usr/local/bin/yq
           fi
-      - name: Install dependencies
+      - name: Install dependencies and execute tests
         shell: bash
         run: |
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          CONDA_DIR=$(which conda)
           # Create Conda environment
-          conda create -n Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA} -c conda-forge -y python=${{ matrix.python-version }} pip
+          conda create -n Recommenders-${TIMESTAMP}-${GITHUB_SHA} -c conda-forge -y python=${{ matrix.python-version }} pip
 
           # Install Recommenders and its dependencies
-          conda info --envs
-          CONDA_PATH=$(which conda)
-          source ${CONDA_PATH%/condabin/conda}/bin/activate
-          conda activate Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA}
+          source ${CONDA_DIR%/condabin/conda}/bin/activate
+          conda activate Recommenders-${TIMESTAMP}-${GITHUB_SHA}
           if [[ "${{ matrix.group }}" =~ spark ]]; then conda install -c conda-forge -y "openjdk>=21,<23"; fi
           if [[ ! "${{ matrix.group }}" =~ gpu ]]; then pip install pytest-xdist; fi
           EXTRAS=dev${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}${{ contains(matrix.group, 'spark') && ',spark' || '' }}
           pip install .["${EXTRAS}"]
-      - name: Execute tests
-        shell: bash
-        run: |
-          conda info --envs
-          CONDA_PATH=$(which conda)
-          source ${CONDA_PATH%/condabin/conda}/bin/activate
-          conda activate Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA}
+
+          # Execute tests
+          source ${CONDA_DIR%/condabin/conda}/bin/activate
+          conda activate Recommenders-${TIMESTAMP}-${GITHUB_SHA}
           pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
