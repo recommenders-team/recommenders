@@ -60,9 +60,6 @@ jobs:
     needs: get-test-groups
     runs-on: ${{ contains(matrix.group, 'gpu') && 'self-hosted' || 'ubuntu-24.04' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
-    container:
-      image: ${{ contains(matrix.group, 'gpu') && 'nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04@sha256:3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c' || 'buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3' }}
-      options: ${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }}
     strategy:
       matrix:
         python-version:
@@ -77,21 +74,15 @@ jobs:
       - name: Set up base environment
         shell: bash
         run: |
-          # Verify GPU
-          nvidia-smi
-
-          # Install yq.  See https://github.com/mikefarah/yq
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y wget git
-          wget https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz -O - | tar xz && mv yq_linux_amd64 /usr/local/bin/yq
-
           # Install Conda
-          wget -qO /tmp/conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-          bash /tmp/conda.sh -bf -p ~/conda
-          ~/conda/bin/conda init bash
-          ~/conda/bin/conda config --set auto_activate false
-          ~/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-          ~/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+          if ! command -v conda &> /dev/null; then
+            wget -qO conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+            bash conda.sh -bf -p ~/conda
+            ~/conda/bin/conda init bash
+            ~/conda/bin/conda config --set auto_activate false
+            ~/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+            ~/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+          fi
       - name: Install dependencies
         shell: bash
         run: |
