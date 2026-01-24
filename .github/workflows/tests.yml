@@ -95,6 +95,7 @@ jobs:
           conda create -n Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA} -c conda-forge -y python=${{ matrix.python-version }} pip
 
           # Install Recommenders and its dependencies
+          conda init
           conda activate Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA}
           if [[ "${{ matrix.group }}" =~ spark ]]; then conda install -c conda-forge -y "openjdk>=21,<23"; fi
           if [[ ! "${{ matrix.group }}" =~ gpu ]]; then pip install pytest-xdist; fi
@@ -103,5 +104,6 @@ jobs:
       - name: Execute tests
         shell: bash
         run: |
+          conda init
           conda activate Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA}
           pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
