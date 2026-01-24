@@ -95,6 +95,7 @@ jobs:
           conda create -n Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA} -c conda-forge -y python=${{ matrix.python-version }} pip
 
           # Install Recommenders and its dependencies
+          conda info --envs
           CONDA_PATH=$(which conda)
           source ${CONDA_PATH%/condabin/conda}/bin/activate
           conda activate Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA}
@@ -105,6 +106,7 @@ jobs:
       - name: Execute tests
         shell: bash
         run: |
+          conda info --envs
           CONDA_PATH=$(which conda)
           source ${CONDA_PATH%/condabin/conda}/bin/activate
           conda activate Recommenders-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA}
