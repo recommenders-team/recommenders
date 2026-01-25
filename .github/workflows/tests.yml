@@ -85,12 +85,12 @@ jobs:
             --build-arg PYTHON_VERSION=${{ matrix.python-version }}
       - name: Execute tests in container
         run: |
-          docker run --rm --gpus all \
+          docker run --gpus all \
             reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} \
             bash -c 'source .venv/bin/activate; pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
-      - name: Clean up
-        if: always()
-        run: |
-          if docker image inspect reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} >/dev/null 2>&1; then
-            docker image rm reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }}
-          fi
+      # - name: Clean up
+      #   if: always()
+      #   run: |
+      #     if docker image inspect reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} >/dev/null 2>&1; then
+      #       docker image rm reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }}
+      #     fi

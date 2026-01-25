@@ -25,7 +25,7 @@ FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f71438902872
 # Choose an appropriate GPU compute image
 #####################################################################
 # * [nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.8.1/ubuntu2404/devel/cudnn/Dockerfile)
-#   + [Created on 20265-03-14](https://hub.docker.com/layers/nvidia/cuda/12.8.1-cudnn-devel-ubuntu24.04/images/sha256-3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c)
+#   + [Created on 2025-03-14](https://hub.docker.com/layers/nvidia/cuda/12.8.1-cudnn-devel-ubuntu24.04/images/sha256-3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c)
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
 FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04@sha256:3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c AS gpu
 
