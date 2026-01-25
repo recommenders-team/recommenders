@@ -95,7 +95,8 @@ RUN source .venv/bin/activate && \
     if [[ ! ${COMPUTE} =~ gpu ]]; then \
       uv pip install pytest-xdist; \
     fi
-RUN source .venv/bin/activate && \
+RUN --mount=type=cache,target=~/.cache/uv \
+    source .venv/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
         uv pip install "recommenders${EXTRAS} @ ."; \
     else \
