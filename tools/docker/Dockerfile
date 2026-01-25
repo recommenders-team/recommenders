@@ -24,10 +24,10 @@ FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f71438902872
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
-# * [nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/13.1.1/ubuntu2404/devel/cudnn/Dockerfile)
-#   + [Created on 2026-01-23](https://hub.docker.com/layers/nvidia/cuda/13.1.1-cudnn-devel-ubuntu24.04/images/sha256-8be896813bf8bf805a6eca85969bf0b2957cba9e3474e7759f56fe9206d838b8)
+# * [nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.8.1/ubuntu2404/devel/cudnn/Dockerfile)
+#   + [Created on 20265-03-14](https://hub.docker.com/layers/nvidia/cuda/12.8.1-cudnn-devel-ubuntu24.04/images/sha256-3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c)
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
-FROM nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04@sha256:8be896813bf8bf805a6eca85969bf0b2957cba9e3474e7759f56fe9206d838b8 AS gpu
+FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04@sha256:3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c AS gpu
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
@@ -42,6 +42,8 @@ RUN apt-get update && \
 # because editable installation is required.
 #####################################################################
 FROM ${COMPUTE} AS deps
+
+ARG COMPUTE
 
 # Valid versions: 3.8, 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
@@ -90,6 +92,10 @@ COPY ./ ./
 
 RUN uv venv --python ${PYTHON_VERSION}
 RUN source .venv/bin/activate && \
+    if [[ ! ${COMPUTE} =~ gpu ]]; then \
+      uv pip install pytest-xdist; \
+    fi
+RUN source .venv/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
         uv pip install "recommenders${EXTRAS} @ ."; \
     else \
@@ -98,11 +104,6 @@ RUN source .venv/bin/activate && \
     jupyter notebook --generate-config && \
     echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
-
-RUN source .venv/bin/activate && \
-    if [[ ! ${COMPUTE} =~ gpu ]]; then \
-      uv pip install pytest-xdist; \
-    fi
 
 # Setup Jupyter notebook
 EXPOSE 8888
