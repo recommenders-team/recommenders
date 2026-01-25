@@ -92,4 +92,4 @@ jobs:
           uv pip install "recommenders[${EXTRAS}] @ ."
 
           # Execute tests
-          pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
+          python -m pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
