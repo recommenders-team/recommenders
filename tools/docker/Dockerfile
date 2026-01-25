@@ -24,14 +24,14 @@ FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f71438902872
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
-# * [nvidia/cuda:13.1.0-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/13.1.0/ubuntu2404/devel/Dockerfile)
-#   + [Created on 2025-12-15](https://hub.docker.com/layers/nvidia/cuda/13.1.0-devel-ubuntu24.04/images/sha256-0725ed044e80c230fcd54218ae3edc2855897ef7813b20868bdb53b03b99ea1c)
+# * [nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/13.1.1/ubuntu2404/devel/cudnn/Dockerfile)
+#   + [Created on 2026-01-23](https://hub.docker.com/layers/nvidia/cuda/13.1.1-cudnn-devel-ubuntu24.04/images/sha256-8be896813bf8bf805a6eca85969bf0b2957cba9e3474e7759f56fe9206d838b8)
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
-FROM nvidia/cuda:13.1.0-devel-ubuntu24.04@sha256:0725ed044e80c230fcd54218ae3edc2855897ef7813b20868bdb53b03b99ea1c AS gpu
+FROM nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04@sha256:8be896813bf8bf805a6eca85969bf0b2957cba9e3474e7759f56fe9206d838b8 AS gpu
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y wget git && \
+    apt-get install -y wget git zip unzip && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
 
