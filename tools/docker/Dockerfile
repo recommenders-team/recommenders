@@ -48,31 +48,20 @@ ARG PYTHON_VERSION="3.11"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-WORKDIR /root
 USER root:root
 
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-lc"]
 
 # Install yq
 # See https://github.com/mikefarah/yq
-RUN wget https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz -O - |\
+RUN wget -qO- https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz | \
     tar xz && mv yq_linux_amd64 /usr/local/bin/yq
 
-# Install Conda
-RUN wget -qO /tmp/conda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
-    bash /tmp/conda.sh -bf -p /root/conda && \
-    /root/conda/bin/conda clean -ay && \
-    rm -rf /root/conda/pkgs && \
-    rm /tmp/conda.sh && \
-    /root/conda/bin/conda init bash && \
-    /root/conda/bin/conda config --set auto_activate false 
+# Install SDKMAN!
+RUN wget -qO- "https://get.sdkman.io?ci=true&rcupdate=false" | bash
 
-# Accept Conda Terms of Service for required channels
-RUN /root/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-RUN /root/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-
-# Create Conda environment
-RUN /root/conda/bin/conda create -n Recommenders -c conda-forge -y python=${PYTHON_VERSION} pip
+# Install uv
+RUN wget -qO- https://astral.sh/uv/install.sh | bash
 
 
 #####################################################################
@@ -88,36 +77,32 @@ ARG EXTRAS=""
 # Empty value ("") indicates editable installation of current clone
 ARG GIT_REF="main"
 
-ARG JDK_VERSION="21"
-
-ARG RECO_DIR="/root/Recommenders"
-
-# Copy Recommenders into the image
-COPY ./ ${RECO_DIR}
+WORKDIR /root/Recommenders
 
 # Install Recommenders and its dependencies
-RUN source /root/conda/bin/activate && \
-    conda activate Recommenders && \
-    if [[ "${EXTRAS}" =~ spark ]]; then conda install -c conda-forge -y "openjdk>=${JDK_VERSION},<23"; fi && \
+RUN if [[ "${EXTRAS}" =~ spark ]]; then \
+      sdk install java 21.0.2-open; \
+      sdk use java 21.0.2-open; \
+    fi
+
+# Copy Recommenders into the image
+COPY ./ ./
+
+RUN uv venv --python ${PYTHON_VERSION}
+RUN source .venv/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
-        pip install ${RECO_DIR}${EXTRAS}; \
+        uv pip install "recommenders${EXTRAS} @ ."; \
     else \
-        pip install recommenders${EXTRAS}@git+https://github.com/recommenders-team/recommenders.git@${GIT_REF}; \
+        uv pip install recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
     fi && \
     jupyter notebook --generate-config && \
     echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
-# Activate Recommenders Conda environment
-ENV PS1='(Recommenders) \[\]\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ \[\]'
-ENV PATH="/root/conda/envs/Recommenders/bin:/root/conda/condabin:${PATH}"
-ENV CONDA_SHLVL='1'
-ENV CONDA_PROMPT_MODIFIER='(Recommenders) '
-ENV CONDA_PREFIX="/root/conda/envs/Recommenders"
-ENV CONDA_EXE="/root/conda/bin/conda"
-ENV CONDA_PYTHON_EXE="/root/conda/bin/python"
-ENV JAVA_HOME="/root/conda/envs/Recommenders/lib/jvm"
-ENV JAVA_LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
+RUN source .venv/bin/activate && \
+    if [[ ! ${COMPUTE} =~ gpu ]]; then \
+      uv pip install pytest-xdist; \
+    fi
 
 # Setup Jupyter notebook
 EXPOSE 8888

@@ -62,34 +62,29 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
-        shell: bash -li {0}
+        shell: bash
     strategy:
       matrix:
         python-version:
           # - '3.8'
           # - '3.9'
-          - '3.10'
-          # - '3.11'
+          # - '3.10'
+          - '3.11'
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
-      - name: Install dependencies and execute tests
+      - name: Build container
         run: |
-          # Install Recommenders and its dependencies
-          if [[ "${{ matrix.group }}" =~ spark ]]; then
-            sdk use java 21.0.2-open
-          fi
-
-          uv venv --python ${{ matrix.python-version }}
-          source .venv/bin/activate
-        
-          if [[ ! "${{ matrix.group }}" =~ gpu ]]; then
-            uv pip install pytest-xdist
-          fi
-
-          EXTRAS=dev${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}${{ contains(matrix.group, 'spark') && ',spark' || '' }}
-          uv pip install "recommenders[${EXTRAS}] @ ."
-
-          # Execute tests
-          python -m pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")
+          docker build . \
+            -t reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} \
+            -f ${{ inputs.dockerfile }} \
+            --build-arg COMPUTE=${{ contains(matrix.group, 'gpu') && 'gpu' || 'cpu' }} \
+            --build-arg EXTRAS=[dev${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}${{ contains(matrix.group, 'spark') && ',spark' || '' }}] \
+            --build-arg GIT_REF= \
+            --build-arg PYTHON_VERSION=${{ matrix.python-version }}
+      - name: Execute tests in container
+        run: |
+          docker run --rm --gpus all \
+            reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} \
+            bash -lc 'source .venv/bin/activate; pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\\" \\")" "${{ inputs.config-file }}")'
