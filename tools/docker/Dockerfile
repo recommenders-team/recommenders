@@ -31,7 +31,7 @@ FROM nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04@sha256:8be896813bf8bf805a6eca859
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y wget git zip unzip && \
+    apt-get install -y wget git zip unzip curl && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
 
