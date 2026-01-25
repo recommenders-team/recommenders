@@ -87,4 +87,4 @@ jobs:
         run: |
           docker run --rm --gpus all \
             reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} \
-            bash -c 'source .venv/bin/activate; pytest ${{ contains(matrix.group, 'gpu') && '' || '-n auto' }} --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\\" \\")" "${{ inputs.config-file }}")'
+            bash -c 'source .venv/bin/activate; pytest ${{ contains(matrix.group, 'gpu') && '' || '-n auto' }} --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
