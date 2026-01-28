@@ -5,6 +5,19 @@
 
 # This is a reusable workflow called by other workflows to run
 # different groups of tests categorized by their types.
+#
+# Tests collected in tests/test_groups.yml, are grouped based on their
+# * type
+#   + pr_gate
+#   + nightly
+#   + experimental
+# * compute
+#   + cpu
+#   + gpu
+#   + spark
+#
+# In order to speed up testing, the testing workflows will run the
+# tests in parallel according to the groups obtained from this action.
 
 name: Tests
 
@@ -15,7 +28,8 @@ on:
         required: false
         type: string
         default: cpu
-        description: Test compute - cpu, gpu or spark
+        description: Test compute - cpu, gpu or spark.  It is only used for
+          nightly not pr_gate
       config-file:
         required: false
         type: string
@@ -46,18 +60,27 @@ jobs:
       groups: ${{ steps.get-test-groups.outputs.groups }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+
       - name: Get test group names
         id: get-test-groups
-        uses: ./.github/actions/get-test-groups
-        with:
-          compute: ${{ inputs.compute }}
-          config-file: ${{ inputs.config-file }}
-          type: ${{ inputs.type }}
+        shell: bash
+        run: |
+          if [[ ${{ inputs.type }} == "nightly" ]]; then
+            TEST_GROUPS_STR=$(yq -o json -I 0 \
+              '[.${{ inputs.type }} | keys | .[] | select(contains("${{ inputs.compute }}"))]' \
+              ${{ inputs.config-file }})
+          else
+            TEST_GROUPS_STR=$(yq -o json -I 0 \
+              '.${{ inputs.type }} | keys' ${{ inputs.config-file }})
+          fi
+          echo "Test Groups: ${TEST_GROUPS_STR}"
+          echo "groups=${TEST_GROUPS_STR}" >> $GITHUB_OUTPUT
 
   execute-tests:
     name: ${{ join(matrix.*, ', ') }}
     needs: get-test-groups
+    # Docker is required on the runner
     runs-on: ${{ contains(matrix.group, 'gpu') && 'self-hosted' || 'ubuntu-24.04' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
@@ -73,24 +96,41 @@ jobs:
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v5
-      - name: Build container
+        uses: actions/checkout@v6
+      - name: Build image
+        env:
+          IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
         run: |
           docker build . \
-            -t reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} \
+            -t ${IMAGE_TAG} \
             -f ${{ inputs.dockerfile }} \
             --build-arg COMPUTE=${{ contains(matrix.group, 'gpu') && 'gpu' || 'cpu' }} \
             --build-arg EXTRAS=[dev${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}${{ contains(matrix.group, 'spark') && ',spark' || '' }}] \
             --build-arg GIT_REF= \
             --build-arg PYTHON_VERSION=${{ matrix.python-version }}
+
       - name: Execute tests in container
+        env:
+          IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
         run: |
-          docker run --gpus all \
-            reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} \
-            bash -c 'source .venv/bin/activate; pytest --durations 0 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
-      # - name: Clean up
-      #   if: always()
-      #   run: |
-      #     if docker image inspect reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }} >/dev/null 2>&1; then
-      #       docker image rm reco-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${{ matrix.group }}-${{ matrix.python-version }}
-      #     fi
+          docker run --rm \
+            ${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }} \
+            ${IMAGE_TAG} \
+            bash -c '\
+              source .venv/bin/activate; \
+              pytest --durations 0 \
+                ${{ contains(matrix.group, 'gpu') && '' || '-n auto' }} \
+                $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" \
+                "${{ inputs.config-file }}")'
+
+      - name: Clean up
+        if: always()
+        env:
+          IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
+        run: |
+          if docker image ls | grep ${IMAGE_TAG} > /dev/null; then
+            if docker container ls -a | grep ${IMAGE_TAG} > /dev/null; then
+              docker container rm -f $(docker ps -a | grep "${IMAGE_TAG}" | awk '{print $1}')
+            fi
+            docker image rm ${IMAGE_TAG}
+          fi

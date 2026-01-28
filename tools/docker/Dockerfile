@@ -29,11 +29,11 @@ FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f71438902872
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
 FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04@sha256:3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c AS gpu
 
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y wget git zip unzip curl && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y git zip unzip curl
 
 
 #####################################################################
@@ -56,19 +56,19 @@ SHELL ["/bin/bash", "-lc"]
 
 # Install yq
 # See https://github.com/mikefarah/yq
-RUN wget -qO- https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz | \
+RUN curl -LsSf https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz | \
     tar xz && mv yq_linux_amd64 /usr/local/bin/yq
 
 # Install SDKMAN!
-RUN wget -qO- "https://get.sdkman.io?ci=true&rcupdate=false" | bash
+RUN curl -LsSf "https://get.sdkman.io?ci=true&rcupdate=false" | bash
 
 # Install uv
-RUN wget -qO- https://astral.sh/uv/install.sh | bash
+RUN curl -LsSf https://astral.sh/uv/install.sh | bash
 
 
 #####################################################################
 # Final Stage
-# Install Recommenders
+# Install Recommenders and its dependencies
 #####################################################################
 FROM deps AS final
 
@@ -81,7 +81,11 @@ ARG GIT_REF="main"
 
 WORKDIR /root/Recommenders
 
-# Install Recommenders and its dependencies
+ENV UV_LINK_MODE=copy
+ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
+ENV UV_CACHE_DIR=/opt/uv-cache/
+
+# Install OpenJDK
 RUN if [[ "${EXTRAS}" =~ spark ]]; then \
       sdk install java 21.0.2-open; \
       sdk use java 21.0.2-open; \
@@ -90,22 +94,31 @@ RUN if [[ "${EXTRAS}" =~ spark ]]; then \
 # Copy Recommenders into the image
 COPY ./ ./
 
-RUN uv venv --python ${PYTHON_VERSION}
-RUN source .venv/bin/activate && \
+# Set up venv
+RUN --mount=type=cache,target=/opt/uv-cache/uv/python,sharing=locked \
+    uv venv --python ${PYTHON_VERSION}
+
+# Install pytest-xdist for parallel testing
+RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
+    source .venv/bin/activate && \
     if [[ ! ${COMPUTE} =~ gpu ]]; then \
       uv pip install pytest-xdist; \
     fi
-RUN --mount=type=cache,target=~/.cache/uv \
+
+# Install Recommenders
+RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
     source .venv/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
         uv pip install "recommenders${EXTRAS} @ ."; \
     else \
         uv pip install recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
-    fi && \
+    fi
+
+# Setup Jupyter notebook
+RUN source .venv/bin/activate && \
     jupyter notebook --generate-config && \
     echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
-# Setup Jupyter notebook
 EXPOSE 8888
 CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.allow_origin='*'", "--IdentityProvider.token=''"]
