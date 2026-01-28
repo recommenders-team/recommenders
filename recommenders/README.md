@@ -14,7 +14,7 @@ Some dependencies require compilation during pip installation. On Linux this can
 ```bash
 sudo apt-get install -y build-essential libpython<version>
 ``` 
-where `<version>` should be the Python version (e.g. `3.8`).
+where `<version>` should be the Python version (e.g. `3.11`).
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
@@ -53,10 +53,16 @@ pip install recommenders[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda environment, this can be installed with
+You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU.
+
+**Note:** uv cannot install system-level dependencies like CUDA. Install CUDA using your system package manager:
 ```bash
-conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1
+# Ubuntu/Debian
+sudo apt install nvidia-cuda-toolkit
+
+# Or download from NVIDIA: https://developer.nvidia.com/cuda-downloads
 ```
+
 For a virtual environment, you may use a [docker container by Nvidia](../SETUP.md#using-a-virtual-environment). 
 
 For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.

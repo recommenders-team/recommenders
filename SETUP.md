@@ -111,7 +111,7 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 
 ## Setup for Experimental 
-<!-- FIXME FIXME 23/04/01 move to experimental. Have not tested -->
+<!-- FIXME 23/04/01 move to experimental. Have not tested -->
 The `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/). 
 
 ## Windows-Specific Instructions
@@ -120,9 +120,14 @@ For Spark features to work, make sure Java and Spark are installed and respectiv
 
 ## MacOS-Specific Instructions
 
-We recommend using [Homebrew](https://brew.sh/) to install the dependencies on macOS, including conda (please remember to add conda's path to `$PATH`). One may also need to install lightgbm using Homebrew before pip install the package.
+We recommend using [Homebrew](https://brew.sh/) to install system dependencies on macOS. One may also need to install lightgbm using Homebrew before pip install the package.
 
-If zsh is used, one will need to use `pip install 'recommenders[<extras>]'` to install \<extras\>.
+To install uv on macOS:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+If zsh is used, one will need to use `uv pip install 'recommenders[<extras>]'` to install \<extras\>.
 
 For Spark features to work, make sure Java and Spark are installed first. Also make sure environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` are set to the the same python executable.
 <!-- TO DO: Pytorch m1 mac GPU suppoort -->

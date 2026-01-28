@@ -1,8 +1,12 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import tensorflow as tf
+import numpy as np
+import torch
+import torch.nn as nn
+
 from recommenders.models.sasrec.model import SASREC, Encoder, LayerNormalization
+from recommenders.models.sasrec.model import pad_sequences
 
 
 class SSEPT(SASREC):
@@ -45,22 +49,18 @@ class SSEPT(SASREC):
         self.hidden_units = self.item_embedding_dim + self.user_embedding_dim
 
         # New, user embedding
-        self.user_embedding_layer = tf.keras.layers.Embedding(
-            input_dim=self.user_num + 1,
-            output_dim=self.user_embedding_dim,
-            name="user_embeddings",
-            mask_zero=True,
-            input_length=1,
-            embeddings_regularizer=tf.keras.regularizers.L2(self.l2_reg),
+        self.user_embedding_layer = nn.Embedding(
+            self.user_num + 1,
+            self.user_embedding_dim,
+            padding_idx=0,
         )
-        self.positional_embedding_layer = tf.keras.layers.Embedding(
+
+        self.positional_embedding_layer = nn.Embedding(
             self.seq_max_len,
             self.user_embedding_dim + self.item_embedding_dim,  # difference
-            name="positional_embeddings",
-            mask_zero=False,
-            embeddings_regularizer=tf.keras.regularizers.L2(self.l2_reg),
         )
-        self.dropout_layer = tf.keras.layers.Dropout(self.dropout_rate)
+
+        self.dropout_layer = nn.Dropout(self.dropout_rate)
         self.encoder = Encoder(
             self.num_blocks,
             self.seq_max_len,
@@ -70,54 +70,69 @@ class SSEPT(SASREC):
             self.conv_dims,
             self.dropout_rate,
         )
-        self.mask_layer = tf.keras.layers.Masking(mask_value=0)
         self.layer_normalization = LayerNormalization(
             self.seq_max_len, self.hidden_units, 1e-08
         )
 
-    def call(self, x, training):
+        # Re-initialize weights for the new layers
+        self._init_weights()
+
+    def _init_weights(self):
+        """Initialize weights to match TensorFlow/Keras defaults.
+
+        Overrides parent to also initialize user_embedding_layer.
+        """
+        # Call parent initialization
+        super()._init_weights()
+
+        # Initialize user embedding with uniform distribution matching TF default
+        nn.init.uniform_(self.user_embedding_layer.weight, -0.05, 0.05)
+        # Keep padding_idx as zeros
+        with torch.no_grad():
+            self.user_embedding_layer.weight[0].fill_(0)
+
+        # Re-initialize positional embeddings (which has different dim in SSEPT)
+        nn.init.uniform_(self.positional_embedding_layer.weight, -0.05, 0.05)
+
+    def forward(self, x, training=True):
         """Model forward pass.
 
         Args:
-            x (tf.Tensor): Input tensor.
-            training (tf.Tensor): Training tensor.
+            x (dict): Input dictionary containing 'users', 'input_seq', 'positive', 'negative'.
+            training (bool): Training mode flag.
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor:
+            torch.Tensor, torch.Tensor, torch.Tensor:
             - Logits of the positive examples.
             - Logits of the negative examples.
             - Mask for nonzero targets
         """
-
         users = x["users"]
         input_seq = x["input_seq"]
         pos = x["positive"]
         neg = x["negative"]
 
-        mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
+        mask = (input_seq != 0).float().unsqueeze(-1)
         seq_embeddings, positional_embeddings = self.embedding(input_seq)
 
         # User Encoding
-        # u0_latent = self.user_embedding_layer(users[0])
-        # u0_latent = u0_latent * (self.embedding_dim ** 0.5)
         u_latent = self.user_embedding_layer(users)
-        u_latent = u_latent * (self.user_embedding_dim**0.5)  # (b, 1, h)
-        # return users
+        u_latent = u_latent * (self.user_embedding_dim ** 0.5)  # (b, 1, h)
 
         # replicate the user embedding for all the items
-        u_latent = tf.tile(u_latent, [1, tf.shape(input_seq)[1], 1])  # (b, s, h)
+        u_latent = u_latent.expand(-1, input_seq.size(1), -1)  # (b, s, h)
 
-        seq_embeddings = tf.reshape(
-            tf.concat([seq_embeddings, u_latent], 2),
-            [tf.shape(input_seq)[0], -1, self.hidden_units],
+        seq_embeddings = torch.cat([seq_embeddings, u_latent], dim=2).reshape(
+            input_seq.size(0), -1, self.hidden_units
         )
-        seq_embeddings += positional_embeddings
+        seq_embeddings = seq_embeddings + positional_embeddings
 
         # dropout
-        seq_embeddings = self.dropout_layer(seq_embeddings, training=training)
+        if training:
+            seq_embeddings = self.dropout_layer(seq_embeddings)
 
         # masking
-        seq_embeddings *= mask
+        seq_embeddings = seq_embeddings * mask
 
         # --- ATTENTION BLOCKS ---
         seq_attention = seq_embeddings  # (b, s, h1 + h2)
@@ -127,135 +142,127 @@ class SSEPT(SASREC):
 
         # --- PREDICTION LAYER ---
         # user's sequence embedding
-        pos = self.mask_layer(pos)
-        neg = self.mask_layer(neg)
+        pos = pos * (pos != 0).long()  # masking
+        neg = neg * (neg != 0).long()  # masking
 
-        user_emb = tf.reshape(
-            u_latent,
-            [tf.shape(input_seq)[0] * self.seq_max_len, self.user_embedding_dim],
+        user_emb = u_latent.reshape(
+            input_seq.size(0) * self.seq_max_len, self.user_embedding_dim
         )
-        pos = tf.reshape(pos, [tf.shape(input_seq)[0] * self.seq_max_len])
-        neg = tf.reshape(neg, [tf.shape(input_seq)[0] * self.seq_max_len])
+        pos = pos.reshape(input_seq.size(0) * self.seq_max_len)
+        neg = neg.reshape(input_seq.size(0) * self.seq_max_len)
         pos_emb = self.item_embedding_layer(pos)
         neg_emb = self.item_embedding_layer(neg)
 
         # Add user embeddings
-        pos_emb = tf.reshape(tf.concat([pos_emb, user_emb], 1), [-1, self.hidden_units])
-        neg_emb = tf.reshape(tf.concat([neg_emb, user_emb], 1), [-1, self.hidden_units])
+        pos_emb = torch.cat([pos_emb, user_emb], dim=1).reshape(-1, self.hidden_units)
+        neg_emb = torch.cat([neg_emb, user_emb], dim=1).reshape(-1, self.hidden_units)
 
-        seq_emb = tf.reshape(
-            seq_attention,
-            [tf.shape(input_seq)[0] * self.seq_max_len, self.hidden_units],
+        seq_emb = seq_attention.reshape(
+            input_seq.size(0) * self.seq_max_len, self.hidden_units
         )  # (b*s, d)
 
-        pos_logits = tf.reduce_sum(pos_emb * seq_emb, -1)
-        neg_logits = tf.reduce_sum(neg_emb * seq_emb, -1)
+        pos_logits = (pos_emb * seq_emb).sum(dim=-1)
+        neg_logits = (neg_emb * seq_emb).sum(dim=-1)
 
-        pos_logits = tf.expand_dims(pos_logits, axis=-1)  # (bs, 1)
-        # pos_prob = tf.keras.layers.Dense(1, activation='sigmoid')(pos_logits)  # (bs, 1)
-
-        neg_logits = tf.expand_dims(neg_logits, axis=-1)  # (bs, 1)
-        # neg_prob = tf.keras.layers.Dense(1, activation='sigmoid')(neg_logits)  # (bs, 1)
-
-        # output = tf.concat([pos_logits, neg_logits], axis=0)
+        pos_logits = pos_logits.unsqueeze(-1)  # (bs, 1)
+        neg_logits = neg_logits.unsqueeze(-1)  # (bs, 1)
 
         # masking for loss calculation
-        istarget = tf.reshape(
-            tf.cast(tf.not_equal(pos, 0), dtype=tf.float32),
-            [tf.shape(input_seq)[0] * self.seq_max_len],
-        )
+        istarget = (pos != 0).float()
 
         return pos_logits, neg_logits, istarget
 
     def predict(self, inputs):
         """
-        Model prediction for candidate (negative) items
-
-        """
-        training = False
-        user = inputs["user"]
-        input_seq = inputs["input_seq"]
-        candidate = inputs["candidate"]
-
-        mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
-        seq_embeddings, positional_embeddings = self.embedding(input_seq)  # (1, s, h)
-
-        u0_latent = self.user_embedding_layer(user)
-        u0_latent = u0_latent * (self.user_embedding_dim**0.5)  # (1, 1, h)
-        u0_latent = tf.squeeze(u0_latent, axis=0)  # (1, h)
-        test_user_emb = tf.tile(u0_latent, [1 + self.num_neg_test, 1])  # (101, h)
-
-        u_latent = self.user_embedding_layer(user)
-        u_latent = u_latent * (self.user_embedding_dim**0.5)  # (b, 1, h)
-        u_latent = tf.tile(u_latent, [1, tf.shape(input_seq)[1], 1])  # (b, s, h)
-
-        seq_embeddings = tf.reshape(
-            tf.concat([seq_embeddings, u_latent], 2),
-            [tf.shape(input_seq)[0], -1, self.hidden_units],
-        )
-        seq_embeddings += positional_embeddings  # (b, s, h1 + h2)
-
-        seq_embeddings *= mask
-        seq_attention = seq_embeddings
-        seq_attention = self.encoder(seq_attention, training=training, mask=mask)
-        seq_attention = self.layer_normalization(seq_attention)  # (b, s, h1+h2)
-        seq_emb = tf.reshape(
-            seq_attention,
-            [tf.shape(input_seq)[0] * self.seq_max_len, self.hidden_units],
-        )  # (b*s1, h1+h2)
-
-        candidate_emb = self.item_embedding_layer(candidate)  # (b, s2, h2)
-        candidate_emb = tf.squeeze(candidate_emb, axis=0)  # (s2, h2)
-        candidate_emb = tf.reshape(
-            tf.concat([candidate_emb, test_user_emb], 1), [-1, self.hidden_units]
-        )  # (b*s2, h1+h2)
-
-        candidate_emb = tf.transpose(candidate_emb, perm=[1, 0])  # (h1+h2, b*s2)
-        test_logits = tf.matmul(seq_emb, candidate_emb)  # (b*s1, b*s2)
-
-        test_logits = tf.reshape(
-            test_logits,
-            [tf.shape(input_seq)[0], self.seq_max_len, 1 + self.num_neg_test],
-        )  # (1, s, 101)
-        test_logits = test_logits[:, -1, :]  # (1, 101)
-        return test_logits
-
-    def loss_function(self, pos_logits, neg_logits, istarget):
-        """Losses are calculated separately for the positive and negative
-        items based on the corresponding logits. A mask is included to
-        take care of the zero items (added for padding).
+        Model prediction for candidate (negative) items.
 
         Args:
-            pos_logits (tf.Tensor): Logits of the positive examples.
-            neg_logits (tf.Tensor): Logits of the negative examples.
-            istarget (tf.Tensor): Mask for nonzero targets.
+            inputs (dict): Input dictionary containing 'user', 'input_seq', 'candidate'.
+                - user: (batch, 1) tensor of user indices
+                - input_seq: (batch, seq_max_len) tensor of item indices
+                - candidate: (batch, num_candidates) tensor of candidate item indices
 
         Returns:
-            float: Loss.
+            torch.Tensor: Output tensor of shape (batch, num_candidates).
         """
+        self.eval()
+        device = next(self.parameters()).device
+        with torch.no_grad():
+            user = inputs["user"]
+            input_seq = inputs["input_seq"]
+            candidate = inputs["candidate"]
 
-        pos_logits = pos_logits[:, 0]
-        neg_logits = neg_logits[:, 0]
+            # Convert numpy arrays to tensors if necessary
+            if not isinstance(user, torch.Tensor):
+                user = torch.LongTensor(user).to(device)
+            if not isinstance(input_seq, torch.Tensor):
+                input_seq = torch.LongTensor(input_seq).to(device)
+            if not isinstance(candidate, torch.Tensor):
+                candidate = torch.LongTensor(candidate).to(device)
 
-        # ignore padding items (0)
-        # istarget = tf.reshape(
-        #     tf.cast(tf.not_equal(self.pos, 0), dtype=tf.float32),
-        #     [tf.shape(self.input_seq)[0] * self.seq_max_len],
-        # )
-        # for logits
-        loss = tf.reduce_sum(
-            -tf.math.log(tf.math.sigmoid(pos_logits) + 1e-24) * istarget
-            - tf.math.log(1 - tf.math.sigmoid(neg_logits) + 1e-24) * istarget
-        ) / tf.reduce_sum(istarget)
+            num_candidates = candidate.size(1)
 
-        # for probabilities
-        # loss = tf.reduce_sum(
-        #         - tf.math.log(pos_logits + 1e-24) * istarget -
-        #         tf.math.log(1 - neg_logits + 1e-24) * istarget
-        # ) / tf.reduce_sum(istarget)
-        reg_loss = tf.compat.v1.losses.get_regularization_loss()
-        # reg_losses = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.REGULARIZATION_LOSSES)
-        # loss += sum(reg_losses)
-        loss += reg_loss
+            mask = (input_seq != 0).float().unsqueeze(-1)
+            seq_embeddings, positional_embeddings = self.embedding(input_seq)  # (b, s, item_dim)
 
-        return loss
+            # User embedding for sequence
+            u_latent = self.user_embedding_layer(user)  # (b, 1, user_dim)
+            u_latent = u_latent * (self.user_embedding_dim ** 0.5)
+            u_latent = u_latent.expand(-1, input_seq.size(1), -1)  # (b, s, user_dim)
+
+            # Concatenate item and user embeddings
+            seq_embeddings = torch.cat([seq_embeddings, u_latent], dim=2)  # (b, s, hidden_units)
+            seq_embeddings = seq_embeddings + positional_embeddings  # (b, s, hidden_units)
+
+            seq_embeddings = seq_embeddings * mask
+            seq_attention = self.encoder(seq_embeddings, training=False, mask=mask)
+            seq_attention = self.layer_normalization(seq_attention)  # (b, s, hidden_units)
+
+            # Take only the last position embedding for each sequence
+            seq_emb = seq_attention[:, -1, :]  # (b, hidden_units)
+
+            # Get candidate item embeddings
+            candidate_item_emb = self.item_embedding_layer(candidate)  # (b, num_cand, item_dim)
+
+            # User embedding for candidates (same user for all candidates in each batch)
+            user_emb_for_cand = self.user_embedding_layer(user)  # (b, 1, user_dim)
+            user_emb_for_cand = user_emb_for_cand * (self.user_embedding_dim ** 0.5)
+            user_emb_for_cand = user_emb_for_cand.expand(-1, num_candidates, -1)  # (b, num_cand, user_dim)
+
+            # Concatenate item and user embeddings for candidates
+            candidate_emb = torch.cat([candidate_item_emb, user_emb_for_cand], dim=2)  # (b, num_cand, hidden_units)
+
+            # Compute logits via batched dot product
+            # (b, num_cand, hidden_units) * (b, 1, hidden_units) -> (b, num_cand, hidden_units) -> sum -> (b, num_cand)
+            test_logits = (candidate_emb * seq_emb.unsqueeze(1)).sum(dim=-1)
+
+        return test_logits
+
+
+    def create_combined_dataset(self, u, seq, pos, neg):
+        """
+        function to create model inputs from sampled batch data.
+        This function is used only during training.
+        Overrides parent to include users in the inputs.
+        """
+        inputs = {}
+        seq = pad_sequences(seq, padding="pre", truncating="pre", maxlen=self.seq_max_len)
+        pos = pad_sequences(pos, padding="pre", truncating="pre", maxlen=self.seq_max_len)
+        neg = pad_sequences(neg, padding="pre", truncating="pre", maxlen=self.seq_max_len)
+
+        inputs["users"] = np.expand_dims(np.array(u), axis=-1)
+        inputs["input_seq"] = seq
+        inputs["positive"] = pos
+        inputs["negative"] = neg
+
+        target = np.concatenate(
+            [
+                np.repeat(1, seq.shape[0] * seq.shape[1]),
+                np.repeat(0, seq.shape[0] * seq.shape[1]),
+            ],
+            axis=0,
+        )
+        target = np.expand_dims(target, axis=-1)
+        return inputs, target
+
+    # train_model is inherited from SASREC (handles "users" key dynamically)

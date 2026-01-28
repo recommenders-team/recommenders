@@ -158,11 +158,13 @@ def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
     if shuffle:
         data = data.sample(frac=1, random_state=seed)
 
-    splits = np.split(data, [round(x * len(data)) for x in split_index])
-
-    # Add split index (this makes splitting by group more efficient).
-    for i in range(len(ratios)):
-        splits[i]["split_index"] = i
+    # Use iloc slicing instead of np.split to speed up the process
+    split_points = [round(x * len(data)) for x in split_index]
+    splits = []
+    prev = 0
+    for point in split_points + [len(data)]:
+        splits.append(data.iloc[prev:point])
+        prev = point
 
     return splits
 

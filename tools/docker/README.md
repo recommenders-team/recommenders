@@ -100,9 +100,7 @@ Running tests with Docker
   package under [../../recommenders/](../../recommenders/).
 
   ```bash
-  docker run -it recommenders:cpu bash -c 'pip install pytest; \
-  pip install pytest-cov; \
-  pip install pytest-mock; \
+  docker run -it recommenders:cpu bash -c 'uv pip install pytest pytest-cov pytest-mock; \
   apt-get install -y git; \
   git clone https://github.com/recommenders-team/recommenders.git; \
   cd Recommenders; \

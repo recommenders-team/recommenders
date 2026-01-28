@@ -1,11 +1,13 @@
 # Environment setup
 
-The following setup instructions assume users work in a Linux system. The testing was performed on a Ubuntu Linux system.
-We use Conda to install packages and manage the virtual environment. Type ``` conda list ``` to check if you have conda in your machine. If not, please follow the instructions on https://conda.io/projects/conda/en/latest/user-guide/install/linux.html to install either Miniconda or Anaconda (preferred) before we proceed. 
+The following setup instructions assume users work in a Linux system. The testing was performed on a Ubuntu Linux system. We use uv to install packages and manage the virtual environment. To install uv, run:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/microsoft/recommenders 
+    git clone https://github.com/recommenders-team/recommenders
     ```
 
 1. Navigate to the tutorial folder. The materials for the tutorial are located under the directory of `recommenders/examples/07_tutorials/KDD2020-tutorial`.
@@ -13,7 +15,7 @@ We use Conda to install packages and manage the virtual environment. Type ``` co
     ```bash
     cd recommenders/examples/07_tutorials/KDD2020-tutorial
     ```
-    
+
 1. Download the dataset
 
     Download the dataset for hands on experiments and unzip to data_folder:
@@ -21,22 +23,29 @@ We use Conda to install packages and manage the virtual environment. Type ``` co
     wget https://huggingface.co/datasets/Recommenders/kdd2020/resolve/main/data_folder.zip
     unzip data_folder.zip -d data_folder
     ```
-    
+
     After you unzip the file, there are two folders under data_folder, i.e. 'raw' and 'my_cached'.   'raw' folder contains original txt files from the COVID MAG dataset. 'my_cached' folder contains processed data files, if you miss some steps during the hands-on tutorial, you can make it up by copying corresponding files into experiment folders.
-    
+
 1. Install the dependencies
 
     1. The model pre-training will use a tool for converting the original data into embeddings. Use of the tool will require `g++`. The following installs `g++` on a Linux system.
         ```bash
         sudo apt-get install g++
         ```
-    1. The Python script will be run in a conda environment where the dependencies are installed. This can be done by using the `reco_gpu_kdd.yaml` file provided in the branch subfolder with the following commands:
-    
+    1. The Python script will be run in a virtual environment where the dependencies are installed. Create and activate the environment:
+
         ```bash
-        conda env create -n kdd_tutorial_2020 -f reco_gpu_kdd.yaml
-        conda activate kdd_tutorial_2020
+        uv venv ~/.venvs/kdd_tutorial_2020 --python 3.11
+        source ~/.venvs/kdd_tutorial_2020/bin/activate
+        uv pip install -r requirements_kdd.txt
         ```
-1. The tutorial will be conducated by using the Jupyter notebooks. The newly created conda kernel can be registered with the Jupyter notebook server
+
+        **Note:** If `requirements_kdd.txt` doesn't exist, you can install the dependencies manually:
+        ```bash
+        uv pip install numpy pandas jupyter ipykernel scikit-learn matplotlib scipy pytest numba tensorflow
+        ```
+
+1. The tutorial will be conducted by using the Jupyter notebooks. The newly created kernel can be registered with the Jupyter notebook server
 
     ```bash
     python -m ipykernel install --user --name kdd_tutorial_2020 --display-name "Python (kdd tutorial)"

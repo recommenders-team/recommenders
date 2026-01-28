@@ -47,28 +47,32 @@ For some of the practical scenarios where recommendation systems have been appli
 
 ## Getting Started
 
-We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [VS Code](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook on Linux/WSL:
+We recommend [uv](https://docs.astral.sh/uv/) for environment management (10-100x faster than conda/pip), and [VS Code](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook on Linux/WSL:
 
 ```bash
 # 1. Install gcc if it is not installed already. On Ubuntu, this could done by using the command
 # sudo apt install gcc
 
-# 2. Create and activate a new conda environment
-conda create -n <environment_name> python=3.9
-conda activate <environment_name>
+# 2. Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 3. Install the core recommenders package. It can run all the CPU notebooks.
-pip install recommenders
+# 3. Create and activate a new virtual environment
+uv venv ~/.venvs/recommenders --python 3.11
+source ~/.venvs/recommenders/bin/activate
 
-# 4. create a Jupyter kernel
-python -m ipykernel install --user --name <environment_name> --display-name <kernel_name>
+# 4. Install the core recommenders package. It can run all the CPU notebooks.
+uv pip install recommenders
 
-# 5. Clone this repo within VSCode or using command line:
+# 5. Create a Jupyter kernel
+uv pip install ipykernel
+python -m ipykernel install --user --name recommenders --display-name "Python (recommenders)"
+
+# 6. Clone this repo within VSCode or using command line:
 git clone https://github.com/recommenders-team/recommenders.git
 
-# 6. Within VSCode:
-#   a. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
-#   b. Select Jupyter kernel <kernel_name>;
+# 7. Within VSCode:
+#   a. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;
+#   b. Select Jupyter kernel "Python (recommenders)";
 #   c. Run the notebook.
 ```
 

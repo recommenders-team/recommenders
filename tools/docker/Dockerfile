@@ -45,7 +45,7 @@ FROM ${COMPUTE} AS deps
 
 ARG COMPUTE
 
-# Valid versions: 3.8, 3.9, 3.10, 3.11
+# Valid versions: 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8

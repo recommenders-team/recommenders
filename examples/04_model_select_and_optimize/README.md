@@ -11,7 +11,7 @@ In this directory, notebooks are provided to demonstrate how to tune and optimiz
 | [nni_ncf](nni_ncf.ipynb) | Quickstart tutorial on utilizing the [Neural Network Intelligence toolkit](https://github.com/Microsoft/nni) as a tool to tune the [NCF model](../02_model/ncf_deep_dive.ipynb) and [SVD model](../02_model/surprise_svd_deep_dive.ipynb) and compare their performance against one another
 
 ### Prerequisites
-To run the examples running on the Azure Machine Learning service, the [`azureml-sdk`](https://pypi.org/project/azureml-sdk/) is required. The AzureML Python SDK is already installed after setting up the conda environments from this repository (see [SETUP.md](../../SETUP.md)). 
+To run the examples running on the Azure Machine Learning service, the [`azureml-sdk`](https://pypi.org/project/azureml-sdk/) is required. The AzureML Python SDK is already installed after setting up the virtual environment from this repository (see [SETUP.md](../../SETUP.md)). 
 
 More info about setting up an AzureML environment can be found at [this link](https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-configure-environment).
 
@@ -38,6 +38,6 @@ To configure this notebook to communicate with your workspace, type in your Azur
 ```
 
 ### NNI Configuration
-The NNI command `nnictl` comes installed with the conda environment. 
-In order to use the SMAC tuner, it has to be installed first with the following command 
+The NNI command `nnictl` comes installed with the virtual environment.
+In order to use the SMAC tuner, it has to be installed first with the following command
 `nnictl package install --name=SMAC`.
