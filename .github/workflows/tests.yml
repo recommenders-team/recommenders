@@ -113,12 +113,13 @@ jobs:
         env:
           IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
           PARALLEL_PYTEST_OPT: "${{ contains(matrix.group, 'gpu') && '' || '-n auto' }}"
+          RECO_VENV_DIR: /root/.venvs/Recommenders
         run: |
           docker run --rm \
             ${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }} \
             ${IMAGE_TAG} \
             bash -c '\
-              source .venv/bin/activate; \
+              source ${RECO_VENV_DIR}/bin/activate; \
               pytest --durations 0 \
                 ${PARALLEL_PYTEST_OPT} \
                 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" \
