@@ -48,6 +48,8 @@ ARG COMPUTE
 # Valid versions: 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
+ARG RECO_VENV_DIR=/root/.venvs/Recommenders
+
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 USER root:root
@@ -62,8 +64,28 @@ RUN curl -LsSf https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linu
 # Install SDKMAN!
 RUN curl -LsSf "https://get.sdkman.io?ci=true&rcupdate=false" | bash
 
+# Install OpenJDK
+RUN if [[ "${EXTRAS}" =~ spark ]]; then \
+      sdk install java 21.0.2-open; \
+      sdk use java 21.0.2-open; \
+    fi
+
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | bash
+
+# Create virtual environment with uv
+ENV UV_LINK_MODE=copy
+ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
+ENV UV_CACHE_DIR=/opt/uv-cache/
+RUN --mount=type=cache,target=/opt/uv-cache/uv/python,sharing=locked \
+    uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
+
+# Install pytest-xdist for parallel testing
+RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
+    source ${RECO_VENV_DIR}/bin/activate && \
+    if [[ ! ${COMPUTE} =~ gpu ]]; then \
+      uv pip install pytest-xdist; \
+    fi
 
 
 #####################################################################
@@ -79,35 +101,16 @@ ARG EXTRAS=""
 # Empty value ("") indicates editable installation of current clone
 ARG GIT_REF="main"
 
-WORKDIR /root/Recommenders
+ARG RECO_DIR="/root/Recommenders"
 
-ENV UV_LINK_MODE=copy
-ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
-ENV UV_CACHE_DIR=/opt/uv-cache/
-
-# Install OpenJDK
-RUN if [[ "${EXTRAS}" =~ spark ]]; then \
-      sdk install java 21.0.2-open; \
-      sdk use java 21.0.2-open; \
-    fi
+WORKDIR ${RECO_DIR}
 
 # Copy Recommenders into the image
-COPY ./ ./
-
-# Set up venv
-RUN --mount=type=cache,target=/opt/uv-cache/uv/python,sharing=locked \
-    uv venv --python ${PYTHON_VERSION}
-
-# Install pytest-xdist for parallel testing
-RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
-    source .venv/bin/activate && \
-    if [[ ! ${COMPUTE} =~ gpu ]]; then \
-      uv pip install pytest-xdist; \
-    fi
+COPY ./ ${RECO_DIR}
 
 # Install Recommenders
 RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
-    source .venv/bin/activate && \
+    source ${RECO_VENV_DIR}/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
         uv pip install "recommenders${EXTRAS} @ ."; \
     else \
@@ -115,10 +118,10 @@ RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
     fi
 
 # Setup Jupyter notebook
-RUN source .venv/bin/activate && \
+RUN source ${RECO_VENV_DIR}/bin/activate && \
     jupyter notebook --generate-config && \
     echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
 EXPOSE 8888
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.allow_origin='*'", "--IdentityProvider.token=''"]
+CMD source ${RECO_VENV_DIR}/bin/activate && ${RECO_VENV_DIR}/bin/jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.allow_origin='*' --IdentityProvider.token=''

@@ -112,6 +112,7 @@ jobs:
       - name: Execute tests in container
         env:
           IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
+          PARALLEL_PYTEST_OPT: "${{ contains(matrix.group, 'gpu') && '' || '-n auto' }}"
         run: |
           docker run --rm \
             ${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }} \
@@ -119,7 +120,7 @@ jobs:
             bash -c '\
               source .venv/bin/activate; \
               pytest --durations 0 \
-                ${{ contains(matrix.group, 'gpu') && '' || '-n auto' }} \
+                ${PARALLEL_PYTEST_OPT} \
                 $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" \
                 "${{ inputs.config-file }}")'
 

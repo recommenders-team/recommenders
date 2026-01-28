@@ -175,7 +175,6 @@ examples/07_tutorials/KDD2020-tutorial/data_folder/
 *.vec
 *.tsv
 *.sh
-!.github/actions/group-test/entrypoint.sh
 
 tests/**/resources/
 reports/

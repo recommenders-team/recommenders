@@ -50,5 +50,5 @@
     },
 
     // Install Java (Temurin) for Spark support and Recommenders in development mode after container create
-    "postCreateCommand": "bash -c 'apt-get update && apt-get install -y wget apt-transport-https gpg && wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor -o /usr/share/keyrings/adoptium.gpg && echo \"deb [signed-by=/usr/share/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release && echo $VERSION_CODENAME) main\" | tee /etc/apt/sources.list.d/adoptium.list && apt-get update && apt-get install -y temurin-21-jdk && export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-amd64 && uv pip install -e .[dev,spark]'"
+    "postCreateCommand": "bash -c 'source /root/.venvs/Recommenders/bin/activate && uv pip install -e .[dev,spark]'"
 }
