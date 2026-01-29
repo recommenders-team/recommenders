@@ -19,6 +19,12 @@ ARG COMPUTE="cpu"
 #   + [Created on 2025-11-14](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3)
 FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3 AS cpu
 
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y zip unzip
+
 
 #####################################################################
 # Compute Stage - GPU
