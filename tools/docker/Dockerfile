@@ -19,6 +19,7 @@ ARG COMPUTE="cpu"
 #   + [Created on 2025-11-14](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3)
 FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3 AS cpu
 
+# unzip and zip is required by SDKMAN!
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
@@ -35,6 +36,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
 FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04@sha256:3986465b3dd3b4d602c07061f2cff417e0bfb24810129408d4eb12e111015a6c AS gpu
 
+# curl, unzip and zip is required by SDKMAN!
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
@@ -54,13 +56,16 @@ ARG COMPUTE
 # Valid versions: 3.9, 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
+# Extra dependencies: dev, gpu, spark
+ARG EXTRAS=""
+
 ARG RECO_VENV_DIR=/root/.venvs/Recommenders
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 USER root:root
 
-SHELL ["/bin/bash", "-lc"]
+SHELL ["/bin/bash", "-ilc"]
 
 # Install yq
 # See https://github.com/mikefarah/yq
@@ -68,7 +73,7 @@ RUN curl -LsSf https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linu
     tar xz && mv yq_linux_amd64 /usr/local/bin/yq
 
 # Install SDKMAN!
-RUN curl -LsSf "https://get.sdkman.io?ci=true&rcupdate=false" | bash
+RUN curl -LsSf "https://get.sdkman.io?ci=true" | bash
 
 # Install OpenJDK
 RUN if [[ "${EXTRAS}" =~ spark ]]; then \
@@ -99,9 +104,6 @@ RUN --mount=type=cache,target=/opt/uv-cache/ \
 # Install Recommenders and its dependencies
 #####################################################################
 FROM deps AS final
-
-# Extra dependencies: dev, gpu, spark
-ARG EXTRAS=""
 
 # Git ref of Recommenders to install: main, staging, etc.
 # Empty value ("") indicates editable installation of current clone
