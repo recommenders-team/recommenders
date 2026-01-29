@@ -94,9 +94,7 @@ RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
 # Install pytest-xdist for parallel testing
 RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
-    if [[ ! ${COMPUTE} =~ gpu ]]; then \
-      uv pip install pytest-xdist; \
-    fi
+    uv pip install pytest-xdist
 
 
 #####################################################################
