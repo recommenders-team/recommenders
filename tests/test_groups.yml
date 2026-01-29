@@ -163,8 +163,7 @@ pr_gate:
   # because the toal running time for the 5 test groups is now reduced to 431.87s,
   # and the time for setting up the environment is 178.3s,
   # there is no need to separate these tests, otherwise, there will be extra 178.3s * 4 time used for setting up another 4 environments.
-  group_cpu_spark:
-    group_cpu_001: # Total group time: 80.77s
+  group_cpu_001: # Total group time: 80.77s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names                     # 1.24s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success # 0.55s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_invalid_param__return_failure
@@ -311,7 +310,7 @@ pr_gate:
     - tests/responsible_ai/recommenders/datasets/test_movielens_privacy.py                                                                 # 2.36s
     - tests/integration/recommenders/utils/test_k8s_utils.py
 
-    group_notebooks_cpu_001: # Total group time: 75.53s
+  group_notebooks_cpu_001: # Total group time: 75.53s
     - tests/unit/examples/test_notebooks_python.py::test_sar_deep_dive_runs                                                                # 5.71s
     - tests/unit/examples/test_notebooks_python.py::test_baseline_deep_dive_runs                                                           # 14.28s
     - tests/unit/examples/test_notebooks_python.py::test_template_runs                                                                     # 2.75s
@@ -326,7 +325,7 @@ pr_gate:
     - tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs                                                              # 5.73s
     - tests/unit/examples/test_notebooks_python.py::test_vw_deep_dive_runs
 
-    group_spark_001: # Total group time: 77.24s
+  group_spark_001: # Total group time: 77.24s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_init_spark                                                                   # 3.90s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success                        # 21.92s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file                        # 0.77s
@@ -364,13 +363,13 @@ pr_gate:
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_catalog_coverage                                                             # 1.89s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage                                                      # 1.67s
 
-    group_notebooks_spark_001: # Total group time: 124.34s
+  group_notebooks_spark_001: # Total group time: 124.34s
     - tests/unit/recommenders/utils/test_notebook_utils.py::test_is_databricks
     - tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs                                                               # 74.48s
     - tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs                                                                 # 54.57s
     - tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs                                                    # 65.37s
 
-    group_notebooks_spark_002: # Total group time: 74.99s
+  group_notebooks_spark_002: # Total group time: 74.99s
     - tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs                                                                  # 18.71s
     - tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs                                                                  # 20.06s
     - tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs                                                        # 52.22s
