@@ -94,13 +94,6 @@ ENV UV_CACHE_DIR=/opt/uv-cache/
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
-# Install pytest-xdist for parallel testing
-RUN --mount=type=cache,target=/opt/uv-cache/ \
-    source ${RECO_VENV_DIR}/bin/activate && \
-    if [[ ! ${COMPUTE} =~ gpu ]]; then \
-      uv pip install pytest-xdist; \
-    fi
-
 
 #####################################################################
 # Final Stage

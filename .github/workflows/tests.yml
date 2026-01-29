@@ -123,7 +123,7 @@ jobs:
           else
             docker run --rm ${IMAGE_TAG} \
               bash -lc 'source /root/.sdkman/bin/sdkman-init.sh && source ${{ env.RECO_VENV_DIR }}/bin/activate && \
-                        pytest --durations 0 -n auto \
+                        pytest --durations 0 \
                           $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
           fi
 
