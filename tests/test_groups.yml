@@ -61,9 +61,7 @@ nightly:
     - tests/functional/examples/test_notebooks_python.py::test_vw_deep_dive_functional
     - tests/functional/examples/test_notebooks_python.py::test_nni_tuning_svd
 
-  group_gpu:
-    # This group was originally 7 test groups, but now is one big group running on a single GPU.
-    # group_gpu_001: Total group time: 1937.01s
+  group_gpu_001: # Total group time: 1937.01s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/smoke/recommenders/models/test_deeprec_utils.py # 2.91
     - tests/smoke/recommenders/models/test_deeprec_model.py::test_FFM_iterator # 0.74s
@@ -80,7 +78,7 @@ nightly:
     - tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional # 175.00s
     - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_slirec # 346.72s
 
-    # group_gpu_002: Total group time: 1896.76s
+  group_gpu_002: # Total group time: 1896.76s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_xdeepfm # 3.10s
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
@@ -97,7 +95,7 @@ nightly:
     - tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke # 30.99s
     - tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional # 483.73s
 
-    # group_gpu_003: Total group time: 2072.15s
+  group_gpu_003: # Total group time: 2072.15s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/smoke/examples/test_notebooks_gpu.py::test_ncf_smoke # 114.39s
     - tests/functional/examples/test_notebooks_gpu.py::test_ncf_functional # 1046.97s
@@ -108,7 +106,7 @@ nightly:
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
     # - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_naml  # 450.65s
 
-    # group_gpu_004: Total group time: 2103.34s
+  group_gpu_004: # Total group time: 2103.34s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/smoke/examples/test_notebooks_gpu.py::test_nrms_smoke # 232.55s
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
@@ -118,7 +116,7 @@ nightly:
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
     # - tests/functional/examples/test_notebooks_gpu.py::test_lstur_quickstart_functional  # 766.52s
 
-    # group_gpu_005: Total group time: 1844.05s
+  group_gpu_005: # Total group time: 1844.05s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
     # - tests/functional/examples/test_notebooks_gpu.py::test_wide_deep_functional  # 1843.29s
@@ -127,12 +125,12 @@ nightly:
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
     # - tests/functional/examples/test_notebooks_gpu.py::test_npa_quickstart_functional  # 810.92s
 
-    # group_gpu_006: Total group time: 1763.99s
+  group_gpu_006: # Total group time: 1763.99s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_npa # 202.61s
     - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_nrms # 188.60s
 
-    # group_gpu_007: Total group time: 846.89s
+  group_gpu_007: # Total group time: 846.89s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     # FIXME: https://github.com/microsoft/recommenders/issues/1883
     # - tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke  # 620.13s
@@ -144,7 +142,7 @@ nightly:
     # - tests/functional/examples/test_notebooks_gpu.py::test_sasrec_quickstart_functional  # 448.06s + 614.69s
     - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_lstur # 194.88s
 
-  group_spark_001: # Total group time: 987.16s
+  group_spark: # Total group time: 987.16s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df # 4.33s+ 25.58s + 101.99s + 139.23s
     #
     - tests/data_validation/recommenders/datasets/test_criteo.py::test_criteo_load_spark_df_sample # 6.83s
@@ -163,7 +161,8 @@ pr_gate:
   # because the toal running time for the 5 test groups is now reduced to 431.87s,
   # and the time for setting up the environment is 178.3s,
   # there is no need to separate these tests, otherwise, there will be extra 178.3s * 4 time used for setting up another 4 environments.
-  group_cpu_001: # Total group time: 80.77s
+  group_cpu_spark:
+  # group_cpu_001: # Total group time: 80.77s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names                     # 1.24s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success # 0.55s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_invalid_param__return_failure
@@ -310,7 +309,7 @@ pr_gate:
     - tests/responsible_ai/recommenders/datasets/test_movielens_privacy.py                                                                 # 2.36s
     - tests/integration/recommenders/utils/test_k8s_utils.py
 
-  group_notebooks_cpu_001: # Total group time: 75.53s
+  # group_notebooks_cpu_001: # Total group time: 75.53s
     - tests/unit/examples/test_notebooks_python.py::test_sar_deep_dive_runs                                                                # 5.71s
     - tests/unit/examples/test_notebooks_python.py::test_baseline_deep_dive_runs                                                           # 14.28s
     - tests/unit/examples/test_notebooks_python.py::test_template_runs                                                                     # 2.75s
@@ -325,7 +324,7 @@ pr_gate:
     - tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs                                                              # 5.73s
     - tests/unit/examples/test_notebooks_python.py::test_vw_deep_dive_runs
 
-  group_spark_001: # Total group time: 77.24s
+  # group_spark_001: # Total group time: 77.24s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_init_spark                                                                   # 3.90s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success                        # 21.92s
     - tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file                        # 0.77s
@@ -363,13 +362,13 @@ pr_gate:
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_catalog_coverage                                                             # 1.89s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage                                                      # 1.67s
 
-  group_notebooks_spark_001: # Total group time: 124.34s
+  # group_notebooks_spark_001: # Total group time: 124.34s
     - tests/unit/recommenders/utils/test_notebook_utils.py::test_is_databricks
     - tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs                                                               # 74.48s
     - tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs                                                                 # 54.57s
     - tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs                                                    # 65.37s
 
-  group_notebooks_spark_002: # Total group time: 74.99s
+  # group_notebooks_spark_002: # Total group time: 74.99s
     - tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs                                                                  # 18.71s
     - tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs                                                                  # 20.06s
     - tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs                                                        # 52.22s
@@ -436,14 +435,12 @@ pr_gate:
     - tests/security/test_dependency_security.py::test_torch
     - tests/regression/test_compatibility_tf.py
 
-  group_notebooks_gpu_001:
+  group_notebooks_gpu:
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart                                                                       # 54.10s
     - tests/unit/examples/test_notebooks_gpu.py::test_ncf                                                                                  # 17.80s
     - tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive                                                                        # 21.14s
     - tests/unit/examples/test_notebooks_gpu.py::test_embdotbias                                                                           # 27.16s
-
-  group_notebooks_gpu_002:
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/unit/examples/test_notebooks_gpu.py::test_wide_deep                                                                            # 8.78s
     - tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm                                                                              # 67.88s

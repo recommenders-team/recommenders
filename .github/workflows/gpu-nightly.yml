@@ -31,7 +31,25 @@ on:
   #     - tests/**
   #     - '!tests/**/*.md'
   #     - setup.py
-
+  pull_request:
+    branches:
+      - staging
+      - main
+    paths:
+      # Tests will be run only when there are changes in the code:
+      - examples/**
+      - '!examples/**/*.md'
+      - recommenders/**
+      - '!recommenders/**/*.md'
+      - tests/**
+      - '!tests/**/*.md'
+      - setup.py
+      - .github/**
+    types: 
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
   # Enable manual trigger
   workflow_dispatch:
@@ -39,9 +57,6 @@ on:
       tags:
         description: 'Tags to label this manual run (optional)'
         default: 'Manual trigger'
-
-  # Make this workflow reusable
-  workflow_call:
 
 jobs:
   run-tests:

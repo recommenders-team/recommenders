@@ -33,9 +33,6 @@ on:
         description: 'Tags to label this manual run (optional)'
         default: 'Manual trigger'
 
-  # Make this workflow reusable
-  workflow_call:
-
 jobs:
   run-tests:
     uses: ./.github/workflows/tests.yml
