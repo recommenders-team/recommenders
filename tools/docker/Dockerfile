@@ -65,7 +65,8 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 USER root:root
 
-SHELL ["/bin/bash", "-ilc"]
+# uv is in /root/.local/bin and is available after using bash -l
+SHELL ["/bin/bash", "-lc"]
 
 # Install yq
 # See https://github.com/mikefarah/yq
@@ -76,7 +77,9 @@ RUN curl -LsSf https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linu
 RUN curl -LsSf "https://get.sdkman.io?ci=true" | bash
 
 # Install OpenJDK
+# sdk is available after source /root/.sdkman/bin/sdkman-init.sh
 RUN if [[ "${EXTRAS}" =~ spark ]]; then \
+      source /root/.sdkman/bin/sdkman-init.sh \
       sdk install java 21.0.2-open; \
       sdk use java 21.0.2-open; \
     fi
@@ -132,4 +135,4 @@ RUN source ${RECO_VENV_DIR}/bin/activate && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
 EXPOSE 8888
-CMD source ${RECO_VENV_DIR}/bin/activate && ${RECO_VENV_DIR}/bin/jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.allow_origin='*' --IdentityProvider.token=''
+CMD source /root/.sdkman/bin/sdkman-init.sh && source ${RECO_VENV_DIR}/bin/activate && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.allow_origin='*' --IdentityProvider.token=''

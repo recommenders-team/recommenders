@@ -116,14 +116,14 @@ jobs:
         run: |
           if [[ ${{ matrix.group }} =~ 'gpu' ]]; then
             docker run --rm --gpus all ${IMAGE_TAG} \
-              bash -ilc 'source ${{ env.RECO_VENV_DIR }}/bin/activate; \
-                         pytest --durations 0 \
-                           $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
+              bash -lc 'source /root/.sdkman/bin/sdkman-init.sh && source ${{ env.RECO_VENV_DIR }}/bin/activate && \
+                        pytest --durations 0 \
+                          $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
           else
             docker run --rm ${IMAGE_TAG} \
-              bash -ilc 'source ${{ env.RECO_VENV_DIR }}/bin/activate; \
-                         pytest --durations 0 -n auto \
-                           $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
+              bash -lc 'source /root/.sdkman/bin/sdkman-init.sh && source ${{ env.RECO_VENV_DIR }}/bin/activate && \
+                        pytest --durations 0 -n auto \
+                          $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
           fi
 
       - name: Clean up
