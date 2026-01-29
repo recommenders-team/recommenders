@@ -77,11 +77,11 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | bash
 ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
-RUN --mount=type=cache,target=/opt/uv-cache/uv/python,sharing=locked \
+RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
 # Install pytest-xdist for parallel testing
-RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
+RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
     if [[ ! ${COMPUTE} =~ gpu ]]; then \
       uv pip install pytest-xdist; \
@@ -109,7 +109,7 @@ WORKDIR ${RECO_DIR}
 COPY ./ ${RECO_DIR}
 
 # Install Recommenders
-RUN --mount=type=cache,target=/opt/uv-cache/,sharing=locked \
+RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
         uv pip install "recommenders${EXTRAS} @ ."; \
