@@ -79,7 +79,7 @@ RUN curl -LsSf "https://get.sdkman.io?ci=true" | bash
 # Install OpenJDK
 # sdk is available after source /root/.sdkman/bin/sdkman-init.sh
 RUN if [[ "${EXTRAS}" =~ spark ]]; then \
-      source /root/.sdkman/bin/sdkman-init.sh \
+      source /root/.sdkman/bin/sdkman-init.sh; \
       sdk install java 21.0.2-open; \
       sdk use java 21.0.2-open; \
     fi
