@@ -85,8 +85,7 @@ jobs:
     # cpu-nightly needs to run on larger runner,
     # otherwise, standard runner is enough.
     runs-on:
-      group: ${{ contains(matrix.group, 'gpu') && 'GPU' || contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu') && 'CPU' || '' }}
-      labels: ${{ contains(matrix.group, 'gpu') && '' || contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu') && '' || 'ubuntu-24.04' }}
+      group: ${{ contains(matrix.group, 'gpu') && 'GPU' || 'CPU' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
