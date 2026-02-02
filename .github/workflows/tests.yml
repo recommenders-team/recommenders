@@ -119,7 +119,8 @@ jobs:
           RECO_VENV_DIR: /root/.venvs/Recommenders
         run: |
           # Check hardware specs
-          nproc
+          echo "CPU: $(nproc)"
+          echo "Memory:"
           free -h
 
           # Run tests
