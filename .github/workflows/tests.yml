@@ -82,10 +82,14 @@ jobs:
     needs: get-test-groups
     # Docker is required on the runner.
     # GPU tests should run on GPUs,
-    # cpu-nightly needs to run on larger runner,
+    # cpu-nightly needs to run on larger CPU runner,
     # otherwise, standard runner is enough.
-    runs-on:
-      group: ${{ contains(matrix.group, 'gpu') && 'GPU' || 'CPU' }}
+    runs-on: |-
+      ${{ case(
+        contains(matrix.group, 'gpu'), 'GPU',
+        contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu'), 'CPU',
+        'ubuntu-24.04'
+      ) }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
@@ -93,9 +97,9 @@ jobs:
     strategy:
       matrix:
         python-version:
-          # - '3.8'
-          # - '3.9'
-          # - '3.10'
+          - '3.8'
+          - '3.9'
+          - '3.10'
           - '3.11'
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     steps:
