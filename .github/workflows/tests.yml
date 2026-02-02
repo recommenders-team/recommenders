@@ -81,7 +81,7 @@ jobs:
     name: ${{ join(matrix.*, ', ') }}
     needs: get-test-groups
     # Docker is required on the runner
-    runs-on: ${{ contains(matrix.group, 'gpu') && 'self-hosted' || 'ubuntu-24.04' }}
+    runs-on: ${{ contains(matrix.group, 'gpu') && 'gpu-github' || 'ubuntu-24.04' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
