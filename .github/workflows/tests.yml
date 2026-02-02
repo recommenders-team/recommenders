@@ -80,8 +80,11 @@ jobs:
   execute-tests:
     name: ${{ join(matrix.*, ', ') }}
     needs: get-test-groups
-    # Docker is required on the runner
-    runs-on: ${{ contains(matrix.group, 'gpu') && 'gpu-github' || 'ubuntu-24.04' }}
+    # Docker is required on the runner.
+    # GPU tests should run on GPUs,
+    # cpu-nightly needs to run on larger runner,
+    # otherwise, standard runner is enough.
+    runs-on: ${{ contains(matrix.group, 'gpu') && '[gpu-github-1, gpu-github-2, gpu-github3]' || contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu') && '[cpu-github-1, cpu-github-2, cpu-github-3]' || 'ubuntu-24.04' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
@@ -114,6 +117,11 @@ jobs:
           IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
         run: |
+          # Check hardware specs
+          nproc
+          free -h
+
+          # Run tests
           if [[ ${{ matrix.group }} =~ 'gpu' ]]; then
             nvidia-smi && \
             docker run --rm --gpus all ${IMAGE_TAG} \
