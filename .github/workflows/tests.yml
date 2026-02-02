@@ -84,7 +84,7 @@ jobs:
     # GPU tests should run on GPUs,
     # cpu-nightly needs to run on larger runner,
     # otherwise, standard runner is enough.
-    runs-on: ${{ contains(matrix.group, 'gpu') && fromJson('["gpu-github-1", "gpu-github-2", "gpu-github3"]') || contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu') && fromJson('["cpu-github-1", "cpu-github-2", "cpu-github-3"]') || 'ubuntu-24.04' }}
+    runs-on: ${{ contains(matrix.group, 'gpu') && fromJson('{"group": "GPU"}') || contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu') && fromJson('{"group": "CPU"}') || 'ubuntu-24.04' }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
