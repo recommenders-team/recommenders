@@ -180,8 +180,9 @@ def test_prepare_test_df():
     # Create simple test data
     uids = np.array([0, 1, 2, 0, 1])
     iids = np.array([0, 1, 2, 1, 0])
-    uid_map = {0: "user_a", 1: "user_b", 2: "user_c"}
-    iid_map = {0: "item_x", 1: "item_y", 2: "item_z"}
+    # uid_map/iid_map: external_id -> internal_index
+    uid_map = {"user_a": 0, "user_b": 1, "user_c": 2}
+    iid_map = {"item_x": 0, "item_y": 1, "item_z": 2}
     
     # Create a sparse weights matrix
     weights_data = [1.0, 2.0, 3.0, 4.0, 5.0]
