@@ -165,3 +165,38 @@ def test_sim_users(sim_users):
 @pytest.mark.experimental
 def test_sim_items(sim_items):
     assert sim_items.shape == (5, 2)
+
+
+@pytest.mark.experimental
+def test_prepare_test_df():
+    """Test prepare_test_df function for correctness"""
+    try:
+        from scipy import sparse
+        from recommenders.models.lightfm.lightfm_utils import prepare_test_df
+    except ModuleNotFoundError:
+        pytest.skip("lightfm or scipy not installed")
+        return
+
+    # Create simple test data
+    uids = np.array([0, 1, 2, 0, 1])
+    iids = np.array([0, 1, 2, 1, 0])
+    uid_map = {0: "user_a", 1: "user_b", 2: "user_c"}
+    iid_map = {0: "item_x", 1: "item_y", 2: "item_z"}
+    
+    # Create a sparse weights matrix
+    weights_data = [1.0, 2.0, 3.0, 4.0, 5.0]
+    weights = sparse.coo_matrix(
+        (weights_data, (uids, iids)),
+        shape=(3, 3)
+    )
+    
+    # Test with a slice
+    test_idx = slice(0, 3)
+    result = prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights)
+    
+    # Verify the result
+    assert result.shape[0] == 3, "Should have 3 rows"
+    assert list(result.columns) == ["userID", "itemID", "rating"], "Should have correct columns"
+    assert result["userID"].tolist() == ["user_a", "user_b", "user_c"], "User IDs should be mapped correctly"
+    assert result["itemID"].tolist() == ["item_x", "item_y", "item_z"], "Item IDs should be mapped correctly"
+    assert result["rating"].tolist() == [1.0, 2.0, 3.0], "Ratings should be correct"
