@@ -282,10 +282,10 @@ class LightGCN(object):
         """
         try:
             self.saver.restore(self.sess, model_path)
-        except Exception:
+        except Exception as exc:
             raise IOError(
-                "Failed to find any matching files for {0}".format(model_path)
-            )
+                'Failed to find any matching files for {0}'.format(model_path)
+            ) from exc
 
     def run_eval(self):
         """Run evaluation on self.data.test.

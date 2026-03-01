@@ -135,8 +135,8 @@ def build_optimizer(name, lr=0.001, **kwargs):
 
     try:
         optimizer_class = OPTIMIZERS[name]
-    except KeyError:
-        raise KeyError("Optimizer name should be one of: {}".format(list(OPTIMIZERS)))
+    except KeyError as exc:
+        raise KeyError("Optimizer name should be one of: {}".format(list(OPTIMIZERS))) from exc
 
     # Set parameters
     params = {}

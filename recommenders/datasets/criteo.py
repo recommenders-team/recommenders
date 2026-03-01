@@ -110,10 +110,9 @@ def load_spark_df(
                 # needs to be on dbfs to load
                 dbutils.fs.cp(node_path, dbfs_datapath, recurse=True)
                 path = dbfs_datapath
-            except Exception:
-                raise ValueError(
-                    "To use on a Databricks notebook, dbutils object should be passed as an argument"
-                )
+            except Exception as exc:
+                raise ValueError("To use on a Databricks notebook, "
+                "dbutils object should be passed as an argument") from exc
         else:
             path = filepath
 

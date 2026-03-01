@@ -430,8 +430,8 @@ class BaseModel:
 
         try:
             self.saver.restore(self.sess, act_path)
-        except Exception:
-            raise IOError("Failed to find any matching files for {0}".format(act_path))
+        except Exception as exc:
+            raise IOError("Failed to find any matching files for {0}".format(act_path)) from exc
 
     def fit(self, train_file, valid_file, test_file=None):
         """Fit the model with `train_file`. Evaluate the model on valid_file per epoch to observe the training status.

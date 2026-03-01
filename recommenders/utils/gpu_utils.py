@@ -76,9 +76,8 @@ def get_cuda_version():
     """
     try:
         import torch
-
         return torch.version.cuda
-    except (ImportError, ModuleNotFoundError):
+    except (ImportError, ModuleNotFoundError) as exc:
         path = ""
         if sys.platform == "win32":
             candidate = (
@@ -90,7 +89,7 @@ def get_cuda_version():
         elif sys.platform == "linux" or sys.platform == "darwin":
             path = "/usr/local/cuda/version.txt"
         else:
-            raise ValueError("Not in Windows, Linux or Mac")
+            raise ValueError("Not in Windows, Linux or Mac") from exc
 
         if os.path.isfile(path):
             with open(path, "r") as f:
@@ -107,7 +106,7 @@ def get_cudnn_version():
         str: Version of the library.
     """
 
-    def find_cudnn_in_headers(candiates):
+    def find_cudnn_in_headers(candidates):
         for c in candidates:
             file = glob.glob(c)
             if file:
@@ -131,9 +130,8 @@ def get_cudnn_version():
 
     try:
         import torch
-
         return str(torch.backends.cudnn.version())
-    except (ImportError, ModuleNotFoundError):
+    except (ImportError, ModuleNotFoundError) as exc:
         if sys.platform == "win32":
             candidates = [r"C:\NVIDIA\cuda\include\cudnn.h"]
         elif sys.platform == "linux":
@@ -146,5 +144,5 @@ def get_cudnn_version():
         elif sys.platform == "darwin":
             candidates = ["/usr/local/cuda/include/cudnn.h", "/usr/include/cudnn.h"]
         else:
-            raise ValueError("Not in Windows, Linux or Mac")
+            raise ValueError("Not in Windows, Linux or Mac") from exc
         return find_cudnn_in_headers(candidates)

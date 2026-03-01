@@ -51,10 +51,10 @@ class Timer(object):
         try:
             self._interval = self.end - self.init
             self.running = False
-        except AttributeError:
+        except AttributeError as exc:
             raise ValueError(
                 "Timer has not been initialized: use start() or the contextual form with Timer() as t:"
-            )
+            ) from exc
 
     @property
     def interval(self):
