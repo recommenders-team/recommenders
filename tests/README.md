@@ -250,43 +250,54 @@ group_spark_001: [  # Total group time: 571.13s
 3. If all the groups of your environment are above the threshold, add a new group.
 
 
-## How to setup GitHub Actions with large runners
+## How to setup GitHub Actions runners
 
 In this section we explain how to create the infrastructure to run the
 tests in GitHub Actions.
 
-In order to execute the tests in Recommenders, we need two types of
-virtual machines: ones without GPU, to execute the CPU and Spark
-tests, and ones with GPU, to execute the GPU tests.  Therefore, the
-first step is to add a large GPU runner to the organization.  We now
-have only one [GitHub-hosted GPU
-runner](https://docs.github.com/en/actions/concepts/runners/github-hosted-runners)
-called
-[ubuntu-gpu](https://github.com/organizations/recommenders-team/settings/actions/github-hosted-runners/4?viewing_from_runner_group=true)
-in the runner group
-[recommenders-gpu](https://github.com/organizations/recommenders-team/settings/actions/runner-groups/4).
-1. Make sure that the current GitHub base plan is Team plan, because
-   GitHub large runners are only available for organizations using the
-   GitHub Team or GitHub Enterprise Cloud plans.
-   * Navigate to the setting page of the organization instead of the
-     repo $\to$ Billing and licensing $\to$ Licensing $\to$ Current
-     GitHub base plan, then choose either Team plan or Enterprise
-     plan.
-   * See also [Larger runners
-     reference](https://docs.github.com/en/actions/reference/runners/larger-runners)
-     and [Actions runner
-     pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing#gpu-powered-larger-runners).
-1. Follow the steps described in [Adding a larger runner to an
-   organization](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners/manage-larger-runners#adding-a-larger-runner-to-an-organization).
-   * Click Actions $\to$ Runners $\to$ New runner $\to$ New
-     GitHub-hosted runner.  After choosing Linux x64, navigate to
-     Image $\to$ Partner and check "NVIDIA GPU-Optimizaed Image for AI
-     and HPC", then GPU-powered options will show in Size.
+In order to execute the tests in Recommenders, we use 3 types of
+GitHub Actions runners:
+* free [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)
+  (16GB memory by default), to execute the CPU and Spark tests in PR
+  gates.
+* [self-hosted runners](https://docs.github.com/en/actions/reference/runners/self-hosted-runners)
+  with GPU, to execute the GPU tests
+* self-hosted runners without GPU but having larger memory (64GB), to
+  execute the nightly CPU tests
 
-Then, change the runner used in
-[`workflows/tests.yml`](../.github/workflows/tests.yml) accordingly by
-following the instructions in [Running jobs on larger
-runners](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners/use-larger-runners?platform=linux).
+The
+[image](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
+for GitHub-hosted runners have everything required installed, so we
+don't have to do extra setup.  In addition, for public repositories,
+GitHub has [usage
+limits](https://docs.github.com/en/actions/reference/limits) for
+GitHub-hosted runners.
+
+For self-hosted runners, follow the steps below for setup:
+1. Install the following prerequisites on the VMs.
+   * [Docker](https://docs.docker.com/engine/install)
+     + Docker daemon should be configured run in [rootless
+       mode](https://docs.docker.com/engine/security/rootless/).
+   * (For GPU runners) [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+1. Follow the steps described in [Adding self-hosted
+   runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
+   to add the VMs as self-hosted runners on GitHub.
+   * Currently, we have 2 runner groups.
+     + `GPU`, for GPU runners.
+     + `CPU`, for CPU runners with larger memory (64GB).
+   * However, which runners are identified as GPU runners or CPU
+     runners is determined by their labels instead of their runner
+     groups.  So we have to label GPU runners as `GPU` and CPU runners
+     as `CPU` in the configure step.
+1. Schedule Docker build cache cleanup by adding the following entry
+   into crontab.
+   
+   ```
+   0 * * * * docker buildx prune -f --min-free-space 80gb
+   ```
+
+   * The amount of free space required (`80gb` in the example above)
+     can vary depending on the actual specification of the VMs.
 
 
 ## How to execute tests in your local environment
