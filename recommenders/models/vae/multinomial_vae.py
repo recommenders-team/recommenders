@@ -1,8 +1,6 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-from __future__ import annotations
-
 from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
@@ -38,19 +36,25 @@ class _MultVAEModel(nn.Module):
         # Encoder
         self.encoder_dropout = nn.Dropout(drop_encoder)
         self.encoder_h = nn.Linear(original_dim, intermediate_dim)
-        nn.init.xavier_uniform_(self.encoder_h.weight)
-        nn.init.trunc_normal_(self.encoder_h.bias, std=0.001)
 
         self.z_mean_layer = nn.Linear(intermediate_dim, latent_dim)
         self.z_log_var_layer = nn.Linear(intermediate_dim, latent_dim)
 
         # Decoder
         self.decoder_h = nn.Linear(latent_dim, intermediate_dim)
-        nn.init.xavier_uniform_(self.decoder_h.weight)
-        nn.init.trunc_normal_(self.decoder_h.bias, std=0.001)
-
         self.decoder_dropout = nn.Dropout(drop_decoder)
         self.decoder_out = nn.Linear(intermediate_dim, original_dim)
+
+        # Match TF paper initializers: glorot_uniform weights, truncated_normal(std=0.001) biases
+        for layer in [
+            self.encoder_h,
+            self.z_mean_layer,
+            self.z_log_var_layer,
+            self.decoder_h,
+            self.decoder_out,
+        ]:
+            nn.init.xavier_uniform_(layer.weight)
+            nn.init.trunc_normal_(layer.bias, std=0.001)
 
     def encode(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         # L2 normalize input as in the original paper
@@ -172,7 +176,7 @@ class MultVAE:
             self.drop_decoder,
             self.seed,
         ).to(self.device)
-        self.optimizer = Adam(self.model.parameters(), lr=0.001)
+        self.optimizer = Adam(self.model.parameters(), lr=0.001, eps=1e-7)
         self.scheduler = ReduceLROnPlateau(
             self.optimizer, factor=0.2, patience=1, min_lr=0.0001
         )
@@ -231,7 +235,6 @@ class MultVAE:
             x_val_te (numpy.ndarray): the click matrix for the validation set testing part.
             mapper (object): the mapper for converting click matrix to dataframe. It can be AffinityMatrix.
         """
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
         # Preload datasets to GPU once to avoid repeated CPU→GPU transfers
@@ -363,7 +366,7 @@ class MultVAE:
         """
         if self.save_path is not None:
             self.model.load_state_dict(
-                torch.load(self.save_path, map_location=self.device)
+                torch.load(self.save_path, map_location=self.device, weights_only=True)
             )
         # Run inference on CPU to free GPU memory
         train_device = self.device

@@ -1,8 +1,6 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-from __future__ import annotations
-
 from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
@@ -41,6 +39,17 @@ class _VAEModel(nn.Module):
         self.decoder_h = nn.Linear(latent_dim, intermediate_dim)
         self.decoder_dropout = nn.Dropout(drop_decoder)
         self.decoder_out = nn.Linear(intermediate_dim, original_dim)
+
+        # Match TF paper initializers: glorot_uniform weights, truncated_normal(std=0.001) biases
+        for layer in [
+            self.encoder_h,
+            self.z_mean_layer,
+            self.z_log_var_layer,
+            self.decoder_h,
+            self.decoder_out,
+        ]:
+            nn.init.xavier_uniform_(layer.weight)
+            nn.init.trunc_normal_(layer.bias, std=0.001)
 
     def encode(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         h = torch.tanh(self.encoder_h(self.encoder_dropout(x)))
@@ -137,7 +146,6 @@ class StandardVAE:
         self.drop_encoder = drop_encoder
         self.drop_decoder = drop_decoder
         self.save_path = save_path
-        self.ndcg_every = 5  # compute NDCG every N epochs; increase to reduce overhead
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -152,7 +160,7 @@ class StandardVAE:
             self.drop_encoder,
             self.drop_decoder,
         ).to(self.device)
-        self.optimizer = Adam(self.model.parameters(), lr=0.001)
+        self.optimizer = Adam(self.model.parameters(), lr=0.001, eps=1e-7)
         self.scheduler = ReduceLROnPlateau(
             self.optimizer, factor=0.2, patience=1, min_lr=0.0001
         )
@@ -166,9 +174,10 @@ class StandardVAE:
         beta: float,
     ) -> torch.Tensor:
         """Calculate negative ELBO (NELBO)."""
-        # Reconstruction error: logistic log likelihood
-        reconst_loss = self.original_dim * F.binary_cross_entropy(
-            x_bar, x, reduction="mean"
+        # Reconstruction error: sum over features, mean over batch
+        # Matches TF: original_dim * binary_crossentropy averages over features then Keras averages over batch
+        reconst_loss = torch.mean(
+            torch.sum(F.binary_cross_entropy(x_bar, x, reduction="none"), dim=-1)
         )
         # Kullback–Leibler divergence
         kl_loss = -0.5 * torch.mean(
@@ -208,17 +217,16 @@ class StandardVAE:
             x_val_te (numpy.ndarray): The click matrix for the validation set testing part.
             mapper (object): The mapper for converting click matrix to dataframe. It can be AffinityMatrix.
         """
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
         # Preload datasets to GPU once to avoid repeated CPU→GPU transfers
         x_train_gpu = torch.FloatTensor(x_train).to(self.device)
         x_val_gpu = torch.FloatTensor(x_valid).to(self.device)
 
-        self.train_loss: list[float] = []
-        self.val_loss: list[float] = []
-        self.val_ndcg: list[float] = []
-        self.ls_beta: list[float] = []
+        self.train_loss: List[float] = []
+        self.val_loss: List[float] = []
+        self.val_ndcg: List[float] = []
+        self.ls_beta: List[float] = []
 
         best_ndcg = 0.0
         update_count = 0
@@ -256,14 +264,11 @@ class StandardVAE:
             self.val_loss.append(val_loss)
             self.ls_beta.append(self.beta)
 
-            # NDCG@k on validation (every ndcg_every epochs)
-            if (epoch + 1) % self.ndcg_every == 0:
-                top_k = self._recommend_k_items_internal(x_val_tr, self.k, remove_seen=True)
-                top_k_df = mapper.map_back_sparse(top_k, kind="prediction")
-                test_df = mapper.map_back_sparse(x_val_te, kind="ratings")
-                ndcg = ndcg_at_k(test_df, top_k_df, col_prediction="prediction", k=self.k)
-            else:
-                ndcg = self.val_ndcg[-1] if self.val_ndcg else 0.0
+            # NDCG@k on validation
+            top_k = self._recommend_k_items_internal(x_val_tr, self.k, remove_seen=True)
+            top_k_df = mapper.map_back_sparse(top_k, kind="prediction")
+            test_df = mapper.map_back_sparse(x_val_te, kind="ratings")
+            ndcg = ndcg_at_k(test_df, top_k_df, col_prediction="prediction", k=self.k)
             self.val_ndcg.append(ndcg)
 
             if ndcg > best_ndcg:
@@ -336,7 +341,7 @@ class StandardVAE:
         """
         if self.save_path is not None:
             self.model.load_state_dict(
-                torch.load(self.save_path, map_location=self.device)
+                torch.load(self.save_path, map_location=self.device, weights_only=True)
             )
         # Run inference on CPU to free GPU memory
         train_device = self.device
