@@ -32,6 +32,12 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         filename = url.split("/")[-1]
     os.makedirs(work_directory, exist_ok=True)
     filepath = os.path.join(work_directory, filename)
+    if os.path.exists(filepath):
+        if filepath.endswith(".zip") and not is_valid_zip(filepath):
+            log.warning(f"File {filepath} is corrupt, re-downloading")
+            os.remove(filepath)
+        else:
+            log.info(f"File {filepath} already downloaded")
     if not os.path.exists(filepath):
         r = requests.get(url, stream=True)
         if r.status_code == 200:
@@ -50,8 +56,6 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         else:
             log.error(f"Problem downloading {url}")
             r.raise_for_status()
-    else:
-        log.info(f"File {filepath} already downloaded")
     if expected_bytes is not None:
         statinfo = os.stat(filepath)
         if statinfo.st_size != expected_bytes:
@@ -59,6 +63,23 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
             raise IOError(f"Failed to verify {filepath}")
 
     return filepath
+
+
+def is_valid_zip(filepath):
+    """Check if a file is a valid zip file.
+
+    Args:
+        filepath (str): Path to the file to check.
+
+    Returns:
+        bool: True if the file is a valid zip file, False otherwise.
+    """
+    try:
+        with zipfile.ZipFile(filepath, "r") as z:
+            z.testzip()
+        return True
+    except (zipfile.BadZipFile, OSError):
+        return False
 
 
 @contextmanager
