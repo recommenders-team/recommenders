@@ -387,6 +387,56 @@ def test_python_r_precision(rating_true, rating_pred, rating_nohit):
     )
 
 
+def test_python_ranking_metrics_by_threshold(rating_true, rating_pred):
+    """Regression for #2154 / #2140: ``relevancy_method='by_threshold'`` must
+    interpret ``threshold`` as a prediction-score cutoff and keep every ranking
+    metric inside ``[0, 1]``."""
+    metrics_to_check = {
+        "precision_at_k": precision_at_k,
+        "recall_at_k": recall_at_k,
+        "ndcg_at_k": ndcg_at_k,
+        "map": map,
+        "map_at_k": map_at_k,
+    }
+
+    # 1) Threshold above the highest predicted score: every metric must be 0.
+    for name, metric in metrics_to_check.items():
+        value = metric(
+            rating_true,
+            rating_pred,
+            relevancy_method="by_threshold",
+            k=10,
+            threshold=100,
+        )
+        assert value == 0.0, f"{name} should be 0 when threshold excludes everything"
+
+    # 2) Threshold below every predicted score: by_threshold collapses to top_k.
+    for name, metric in metrics_to_check.items():
+        top_k_value = metric(rating_true, rating_pred, relevancy_method="top_k", k=10)
+        threshold_value = metric(
+            rating_true,
+            rating_pred,
+            relevancy_method="by_threshold",
+            k=10,
+            threshold=0,
+        )
+        assert threshold_value == pytest.approx(top_k_value, TOL), (
+            f"{name} should match top_k when threshold passes every item"
+        )
+
+    # 3) Mid threshold previously caused metrics > 1 because `threshold` was
+    #    silently used as a top-N count. With the fix the result is bounded.
+    for name, metric in metrics_to_check.items():
+        value = metric(
+            rating_true,
+            rating_pred,
+            relevancy_method="by_threshold",
+            k=10,
+            threshold=11,
+        )
+        assert 0.0 <= value <= 1.0, f"{name}={value} is out of [0, 1]"
+
+
 def test_python_auc(rating_true_binary, rating_pred_binary):
     assert auc(
         rating_true=rating_true_binary,
