@@ -398,7 +398,9 @@ def merge_ranking_true_pred(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user (optional)
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
 
     Returns:
         pandas.DataFrame, pandas.DataFrame, int: DataFrame of recommendation hits, sorted by `col_user` and `rank`
@@ -418,7 +420,14 @@ def merge_ranking_true_pred(
     if relevancy_method == "top_k":
         top_k = k
     elif relevancy_method == "by_threshold":
-        top_k = threshold
+        # `threshold` is a score cutoff: only predictions with col_prediction >= threshold
+        # are eligible. The standard `k` cutoff still applies on top, so the resulting
+        # recommendation list always has at most k items per user. This keeps metrics
+        # like precision@k well-defined and bounded by 1.
+        rating_pred_common = rating_pred_common[
+            rating_pred_common[col_prediction] >= threshold
+        ]
+        top_k = k
     elif relevancy_method is None:
         top_k = None
     else:
@@ -474,7 +483,9 @@ def precision_at_k(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
 
     Returns:
         float: precision at k (min=0, max=1)
@@ -518,7 +529,9 @@ def recall_at_k(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
 
     Returns:
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than
@@ -572,7 +585,9 @@ def r_precision_at_k(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
 
     Returns:
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than
@@ -626,7 +641,9 @@ def ndcg_at_k(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
         score_type (str): type of relevance scores ['binary', 'raw', 'exp']. With the default option 'binary', the
             relevance score is reduced to either 1 (hit) or 0 (miss). Option 'raw' uses the raw relevance score.
             Option 'exp' uses (2 ** RAW_RELEVANCE - 1) as the relevance score
@@ -763,7 +780,9 @@ def map(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
 
     Returns:
         float: MAP (min=0, max=1)
@@ -810,7 +829,9 @@ def map_at_k(
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
-        threshold (float): threshold of top items per user (optional)
+        threshold (float): minimum prediction score for an item to be considered relevant
+            when ``relevancy_method="by_threshold"``. Items with ``col_prediction < threshold``
+            are dropped before the top-k cutoff is applied (optional).
 
     Returns:
         float: MAP@k (min=0, max=1)

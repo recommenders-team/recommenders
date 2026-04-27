@@ -387,6 +387,34 @@ def test_python_r_precision(rating_true, rating_pred, rating_nohit):
     )
 
 
+def test_python_ranking_metrics_by_threshold(rating_true, rating_pred):
+    metrics = [precision_at_k, recall_at_k, ndcg_at_k, map_at_k, map]
+
+    # Threshold above all predicted scores → no items selected → all metrics are 0.
+    for metric in metrics:
+        assert metric(
+            rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=100
+        ) == 0.0
+
+    # Threshold at or below the minimum predicted score → all items pass → matches top_k.
+    for metric in metrics:
+        assert metric(
+            rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=0
+        ) == pytest.approx(
+            metric(rating_true, rating_pred, relevancy_method="top_k", k=10), TOL
+        )
+
+    # threshold=13 keeps only pred >= 13 (top-2 per user); all are true hits.
+    # precision: 2/2 per user → 1.0
+    # recall: (2/3 + 2/5 + 2/10) / 3 = 19/45
+    assert precision_at_k(
+        rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=13
+    ) == pytest.approx(1.0, TOL)
+    assert recall_at_k(
+        rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=13
+    ) == pytest.approx(19 / 45, TOL)
+
+
 def test_python_auc(rating_true_binary, rating_pred_binary):
     assert auc(
         rating_true=rating_true_binary,
