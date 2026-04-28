@@ -122,6 +122,7 @@ jobs:
           bash tools/ci/compshare/setup_vm.sh "${vm_name}"
 
           # Export VM info for subsequent steps
+          COMPSHARE_SPEC_FILE='tools/ci/compshare/spec.json'
           source tools/ci/compshare/utils.sh
           mapfile -t vm_info < <(get_vm_info "${vm_name}")
           ssh_dest="${vm_info[1]}"
