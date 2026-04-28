@@ -1,0 +1,58 @@
+#! /bin/bash -
+
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+######################################################################
+# Install Docker in rootless mode
+#
+# See
+# * https://docs.docker.com/engine/install/ubuntu/
+# * https://docs.docker.com/engine/security/rootless/
+######################################################################
+set -euo pipefail
+shopt -s inherit_errexit
+
+ARCH="$(dpkg --print-architecture)"
+CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+APT_URL="https://download.docker.com/linux/ubuntu"
+APT_LIST="/etc/apt/sources.list.d/docker.list"
+KEYRING_DIR="/etc/apt/keyrings"
+GPG_PATH="${KEYRING_DIR}/docker.asc"
+GPG_URL="${APT_URL}/gpg"
+APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stable"
+
+echo '* Installing prerequisites ...'
+sudo apt update
+sudo apt install -y ca-certificates curl
+
+echo '* Adding Docker official GPG key ...'
+sudo install -m 0755 -d "${KEYRING_DIR}"
+sudo curl -fsSL "${GPG_URL}" -o "${GPG_PATH}"
+sudo chmod a+r "${GPG_PATH}"
+
+echo '* Setting APT repo source for Docker ...'
+sudo mkdir -p "${APT_LIST%/*}"
+echo "${APT_ENTRY}" | sudo tee "${APT_LIST}" > /dev/null
+sudo apt update
+
+echo '* Installing the latest Docker community edition ...'
+sudo apt install -y docker-ce
+
+echo '* Configuring Docker daemon in rootless mode ...'
+echo '  - Installing prerequisites ...'
+sudo apt install -y uidmap docker-ce-rootless-extras
+
+echo '  - Disabling system-wide Docker daemon ...'
+sudo systemctl disable --now docker.service docker.socket
+sudo rm /var/run/docker.sock
+
+echo '  - Installing rootless Docker daemon ...'
+dockerd-rootless-setuptool.sh install
+
+echo '  - Starting rootless Docker daemon ...'
+systemctl --user start docker
+
+echo '  - Enabling Docker service and launch the daemon on startup ...'
+systemctl --user enable docker
+sudo loginctl enable-linger "$(whoami)"

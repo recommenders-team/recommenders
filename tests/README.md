@@ -26,7 +26,9 @@ In this document we show our test infrastructure and how to contribute tests to 
     - [How to create tests for the Recommenders library](#how-to-create-tests-for-the-recommenders-library)
     - [How to create tests for the notebooks](#how-to-create-tests-for-the-notebooks)
     - [How to add tests to the GitHub workflows](#How-to-add-tests-to-the-GitHub-workflows)
-- [How to setup GitHub Actions with large runners](#how-to-setup-github-actions-with-large-runners)
+- [How to set up the infrastructure](#how-to-set-up-the-infrastructure)
+    - [How to set up GitHub Actions runners](#how-to-set-up-github-actions-runners)
+    - [How to set up Compshare VMs for on-demand creation](#how-to-set-up-compshare-vms-for-on-demand-creation)
 - [How to execute tests in your local environment](#how-to-execute-tests-in-your-local-environment)
 
 
@@ -67,30 +69,34 @@ executed via GitHub Actions:
 
 <img src="./github-actions-tests.svg">
 
-GitHub workflows `unit-tests.yml`, `cpu-nightly.yml`,
-`gpu-nightly.yml` and `spark-nightly.yml` located in
+GitHub workflows [`unit-tests.yml`](../.github/workflows/unit-tests.yml),
+[`cpu-nightly.yml`](../.github/workflows/cpu-nightly.yml),
+[`gpu-nightly.yml`](../.github/workflows/gpu-nightly.yml) and
+[`spark-nightly.yml`](../.github/workflows/spark-nightly.yml) located in
 [.github/workflows/](../.github/workflows/) are used to run the tests.
 The tests are divided into groups and each workflow triggers these
 test groups in parallel, which significantly reduces end-to-end
 execution time.
 
 These workflows is composed of:
-* two actions
-  + [`actions/get-test-groups`](../.github/actions/get-test-groups/action.yml):
-    this action extracts test groups collected in the configuration
-    file [`test_groups.yml`](./test_groups.yml) to be run in parallel
-    in the workflows.
-  + [`actions/group-test`](../.github/actions/group-test/action.yml):
-    this action runs one test group output from
-    [`actions/get-test-groups`](../.github/actions/get-test-groups/action.yml)
-    in a Docker container with appropriate environment set up in the
-    [`Dockerfile`](../tools/docker/Dockerfile).  More details on
-    Docker support can be found at
-    [tools/docker/README.md](../tools/docker/README.md).
-* one [reusable workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations)
-  + [`workflows/tests.yml`](../.github/workflows/tests.yml): this
-    reusable workflow is used by other workflows configured for
+* two [reusable workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations)
+  + They are used by other workflows configured for
     different compute environments and test categories.
+  + They use different infrastructures to run the tests.
+    - [`compshare-vm.yml`](../.github/workflows/compshare-vm.yml) runs
+      the tests on VMs created on demand.  And the service is now provided
+      by [Compshare](self-hosted-runner.yml) from UCloud via its APIs.
+    - [`self-hosted-runner.yml`](../.github/workflows/self-hosted-runner.yml)
+      runs the test on pre-allocated VMs set up as GitHub Actions self-hosted runners.
+  + Both of them include 2 jobs:
+    - `get-test-groups` extracts test groups collected in the configuration
+      file [`test_groups.yml`](./test_groups.yml) to be run in parallel
+      in the workflows.
+    - `execute-tests` runs one test group output from
+      `get-test-groups` in a Docker container with appropriate environment set up in the
+      [`Dockerfile`](../tools/docker/Dockerfile).  More details on
+      Docker support can be found at
+      [tools/docker/README.md](../tools/docker/README.md).
 * one configuration file
   + [`test_groups.yml`](./test_groups.yml): this configuration file
     defines the groups of tests.
@@ -250,20 +256,27 @@ group_spark_001: [  # Total group time: 571.13s
 3. If all the groups of your environment are above the threshold, add a new group.
 
 
-## How to setup GitHub Actions runners
+## How to set up the infrastructure
+
+### How to set up GitHub Actions runners
 
 In this section we explain how to create the infrastructure to run the
-tests in GitHub Actions.
+tests via self-hosted GitHub Actions runners used in
+[`self-hosted-runner.yml`](../.github/workflows/self-hosted-runner.yml).
 
-In order to execute the tests in Recommenders, we use 3 types of
-GitHub Actions runners:
-* free [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)
-  (16GB memory by default), to execute the CPU and Spark tests in PR
-  gates.
-* [self-hosted runners](https://docs.github.com/en/actions/reference/runners/self-hosted-runners)
-  with GPU, to execute the GPU tests
-* self-hosted runners without GPU but having larger memory (64GB), to
-  execute the nightly CPU tests
+In a nutshell, this requires the following steps:
+1. Set up several self-hosted GitHub Actions runners described below.
+1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`, 
+   `gpu-nightly.yml` and `spark-nightly.yml` to use `self-hosted-runner.yml`.
+
+We use 3 types of GitHub Actions runners to execute the tests in Recommenders:
+1. free [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)
+   (16GB memory by default), to execute the CPU and Spark tests in PR
+   gates.
+1. [self-hosted runners](https://docs.github.com/en/actions/reference/runners/self-hosted-runners)
+   with GPU, to execute the GPU tests
+1. self-hosted runners without GPU but having larger memory (64GB), to
+   execute the nightly CPU tests
 
 The
 [image](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
@@ -298,6 +311,39 @@ For self-hosted runners, follow the steps below for setup:
 
    * The amount of free space required (`80gb` in the example above)
      can vary depending on the actual specification of the VMs.
+
+
+### How to set up Compshare VMs for on-demand creation
+
+In this section we explain how to create the infrastructure to run the
+tests via VMs on demand used in
+[`compshare-vm.yml`](../.github/workflows/compshare-vm.yml).
+
+In addition to set up VMs as self-hosted runners waiting for testing jobs described
+the previous section, we also try to allocate VMs on demand from other cheaper cloud
+service providers, such as [Compshare](https://www.compshare.cn) from UCloud.
+However, different cloud services offer different APIs and tools.
+To unify the management and provisioning,
+[Terraform](https://developer.hashicorp.com/terraform) can be used.
+Alas, since Terraform is not supported by the current service provider Compshare,
+we develop some shell scripts under [`tools/ci/compshare/`](../tools/ci/compshare/)
+for our basic usage of VM allocation from Compshare.
+
+Before using `compshare-vm.yml`, follow the steps below for the setup:
+1. Log into [Compshare console](https://passport.compshare.cn/login).
+1. Create API keys (one API private key and one API public key)
+   for the shell scripts to interact with the APIs.
+1. Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
+   $\to$ [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+   $\to$ New repository secret
+   * One for the API private key
+     + Name: `COMPSHARE_PRIVATE_KEY`
+     + Secret: value of the API private key
+   * One for the API public key
+     + Name: `COMPSHARE_PUBLIC_KEY`
+     + Secret: value of the API public key
+1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`, 
+   `gpu-nightly.yml` and `spark-nightly.yml` to use `compshare-vm.yml`.
 
 
 ## How to execute tests in your local environment
