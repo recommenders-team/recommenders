@@ -114,7 +114,8 @@ jobs:
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
-          vm_name="$(mktemp -u vm_XXXXXX)"
+          commit="$(echo ${{ github.sha }} | head -c 5)"
+          vm_name="$(mktemp -u vm_${commit}_XXXXXX)"
           echo "VM_NAME=${vm_name}" >> "$GITHUB_ENV"
 
           # Set up a VM
@@ -137,12 +138,12 @@ jobs:
           extras_spark="${{ contains(matrix.group, 'spark') && ',spark' || '' }}"
           extras="[dev${extras_gpu}${extras_spark}]"
           python_version="${{ matrix.python-version }}"
-          docker_args="-t '${image_tag}' \
-              -f '${dockerfile}' \
-              --build-arg COMPUTE='${compute}' \
-              --build-arg EXTRAS='${extras}' \
+          docker_args="-t ${image_tag} \
+              -f ${dockerfile} \
+              --build-arg COMPUTE=${compute} \
+              --build-arg EXTRAS=${extras} \
               --build-arg GIT_REF= \
-              --build-arg PYTHON_VERSION='${python_version}'"
+              --build-arg PYTHON_VERSION=${python_version}"
 
           if [[ -z "${SSH_DEST}" ]]; then
               # Run on current GitHub-hosted runner directly

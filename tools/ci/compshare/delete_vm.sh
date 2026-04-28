@@ -41,7 +41,7 @@ if [[ -n "${vm_id}" ]]; then
         fi
         echo "* Failed to stop the VM: ${response}"
         echo '* Trying again ...'
-        sleep $((i * 5))
+        sleep $(( (i+1) * 20))
     done
 
     echo "Deleting the VM ${vm_name} ..."
@@ -53,6 +53,6 @@ if [[ -n "${vm_id}" ]]; then
         fi
         echo "* Failed to delete the VM: ${response}"
         echo '* Trying again ...'
-        sleep $((i * 5))
+        sleep $(( (i+1) * 20))
     done
 fi

@@ -320,7 +320,7 @@ get_vm_info() {
         fi
         echo "* Failed to get the info: ${response}." >&2
         echo '* Trying again ...' >&2
-        sleep $((i * 5))
+        sleep $(( (i+1) * 5 ))
     done
     if [[ "${retcode}" != 0 ]]; then
         echo "ERROR: ${response}" >&2
