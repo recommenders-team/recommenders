@@ -8,16 +8,13 @@ import pytest
 import numpy as np
 import pandas as pd
 
-try:
-    from recommenders.models.ncf.ncf_singlenode import NCF
-    from recommenders.models.ncf.dataset import Dataset
-    from recommenders.utils.constants import (
-        DEFAULT_USER_COL,
-        DEFAULT_ITEM_COL,
-        SEED,
-    )
-except ImportError:
-    pass  # skip this import if we are in cpu environment
+from recommenders.models.ncf.ncf_singlenode import NCF
+from recommenders.models.ncf.dataset import Dataset
+from recommenders.utils.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    SEED,
+)
 
 
 N_NEG = 5
@@ -39,15 +36,13 @@ def test_init(model_type, n_users, n_items):
     # number of items in dataset
     assert model.n_items == n_items
     # dimension of gmf user embedding
-    assert model.embedding_gmf_P.shape == [n_users, model.n_factors]
+    assert model.embedding_gmf_P.weight.shape == (n_users, model.n_factors)
     # dimension of gmf item embedding
-    assert model.embedding_gmf_Q.shape == [n_items, model.n_factors]
+    assert model.embedding_gmf_Q.weight.shape == (n_items, model.n_factors)
     # dimension of mlp user embedding
-    assert model.embedding_mlp_P.shape == [n_users, model.n_factors]
+    assert model.embedding_mlp_P.weight.shape == (n_users, model.n_factors)
     # dimension of mlp item embedding
-    assert model.embedding_mlp_Q.shape == [n_items, model.n_factors]
-
-    # TODO: more parameters
+    assert model.embedding_mlp_Q.weight.shape == (n_items, model.n_factors)
 
 
 @pytest.mark.gpu
@@ -64,14 +59,14 @@ def test_regular_save_load(model_type, n_users, n_items):
     )
     model.save(ckpt)
     if model.model_type == "neumf":
-        P = model.sess.run(model.embedding_gmf_P)
-        Q = model.sess.run(model.embedding_mlp_Q)
+        P = model.embedding_gmf_P.weight.detach().cpu().numpy()
+        Q = model.embedding_mlp_Q.weight.detach().cpu().numpy()
     elif model.model_type == "gmf":
-        P = model.sess.run(model.embedding_gmf_P)
-        Q = model.sess.run(model.embedding_gmf_Q)
+        P = model.embedding_gmf_P.weight.detach().cpu().numpy()
+        Q = model.embedding_gmf_Q.weight.detach().cpu().numpy()
     elif model.model_type == "mlp":
-        P = model.sess.run(model.embedding_mlp_P)
-        Q = model.sess.run(model.embedding_mlp_Q)
+        P = model.embedding_mlp_P.weight.detach().cpu().numpy()
+        Q = model.embedding_mlp_Q.weight.detach().cpu().numpy()
 
     del model
     model = NCF(
@@ -80,16 +75,16 @@ def test_regular_save_load(model_type, n_users, n_items):
 
     if model.model_type == "neumf":
         model.load(neumf_dir=ckpt)
-        P_ = model.sess.run(model.embedding_gmf_P)
-        Q_ = model.sess.run(model.embedding_mlp_Q)
+        P_ = model.embedding_gmf_P.weight.detach().cpu().numpy()
+        Q_ = model.embedding_mlp_Q.weight.detach().cpu().numpy()
     elif model.model_type == "gmf":
         model.load(gmf_dir=ckpt)
-        P_ = model.sess.run(model.embedding_gmf_P)
-        Q_ = model.sess.run(model.embedding_gmf_Q)
+        P_ = model.embedding_gmf_P.weight.detach().cpu().numpy()
+        Q_ = model.embedding_gmf_Q.weight.detach().cpu().numpy()
     elif model.model_type == "mlp":
         model.load(mlp_dir=ckpt)
-        P_ = model.sess.run(model.embedding_mlp_P)
-        Q_ = model.sess.run(model.embedding_mlp_Q)
+        P_ = model.embedding_mlp_P.weight.detach().cpu().numpy()
+        Q_ = model.embedding_mlp_Q.weight.detach().cpu().numpy()
 
     # test load function
     assert np.array_equal(P, P_)
@@ -108,8 +103,8 @@ def test_neumf_save_load(n_users, n_items):
         shutil.rmtree(ckpt_gmf)
     model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1)
     model.save(ckpt_gmf)
-    P_gmf = model.sess.run(model.embedding_gmf_P)
-    Q_gmf = model.sess.run(model.embedding_gmf_Q)
+    P_gmf = model.embedding_gmf_P.weight.detach().cpu().numpy()
+    Q_gmf = model.embedding_gmf_Q.weight.detach().cpu().numpy()
     del model
 
     model_type = "mlp"
@@ -118,19 +113,19 @@ def test_neumf_save_load(n_users, n_items):
         shutil.rmtree(ckpt_mlp)
     model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1)
     model.save(".%s" % model_type)
-    P_mlp = model.sess.run(model.embedding_mlp_P)
-    Q_mlp = model.sess.run(model.embedding_mlp_Q)
+    P_mlp = model.embedding_mlp_P.weight.detach().cpu().numpy()
+    Q_mlp = model.embedding_mlp_Q.weight.detach().cpu().numpy()
     del model
 
     model_type = "neumf"
     model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1)
     model.load(gmf_dir=ckpt_gmf, mlp_dir=ckpt_mlp)
 
-    P_gmf_ = model.sess.run(model.embedding_gmf_P)
-    Q_gmf_ = model.sess.run(model.embedding_gmf_Q)
+    P_gmf_ = model.embedding_gmf_P.weight.detach().cpu().numpy()
+    Q_gmf_ = model.embedding_gmf_Q.weight.detach().cpu().numpy()
 
-    P_mlp_ = model.sess.run(model.embedding_mlp_P)
-    Q_mlp_ = model.sess.run(model.embedding_mlp_Q)
+    P_mlp_ = model.embedding_mlp_P.weight.detach().cpu().numpy()
+    Q_mlp_ = model.embedding_mlp_Q.weight.detach().cpu().numpy()
 
     assert np.array_equal(P_gmf, P_gmf_)
     assert np.array_equal(Q_gmf, Q_gmf_)
@@ -141,8 +136,6 @@ def test_neumf_save_load(n_users, n_items):
         shutil.rmtree(ckpt_gmf)
     if os.path.exists(ckpt_mlp):
         shutil.rmtree(ckpt_mlp)
-
-    # TODO: test loading fc-concat
 
 
 @pytest.mark.gpu

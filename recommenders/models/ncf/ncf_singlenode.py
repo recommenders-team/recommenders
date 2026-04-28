@@ -2,19 +2,19 @@
 # Licensed under the MIT License.
 
 import os
-import numpy as np
-import tensorflow as tf
-import tf_slim as slim
-from time import time
 import logging
+from time import time
+
+import numpy as np
+import torch
+import torch.nn as nn
 
 
-tf.compat.v1.disable_eager_execution()
 logger = logging.getLogger(__name__)
-MODEL_CHECKPOINT = "model.ckpt"
+MODEL_CHECKPOINT = "model.pt"
 
 
-class NCF:
+class NCF(nn.Module):
     """Neural Collaborative Filtering (NCF) implementation
 
     :Citation:
@@ -53,9 +53,12 @@ class NCF:
 
         """
 
+        super().__init__()
+
         # seed
-        tf.compat.v1.set_random_seed(seed)
-        np.random.seed(seed)
+        if seed is not None:
+            torch.manual_seed(seed)
+            np.random.seed(seed)
         self.seed = seed
 
         self.n_users = n_users
@@ -79,196 +82,89 @@ class NCF:
 
         # ncf layer input size
         self.ncf_layer_size = n_factors + layer_sizes[-1]
-        # create ncf model
-        self._create_model()
-        # set GPU use with demand growth
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        # set TF Session
-        self.sess = tf.compat.v1.Session(
-            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
-        )
-        # parameters initialization
-        self.sess.run(tf.compat.v1.global_variables_initializer())
 
-    def _create_model(
-        self,
-    ):
-        # reset graph
-        tf.compat.v1.reset_default_graph()
+        # --- Embeddings ---
+        # GMF embeddings
+        self.embedding_gmf_P = nn.Embedding(n_users, n_factors)
+        self.embedding_gmf_Q = nn.Embedding(n_items, n_factors)
+        # MLP embeddings
+        self.embedding_mlp_P = nn.Embedding(n_users, int(layer_sizes[0] / 2))
+        self.embedding_mlp_Q = nn.Embedding(n_items, int(layer_sizes[0] / 2))
 
-        with tf.compat.v1.variable_scope("input_data", reuse=tf.compat.v1.AUTO_REUSE):
+        # Initialize embeddings with truncated normal (matches TF truncated_normal stddev=0.01)
+        for emb in [
+            self.embedding_gmf_P,
+            self.embedding_gmf_Q,
+            self.embedding_mlp_P,
+            self.embedding_mlp_Q,
+        ]:
+            nn.init.trunc_normal_(emb.weight, mean=0.0, std=0.01)
 
-            # input: index of users, items and ground truth
-            self.user_input = tf.compat.v1.placeholder(tf.int32, shape=[None, 1])
-            self.item_input = tf.compat.v1.placeholder(tf.int32, shape=[None, 1])
-            self.labels = tf.compat.v1.placeholder(tf.float32, shape=[None, 1])
+        # --- MLP layers ---
+        mlp_layers = []
+        for i in range(1, len(layer_sizes)):
+            mlp_layers.append(nn.Linear(layer_sizes[i - 1], layer_sizes[i]))
+            mlp_layers.append(nn.ReLU())
+        self.mlp_layers = nn.Sequential(*mlp_layers)
 
-        with tf.compat.v1.variable_scope("embedding", reuse=tf.compat.v1.AUTO_REUSE):
+        # Initialize MLP weights with Xavier uniform (matches TF VarianceScaling fan_avg uniform)
+        # and biases with zeros (matches slim default)
+        for module in self.mlp_layers:
+            if isinstance(module, nn.Linear):
+                nn.init.xavier_uniform_(module.weight)
+                nn.init.zeros_(module.bias)
 
-            # set embedding table
-            self.embedding_gmf_P = tf.Variable(
-                tf.random.truncated_normal(
-                    shape=[self.n_users, self.n_factors],
-                    mean=0.0,
-                    stddev=0.01,
-                    seed=self.seed,
-                ),
-                name="embedding_gmf_P",
-                dtype=tf.float32,
+        # --- Output layer (no bias, matches TF biases_initializer=None) ---
+        if self.model_type == "gmf":
+            self.output_layer = nn.Linear(n_factors, 1, bias=False)
+        elif self.model_type == "mlp":
+            self.output_layer = nn.Linear(layer_sizes[-1], 1, bias=False)
+        elif self.model_type == "neumf":
+            self.output_layer = nn.Linear(
+                n_factors + layer_sizes[-1], 1, bias=False
+            )
+        nn.init.xavier_uniform_(self.output_layer.weight)
+
+        # Device setup
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.to(self.device)
+
+    def forward(self, user_input, item_input):
+        """Forward pass
+
+        Args:
+            user_input (torch.LongTensor): User indices, shape (batch,).
+            item_input (torch.LongTensor): Item indices, shape (batch,).
+
+        Returns:
+            torch.Tensor: Predicted scores, shape (batch, 1).
+        """
+
+        # GMF path
+        gmf_vector = None
+        if self.model_type in ("gmf", "neumf"):
+            gmf_p = self.embedding_gmf_P(user_input)
+            gmf_q = self.embedding_gmf_Q(item_input)
+            gmf_vector = gmf_p * gmf_q
+
+        # MLP path
+        mlp_vector = None
+        if self.model_type in ("mlp", "neumf"):
+            mlp_p = self.embedding_mlp_P(user_input)
+            mlp_q = self.embedding_mlp_Q(item_input)
+            mlp_vector = self.mlp_layers(torch.cat([mlp_p, mlp_q], dim=-1))
+
+        # Output
+        if self.model_type == "gmf":
+            output = self.output_layer(gmf_vector)
+        elif self.model_type == "mlp":
+            output = self.output_layer(mlp_vector)
+        else:  # neumf
+            output = self.output_layer(
+                torch.cat([gmf_vector, mlp_vector], dim=-1)
             )
 
-            self.embedding_gmf_Q = tf.Variable(
-                tf.random.truncated_normal(
-                    shape=[self.n_items, self.n_factors],
-                    mean=0.0,
-                    stddev=0.01,
-                    seed=self.seed,
-                ),
-                name="embedding_gmf_Q",
-                dtype=tf.float32,
-            )
-
-            # set embedding table
-            self.embedding_mlp_P = tf.Variable(
-                tf.random.truncated_normal(
-                    shape=[self.n_users, int(self.layer_sizes[0] / 2)],
-                    mean=0.0,
-                    stddev=0.01,
-                    seed=self.seed,
-                ),
-                name="embedding_mlp_P",
-                dtype=tf.float32,
-            )
-
-            self.embedding_mlp_Q = tf.Variable(
-                tf.random.truncated_normal(
-                    shape=[self.n_items, int(self.layer_sizes[0] / 2)],
-                    mean=0.0,
-                    stddev=0.01,
-                    seed=self.seed,
-                ),
-                name="embedding_mlp_Q",
-                dtype=tf.float32,
-            )
-
-        with tf.compat.v1.variable_scope("gmf", reuse=tf.compat.v1.AUTO_REUSE):
-
-            # get user embedding p and item embedding q
-            self.gmf_p = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(
-                    params=self.embedding_gmf_P, ids=self.user_input
-                ),
-                axis=1,
-            )
-            self.gmf_q = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(
-                    params=self.embedding_gmf_Q, ids=self.item_input
-                ),
-                axis=1,
-            )
-
-            # get gmf vector
-            self.gmf_vector = self.gmf_p * self.gmf_q
-
-        with tf.compat.v1.variable_scope("mlp", reuse=tf.compat.v1.AUTO_REUSE):
-
-            # get user embedding p and item embedding q
-            self.mlp_p = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(
-                    params=self.embedding_mlp_P, ids=self.user_input
-                ),
-                axis=1,
-            )
-            self.mlp_q = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(
-                    params=self.embedding_mlp_Q, ids=self.item_input
-                ),
-                axis=1,
-            )
-
-            # concatenate user and item vector
-            output = tf.concat([self.mlp_p, self.mlp_q], 1)
-
-            # MLP Layers
-            for layer_size in self.layer_sizes[1:]:
-                output = slim.layers.fully_connected(
-                    output,
-                    num_outputs=layer_size,
-                    activation_fn=tf.nn.relu,
-                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0,
-                        mode="fan_avg",
-                        distribution="uniform",
-                        seed=self.seed,
-                    ),
-                )
-            self.mlp_vector = output
-
-            # self.output = tf.sigmoid(tf.reduce_sum(self.mlp_vector, axis=1, keepdims=True))
-
-        with tf.compat.v1.variable_scope("ncf", reuse=tf.compat.v1.AUTO_REUSE):
-
-            if self.model_type == "gmf":
-                # GMF only
-                output = slim.layers.fully_connected(
-                    self.gmf_vector,
-                    num_outputs=1,
-                    activation_fn=None,
-                    biases_initializer=None,
-                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0,
-                        mode="fan_avg",
-                        distribution="uniform",
-                        seed=self.seed,
-                    ),
-                )
-                self.output = tf.sigmoid(output)
-
-            elif self.model_type == "mlp":
-                # MLP only
-                output = slim.layers.fully_connected(
-                    self.mlp_vector,
-                    num_outputs=1,
-                    activation_fn=None,
-                    biases_initializer=None,
-                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0,
-                        mode="fan_avg",
-                        distribution="uniform",
-                        seed=self.seed,
-                    ),
-                )
-                self.output = tf.sigmoid(output)
-
-            elif self.model_type == "neumf":
-                # concatenate GMF and MLP vector
-                self.ncf_vector = tf.concat([self.gmf_vector, self.mlp_vector], 1)
-                # get predicted rating score
-                output = slim.layers.fully_connected(
-                    self.ncf_vector,
-                    num_outputs=1,
-                    activation_fn=None,
-                    biases_initializer=None,
-                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0,
-                        mode="fan_avg",
-                        distribution="uniform",
-                        seed=self.seed,
-                    ),
-                )
-                self.output = tf.sigmoid(output)
-
-        with tf.compat.v1.variable_scope("loss", reuse=tf.compat.v1.AUTO_REUSE):
-
-            # set loss function
-            self.loss = tf.compat.v1.losses.log_loss(self.labels, self.output)
-
-        with tf.compat.v1.variable_scope("optimizer", reuse=tf.compat.v1.AUTO_REUSE):
-
-            # set optimizer
-            self.optimizer = tf.compat.v1.train.AdamOptimizer(
-                learning_rate=self.learning_rate
-            ).minimize(self.loss)
+        return torch.sigmoid(output)
 
     def save(self, dir_name):
         """Save model parameters in `dir_name`
@@ -277,11 +173,9 @@ class NCF:
             dir_name (str): directory name, which should be a folder name instead of file name
                 we will create a new directory if not existing.
         """
-        # save trained model
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
-        saver = tf.compat.v1.train.Saver()
-        saver.save(self.sess, os.path.join(dir_name, MODEL_CHECKPOINT))
+        torch.save(self.state_dict(), os.path.join(dir_name, MODEL_CHECKPOINT))
 
     def load(self, gmf_dir=None, mlp_dir=None, neumf_dir=None, alpha=0.5):
         """Load model parameters for further use.
@@ -302,21 +196,28 @@ class NCF:
             object: Load parameters in this model.
         """
 
-        # load pre-trained model
         if self.model_type == "gmf" and gmf_dir is not None:
-            saver = tf.compat.v1.train.Saver()
-            saver.restore(self.sess, os.path.join(gmf_dir, MODEL_CHECKPOINT))
+            state_dict = torch.load(
+                os.path.join(gmf_dir, MODEL_CHECKPOINT),
+                map_location=self.device,
+            )
+            self.load_state_dict(state_dict)
 
         elif self.model_type == "mlp" and mlp_dir is not None:
-            saver = tf.compat.v1.train.Saver()
-            saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
+            state_dict = torch.load(
+                os.path.join(mlp_dir, MODEL_CHECKPOINT),
+                map_location=self.device,
+            )
+            self.load_state_dict(state_dict)
 
         elif self.model_type == "neumf" and neumf_dir is not None:
-            saver = tf.compat.v1.train.Saver()
-            saver.restore(self.sess, os.path.join(neumf_dir, MODEL_CHECKPOINT))
+            state_dict = torch.load(
+                os.path.join(neumf_dir, MODEL_CHECKPOINT),
+                map_location=self.device,
+            )
+            self.load_state_dict(state_dict)
 
         elif self.model_type == "neumf" and gmf_dir is not None and mlp_dir is not None:
-            # load neumf using gmf and mlp
             self._load_neumf(gmf_dir, mlp_dir, alpha)
 
         else:
@@ -326,45 +227,42 @@ class NCF:
         """Load gmf and mlp model parameters for further use in NeuMF.
         NeuMF model --> load parameters in `gmf_dir` and `mlp_dir`
         """
-        # load gmf part
-        variables = tf.compat.v1.global_variables()
-        # get variables with 'gmf'
-        var_flow_restore = [
-            val for val in variables if "gmf" in val.name and "ncf" not in val.name
-        ]
-        # load 'gmf' variable
-        saver = tf.compat.v1.train.Saver(var_flow_restore)
-        # restore
-        saver.restore(self.sess, os.path.join(gmf_dir, MODEL_CHECKPOINT))
-
-        # load mlp part
-        variables = tf.compat.v1.global_variables()
-        # get variables with 'gmf'
-        var_flow_restore = [
-            val for val in variables if "mlp" in val.name and "ncf" not in val.name
-        ]
-        # load 'gmf' variable
-        saver = tf.compat.v1.train.Saver(var_flow_restore)
-        # restore
-        saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
-
-        # concat pretrain h_from_gmf and h_from_mlp
-        vars_list = tf.compat.v1.get_collection(
-            tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="ncf"
+        gmf_state = torch.load(
+            os.path.join(gmf_dir, MODEL_CHECKPOINT),
+            map_location=self.device,
+        )
+        mlp_state = torch.load(
+            os.path.join(mlp_dir, MODEL_CHECKPOINT),
+            map_location=self.device,
         )
 
-        assert len(vars_list) == 1
-        ncf_fc = vars_list[0]
+        # Build a new state dict to load atomically
+        new_state = self.state_dict()
 
-        # get weight from gmf and mlp
-        gmf_fc = tf.train.load_variable(gmf_dir, ncf_fc.name)
-        mlp_fc = tf.train.load_variable(mlp_dir, ncf_fc.name)
+        # GMF embeddings from GMF model
+        new_state["embedding_gmf_P.weight"] = gmf_state["embedding_gmf_P.weight"]
+        new_state["embedding_gmf_Q.weight"] = gmf_state["embedding_gmf_Q.weight"]
 
-        # load fc layer by tf.concat
-        assign_op = tf.compat.v1.assign(
-            ncf_fc, tf.concat([alpha * gmf_fc, (1 - alpha) * mlp_fc], axis=0)
+        # MLP embeddings from MLP model
+        new_state["embedding_mlp_P.weight"] = mlp_state["embedding_mlp_P.weight"]
+        new_state["embedding_mlp_Q.weight"] = mlp_state["embedding_mlp_Q.weight"]
+
+        # MLP layer weights from MLP model
+        for key in mlp_state:
+            if key.startswith("mlp_layers."):
+                new_state[key] = mlp_state[key]
+
+        # Concatenate output layer weights: [alpha * gmf_fc, (1-alpha) * mlp_fc]
+        # PyTorch Linear weight shape is (out_features, in_features), so concat on dim=1
+        new_state["output_layer.weight"] = torch.cat(
+            [
+                alpha * gmf_state["output_layer.weight"],
+                (1 - alpha) * mlp_state["output_layer.weight"],
+            ],
+            dim=1,
         )
-        self.sess.run(assign_op)
+
+        self.load_state_dict(new_state)
 
     def fit(self, data):
         """Fit model with training data
@@ -379,6 +277,10 @@ class NCF:
         self.id2user = data.id2user
         self.id2item = data.id2item
 
+        # create optimizer AFTER model is on device
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        criterion = nn.BCELoss()
+
         # loop for n_epochs
         for epoch_count in range(1, self.n_epochs + 1):
 
@@ -387,6 +289,7 @@ class NCF:
 
             # initialize
             train_loss = []
+            self.train()
 
             # calculate loss and update NCF parameters
             for user_input, item_input, labels in data.train_loader(self.batch_size):
@@ -395,15 +298,22 @@ class NCF:
                 item_input = np.array([self.item2id[x] for x in item_input])
                 labels = np.array(labels)
 
-                feed_dict = {
-                    self.user_input: user_input[..., None],
-                    self.item_input: item_input[..., None],
-                    self.labels: labels[..., None],
-                }
+                user_tensor = torch.LongTensor(user_input).to(self.device)
+                item_tensor = torch.LongTensor(item_input).to(self.device)
+                label_tensor = (
+                    torch.FloatTensor(labels).unsqueeze(1).to(self.device)
+                )
 
-                # get loss and execute optimization
-                loss, _ = self.sess.run([self.loss, self.optimizer], feed_dict)
-                train_loss.append(loss)
+                # forward pass
+                output = self.forward(user_tensor, item_tensor)
+                loss = criterion(output, label_tensor)
+
+                # backward pass
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                train_loss.append(loss.item())
             train_time = time() - train_begin
 
             # output every self.verbose
@@ -440,11 +350,11 @@ class NCF:
         user_input = np.array([self.user2id[x] for x in user_input])
         item_input = np.array([self.item2id[x] for x in item_input])
 
-        # get feed dict
-        feed_dict = {
-            self.user_input: user_input[..., None],
-            self.item_input: item_input[..., None],
-        }
+        user_tensor = torch.LongTensor(user_input).to(self.device)
+        item_tensor = torch.LongTensor(item_input).to(self.device)
 
-        # calculate predicted score
-        return self.sess.run(self.output, feed_dict)
+        self.eval()
+        with torch.no_grad():
+            output = self.forward(user_tensor, item_tensor)
+
+        return output.cpu().numpy()
