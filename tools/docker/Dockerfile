@@ -70,11 +70,19 @@ SHELL ["/bin/bash", "-lc"]
 
 # Install yq
 # See https://github.com/mikefarah/yq
-RUN curl -LsSf https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz | \
-    tar xz && mv yq_linux_amd64 /usr/local/bin/yq
+RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
+        -o yq_linux_amd64.tar.gz \
+        https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz \
+    && tar xzf yq_linux_amd64.tar.gz \
+    && rm yq_linux_amd64.tar.gz \
+    && mv yq_linux_amd64 /usr/local/bin/yq
 
 # Install SDKMAN!
-RUN curl -LsSf "https://get.sdkman.io?ci=true" | bash
+RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
+        -o sdkman.sh \
+        "https://get.sdkman.io?ci=true" \
+    && bash sdkman.sh \
+    && rm sdkman.sh
 
 # Install OpenJDK
 # sdk is available after source /root/.sdkman/bin/sdkman-init.sh
@@ -85,7 +93,11 @@ RUN if [[ "${EXTRAS}" =~ spark ]]; then \
     fi
 
 # Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | bash
+RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
+        -o uv_install.sh \
+        https://astral.sh/uv/install.sh \
+    && bash uv_install.sh \
+    && rm uv_install.sh
 
 # Create virtual environment with uv
 ENV UV_LINK_MODE=copy

@@ -15,15 +15,18 @@ KEYRING_URL="https://nvidia.github.io/libnvidia-container/gpgkey"
 KEYRING_PATH="/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg"
 NCT_LIST_FILE="nvidia-container-toolkit.list"
 NCT_URL="https://nvidia.github.io/libnvidia-container/stable/deb/${NCT_LIST_FILE}"
-NCT_FILE="nvidia-container-toolkit.list"
+APT_LIST_DIR='/etc/apt/sources.list.d'
 
 echo '* Getting NVIDIA container toolkit GPG key ...'
-curl -fsSL "${KEYRING_URL}" | sudo gpg --dearmor --yes -o "${KEYRING_PATH}"
+curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${KEYRING_URL}" -o "${KEYRING_URL##*/}"
+sudo gpg --dearmor --yes -o "${KEYRING_PATH}" "${KEYRING_URL##*/}"
+rm -rf "${KEYRING_URL##*/}"
 
 echo '* Setting APT repo source for NVIDIA container toolkit ...'
-curl -s -L "${NCT_URL}" \
-  | sed "s#deb https://#deb [signed-by=${KEYRING_PATH}] https://#g" \
-  | sudo tee "/etc/apt/sources.list.d/${NCT_FILE}"
+sudo mkdir -p "${APT_LIST_DIR}"
+curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${NCT_URL}" -o "${NCT_LIST_FILE}"
+sed -i "s#deb https://#deb [signed-by=${KEYRING_PATH}] https://#g" "${NCT_LIST_FILE}"
+sudo mv "${NCT_LIST_FILE}" "${APT_LIST_DIR}"
 sudo apt update
 
 echo '* Installing NVIDIA container toolkit ...'

@@ -28,7 +28,7 @@ sudo apt install -y ca-certificates curl
 
 echo '* Adding Docker official GPG key ...'
 sudo install -m 0755 -d "${KEYRING_DIR}"
-sudo curl -fsSL "${GPG_URL}" -o "${GPG_PATH}"
+sudo curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${GPG_URL}" -o "${GPG_PATH}"
 sudo chmod a+r "${GPG_PATH}"
 
 echo '* Setting APT repo source for Docker ...'
