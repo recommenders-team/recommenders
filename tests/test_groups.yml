@@ -386,6 +386,7 @@ pr_gate:
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sampler # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_ssept # FIXME: it takes too long to run
+    - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus_falls_back_to_cuda_namespace_when_torch_is_missing
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_clear_memory_all_gpus
