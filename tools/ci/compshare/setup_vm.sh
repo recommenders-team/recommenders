@@ -64,6 +64,10 @@ for index in "${!SCRIPT_SETUP[@]}"; do
     ssh -t -o StrictHostKeyChecking=no \
       -o UserKnownHostsFile=/dev/null \
       "${ssh_dest}" "bash ./${script}"
+    echo "Removing ${script} ..."
+    ssh -t -o StrictHostKeyChecking=no \
+      -o UserKnownHostsFile=/dev/null \
+      "${ssh_dest}" "rm -rf ./${script}"
     if [[ "${REBOOT_REQUERED[${index}]}" == 'yes' ]]; then
         echo 'Rebooting for setup to take effect ...'
         ssh -t -o StrictHostKeyChecking=no \

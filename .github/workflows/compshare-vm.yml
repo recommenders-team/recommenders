@@ -151,12 +151,19 @@ jobs:
               docker build . ${docker_args}
           else
               # Run on newly created self-hosted runner by SSH
+              # Copy repo files to avoid git clone failure on the VM
+              tar cf ../recommenders.tar *
+              scp -q -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  ../recommenders.tar "${SSH_DEST}":
+              rm -rf ../recommenders.tar
               ssh -t -o StrictHostKeyChecking=no \
                   -o UserKnownHostsFile=/dev/null \
                   "${SSH_DEST}" "\
-                      git clone ${{ github.repositoryUrl }} recommenders \
+                      mkdir recommenders \
+                      && tar xf recommenders.tar -C recommenders \
+                      && rm -rf recommenders.tar \
                       && cd recommenders \
-                      && git checkout ${{ github.sha }} \
                       && docker build . ${docker_args}"
           fi
 
