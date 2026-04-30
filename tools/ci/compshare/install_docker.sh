@@ -57,13 +57,3 @@ systemctl --user start docker
 echo '  - Enabling Docker service and launch the daemon on startup ...'
 systemctl --user enable docker
 sudo loginctl enable-linger "$(whoami)"
-
-echo '* Configuring Docker registry-mirrors ...'
-sudo tee /etc/docker/daemon.json <<EOF > /dev/null
-{                                                                                                                       
-  "registry-mirrors": [                                                                                                 
-    "https://docker.m.daocloud.io",                                                                                     
-    "https://mcr.m.daocloud.io"                                                                                         
-  ]                                                                                                                     
-}
-EOF

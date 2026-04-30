@@ -142,8 +142,7 @@ jobs:
               --build-arg COMPUTE=${compute} \
               --build-arg EXTRAS=${extras} \
               --build-arg GIT_REF= \
-              --build-arg PYTHON_VERSION=${python_version}\
-              --build-arg PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple"
+              --build-arg PYTHON_VERSION=${python_version}"
 
           if [[ -z "${SSH_DEST}" ]]; then
               echo 'Building Docker image on the current GitHub-hosted runner ...'
