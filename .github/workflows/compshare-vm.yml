@@ -167,6 +167,8 @@ jobs:
               for i in {1..3}; do
                   ssh -t -o StrictHostKeyChecking=no \
                       -o UserKnownHostsFile=/dev/null \
+                      -o ServerAliveInterval=60 \
+                      -o ServerAliveCountMax=10 \
                       "${SSH_DEST}" "\
                           cd recommenders; \
                           docker build . ${docker_args} --target deps" \
@@ -179,6 +181,8 @@ jobs:
               for i in {1..3}; do
                   ssh -t -o StrictHostKeyChecking=no \
                       -o UserKnownHostsFile=/dev/null \
+                      -o ServerAliveInterval=60 \
+                      -o ServerAliveCountMax=10 \
                       "${SSH_DEST}" "\
                           cd recommenders; \
                           docker build . ${docker_args}" \
@@ -207,6 +211,8 @@ jobs:
               # Run on newly created self-hosted runner by SSH
               ssh -t -o StrictHostKeyChecking=no \
                   -o UserKnownHostsFile=/dev/null \
+                  -o ServerAliveInterval=60 \
+                  -o ServerAliveCountMax=10 \
                   "${SSH_DEST}" "\
                       ${check_gpu} \
                       && docker run --rm ${gpu_arg} ${IMAGE_TAG} bash -lc '${test_cmd}'"

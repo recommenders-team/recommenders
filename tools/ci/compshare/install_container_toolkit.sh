@@ -27,10 +27,11 @@ sudo mkdir -p "${APT_LIST_DIR}"
 curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${NCT_URL}" -o "${NCT_LIST_FILE}"
 sed -i "s#deb https://#deb [signed-by=${KEYRING_PATH}] https://#g" "${NCT_LIST_FILE}"
 sudo mv "${NCT_LIST_FILE}" "${APT_LIST_DIR}"
-sudo apt update
+sudo apt-get update
 
 echo '* Installing NVIDIA container toolkit ...'
-sudo apt install -y \
+sudo dpkg --configure -a
+sudo apt-get install -y \
     nvidia-container-toolkit \
     nvidia-container-toolkit-base \
     libnvidia-container-tools \

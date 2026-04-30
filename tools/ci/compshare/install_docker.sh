@@ -23,8 +23,9 @@ GPG_URL="${APT_URL}/gpg"
 APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stable"
 
 echo '* Installing prerequisites ...'
-sudo apt update
-sudo apt install -y ca-certificates curl
+sudo apt-get update
+sudo dpkg --configure -a
+sudo apt-get install -y ca-certificates curl
 
 echo '* Adding Docker official GPG key ...'
 sudo install -m 0755 -d "${KEYRING_DIR}"
@@ -34,14 +35,14 @@ sudo chmod a+r "${GPG_PATH}"
 echo '* Setting APT repo source for Docker ...'
 sudo mkdir -p "${APT_LIST%/*}"
 echo "${APT_ENTRY}" | sudo tee "${APT_LIST}" > /dev/null
-sudo apt update
+sudo apt-get update
 
 echo '* Installing the latest Docker community edition ...'
-sudo apt install -y docker-ce
+sudo apt-get install -y docker-ce
 
 echo '* Configuring Docker daemon in rootless mode ...'
 echo '  - Installing prerequisites ...'
-sudo apt install -y uidmap docker-ce-rootless-extras
+sudo apt-get install -y uidmap docker-ce-rootless-extras
 
 echo '  - Disabling system-wide Docker daemon ...'
 sudo systemctl disable --now docker.service docker.socket
