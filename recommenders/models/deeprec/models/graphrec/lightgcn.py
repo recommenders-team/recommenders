@@ -1,12 +1,19 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import tensorflow as tf
-import time
+from __future__ import annotations
+
 import os
 import sys
+import time
+from typing import TYPE_CHECKING, Any
+
 import numpy as np
 import pandas as pd
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 from recommenders.evaluation.python_evaluation import (
     map_at_k,
     ndcg_at_k,
@@ -15,10 +22,16 @@ from recommenders.evaluation.python_evaluation import (
 )
 from recommenders.utils.python_utils import get_top_k_scored_items
 
-tf.compat.v1.disable_eager_execution()  # need to disable eager in TF2.x
+if TYPE_CHECKING:
+    import scipy.sparse as sp
+
+    from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
 
 
-class LightGCN(object):
+MODEL_CHECKPOINT = "model.pt"
+
+
+class LightGCN(nn.Module):
     """LightGCN model
 
     :Citation:
@@ -28,8 +41,13 @@ class LightGCN(object):
         preprint arXiv:2002.02126, 2020.
     """
 
-    def __init__(self, hparams, data, seed=None):
-        """Initializing the model. Create parameters, placeholders, embeddings and loss function.
+    def __init__(
+        self,
+        hparams: Any,
+        data: "ImplicitCF",
+        seed: int | None = None,
+    ) -> None:
+        """Initializing the model. Create parameters, embeddings, and graph buffers.
 
         Args:
             hparams (HParams): A HParams object, hold the entire set of hyperparameters.
@@ -38,8 +56,14 @@ class LightGCN(object):
 
         """
 
-        tf.compat.v1.set_random_seed(seed)
-        np.random.seed(seed)
+        super().__init__()
+
+        if seed is not None:
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(seed)
+            np.random.seed(seed)
+        self.seed = seed
 
         self.data = data
         self.epochs = hparams.epochs
@@ -69,177 +93,187 @@ class LightGCN(object):
         self.n_users = data.n_users
         self.n_items = data.n_items
 
-        self.users = tf.compat.v1.placeholder(tf.int32, shape=(None,))
-        self.pos_items = tf.compat.v1.placeholder(tf.int32, shape=(None,))
-        self.neg_items = tf.compat.v1.placeholder(tf.int32, shape=(None,))
-
-        self.weights = self._init_weights()
-        self.ua_embeddings, self.ia_embeddings = self._create_lightgcn_embed()
-
-        self.u_g_embeddings = tf.nn.embedding_lookup(
-            params=self.ua_embeddings, ids=self.users
-        )
-        self.pos_i_g_embeddings = tf.nn.embedding_lookup(
-            params=self.ia_embeddings, ids=self.pos_items
-        )
-        self.neg_i_g_embeddings = tf.nn.embedding_lookup(
-            params=self.ia_embeddings, ids=self.neg_items
-        )
-        self.u_g_embeddings_pre = tf.nn.embedding_lookup(
-            params=self.weights["user_embedding"], ids=self.users
-        )
-        self.pos_i_g_embeddings_pre = tf.nn.embedding_lookup(
-            params=self.weights["item_embedding"], ids=self.pos_items
-        )
-        self.neg_i_g_embeddings_pre = tf.nn.embedding_lookup(
-            params=self.weights["item_embedding"], ids=self.neg_items
-        )
-
-        self.batch_ratings = tf.matmul(
-            self.u_g_embeddings,
-            self.pos_i_g_embeddings,
-            transpose_a=False,
-            transpose_b=True,
-        )
-
-        self.mf_loss, self.emb_loss = self._create_bpr_loss(
-            self.u_g_embeddings, self.pos_i_g_embeddings, self.neg_i_g_embeddings
-        )
-        self.loss = self.mf_loss + self.emb_loss
-
-        self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=self.lr).minimize(
-            self.loss
-        )
-        self.saver = tf.compat.v1.train.Saver(max_to_keep=1)
-
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        self.sess = tf.compat.v1.Session(
-            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
-        )
-        self.sess.run(tf.compat.v1.global_variables_initializer())
-
-    def _init_weights(self):
-        """Initialize user and item embeddings.
-
-        Returns:
-            dict: With keys `user_embedding` and `item_embedding`, embeddings of all users and items.
-
-        """
-        all_weights = dict()
-        initializer = tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1.0, mode="fan_avg", distribution="uniform"
-        )
-
-        all_weights["user_embedding"] = tf.Variable(
-            initializer([self.n_users, self.emb_dim]), name="user_embedding"
-        )
-        all_weights["item_embedding"] = tf.Variable(
-            initializer([self.n_items, self.emb_dim]), name="item_embedding"
-        )
+        # Trainable embeddings (matches TF VarianceScaling fan_avg uniform == xavier_uniform)
+        self.user_embedding = nn.Embedding(self.n_users, self.emb_dim)
+        self.item_embedding = nn.Embedding(self.n_items, self.emb_dim)
+        nn.init.xavier_uniform_(self.user_embedding.weight)
+        nn.init.xavier_uniform_(self.item_embedding.weight)
         print("Using xavier initialization.")
 
-        return all_weights
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj).to(self.device)
+        self.to(self.device)
 
-    def _create_lightgcn_embed(self):
-        """Calculate the average embeddings of users and items after every layer of the model.
+        self.optimizer = None
 
-        Returns:
-            tf.Tensor, tf.Tensor: Average user embeddings. Average item embeddings.
+    @property
+    def ua_embeddings(self) -> torch.Tensor:
+        """Aggregated (LGC-propagated) user embeddings."""
+        u_g, _ = self._propagate()
+        return u_g
 
+    @property
+    def ia_embeddings(self) -> torch.Tensor:
+        """Aggregated (LGC-propagated) item embeddings."""
+        _, i_g = self._propagate()
+        return i_g
+
+    def _propagate(self) -> tuple[torch.Tensor, torch.Tensor]:
+        """Run LightGCN propagation and return averaged user/item embeddings.
+
+        Uses an iterative sum accumulator (mathematically equivalent to
+        ``mean(stack([E^0, ..., E^K]))``) which avoids materializing the
+        ``stack`` tensor and shaves one kernel launch per call.
         """
-        A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj)
-
-        ego_embeddings = tf.concat(
-            [self.weights["user_embedding"], self.weights["item_embedding"]], axis=0
+        ego_embeddings = torch.cat(
+            [self.user_embedding.weight, self.item_embedding.weight], dim=0
         )
-        all_embeddings = [ego_embeddings]
+        sum_embeddings = ego_embeddings
+        for _ in range(self.n_layers):
+            ego_embeddings = torch.sparse.mm(self.A_hat, ego_embeddings)
+            sum_embeddings = sum_embeddings + ego_embeddings
 
-        for k in range(0, self.n_layers):
-            ego_embeddings = tf.sparse.sparse_dense_matmul(A_hat, ego_embeddings)
-            all_embeddings += [ego_embeddings]
-
-        all_embeddings = tf.stack(all_embeddings, 1)
-        all_embeddings = tf.reduce_mean(
-            input_tensor=all_embeddings, axis=1, keepdims=False
+        avg_embeddings = sum_embeddings / (self.n_layers + 1)
+        u_g, i_g = torch.split(
+            avg_embeddings, [self.n_users, self.n_items], dim=0
         )
-        u_g_embeddings, i_g_embeddings = tf.split(
-            all_embeddings, [self.n_users, self.n_items], 0
-        )
-        return u_g_embeddings, i_g_embeddings
+        return u_g, i_g
 
-    def _create_bpr_loss(self, users, pos_items, neg_items):
-        """Calculate BPR loss.
+    def forward(
+        self,
+        users: torch.Tensor,
+        pos_items: torch.Tensor,
+        neg_items: torch.Tensor,
+    ) -> tuple[
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+    ]:
+        """Forward pass returning embeddings used for BPR loss.
 
         Args:
-            users (tf.Tensor): User embeddings to calculate loss.
-            pos_items (tf.Tensor): Positive item embeddings to calculate loss.
-            neg_items (tf.Tensor): Negative item embeddings to calculate loss.
+            users (torch.LongTensor): User indices.
+            pos_items (torch.LongTensor): Positive item indices.
+            neg_items (torch.LongTensor): Negative item indices.
 
         Returns:
-            tf.Tensor, tf.Tensor: Matrix factorization loss. Embedding regularization loss.
-
+            tuple: Propagated and pre-propagation embeddings for users, pos and neg items.
         """
-        pos_scores = tf.reduce_sum(input_tensor=tf.multiply(users, pos_items), axis=1)
-        neg_scores = tf.reduce_sum(input_tensor=tf.multiply(users, neg_items), axis=1)
+        u_g, i_g = self._propagate()
+        u_emb = u_g[users]
+        pos_emb = i_g[pos_items]
+        neg_emb = i_g[neg_items]
+        u_pre = self.user_embedding(users)
+        pos_pre = self.item_embedding(pos_items)
+        neg_pre = self.item_embedding(neg_items)
+        return u_emb, pos_emb, neg_emb, u_pre, pos_pre, neg_pre
 
-        regularizer = (
-            tf.nn.l2_loss(self.u_g_embeddings_pre)
-            + tf.nn.l2_loss(self.pos_i_g_embeddings_pre)
-            + tf.nn.l2_loss(self.neg_i_g_embeddings_pre)
+    def _bpr_loss(
+        self,
+        u_emb: torch.Tensor,
+        pos_emb: torch.Tensor,
+        neg_emb: torch.Tensor,
+        u_pre: torch.Tensor,
+        pos_pre: torch.Tensor,
+        neg_pre: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Calculate BPR loss.
+
+        Returns:
+            tuple: Matrix factorization loss and embedding regularization loss.
+        """
+        pos_scores = (u_emb * pos_emb).sum(dim=1)
+        neg_scores = (u_emb * neg_emb).sum(dim=1)
+
+        # tf.nn.l2_loss(x) == 0.5 * sum(x ** 2)
+        regularizer = 0.5 * (
+            u_pre.pow(2).sum() + pos_pre.pow(2).sum() + neg_pre.pow(2).sum()
         )
         regularizer = regularizer / self.batch_size
-        mf_loss = tf.reduce_mean(
-            input_tensor=tf.nn.softplus(-(pos_scores - neg_scores))
-        )
+
+        mf_loss = torch.mean(F.softplus(-(pos_scores - neg_scores)))
         emb_loss = self.decay * regularizer
         return mf_loss, emb_loss
 
-    def _convert_sp_mat_to_sp_tensor(self, X):
-        """Convert a scipy sparse matrix to tf.SparseTensor.
+    def _convert_sp_mat_to_sp_tensor(self, X: "sp.spmatrix") -> torch.Tensor:
+        """Convert a scipy sparse matrix to a torch sparse_coo_tensor.
 
         Returns:
-            tf.SparseTensor: SparseTensor after conversion.
-
+            torch.Tensor: Sparse COO tensor.
         """
         coo = X.tocoo().astype(np.float32)
-        indices = np.mat([coo.row, coo.col]).transpose()
-        return tf.SparseTensor(indices, coo.data, coo.shape)
+        indices = torch.from_numpy(np.vstack((coo.row, coo.col)).astype(np.int64))
+        values = torch.from_numpy(coo.data)
+        shape = torch.Size(coo.shape)
+        return torch.sparse_coo_tensor(indices, values, shape).coalesce()
 
-    def fit(self):
-        """Fit the model on self.data.train. If eval_epoch is not -1, evaluate the model on `self.data.test`
-        every `eval_epoch` epoch to observe the training status.
-
+    def fit(self) -> None:
+        """Fit the model on `self.data.train`. If `eval_epoch` is not -1, evaluate the model on
+        `self.data.test` every `eval_epoch` epoch to observe the training status.
         """
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+
         for epoch in range(1, self.epochs + 1):
             train_start = time.time()
-            loss, mf_loss, emb_loss = 0.0, 0.0, 0.0
+            self.train()
+
+            # Accumulate losses on the device to avoid CPU<->GPU sync per batch
+            # (TF v1 sess.run returns all values in one C++ call; the closest
+            # PyTorch analogue is to defer .item() until end-of-epoch).
+            loss_acc = torch.zeros((), device=self.device)
+            mf_acc = torch.zeros((), device=self.device)
+            emb_acc = torch.zeros((), device=self.device)
+
             n_batch = self.data.train.shape[0] // self.batch_size + 1
-            for idx in range(n_batch):
+            for _ in range(n_batch):
                 users, pos_items, neg_items = self.data.train_loader(self.batch_size)
-                _, batch_loss, batch_mf_loss, batch_emb_loss = self.sess.run(
-                    [self.opt, self.loss, self.mf_loss, self.emb_loss],
-                    feed_dict={
-                        self.users: users,
-                        self.pos_items: pos_items,
-                        self.neg_items: neg_items,
-                    },
+                users_t = torch.from_numpy(np.asarray(users, dtype=np.int64)).to(
+                    self.device, non_blocking=True
                 )
-                loss += batch_loss / n_batch
-                mf_loss += batch_mf_loss / n_batch
-                emb_loss += batch_emb_loss / n_batch
+                pos_t = torch.from_numpy(np.asarray(pos_items, dtype=np.int64)).to(
+                    self.device, non_blocking=True
+                )
+                neg_t = torch.from_numpy(np.asarray(neg_items, dtype=np.int64)).to(
+                    self.device, non_blocking=True
+                )
+
+                self.optimizer.zero_grad(set_to_none=True)
+                u_emb, pos_emb, neg_emb, u_pre, pos_pre, neg_pre = self.forward(
+                    users_t, pos_t, neg_t
+                )
+                batch_mf_loss, batch_emb_loss = self._bpr_loss(
+                    u_emb, pos_emb, neg_emb, u_pre, pos_pre, neg_pre
+                )
+                batch_loss = batch_mf_loss + batch_emb_loss
+
+                batch_loss.backward()
+                self.optimizer.step()
+
+                loss_acc += batch_loss.detach()
+                mf_acc += batch_mf_loss.detach()
+                emb_acc += batch_emb_loss.detach()
+
+            # Single CPU sync per epoch
+            loss = (loss_acc / n_batch).item()
+            mf_loss = (mf_acc / n_batch).item()
+            emb_loss = (emb_acc / n_batch).item()
 
             if np.isnan(loss):
                 print("ERROR: loss is nan.")
                 sys.exit()
-            train_end = time.time()
-            train_time = train_end - train_start
+
+            train_time = time.time() - train_start
 
             if self.save_model and epoch % self.save_epoch == 0:
                 save_path_str = os.path.join(self.model_dir, "epoch_" + str(epoch))
                 if not os.path.exists(save_path_str):
                     os.makedirs(save_path_str)
-                checkpoint_path = self.saver.save(  # noqa: F841
-                    sess=self.sess, save_path=save_path_str
+                torch.save(
+                    self.state_dict(),
+                    os.path.join(save_path_str, MODEL_CHECKPOINT),
                 )
                 print("Save model to path {0}".format(os.path.abspath(save_path_str)))
 
@@ -251,8 +285,7 @@ class LightGCN(object):
             else:
                 eval_start = time.time()
                 ret = self.run_eval()
-                eval_end = time.time()
-                eval_time = eval_end - eval_start
+                eval_time = time.time() - eval_start
 
                 print(
                     "Epoch %d (train)%.1fs + (eval)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f, %s"
@@ -270,28 +303,31 @@ class LightGCN(object):
                     )
                 )
 
-    def load(self, model_path=None):
+    def load(self, model_path: str | None = None) -> None:
         """Load an existing model.
 
         Args:
-            model_path: Model path.
+            model_path (str): Path to a checkpoint file or a directory containing the
+                ``model.pt`` checkpoint.
 
         Raises:
             IOError: if the restore operation failed.
-
         """
         try:
-            self.saver.restore(self.sess, model_path)
+            if model_path is not None and os.path.isdir(model_path):
+                model_path = os.path.join(model_path, MODEL_CHECKPOINT)
+            state_dict = torch.load(model_path, map_location=self.device)
+            self.load_state_dict(state_dict)
         except Exception:
             raise IOError(
                 "Failed to find any matching files for {0}".format(model_path)
             )
 
-    def run_eval(self):
-        """Run evaluation on self.data.test.
+    def run_eval(self) -> list[float]:
+        """Run evaluation on `self.data.test`.
 
         Returns:
-            dict: Results of all metrics in `self.metrics`.
+            list: Results for all metrics in `self.metrics`.
         """
         topk_scores = self.recommend_k_items(
             self.data.test, top_k=self.top_k, use_id=True
@@ -308,41 +344,51 @@ class LightGCN(object):
                 ret.append(recall_at_k(self.data.test, topk_scores, k=self.top_k))
         return ret
 
-    def score(self, user_ids, remove_seen=True):
-        """Score all items for test users.
+    def score(self, user_ids: np.ndarray, remove_seen: bool = True) -> np.ndarray:
+        """Score all items for the given users.
 
         Args:
             user_ids (np.array): Users to test.
             remove_seen (bool): Flag to remove items seen in training from recommendation.
 
         Returns:
-            numpy.ndarray: Value of interest of all items for the users.
-
+            numpy.ndarray: Scores of all items for each user, shape (len(user_ids), n_items).
         """
         if any(np.isnan(user_ids)):
             raise ValueError(
                 "LightGCN cannot score users that are not in the training set"
             )
+
         u_batch_size = self.batch_size
         n_user_batchs = len(user_ids) // u_batch_size + 1
+
+        self.eval()
         test_scores = []
-        for u_batch_id in range(n_user_batchs):
-            start = u_batch_id * u_batch_size
-            end = (u_batch_id + 1) * u_batch_size
-            user_batch = user_ids[start:end]
-            item_batch = range(self.data.n_items)
-            rate_batch = self.sess.run(
-                self.batch_ratings, {self.users: user_batch, self.pos_items: item_batch}
-            )
-            test_scores.append(np.array(rate_batch))
+        with torch.no_grad():
+            u_g, i_g = self._propagate()
+            for u_batch_id in range(n_user_batchs):
+                start = u_batch_id * u_batch_size
+                end = (u_batch_id + 1) * u_batch_size
+                user_batch = user_ids[start:end]
+                if len(user_batch) == 0:
+                    continue
+                user_batch_t = torch.LongTensor(np.asarray(user_batch)).to(self.device)
+                rate_batch = u_g[user_batch_t] @ i_g.t()
+                test_scores.append(rate_batch.cpu().numpy())
+
         test_scores = np.concatenate(test_scores, axis=0)
         if remove_seen:
             test_scores += self.data.R.tocsr()[user_ids, :] * -np.inf
         return test_scores
 
     def recommend_k_items(
-        self, test, top_k=10, sort_top_k=True, remove_seen=True, use_id=False
-    ):
+        self,
+        test: pd.DataFrame,
+        top_k: int = 10,
+        sort_top_k: bool = True,
+        remove_seen: bool = True,
+        use_id: bool = False,
+    ) -> pd.DataFrame:
         """Recommend top K items for all users in the test set.
 
         Args:
@@ -353,11 +399,12 @@ class LightGCN(object):
 
         Returns:
             pandas.DataFrame: Top k recommendation items for each user.
-
         """
         data = self.data
         if not use_id:
-            user_ids = np.array([data.user2id[x] for x in test[data.col_user].unique()])
+            user_ids = np.array(
+                [data.user2id[x] for x in test[data.col_user].unique()]
+            )
         else:
             user_ids = np.array(test[data.col_user].unique())
 
@@ -381,8 +428,14 @@ class LightGCN(object):
 
         return df.replace(-np.inf, np.nan).dropna()
 
-    def output_embeddings(self, idmapper, n, target, user_file):
-        embeddings = list(target.eval(session=self.sess))
+    def output_embeddings(
+        self,
+        idmapper: dict[int, Any],
+        n: int,
+        target: torch.Tensor,
+        user_file: str,
+    ) -> None:
+        embeddings = target.detach().cpu().numpy()
         with open(user_file, "w") as wt:
             for i in range(n):
                 wt.write(
@@ -391,27 +444,25 @@ class LightGCN(object):
                     )
                 )
 
-    def infer_embedding(self, user_file, item_file):
+    def infer_embedding(self, user_file: str, item_file: str) -> None:
         """Export user and item embeddings to csv files.
 
         Args:
             user_file (str): Path of file to save user embeddings.
             item_file (str): Path of file to save item embeddings.
-
         """
-        # create output directories if they do not exist
         dirs, _ = os.path.split(user_file)
-        if not os.path.exists(dirs):
+        if dirs and not os.path.exists(dirs):
             os.makedirs(dirs)
         dirs, _ = os.path.split(item_file)
-        if not os.path.exists(dirs):
+        if dirs and not os.path.exists(dirs):
             os.makedirs(dirs)
 
         data = self.data
 
-        self.output_embeddings(
-            data.id2user, self.n_users, self.ua_embeddings, user_file
-        )
-        self.output_embeddings(
-            data.id2item, self.n_items, self.ia_embeddings, item_file
-        )
+        self.eval()
+        with torch.no_grad():
+            u_g, i_g = self._propagate()
+
+        self.output_embeddings(data.id2user, self.n_users, u_g, user_file)
+        self.output_embeddings(data.id2item, self.n_items, i_g, item_file)

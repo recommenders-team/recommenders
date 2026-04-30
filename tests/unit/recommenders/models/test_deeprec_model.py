@@ -349,13 +349,9 @@ def test_lightgcn_component_definition(deeprec_config_path):
     model = LightGCN(hparams, data)
 
     assert model.norm_adj is not None
-    assert model.ua_embeddings.shape == [943, 64]
-    assert model.ia_embeddings.shape == [1682, 64]
-    assert model.u_g_embeddings is not None
-    assert model.pos_i_g_embeddings is not None
-    assert model.neg_i_g_embeddings is not None
-    assert model.batch_ratings is not None
-    assert model.loss is not None
-    assert model.opt is not None
+    assert model.user_embedding.weight.shape == (943, 64)
+    assert model.item_embedding.weight.shape == (1682, 64)
+    assert model.ua_embeddings.shape == (943, 64)
+    assert model.ia_embeddings.shape == (1682, 64)
     assert model.batch_size == 1024
     assert model.epochs == 1000
