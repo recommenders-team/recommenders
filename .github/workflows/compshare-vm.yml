@@ -170,7 +170,7 @@ jobs:
                       &&  for i in {1..3}; do \
                             docker build . ${docker_args} --target deps \
                             && break \
-                            || { sleep 5; echo '  + Trying again ...' }; done"
+                            || { sleep 5; echo '  + Trying again ...'; } done"
 
               echo '* Building the final image ...'
               ssh -t -o StrictHostKeyChecking=no \
@@ -180,7 +180,7 @@ jobs:
                       &&  for i in {1..3}; do \
                             docker build . ${docker_args} \
                             && break \
-                            || { sleep 5; echo '  + Trying again ...' }; done"
+                            || { sleep 5; echo '  + Trying again ...'; } done"
           fi
 
       - name: Execute tests in container
