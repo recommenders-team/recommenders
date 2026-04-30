@@ -117,11 +117,9 @@ jobs:
           commit="$(echo ${{ github.sha }} | head -c 5)"
           vm_name="$(mktemp -u vm_${commit}_XXXXXX)"
           echo "VM_NAME=${vm_name}" >> "$GITHUB_ENV"
-
-          # Set up a VM
           bash tools/ci/compshare/setup_vm.sh "${vm_name}"
 
-          # Export VM info for subsequent steps
+          echo 'Exporting VM info for subsequent steps ...'
           COMPSHARE_SPEC_FILE='tools/ci/compshare/spec.json'
           source tools/ci/compshare/utils.sh
           mapfile -t vm_info < <(get_vm_info "${vm_name}")
@@ -147,11 +145,11 @@ jobs:
               --build-arg PYTHON_VERSION=${python_version}"
 
           if [[ -z "${SSH_DEST}" ]]; then
-              # Run on current GitHub-hosted runner directly
+              echo 'Building Docker image on the current GitHub-hosted runner ...'
               docker build . ${docker_args}
           else
-              # Run on newly created self-hosted runner by SSH
-              # Copy repo files to avoid git clone failure on the VM
+              echo "Building Docker image on the VM ${VM_NAME} ..."
+              echo '* Copying repo files to avoid git clone failure on the VM ...'
               tar cf ../recommenders.tar *
               scp -q -o StrictHostKeyChecking=no \
                   -o UserKnownHostsFile=/dev/null \
@@ -162,9 +160,27 @@ jobs:
                   "${SSH_DEST}" "\
                       mkdir recommenders \
                       && tar xf recommenders.tar -C recommenders \
-                      && rm -rf recommenders.tar \
-                      && cd recommenders \
-                      && docker build . ${docker_args}"
+                      && rm -rf recommenders.tar"
+
+              echo '* Building the base image ...'
+              ssh -t -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  "${SSH_DEST}" "\
+                      cd recommenders \
+                      &&  for i in {1..3}; do \
+                            docker build . ${docker_args} --target deps \
+                            && break \
+                            || { sleep 5; echo '  + Trying again ...' }; done"
+
+              echo '* Building the final image ...'
+              ssh -t -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  "${SSH_DEST}" "\
+                      cd recommenders \
+                      &&  for i in {1..3}; do \
+                            docker build . ${docker_args} \
+                            && break \
+                            || { sleep 5; echo '  + Trying again ...' }; done"
           fi
 
       - name: Execute tests in container
