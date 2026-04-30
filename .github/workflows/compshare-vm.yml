@@ -142,7 +142,8 @@ jobs:
               --build-arg COMPUTE=${compute} \
               --build-arg EXTRAS=${extras} \
               --build-arg GIT_REF= \
-              --build-arg PYTHON_VERSION=${python_version}"
+              --build-arg PYTHON_VERSION=${python_version}\
+              --build-arg PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple"
 
           if [[ -z "${SSH_DEST}" ]]; then
               echo 'Building Docker image on the current GitHub-hosted runner ...'
@@ -163,24 +164,27 @@ jobs:
                       && rm -rf recommenders.tar"
 
               echo '* Building the base image ...'
-              ssh -t -o StrictHostKeyChecking=no \
-                  -o UserKnownHostsFile=/dev/null \
-                  "${SSH_DEST}" "\
-                      cd recommenders \
-                      &&  for i in {1..3}; do \
-                            docker build . ${docker_args} --target deps \
-                            && break \
-                            || { sleep 5; echo '  + Trying again ...'; } done"
+              for i in {1..3}; do
+                  ssh -t -o StrictHostKeyChecking=no \
+                      -o UserKnownHostsFile=/dev/null \
+                      "${SSH_DEST}" "\
+                          cd recommenders; \
+                          docker build . ${docker_args} --target deps" \
+                  && break \
+                  || { sleep 5; echo '  + Trying again ...'; }
+              done
+              
 
               echo '* Building the final image ...'
-              ssh -t -o StrictHostKeyChecking=no \
-                  -o UserKnownHostsFile=/dev/null \
-                  "${SSH_DEST}" "\
-                      cd recommenders \
-                      &&  for i in {1..3}; do \
-                            docker build . ${docker_args} \
-                            && break \
-                            || { sleep 5; echo '  + Trying again ...'; } done"
+              for i in {1..3}; do
+                  ssh -t -o StrictHostKeyChecking=no \
+                      -o UserKnownHostsFile=/dev/null \
+                      "${SSH_DEST}" "\
+                          cd recommenders; \
+                          docker build . ${docker_args}" \
+                  && break \
+                  || { sleep 5; echo '  + Trying again ...'; }
+              done
           fi
 
       - name: Execute tests in container

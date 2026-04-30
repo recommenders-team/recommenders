@@ -117,6 +117,10 @@ FROM deps AS final
 # Empty value ("") indicates editable installation of current clone
 ARG GIT_REF="main"
 
+# Use PyPI as the default pip index,
+# otherwise, use the specified.
+ARG PIP_INDEX_URL=''
+
 ARG RECO_DIR="/root/Recommenders"
 
 WORKDIR ${RECO_DIR}
@@ -128,9 +132,9 @@ COPY ./ ${RECO_DIR}
 RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
     if [ -z "${GIT_REF}" ]; then \
-        uv pip install "recommenders${EXTRAS} @ ."; \
+        uv pip install --index '${PIP_INDEX_URL}' "recommenders${EXTRAS} @ ."; \
     else \
-        uv pip install recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
+        uv pip install --index '${PIP_INDEX_URL}' recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
     fi
 
 # Setup Jupyter notebook
