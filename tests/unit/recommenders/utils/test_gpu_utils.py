@@ -21,9 +21,7 @@ except ImportError:
     pass  # skip this import if we are in cpu environment
 
 
-def test_get_number_gpus_falls_back_to_cuda_namespace_when_torch_is_missing(
-    monkeypatch,
-):
+def test_get_number_gpus_without_torch(monkeypatch):
     fake_cuda = SimpleNamespace(gpus=["gpu0", "gpu1"])
     real_import = builtins.__import__
 
