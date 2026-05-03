@@ -27,9 +27,7 @@ def get_number_gpus():
     except (ImportError, ModuleNotFoundError):
         pass
     try:
-        import numba
-
-        return len(numba.cuda.gpus)
+        return len(cuda.gpus)
     except Exception:  # numba.cuda.cudadrv.error.CudaSupportError:
         return 0
 
