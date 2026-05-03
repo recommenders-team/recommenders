@@ -3,13 +3,15 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import sys
 import time
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -20,14 +22,10 @@ from recommenders.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
 )
+from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
 from recommenders.utils.python_utils import get_top_k_scored_items
 
-if TYPE_CHECKING:
-    import scipy.sparse as sp
-
-    from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-
-
+logger = logging.getLogger(__name__)
 MODEL_CHECKPOINT = "model.pt"
 
 
@@ -44,7 +42,7 @@ class LightGCN(nn.Module):
     def __init__(
         self,
         hparams: Any,
-        data: "ImplicitCF",
+        data: ImplicitCF,
         seed: int | None = None,
     ) -> None:
         """Initializing the model. Create parameters, embeddings, and graph buffers.
@@ -98,7 +96,7 @@ class LightGCN(nn.Module):
         self.item_embedding = nn.Embedding(self.n_items, self.emb_dim)
         nn.init.xavier_uniform_(self.user_embedding.weight)
         nn.init.xavier_uniform_(self.item_embedding.weight)
-        print("Using xavier initialization.")
+        logger.info("Using xavier initialization.")
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj).to(self.device)
@@ -134,9 +132,7 @@ class LightGCN(nn.Module):
             sum_embeddings = sum_embeddings + ego_embeddings
 
         avg_embeddings = sum_embeddings / (self.n_layers + 1)
-        u_g, i_g = torch.split(
-            avg_embeddings, [self.n_users, self.n_items], dim=0
-        )
+        u_g, i_g = torch.split(avg_embeddings, [self.n_users, self.n_items], dim=0)
         return u_g, i_g
 
     def forward(
@@ -198,7 +194,7 @@ class LightGCN(nn.Module):
         emb_loss = self.decay * regularizer
         return mf_loss, emb_loss
 
-    def _convert_sp_mat_to_sp_tensor(self, X: "sp.spmatrix") -> torch.Tensor:
+    def _convert_sp_mat_to_sp_tensor(self, X: sp.spmatrix) -> torch.Tensor:
         """Convert a scipy sparse matrix to a torch sparse_coo_tensor.
 
         Returns:
@@ -262,7 +258,7 @@ class LightGCN(nn.Module):
             emb_loss = (emb_acc / n_batch).item()
 
             if np.isnan(loss):
-                print("ERROR: loss is nan.")
+                logger.error("loss is nan.")
                 sys.exit()
 
             train_time = time.time() - train_start
@@ -275,32 +271,36 @@ class LightGCN(nn.Module):
                     self.state_dict(),
                     os.path.join(save_path_str, MODEL_CHECKPOINT),
                 )
-                print("Save model to path {0}".format(os.path.abspath(save_path_str)))
+                logger.info(
+                    "Save model to path %s", os.path.abspath(save_path_str)
+                )
 
             if self.eval_epoch == -1 or epoch % self.eval_epoch != 0:
-                print(
-                    "Epoch %d (train)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f"
-                    % (epoch, train_time, loss, mf_loss, emb_loss)
+                logger.info(
+                    "Epoch %d (train)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f",
+                    epoch,
+                    train_time,
+                    loss,
+                    mf_loss,
+                    emb_loss,
                 )
             else:
                 eval_start = time.time()
                 ret = self.run_eval()
                 eval_time = time.time() - eval_start
 
-                print(
-                    "Epoch %d (train)%.1fs + (eval)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f, %s"
-                    % (
-                        epoch,
-                        train_time,
-                        eval_time,
-                        loss,
-                        mf_loss,
-                        emb_loss,
-                        ", ".join(
-                            metric + " = %.5f" % (r)
-                            for metric, r in zip(self.metrics, ret)
-                        ),
-                    )
+                logger.info(
+                    "Epoch %d (train)%.1fs + (eval)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f, %s",
+                    epoch,
+                    train_time,
+                    eval_time,
+                    loss,
+                    mf_loss,
+                    emb_loss,
+                    ", ".join(
+                        metric + " = %.5f" % (r)
+                        for metric, r in zip(self.metrics, ret)
+                    ),
                 )
 
     def load(self, model_path: str | None = None) -> None:
@@ -402,9 +402,7 @@ class LightGCN(nn.Module):
         """
         data = self.data
         if not use_id:
-            user_ids = np.array(
-                [data.user2id[x] for x in test[data.col_user].unique()]
-            )
+            user_ids = np.array([data.user2id[x] for x in test[data.col_user].unique()])
         else:
             user_ids = np.array(test[data.col_user].unique())
 
