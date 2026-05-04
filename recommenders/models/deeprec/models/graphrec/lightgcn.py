@@ -28,6 +28,9 @@ from recommenders.utils.python_utils import get_top_k_scored_items
 logger = logging.getLogger(__name__)
 MODEL_CHECKPOINT = "model.pt"
 
+METRIC_OPTIONS = ("map", "ndcg", "precision", "recall")
+DEFAULT_METRICS = ("recall", "ndcg", "precision", "map")
+
 
 class LightGCN(nn.Module):
     """LightGCN model
@@ -41,17 +44,27 @@ class LightGCN(nn.Module):
 
     def __init__(
         self,
-        hparams: Any,
-        data: ImplicitCF,
+        n_users: int,
+        n_items: int,
+        norm_adj: sp.spmatrix,
+        embed_size: int = 64,
+        n_layers: int = 3,
         seed: int | None = None,
     ) -> None:
-        """Initializing the model. Create parameters, embeddings, and graph buffers.
+        """Build the LightGCN model.
+
+        Only the architectural arguments live on the constructor; training-time
+        hyperparameters belong on :meth:`fit`.
 
         Args:
-            hparams (HParams): A HParams object, hold the entire set of hyperparameters.
-            data (object): A recommenders.models.deeprec.DataModel.ImplicitCF object, load and process data.
-            seed (int): Seed.
-
+            n_users (int): Number of users.
+            n_items (int): Number of items.
+            norm_adj (scipy.sparse.spmatrix): Normalized user-item adjacency matrix
+                ``D^{-1/2} A D^{-1/2}`` of shape ``(n_users + n_items, n_users + n_items)``.
+                Typically obtained via ``ImplicitCF.get_norm_adj_mat()``.
+            embed_size (int): Dimension of the user/item embedding tables.
+            n_layers (int): Number of light graph convolution layers.
+            seed (int): Random seed for embedding initialization.
         """
 
         super().__init__()
@@ -63,46 +76,29 @@ class LightGCN(nn.Module):
             np.random.seed(seed)
         self.seed = seed
 
-        self.data = data
-        self.epochs = hparams.epochs
-        self.lr = hparams.learning_rate
-        self.emb_dim = hparams.embed_size
-        self.batch_size = hparams.batch_size
-        self.n_layers = hparams.n_layers
-        self.decay = hparams.decay
-        self.eval_epoch = hparams.eval_epoch
-        self.top_k = hparams.top_k
-        self.save_model = hparams.save_model
-        self.save_epoch = hparams.save_epoch
-        self.metrics = hparams.metrics
-        self.model_dir = hparams.MODEL_DIR
-
-        metric_options = ["map", "ndcg", "precision", "recall"]
-        for metric in self.metrics:
-            if metric not in metric_options:
-                raise ValueError(
-                    "Wrong metric(s), please select one of this list: {}".format(
-                        metric_options
-                    )
-                )
-
-        self.norm_adj = data.get_norm_adj_mat()
-
-        self.n_users = data.n_users
-        self.n_items = data.n_items
+        self.n_users = n_users
+        self.n_items = n_items
+        self.emb_dim = embed_size
+        self.n_layers = n_layers
+        self.norm_adj = norm_adj
 
         # Trainable embeddings (matches TF VarianceScaling fan_avg uniform == xavier_uniform)
-        self.user_embedding = nn.Embedding(self.n_users, self.emb_dim)
-        self.item_embedding = nn.Embedding(self.n_items, self.emb_dim)
+        self.user_embedding = nn.Embedding(n_users, embed_size)
+        self.item_embedding = nn.Embedding(n_items, embed_size)
         nn.init.xavier_uniform_(self.user_embedding.weight)
         nn.init.xavier_uniform_(self.item_embedding.weight)
         logger.info("Using xavier initialization.")
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj).to(self.device)
+        self.A_hat = self._convert_sp_mat_to_sp_tensor(norm_adj).to(self.device)
         self.to(self.device)
 
-        self.optimizer = None
+        # Populated by fit(); inference methods (score / recommend_k_items /
+        # run_eval / infer_embedding) read these.
+        self.data: ImplicitCF | None = None
+        self.batch_size: int = 1024
+        self.decay: float = 0.0
+        self.optimizer: torch.optim.Optimizer | None = None
 
     @property
     def ua_embeddings(self) -> torch.Tensor:
@@ -206,13 +202,52 @@ class LightGCN(nn.Module):
         shape = torch.Size(coo.shape)
         return torch.sparse_coo_tensor(indices, values, shape).coalesce()
 
-    def fit(self) -> None:
-        """Fit the model on `self.data.train`. If `eval_epoch` is not -1, evaluate the model on
-        `self.data.test` every `eval_epoch` epoch to observe the training status.
-        """
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+    def fit(
+        self,
+        data: ImplicitCF,
+        epochs: int = 50,
+        learning_rate: float = 1e-3,
+        batch_size: int = 1024,
+        decay: float = 1e-5,
+        eval_epoch: int = 5,
+        top_k: int = 10,
+        metrics: list[str] | None = None,
+        save_model: bool = False,
+        save_epoch: int = 5,
+        model_dir: str = "./",
+    ) -> None:
+        """Fit the model on ``data.train``.
 
-        for epoch in range(1, self.epochs + 1):
+        Calling ``fit`` multiple times retrains the *same* model (parameters are
+        not re-initialized). Inference methods (``score``, ``recommend_k_items``,
+        ``run_eval``, ``infer_embedding``) read ``self.data`` set here.
+
+        Args:
+            data (ImplicitCF): Training/test container.
+            epochs (int): Number of training epochs.
+            learning_rate (float): Adam learning rate.
+            batch_size (int): Mini-batch size for both training and inference scoring.
+            decay (float): L2 regularization coefficient on the input embeddings.
+            eval_epoch (int): If positive, run :meth:`run_eval` every ``eval_epoch`` epochs.
+                ``-1`` disables periodic evaluation.
+            top_k (int): ``k`` used by periodic evaluation.
+            metrics (list[str]): Metrics to report during periodic evaluation. Defaults
+                to ``["recall", "ndcg", "precision", "map"]``.
+            save_model (bool): If True, dump checkpoints under ``model_dir``.
+            save_epoch (int): Save a checkpoint every ``save_epoch`` epochs (only used
+                when ``save_model`` is True).
+            model_dir (str): Directory to write checkpoints to.
+        """
+        if metrics is None:
+            metrics = list(DEFAULT_METRICS)
+        _validate_metrics(metrics)
+
+        self.data = data
+        self.batch_size = batch_size
+        self.decay = decay
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
+
+        for epoch in range(1, epochs + 1):
             train_start = time.time()
             self.train()
 
@@ -223,9 +258,9 @@ class LightGCN(nn.Module):
             mf_acc = torch.zeros((), device=self.device)
             emb_acc = torch.zeros((), device=self.device)
 
-            n_batch = self.data.train.shape[0] // self.batch_size + 1
+            n_batch = data.train.shape[0] // batch_size + 1
             for _ in range(n_batch):
-                users, pos_items, neg_items = self.data.train_loader(self.batch_size)
+                users, pos_items, neg_items = data.train_loader(batch_size)
                 users_t = torch.from_numpy(np.asarray(users, dtype=np.int64)).to(
                     self.device, non_blocking=True
                 )
@@ -263,19 +298,17 @@ class LightGCN(nn.Module):
 
             train_time = time.time() - train_start
 
-            if self.save_model and epoch % self.save_epoch == 0:
-                save_path_str = os.path.join(self.model_dir, "epoch_" + str(epoch))
+            if save_model and epoch % save_epoch == 0:
+                save_path_str = os.path.join(model_dir, "epoch_" + str(epoch))
                 if not os.path.exists(save_path_str):
                     os.makedirs(save_path_str)
                 torch.save(
                     self.state_dict(),
                     os.path.join(save_path_str, MODEL_CHECKPOINT),
                 )
-                logger.info(
-                    "Save model to path %s", os.path.abspath(save_path_str)
-                )
+                logger.info("Save model to path %s", os.path.abspath(save_path_str))
 
-            if self.eval_epoch == -1 or epoch % self.eval_epoch != 0:
+            if eval_epoch == -1 or epoch % eval_epoch != 0:
                 logger.info(
                     "Epoch %d (train)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f",
                     epoch,
@@ -286,7 +319,7 @@ class LightGCN(nn.Module):
                 )
             else:
                 eval_start = time.time()
-                ret = self.run_eval()
+                ret = self.run_eval(top_k=top_k, metrics=metrics)
                 eval_time = time.time() - eval_start
 
                 logger.info(
@@ -298,8 +331,7 @@ class LightGCN(nn.Module):
                     mf_loss,
                     emb_loss,
                     ", ".join(
-                        metric + " = %.5f" % (r)
-                        for metric, r in zip(self.metrics, ret)
+                        metric + " = %.5f" % (r) for metric, r in zip(metrics, ret)
                     ),
                 )
 
@@ -323,25 +355,40 @@ class LightGCN(nn.Module):
                 "Failed to find any matching files for {0}".format(model_path)
             )
 
-    def run_eval(self) -> list[float]:
-        """Run evaluation on `self.data.test`.
+    def run_eval(
+        self,
+        top_k: int = 10,
+        metrics: list[str] | None = None,
+    ) -> list[float]:
+        """Run evaluation on ``self.data.test``.
+
+        Args:
+            top_k (int): Cut-off ``k`` for the ranking metrics.
+            metrics (list[str]): Metrics to compute. Defaults to
+                ``["recall", "ndcg", "precision", "map"]``.
 
         Returns:
-            list: Results for all metrics in `self.metrics`.
+            list[float]: Metric values, in the same order as ``metrics``.
         """
-        topk_scores = self.recommend_k_items(
-            self.data.test, top_k=self.top_k, use_id=True
-        )
+        if self.data is None:
+            raise RuntimeError(
+                "run_eval() requires a dataset. Call fit() first or assign self.data."
+            )
+        if metrics is None:
+            metrics = list(DEFAULT_METRICS)
+        _validate_metrics(metrics)
+
+        topk_scores = self.recommend_k_items(self.data.test, top_k=top_k, use_id=True)
         ret = []
-        for metric in self.metrics:
+        for metric in metrics:
             if metric == "map":
-                ret.append(map_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(map_at_k(self.data.test, topk_scores, k=top_k))
             elif metric == "ndcg":
-                ret.append(ndcg_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(ndcg_at_k(self.data.test, topk_scores, k=top_k))
             elif metric == "precision":
-                ret.append(precision_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(precision_at_k(self.data.test, topk_scores, k=top_k))
             elif metric == "recall":
-                ret.append(recall_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(recall_at_k(self.data.test, topk_scores, k=top_k))
         return ret
 
     def score(self, user_ids: np.ndarray, remove_seen: bool = True) -> np.ndarray:
@@ -354,6 +401,10 @@ class LightGCN(nn.Module):
         Returns:
             numpy.ndarray: Scores of all items for each user, shape (len(user_ids), n_items).
         """
+        if self.data is None:
+            raise RuntimeError(
+                "score() requires a dataset. Call fit() first or assign self.data."
+            )
         if any(np.isnan(user_ids)):
             raise ValueError(
                 "LightGCN cannot score users that are not in the training set"
@@ -400,6 +451,10 @@ class LightGCN(nn.Module):
         Returns:
             pandas.DataFrame: Top k recommendation items for each user.
         """
+        if self.data is None:
+            raise RuntimeError(
+                "recommend_k_items() requires a dataset. Call fit() first or assign self.data."
+            )
         data = self.data
         if not use_id:
             user_ids = np.array([data.user2id[x] for x in test[data.col_user].unique()])
@@ -449,6 +504,10 @@ class LightGCN(nn.Module):
             user_file (str): Path of file to save user embeddings.
             item_file (str): Path of file to save item embeddings.
         """
+        if self.data is None:
+            raise RuntimeError(
+                "infer_embedding() requires a dataset. Call fit() first or assign self.data."
+            )
         dirs, _ = os.path.split(user_file)
         if dirs and not os.path.exists(dirs):
             os.makedirs(dirs)
@@ -464,3 +523,13 @@ class LightGCN(nn.Module):
 
         self.output_embeddings(data.id2user, self.n_users, u_g, user_file)
         self.output_embeddings(data.id2item, self.n_items, i_g, item_file)
+
+
+def _validate_metrics(metrics: list[str]) -> None:
+    for metric in metrics:
+        if metric not in METRIC_OPTIONS:
+            raise ValueError(
+                "Wrong metric(s), please select one of this list: {}".format(
+                    list(METRIC_OPTIONS)
+                )
+            )
