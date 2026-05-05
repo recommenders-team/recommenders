@@ -150,14 +150,15 @@ jobs:
               --build-arg COMPUTE=${compute} \
               --build-arg EXTRAS=${extras} \
               --build-arg GIT_REF= \
-              --build-arg PYTHON_VERSION=${python_version} \
-              --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
+              --build-arg PYTHON_VERSION=${python_version}"
 
           if [[ -z "${SSH_DEST}" ]]; then
               echo 'Building Docker image on the current GitHub-hosted runner ...'
               docker build . ${docker_args}
           else
               echo "Building Docker image on the VM ${VM_NAME} ..."
+              docker_args="${docker_args} --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
+
               echo '* Copying repo files to avoid git clone failure on the VM ...'
               tar cf ../recommenders.tar *
               scp -q -o StrictHostKeyChecking=no \
