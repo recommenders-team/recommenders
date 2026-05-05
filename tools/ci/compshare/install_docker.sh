@@ -28,7 +28,17 @@ APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stabl
 echo '* Installing prerequisites ...'
 sudo apt-get update
 sudo dpkg --configure -a
-until sudo apt-get install -y ca-certificates curl; do echo '  + Trying again ...'; sleep 5; done
+count=0
+until sudo apt-get install -y ca-certificates curl; do
+    echo '  + Failed to install.'
+    count=$((count + 1))
+    if [[ $count -lt 5 ]]; then
+        sleep 5
+        echo '  + Trying again ...'
+    else
+        exit 1
+    fi
+done
 
 echo '* Adding Docker official GPG key ...'
 sudo install -m 0755 -d "${KEYRING_DIR}"
@@ -41,11 +51,31 @@ echo "${APT_ENTRY}" | sudo tee "${APT_LIST}" > /dev/null
 sudo apt-get update
 
 echo '* Installing the latest Docker community edition ...'
-until sudo apt-get install -y docker-ce; do echo '  + Trying again ...'; sleep 5; done
+count=0
+until sudo apt-get install -y docker-ce; do
+    echo '  + Failed to install.'
+    count=$((count + 1))
+    if [[ $count -lt 5 ]]; then
+        sleep 5
+        echo '  + Trying again ...'
+    else
+        exit 1
+    fi
+done
 
 echo '* Configuring Docker daemon in rootless mode ...'
 echo '  - Installing prerequisites ...'
-until sudo apt-get install -y uidmap docker-ce-rootless-extras; do echo '  + Trying again ...'; sleep 5; done
+count=0
+until sudo apt-get install -y uidmap docker-ce-rootless-extras; do
+    echo '  + Failed to install.'
+    count=$((count + 1))
+    if [[ $count -lt 5 ]]; then
+        sleep 5
+        echo '  + Trying again ...'
+    else
+        exit 1
+    fi
+done
 
 echo '  - Disabling system-wide Docker daemon ...'
 sudo systemctl disable --now docker.service docker.socket

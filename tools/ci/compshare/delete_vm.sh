@@ -33,26 +33,38 @@ mapfile -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 if [[ -n "${vm_id}" ]]; then
     echo "Stopping the VM ${vm_name} ..."
-    for ((i=0; i<4; i++)); do
+    count=0
+    while true; do
         response=$(stop_instance "${vm_id}")
         retcode="$(echo "${response}" | jq '.RetCode')"
         if [[ ${retcode} == 0 ]]; then
             break
         fi
         echo "* Failed to stop the VM: ${response}"
-        echo '* Trying again ...'
-        sleep $(( (i+1) * 20))
+        count=$((count + 1))
+        if [[ $count -lt 5 ]]; then
+            sleep $(( (count+1) * 5 ))
+            echo '* Trying again ...'
+        else
+            exit 1
+        fi
     done
 
     echo "Deleting the VM ${vm_name} ..."
-    for ((i=0; i<4; i++)); do
+    count=0
+    while true; do
         response=$(terminate_instance "${vm_id}")
         retcode="$(echo "${response}" | jq '.RetCode')"
         if [[ ${retcode} == 0 ]]; then
             break
         fi
         echo "* Failed to delete the VM: ${response}"
-        echo '* Trying again ...'
-        sleep $(( (i+1) * 20))
+        count=$((count + 1))
+        if [[ $count -lt 5 ]]; then
+            sleep $(( (count+1) * 5 ))
+            echo '* Trying again ...'
+        else
+            exit 1
+        fi
     done
 fi

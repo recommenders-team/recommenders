@@ -172,30 +172,41 @@ jobs:
                       && rm -rf recommenders.tar"
 
               echo '* Building the base image ...'
-              for i in {1..3}; do
-                  ssh -t -o StrictHostKeyChecking=no \
+              count=0
+              until ssh -t -o StrictHostKeyChecking=no \
                       -o UserKnownHostsFile=/dev/null \
                       -o ServerAliveInterval=60 \
                       -o ServerAliveCountMax=10 \
                       "${SSH_DEST}" "\
                           cd recommenders; \
-                          docker build . ${docker_args} --target deps" \
-                  && break \
-                  || { sleep 5; echo '  + Trying again ...'; }
+                          docker build . ${docker_args} --target deps"; do
+                  echo '  + Failed to build the base image.'
+                  count=$((count + 1))
+                  if [[ $count -lt 5 ]]; then
+                      sleep 5
+                      echo '  + Trying again ...'
+                  else
+                      exit 1
+                  fi
               done
-              
 
               echo '* Building the final image ...'
-              for i in {1..3}; do
-                  ssh -t -o StrictHostKeyChecking=no \
+              count=0
+              until ssh -t -o StrictHostKeyChecking=no \
                       -o UserKnownHostsFile=/dev/null \
                       -o ServerAliveInterval=60 \
                       -o ServerAliveCountMax=10 \
                       "${SSH_DEST}" "\
                           cd recommenders; \
-                          docker build . ${docker_args}" \
-                  && break \
-                  || { sleep 5; echo '  + Trying again ...'; }
+                          docker build . ${docker_args}"; do
+                  echo '  + Failed to build the final image'
+                  count=$((count + 1))
+                  if [[ $count -lt 5 ]]; then
+                      sleep 5
+                      echo '  + Trying again ...'
+                  else
+                      exit 1
+                  fi
               done
           fi
 

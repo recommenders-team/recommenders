@@ -305,20 +305,22 @@ get_vm_info() {
     echo "Getting info of the VM ..." >&2
     local response
     local retcode
-    for ((i=0; i<4; i++)); do
+    local count=0
+    while true; do
         response="$(describe_instance)"
         retcode="$(echo "${response}" | jq '.RetCode')"
         if [[ ${retcode} == 0 ]]; then
             break
         fi
         echo "* Failed to get the info: ${response}." >&2
-        echo '* Trying again ...' >&2
-        sleep $(( (i+1) * 5 ))
+        count=$((count + 1))
+        if [[ $count -lt 5 ]]; then
+            sleep $(( (count+1) * 5 ))
+            echo '* Trying again ...' >&2
+        else
+            return 1
+        fi
     done
-    if [[ "${retcode}" != 0 ]]; then
-        echo "ERROR: ${response}" >&2
-        return 1
-    fi
 
     local vm_info
     vm_info="$(echo "${response}" \

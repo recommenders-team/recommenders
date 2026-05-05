@@ -140,7 +140,7 @@ RUN --mount=type=cache,target=/opt/uv-cache/ \
               uv pip install --index "${PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
           fi \
           && break \
-          || { ((count++)); [[ $count -ge 5 ]] && exit 1 || { sleep 5; } } \
+          || { ((count++)); if [[ $count -lt 5 ]]; then sleep 5; else exit 1; fi; } \
       done; \
     }
 

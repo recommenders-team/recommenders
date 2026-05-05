@@ -12,6 +12,7 @@
 # The following environment variables must be set:
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
+# * DOCKER_MIRROR_URL
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -60,14 +61,18 @@ done
 
 for index in "${!SCRIPT_SETUP[@]}"; do
     script="${SCRIPT_SETUP[${index}]##*/}"
+
+    wait_for_vm_to_be_available "${ssh_dest}"
     echo "Running ${script} on the VM ..."
     ssh -t -o StrictHostKeyChecking=no \
       -o UserKnownHostsFile=/dev/null \
-      "${ssh_dest}" "bash ./${script}"
+      "${ssh_dest}" "export DOCKER_MIRROR_URL='${DOCKER_MIRROR_URL:-}'; bash ./${script}"
+
     echo "Removing ${script} ..."
     ssh -t -o StrictHostKeyChecking=no \
       -o UserKnownHostsFile=/dev/null \
       "${ssh_dest}" "rm -rf ./${script}"
+
     if [[ "${REBOOT_REQUERED[${index}]}" == 'yes' ]]; then
         echo 'Rebooting for setup to take effect ...'
         ssh -t -o StrictHostKeyChecking=no \
