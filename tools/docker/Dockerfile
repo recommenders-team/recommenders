@@ -103,6 +103,7 @@ RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
 ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
+ENV UV_HTTP_TIMEOUT=300
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
@@ -117,6 +118,10 @@ FROM deps AS final
 # Empty value ("") indicates editable installation of current clone
 ARG GIT_REF="main"
 
+# Use PyPI as the default pip index,
+# otherwise, use the specified.
+ARG PIP_INDEX_URL=''
+
 ARG RECO_DIR="/root/Recommenders"
 
 WORKDIR ${RECO_DIR}
@@ -127,11 +132,17 @@ COPY ./ ${RECO_DIR}
 # Install Recommenders
 RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
-    if [ -z "${GIT_REF}" ]; then \
-        uv pip install "recommenders${EXTRAS} @ ."; \
-    else \
-        uv pip install recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
-    fi
+    { count=0; \
+      while true; do \
+          if [ -z "${GIT_REF}" ]; then \
+              uv pip install --index "${PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
+          else \
+              uv pip install --index "${PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
+          fi \
+          && break \
+          || { ((count++)); [[ $count -ge 5 ]] && exit 1 || { sleep 5; } } \
+      done; \
+    }
 
 # Setup Jupyter notebook
 RUN source ${RECO_VENV_DIR}/bin/activate && \

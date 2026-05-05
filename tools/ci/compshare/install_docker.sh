@@ -6,6 +6,9 @@
 ######################################################################
 # Install Docker in rootless mode
 #
+# The following environment variables must be set:
+# * DOCKER_MIRROR_URL
+#
 # See
 # * https://docs.docker.com/engine/install/ubuntu/
 # * https://docs.docker.com/engine/security/rootless/
@@ -25,7 +28,7 @@ APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stabl
 echo '* Installing prerequisites ...'
 sudo apt-get update
 sudo dpkg --configure -a
-sudo apt-get install -y ca-certificates curl
+until sudo apt-get install -y ca-certificates curl; do echo '  + Trying again ...'; sleep 5; done
 
 echo '* Adding Docker official GPG key ...'
 sudo install -m 0755 -d "${KEYRING_DIR}"
@@ -38,11 +41,11 @@ echo "${APT_ENTRY}" | sudo tee "${APT_LIST}" > /dev/null
 sudo apt-get update
 
 echo '* Installing the latest Docker community edition ...'
-sudo apt-get install -y docker-ce
+until sudo apt-get install -y docker-ce; do echo '  + Trying again ...'; sleep 5; done
 
 echo '* Configuring Docker daemon in rootless mode ...'
 echo '  - Installing prerequisites ...'
-sudo apt-get install -y uidmap docker-ce-rootless-extras
+until sudo apt-get install -y uidmap docker-ce-rootless-extras; do echo '  + Trying again ...'; sleep 5; done
 
 echo '  - Disabling system-wide Docker daemon ...'
 sudo systemctl disable --now docker.service docker.socket
@@ -50,6 +53,18 @@ sudo rm /var/run/docker.sock
 
 echo '  - Installing rootless Docker daemon ...'
 dockerd-rootless-setuptool.sh install
+
+if [[ -n "${DOCKER_MIRROR_URL:-}" ]]; then
+    echo '  - Setting Docker mirror URL ...'
+    DAEMON_JSON="${HOME}/.config/docker/daemon.json"
+    if [[ -f "${DAEMON_JSON}" ]]; then
+        TEMP_JSON=$(jq ".\"registry-mirrors\" += [ \"${DOCKER_MIRROR_URL}\" ]" "${DAEMON_JSON}")
+        echo "${TEMP_JSON}" > "${DAEMON_JSON}"
+    else
+        mkdir -p "${DAEMON_JSON%/*}"
+        echo "{ \"registry-mirrors\": [ \"${DOCKER_MIRROR_URL}\" ] }" > "${DAEMON_JSON}"
+    fi
+fi
 
 echo '  - Starting rootless Docker daemon ...'
 systemctl --user start docker

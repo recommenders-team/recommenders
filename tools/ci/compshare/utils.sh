@@ -32,6 +32,7 @@ get_compute_spec() {
     #       }
     #   }
     local compute_spec
+    # COMPSHARE_SPEC_FILE is not set directly in the script
     compute_spec="$(jq '.Compute | sort_by(.Price)' "${COMPSHARE_SPEC_FILE}")"
     echo "${compute_spec}"
 }
@@ -45,17 +46,12 @@ get_action_template() {
     [[ -z "${action}" ]] && return 1
 
     local action_template
+    # COMPSHARE_SPEC_FILE is not set directly in the script
     action_template="$(jq ".Action.${action}" "${COMPSHARE_SPEC_FILE}")"
 
     # COMPSHARE_PUBLIC_KEY is not set directly in the script
-    local reset_u=false
-    [[ "$-" == *u* ]] && reset_u=true
-    set +u
-
     action_template="$(echo "${action_template}" \
         | jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"")"
-
-    [[ "${reset_u}" == true ]] && set -u
 
     echo "${action_template}"
 }
@@ -82,11 +78,9 @@ gen_action_digest() {
                 > "${action_spec_file}"
     fi
 
-    local reset_u=false
     local reset_x=false
-    [[ "$-" == *u* ]] && reset_u=true
     [[ "$-" == *x* ]] && reset_x=true
-    set +xu
+    set +x
 
     # COMPSHARE_PRIVATE_KEY are set as an environment variable,
     # not directly in the script
@@ -102,7 +96,6 @@ gen_action_digest() {
     rm -rf "${action_spec_file}"
 
     [[ "${reset_x}" == true ]] && set -x
-    [[ "${reset_u}" == true ]] && set -u
 
     echo "${digest}"
 }

@@ -54,6 +54,10 @@ on:
         required: true
       COMPSHARE_PUBLIC_KEY:
         required: true
+      DOCKER_MIRROR_URL:
+        required: true
+      PIP_INDEX_URL:
+        required: true
 
 jobs:
   get-test-groups:
@@ -92,6 +96,7 @@ jobs:
       run:
         shell: bash
     strategy:
+      max-parallel: 6
       matrix:
         python-version:
           - '3.9'
@@ -112,6 +117,7 @@ jobs:
         env:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+          DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
           commit="$(echo ${{ github.sha }} | head -c 5)"
@@ -127,6 +133,8 @@ jobs:
           echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
       - name: Build image
+        env:
+          PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
         run: |
           image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
           echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
@@ -142,7 +150,8 @@ jobs:
               --build-arg COMPUTE=${compute} \
               --build-arg EXTRAS=${extras} \
               --build-arg GIT_REF= \
-              --build-arg PYTHON_VERSION=${python_version}"
+              --build-arg PYTHON_VERSION=${python_version} \
+              --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
 
           if [[ -z "${SSH_DEST}" ]]; then
               echo 'Building Docker image on the current GitHub-hosted runner ...'

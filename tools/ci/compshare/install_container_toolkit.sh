@@ -31,11 +31,11 @@ sudo apt-get update
 
 echo '* Installing NVIDIA container toolkit ...'
 sudo dpkg --configure -a
-sudo apt-get install -y \
+until sudo apt-get install -y \
     nvidia-container-toolkit \
     nvidia-container-toolkit-base \
     libnvidia-container-tools \
-    libnvidia-container1
+    libnvidia-container1; do echo '  + Trying again ...'; sleep 5; done
 
 echo '* Configuring the container runtime ...'
 nvidia-ctk runtime configure --runtime=docker --config="${HOME}/.config/docker/daemon.json"
