@@ -355,7 +355,9 @@ pr_gate:
     # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
     # - tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning  # 212.29s+190.02s+180.13s+164.09s=746.53s (flaky test, it rerun several times)
 
-  group_gpu_001:                                                                                                                                     # Total: 39.29s
+  # This group is also the same as group_cpu_spark.
+  group_gpu:                                                                                                                                         # Total: 379.31s
+  # group_gpu_001:                                                                                                                                     # Total: 39.29s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/unit/recommenders/models/test_rbm.py::test_class_init                                                                                    #    0.14s
     - tests/unit/recommenders/models/test_rbm.py::test_sampling_funct                                                                                #    0.43s
@@ -398,7 +400,7 @@ pr_gate:
     - tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn                                                                           #    0.11s
     - tests/unit/recommenders/utils/test_tf_utils.py::test_build_optimizer
 
-  group_gpu_002:                                                                                                                                     # Total: 143.16s
+  # group_gpu_002:                                                                                                                                     # Total: 143.16s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     # - tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
     - tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition                                                            #    1.99s
@@ -413,7 +415,7 @@ pr_gate:
     - tests/security/test_dependency_security.py::test_torch
     - tests/regression/test_compatibility_tf.py
 
-  group_notebooks_gpu:                                                                                                                               # Total: 196.86
+  # group_notebooks_gpu:                                                                                                                               # Total: 196.86
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
     - tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart                                                                                 #   54.10s
     - tests/unit/examples/test_notebooks_gpu.py::test_ncf                                                                                            #   17.80s
