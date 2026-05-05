@@ -341,16 +341,30 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
 1. Log into [Compshare console](https://passport.compshare.cn/login).
 1. Create API keys (one API private key and one API public key) for
    the shell scripts to interact with the APIs.
-1. Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
-   $\to$
-   [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
-   $\to$ New repository secret
-   * One for the API private key
-     + Name: `COMPSHARE_PRIVATE_KEY`
-     + Secret: value of the API private key
-   * One for the API public key
-     + Name: `COMPSHARE_PUBLIC_KEY`
-     + Secret: value of the API public key
+1. (Optional) Create a VM as pull-through caches/mirrors for Docker
+   and PyPI index.
+   * [devpi-server](https://pypi.org/project/devpi-server/) can be
+     used for caching PyPI index.
+   * [Distribution
+     Registry](https://distribution.github.io/distribution/) can be
+     use for caching Docker Hub.
+1. Create 4 repository secret
+   * Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
+     $\to$
+     [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+     $\to$ New repository secret
+     + For the API private key
+       - Name: `COMPSHARE_PRIVATE_KEY`
+       - Secret: value of the API private key
+     + For the API public key
+       - Name: `COMPSHARE_PUBLIC_KEY`
+       - Secret: value of the API public key
+     + (Optional) For Docker Hub
+       - Name: `DOCKER_MIRROR_URL`
+       - Secret: URL of the Docker Hub mirror
+     + (Optional) For PyPI index
+       - Name: `PIP_INDEX_URL`
+       - Secret: URL of the PyPI index mirror
 1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`,
    `gpu-nightly.yml` and `spark-nightly.yml` to use
    `compshare-vm.yml`.
