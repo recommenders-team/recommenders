@@ -1,6 +1,15 @@
 {
     "Compute": [
         {
+            "GPUType": "P40",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 24
+            },
+            "CPU": 8,
+            "Price": 0.38
+        },
+        {
             "GPUType": "3080Ti",
             "Memory": {
                 "CPU": 32,
@@ -41,7 +50,7 @@
         "CreateCompShareInstance": {
             "Action": "CreateCompShareInstance",
             "ChargeType": "Postpay",
-            "CompShareImageId": "compshareImage-1b6bx62uvf70",
+            "CompShareImageId": "compshareImage-12t3obvu3z6d",
             "Disks.0.IsBoot": true,
             "Disks.0.Size": 100,
             "Disks.0.Type": "CLOUD_SSD",

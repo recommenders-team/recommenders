@@ -31,7 +31,7 @@ SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
 # installing Docker and NVIDIA container toolkit
 SCRIPT_SETUP=("${SCRIPT_DIR}/configure.sh" \
               "${SCRIPT_DIR}/install_docker.sh" \
-              "${SCRIPT_DIR}/install_container_toolkit.sh")
+              "${SCRIPT_DIR}/install_nvidia_tools.sh")
 
 # Indicators for whether reboot is required after running each setup script
 REBOOT_REQUERED=('yes' 'no' 'yes')
