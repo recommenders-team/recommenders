@@ -35,7 +35,7 @@ until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
 done
 
 echo '* Installing cuda-keyring ...'
-sudo curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${CUDA_KEYRING_URL}" -o "${CUDA_KEYRING}"
+curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${CUDA_KEYRING_URL}" -o "${CUDA_KEYRING}"
 sudo dpkg -i "${CUDA_KEYRING}"
 rm -f "${CUDA_KEYRING}"
 sudo apt-get update
