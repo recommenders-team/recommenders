@@ -25,11 +25,12 @@ from recommenders.evaluation.python_evaluation import (
 from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
 from recommenders.utils.python_utils import get_top_k_scored_items
 
-logger = logging.getLogger(__name__)
 MODEL_CHECKPOINT = "model.pt"
 
 METRIC_OPTIONS = ("map", "ndcg", "precision", "recall")
 DEFAULT_METRICS = ("recall", "ndcg", "precision", "map")
+
+logger = logging.getLogger(__name__)
 
 
 class LightGCN(nn.Module):
