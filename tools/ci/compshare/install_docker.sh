@@ -29,7 +29,8 @@ echo '* Installing prerequisites ...'
 sudo apt-get update
 sudo dpkg --configure -a
 count=0
-until sudo apt-get install -y ca-certificates curl; do
+until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    apt-get install -y ca-certificates curl; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
@@ -52,7 +53,8 @@ sudo apt-get update
 
 echo '* Installing the latest Docker community edition ...'
 count=0
-until sudo apt-get install -y docker-ce; do
+until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    apt-get install -y docker-ce; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
@@ -66,7 +68,8 @@ done
 echo '* Configuring Docker daemon in rootless mode ...'
 echo '  - Installing prerequisites ...'
 count=0
-until sudo apt-get install -y uidmap docker-ce-rootless-extras; do
+until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    apt-get install -y uidmap docker-ce-rootless-extras; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
