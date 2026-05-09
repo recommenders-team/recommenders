@@ -40,25 +40,10 @@ sudo dpkg -i "${CUDA_KEYRING}"
 rm -f "${CUDA_KEYRING}"
 sudo apt-get update
 
-echo '* Installing CUDA drivers ...'
-echo '  + Locking to version 580 ...'
+echo '* Installing CUDA driver ...'
 count=0
 until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
-    apt-get install -y nvidia-driver-pinning-580; do
-    echo '  + Failed to install.'
-    count=$((count + 1))
-    if [[ $count -lt 5 ]]; then
-        sleep 5
-        echo '  + Trying again ...'
-    else
-        exit 1
-    fi
-done
-
-echo '  + Installing compute-only drivers ...'
-count=0
-until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
-    apt-get install -y libnvidia-compute-580 nvidia-dkms-580; do
+    apt-get install -y libnvidia-compute nvidia-dkms; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
