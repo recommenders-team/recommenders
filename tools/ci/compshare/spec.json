@@ -1,13 +1,13 @@
 {
     "Compute": [
         {
-            "GPUType": "P40",
+            "GPUType": "2080",
             "Memory": {
-                "CPU": 64,
-                "GPU": 24
+                "CPU": 40,
+                "GPU": 8
             },
             "CPU": 8,
-            "Price": 0.38
+            "Price": 0.39
         },
         {
             "GPUType": "3080Ti",
