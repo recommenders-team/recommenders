@@ -9,13 +9,15 @@ import cornac
 
 try:
     from pyspark.ml.recommendation import ALS
+    from pyspark.sql import Window
+    from pyspark.sql.functions import row_number
     from pyspark.sql.types import StructType, StructField
     from pyspark.sql.types import FloatType, IntegerType, LongType
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
     import surprise  # Put SVD surprise back in core deps when #2224 is fixed
-except:
+except ImportError:
     pass
 
 from recommenders.utils.timer import Timer
@@ -37,12 +39,16 @@ from recommenders.models.surprise.surprise_utils import (
     compute_ranking_predictions,
 )
 from recommenders.evaluation.python_evaluation import (
+    exp_var,
+    get_top_k_items,
     map_at_k,
+    mae,
     ndcg_at_k,
     precision_at_k,
     recall_at_k,
+    rmse,
+    rsquared,
 )
-from recommenders.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
 
 try:
     from recommenders.utils.spark_utils import start_or_get_spark
@@ -70,6 +76,30 @@ except ImportError:
 tmp_dir = TemporaryDirectory()
 TRAIN_FILE = os.path.join(tmp_dir.name, "df_train.csv")
 TEST_FILE = os.path.join(tmp_dir.name, "df_test.csv")
+
+
+def _get_top_k_pandas(predictions, top_k):
+    if top_k is None:
+        return predictions
+    return get_top_k_items(
+        predictions,
+        col_user=DEFAULT_USER_COL,
+        col_rating=DEFAULT_PREDICTION_COL,
+        k=top_k,
+    ).drop("rank", axis=1)
+
+
+def _get_top_k_spark(predictions, top_k):
+    if top_k is None:
+        return predictions
+    window = Window.partitionBy(DEFAULT_USER_COL).orderBy(
+        predictions[DEFAULT_PREDICTION_COL].desc()
+    )
+    return (
+        predictions.withColumn("rank", row_number().over(window))
+        .filter("rank <= {}".format(top_k))
+        .drop("rank")
+    )
 
 
 def prepare_training_als(train, test):
@@ -122,20 +152,27 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         user_item = users.crossJoin(items)
         dfs_pred = model.transform(user_item)
 
-        # Remove seen items
-        dfs_pred_exclude_train = dfs_pred.alias("pred").join(
-            train.alias("train"),
-            (dfs_pred[DEFAULT_USER_COL] == train[DEFAULT_USER_COL])
-            & (dfs_pred[DEFAULT_ITEM_COL] == train[DEFAULT_ITEM_COL]),
-            how="outer",
-        )
-        topk_scores = dfs_pred_exclude_train.filter(
-            dfs_pred_exclude_train["train." + DEFAULT_RATING_COL].isNull()
-        ).select(
-            "pred." + DEFAULT_USER_COL,
-            "pred." + DEFAULT_ITEM_COL,
-            "pred." + DEFAULT_PREDICTION_COL,
-        )
+        if remove_seen:
+            dfs_pred_exclude_train = dfs_pred.alias("pred").join(
+                train.alias("train"),
+                (dfs_pred[DEFAULT_USER_COL] == train[DEFAULT_USER_COL])
+                & (dfs_pred[DEFAULT_ITEM_COL] == train[DEFAULT_ITEM_COL]),
+                how="outer",
+            )
+            topk_scores = dfs_pred_exclude_train.filter(
+                dfs_pred_exclude_train["train." + DEFAULT_RATING_COL].isNull()
+            ).select(
+                "pred." + DEFAULT_USER_COL,
+                "pred." + DEFAULT_ITEM_COL,
+                "pred." + DEFAULT_PREDICTION_COL,
+            )
+        else:
+            topk_scores = dfs_pred.select(
+                DEFAULT_USER_COL,
+                DEFAULT_ITEM_COL,
+                DEFAULT_PREDICTION_COL,
+            )
+        topk_scores = _get_top_k_spark(topk_scores, top_k)
     return topk_scores, t
 
 
@@ -175,6 +212,7 @@ def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             predcol=DEFAULT_PREDICTION_COL,
             remove_seen=remove_seen,
         )
+        topk_scores = _get_top_k_pandas(topk_scores, top_k)
     return topk_scores, t
 
 
@@ -229,13 +267,17 @@ def predict_embdotbias(model, test):
     return preds, t
 
 
-def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_embdotbias(
+    model, test, train, top_k=DEFAULT_K, remove_seen=True
+):
     # Get all users/items known to the model
     total_users = model.classes[DEFAULT_USER_COL][1:]
     total_items = model.classes[DEFAULT_ITEM_COL][1:]
     test_users = test[DEFAULT_USER_COL].unique()
     test_users = np.intersect1d(test_users, total_users)
-    users_items = cartesian_product(np.array(test_users), np.array(total_items))
+    users_items = cartesian_product(
+        np.array(test_users), np.array(total_items)
+    )
     users_items = pd.DataFrame(
         users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
     )
@@ -247,9 +289,9 @@ def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True
             on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
             how="left",
         )
-        candidates = training_removed[training_removed[DEFAULT_RATING_COL].isna()][
-            [DEFAULT_USER_COL, DEFAULT_ITEM_COL]
-        ]
+        candidates = training_removed[
+            training_removed[DEFAULT_RATING_COL].isna()
+        ][[DEFAULT_USER_COL, DEFAULT_ITEM_COL]]
     else:
         candidates = users_items
     with Timer() as t:
@@ -267,7 +309,9 @@ def recommend_k_embdotbias(model, test, train, top_k=DEFAULT_K, remove_seen=True
 def prepare_training_ncf(df_train, df_test):
     train = df_train.sort_values([DEFAULT_USER_COL], axis=0, ascending=[True])
     test = df_test.sort_values([DEFAULT_USER_COL], axis=0, ascending=[True])
-    test = test[df_test[DEFAULT_USER_COL].isin(train[DEFAULT_USER_COL].unique())]
+    test = test[
+        df_test[DEFAULT_USER_COL].isin(train[DEFAULT_USER_COL].unique())
+    ]
     test = test[test[DEFAULT_ITEM_COL].isin(train[DEFAULT_ITEM_COL].unique())]
     train.to_csv(TRAIN_FILE, index=False)
     test.to_csv(TEST_FILE, index=False)
@@ -304,22 +348,25 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             }
         )
         merged = pd.merge(
-            train, topk_scores, on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how="outer"
+            train,
+            topk_scores,
+            on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+            how="outer",
         )
-        topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(
-            DEFAULT_RATING_COL, axis=1
-        )
+        if remove_seen:
+            topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(
+                DEFAULT_RATING_COL, axis=1
+            )
+        topk_scores = _get_top_k_pandas(topk_scores, top_k)
     # Remove temp files
     return topk_scores, t
 
 
 def prepare_training_cornac(train, test):
     return cornac.data.Dataset.from_uir(
-        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False), seed=SEED
+        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
+        seed=SEED,
     )
-
-
-
 
 
 def train_bpr(params, data):
@@ -327,6 +374,7 @@ def train_bpr(params, data):
     with Timer() as t:
         model.fit(data)
     return model, t
+
 
 def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
@@ -337,7 +385,9 @@ def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             col_prediction=DEFAULT_PREDICTION_COL,
             remove_seen=remove_seen,
         )
+        topk_scores = _get_top_k_pandas(topk_scores, top_k)
     return topk_scores, t
+
 
 def train_bivae(params, data):
     model = cornac.models.BiVAECF(**params)
@@ -356,6 +406,7 @@ def recommend_k_bivae(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             predcol=DEFAULT_PREDICTION_COL,
             remove_seen=remove_seen,
         )
+        topk_scores = _get_top_k_pandas(topk_scores, top_k)
     return topk_scores, t
 
 
@@ -413,7 +464,9 @@ def train_lightgcn(params, data):
     return model, t
 
 
-def recommend_k_lightgcn(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_lightgcn(
+    model, test, train, top_k=DEFAULT_K, remove_seen=True
+):
     with Timer() as t:
         topk_scores = model.recommend_k_items(
             test, top_k=top_k, remove_seen=remove_seen
