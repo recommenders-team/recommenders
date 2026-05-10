@@ -6,7 +6,7 @@
 ######################################################################
 # Install Docker in rootless mode
 #
-# The following environment variables must be set:
+# The following environment variables may need to be set:
 # * DOCKER_MIRROR_URL
 #
 # See

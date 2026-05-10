@@ -12,7 +12,10 @@
 # The following environment variables must be set:
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
+#
+# The following environment variables may need to be set:
 # * DOCKER_MIRROR_URL
+# * HTTP_PROXY
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -66,7 +69,13 @@ for index in "${!SCRIPT_SETUP[@]}"; do
     echo "Running ${script} on the VM ..."
     ssh -t -o StrictHostKeyChecking=no \
       -o UserKnownHostsFile=/dev/null \
-      "${ssh_dest}" "export DOCKER_MIRROR_URL='${DOCKER_MIRROR_URL:-}'; bash ./${script}"
+      "${ssh_dest}" "\
+          export DOCKER_MIRROR_URL=${DOCKER_MIRROR_URL:-}; \
+          export http_proxy=${HTTP_PROXY:-}; \
+          export HTTP_PROXY=${HTTP_PROXY:-}; \
+          export https_proxy=${HTTP_PROXY:-}; \
+          export HTTPS_PROXY=${HTTP_PROXY:-}; \
+          bash ./${script}"
 
     echo "Removing ${script} ..."
     ssh -t -o StrictHostKeyChecking=no \

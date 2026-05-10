@@ -53,11 +53,11 @@ FROM ${COMPUTE} AS deps
 
 ARG COMPUTE
 
-# Valid versions: 3.9, 3.10, 3.11
-ARG PYTHON_VERSION="3.11"
-
 # Extra dependencies: dev, gpu, spark
 ARG EXTRAS=""
+
+# Valid versions: 3.9, 3.10, 3.11
+ARG PYTHON_VERSION="3.11"
 
 ARG RECO_VENV_DIR=/root/.venvs/Recommenders
 
@@ -87,9 +87,9 @@ RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
 # Install OpenJDK
 # sdk is available after source /root/.sdkman/bin/sdkman-init.sh
 RUN if [[ "${EXTRAS}" =~ spark ]]; then \
-      source /root/.sdkman/bin/sdkman-init.sh; \
-      sdk install java 21.0.2-open; \
-      sdk use java 21.0.2-open; \
+      source /root/.sdkman/bin/sdkman-init.sh \
+      && sdk install java 21.0.2-open \
+      && sdk use java 21.0.2-open; \
     fi
 
 # Install uv
