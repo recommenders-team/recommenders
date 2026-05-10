@@ -54,11 +54,11 @@ on:
         required: true
       COMPSHARE_PUBLIC_KEY:
         required: true
-      DOCKER_MIRROR_URL:
+      VM_DOCKER_MIRROR_URL:
         required: false
-      HTTP_PROXY:
+      VM_HTTP_PROXY:
         required: false
-      PIP_INDEX_URL:
+      VM_PIP_INDEX_URL:
         required: false
 
 jobs:
@@ -119,8 +119,8 @@ jobs:
         env:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
-          DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
-          HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+          VM_DOCKER_MIRROR_URL: ${{ secrets.VM_DOCKER_MIRROR_URL }}
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
           commit="$(echo ${{ github.sha }} | head -c 5)"
@@ -137,8 +137,8 @@ jobs:
 
       - name: Build image
         env:
-          HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
-          PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
+          VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
         run: |
           image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
           echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
@@ -161,14 +161,14 @@ jobs:
               docker build . ${docker_args}
           else
               echo "Building Docker image on the VM ${VM_NAME} ..."
-              pypi_mirror="$(echo "${PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
+              pypi_mirror="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
               pypi_mirror="${pypi_mirror:+,$pypi_mirror}"
               docker_args="${docker_args} \
-                  --build-arg PIP_INDEX_URL=${PIP_INDEX_URL} \
-                  --build-arg http_proxy=${HTTP_PROXY} \
-                  --build-arg HTTP_PROXY=${HTTP_PROXY} \
-                  --build-arg https_proxy=${HTTP_PROXY} \
-                  --build-arg HTTPS_PROXY=${HTTP_PROXY} \
+                  --build-arg VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL} \
+                  --build-arg http_proxy=${VM_HTTP_PROXY} \
+                  --build-arg HTTP_PROXY=${VM_HTTP_PROXY} \
+                  --build-arg https_proxy=${VM_HTTP_PROXY} \
+                  --build-arg HTTPS_PROXY=${VM_HTTP_PROXY} \
                   --build-arg no_proxy=localhost,127.0.0.1,::1${pypi_mirror} \
                   --build-arg NO_PROXY=localhost,127.0.0.1,::1${pypi_mirror}"
 
@@ -226,7 +226,7 @@ jobs:
 
       - name: Execute tests in container
         env:
-          HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
         run: |
           test_list="$(yq \
@@ -250,10 +250,10 @@ jobs:
                   "${SSH_DEST}" "\
                       ${check_gpu} \
                       && docker run --rm ${gpu_arg} \
-                          -e http_proxy=${HTTP_PROXY} \
-                          -e HTTP_PROXY=${HTTP_PROXY} \
-                          -e https_proxy=${HTTP_PROXY} \
-                          -e HTTPS_PROXY=${HTTP_PROXY} \
+                          -e http_proxy=${VM_HTTP_PROXY} \
+                          -e HTTP_PROXY=${VM_HTTP_PROXY} \
+                          -e https_proxy=${VM_HTTP_PROXY} \
+                          -e HTTPS_PROXY=${VM_HTTP_PROXY} \
                           ${IMAGE_TAG} bash -lc '${test_cmd}'"
           fi
 

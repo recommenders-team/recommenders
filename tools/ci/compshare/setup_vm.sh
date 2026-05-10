@@ -14,8 +14,8 @@
 # * COMPSHARE_PUBLIC_KEY
 #
 # The following environment variables may need to be set:
-# * DOCKER_MIRROR_URL
-# * HTTP_PROXY
+# * VM_DOCKER_MIRROR_URL
+# * VM_HTTP_PROXY
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -70,11 +70,11 @@ for index in "${!SCRIPT_SETUP[@]}"; do
     ssh -t -o StrictHostKeyChecking=no \
       -o UserKnownHostsFile=/dev/null \
       "${ssh_dest}" "\
-          export DOCKER_MIRROR_URL=${DOCKER_MIRROR_URL:-}; \
-          export http_proxy=${HTTP_PROXY:-}; \
-          export HTTP_PROXY=${HTTP_PROXY:-}; \
-          export https_proxy=${HTTP_PROXY:-}; \
-          export HTTPS_PROXY=${HTTP_PROXY:-}; \
+          export VM_DOCKER_MIRROR_URL=${VM_DOCKER_MIRROR_URL:-}; \
+          export http_proxy=${VM_HTTP_PROXY:-}; \
+          export HTTP_PROXY=${VM_HTTP_PROXY:-}; \
+          export https_proxy=${VM_HTTP_PROXY:-}; \
+          export HTTPS_PROXY=${VM_HTTP_PROXY:-}; \
           bash ./${script}"
 
     echo "Removing ${script} ..."

@@ -120,7 +120,7 @@ ARG GIT_REF="main"
 
 # Use PyPI as the default pip index,
 # otherwise, use the specified.
-ARG PIP_INDEX_URL=''
+ARG VM_PIP_INDEX_URL=''
 
 ARG RECO_DIR="/root/Recommenders"
 
@@ -135,9 +135,9 @@ RUN --mount=type=cache,target=/opt/uv-cache/ \
     { count=0; \
       while true; do \
           if [ -z "${GIT_REF}" ]; then \
-              uv pip install --index "${PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
+              uv pip install --index "${VM_PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
           else \
-              uv pip install --index "${PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
+              uv pip install --index "${VM_PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
           fi \
           && break \
           || { ((count++)); if [[ $count -lt 5 ]]; then sleep 5; else exit 1; fi; } \

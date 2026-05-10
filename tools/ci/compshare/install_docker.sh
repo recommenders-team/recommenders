@@ -7,7 +7,7 @@
 # Install Docker in rootless mode
 #
 # The following environment variables may need to be set:
-# * DOCKER_MIRROR_URL
+# * VM_DOCKER_MIRROR_URL
 #
 # See
 # * https://docs.docker.com/engine/install/ubuntu/
@@ -87,17 +87,17 @@ sudo rm /var/run/docker.sock
 echo '  - Installing rootless Docker daemon ...'
 dockerd-rootless-setuptool.sh install
 
-if [[ -n "${DOCKER_MIRROR_URL:-}" ]]; then
+if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
     echo '  - Setting Docker mirror URL ...'
     DAEMON_JSON="${HOME}/.config/docker/daemon.json"
     if [[ -f "${DAEMON_JSON}" ]]; then
         echo "    ## Appending to ${DAEMON_JSON} ..."
-        TEMP_JSON=$(jq ".\"registry-mirrors\" += [ \"${DOCKER_MIRROR_URL}\" ]" "${DAEMON_JSON}")
+        TEMP_JSON=$(jq ".\"registry-mirrors\" += [ \"${VM_DOCKER_MIRROR_URL}\" ]" "${DAEMON_JSON}")
         echo "${TEMP_JSON}" > "${DAEMON_JSON}"
     else
         echo "    ## Creating ${DAEMON_JSON} ..."
         mkdir -p "${DAEMON_JSON%/*}"
-        echo "{ \"registry-mirrors\": [ \"${DOCKER_MIRROR_URL}\" ] }" > "${DAEMON_JSON}"
+        echo "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }" > "${DAEMON_JSON}"
     fi
 fi
 
