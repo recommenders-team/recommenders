@@ -759,7 +759,7 @@ def map(
     threshold=DEFAULT_THRESHOLD,
     **_,
 ):
-    """Mean Average Precision for top k prediction items
+    """Mean Average Precision for ranked prediction items
 
     The implementation of MAP is referenced from Spark MLlib evaluation metrics.
     https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
@@ -770,6 +770,8 @@ def map(
     Note:
         The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
         relevant items in the ground truth data, instead of k.
+        Use ``map_at_k`` when the metric should be normalized by
+        ``min(number of relevant items, k)``.
 
     Args:
         rating_true (pandas.DataFrame): True DataFrame

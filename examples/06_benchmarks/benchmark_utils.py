@@ -15,7 +15,7 @@ except ImportError:
     pass  # skip this import if we are not in a Spark environment
 try:
     import surprise  # Put SVD surprise back in core deps when #2224 is fixed
-except:
+except ImportError:
     pass
 
 from recommenders.utils.timer import Timer
@@ -37,7 +37,7 @@ from recommenders.models.surprise.surprise_utils import (
     compute_ranking_predictions,
 )
 from recommenders.evaluation.python_evaluation import (
-    map,
+    map_at_k,
     ndcg_at_k,
     precision_at_k,
     recall_at_k,
@@ -415,7 +415,7 @@ def ranking_metrics_pyspark(test, predictions, k=DEFAULT_K):
         test, predictions, k=k, relevancy_method="top_k", **COL_DICT
     )
     return {
-        "MAP": rank_eval.map(),
+        "MAP": rank_eval.map_at_k(),
         "nDCG@k": rank_eval.ndcg_at_k(),
         "Precision@k": rank_eval.precision_at_k(),
         "Recall@k": rank_eval.recall_at_k(),
@@ -433,7 +433,7 @@ def rating_metrics_python(test, predictions):
 
 def ranking_metrics_python(test, predictions, k=DEFAULT_K):
     return {
-        "MAP": map(test, predictions, k=k, **COL_DICT),
+        "MAP": map_at_k(test, predictions, k=k, **COL_DICT),
         "nDCG@k": ndcg_at_k(test, predictions, k=k, **COL_DICT),
         "Precision@k": precision_at_k(test, predictions, k=k, **COL_DICT),
         "Recall@k": recall_at_k(test, predictions, k=k, **COL_DICT),
