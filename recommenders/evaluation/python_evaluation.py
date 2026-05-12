@@ -759,7 +759,7 @@ def map(
     threshold=DEFAULT_THRESHOLD,
     **_,
 ):
-    """Mean Average Precision for top k prediction items
+    """Mean Average Precision
 
     The implementation of MAP is referenced from Spark MLlib evaluation metrics.
     https://spark.apache.org/docs/latest/mllib-evaluation-metrics.html#ranking-systems
