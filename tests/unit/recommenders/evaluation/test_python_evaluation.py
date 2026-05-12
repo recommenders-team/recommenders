@@ -294,6 +294,21 @@ def test_python_map_at_k(rating_true, rating_pred, rating_nohit):
     assert map_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.23613, TOL)
 
 
+def test_python_map_vs_map_at_k(rating_true, rating_pred):
+    """``map_at_k`` and ``map`` differ only in the per-user normalizer.
+
+    ``map_at_k`` divides each user's hit-precision sum by ``min(k, n_relevant)``;
+    ``map`` divides by ``n_relevant`` (Spark MLlib convention). So ``map_at_k >= map``
+    in general, and they coincide when ``k >= n_relevant`` for every user.
+    """
+    # Every user in the fixture has at most 10 relevant items, so at k=10 the two metrics agree.
+    assert map_at_k(rating_true, rating_pred, k=10) == pytest.approx(
+        map(rating_true, rating_pred, k=10), TOL
+    )
+    # User 3 has 10 relevant items > k=5, so map_at_k strictly exceeds map at k=5.
+    assert map_at_k(rating_true, rating_pred, k=5) > map(rating_true, rating_pred, k=5)
+
+
 def test_python_precision_at_k(rating_true, rating_pred, rating_nohit):
     assert (
         precision_at_k(
