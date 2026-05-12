@@ -762,7 +762,7 @@ def map(
     """Mean Average Precision for top k prediction items
 
     The implementation of MAP is referenced from Spark MLlib evaluation metrics.
-    https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
+    https://spark.apache.org/docs/latest/mllib-evaluation-metrics.html#ranking-systems
 
     A good reference can be found at:
     http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
