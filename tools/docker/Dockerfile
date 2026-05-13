@@ -19,13 +19,6 @@ ARG COMPUTE="cpu"
 #   + [Created on 2026-04-19](https://hub.docker.com/layers/library/buildpack-deps/24.04/images/sha256-6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673)
 FROM buildpack-deps:24.04@sha256:6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673 AS cpu
 
-# unzip and zip is required by SDKMAN!
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y zip unzip
-
 
 #####################################################################
 # Compute Stage - GPU
@@ -35,13 +28,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #   + [Created on 2026-04-20](https://hub.docker.com/layers/nvidia/cuda/13.2.1-devel-ubuntu24.04/images/sha256-0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf)
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
 FROM nvidia/cuda:13.2.1-devel-ubuntu24.04@sha256:0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf AS gpu
-
-# curl, unzip and zip is required by SDKMAN!
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y git zip unzip curl
 
 
 #####################################################################
@@ -61,12 +47,29 @@ ARG PYTHON_VERSION="3.11"
 
 ARG RECO_VENV_DIR=/root/.venvs/Recommenders
 
+# HTTPS proxy certificate if needed
+ARG VM_PROXY_CERTIFICATE=''
+
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 USER root:root
 
 # uv is in /root/.local/bin and is available after using bash -l
 SHELL ["/bin/bash", "-lc"]
+
+# Add HTTPS proxy CA certificate
+# * ca-certificates is required and installed in all base images
+RUN if [[ -n "${VM_PROXY_CERTIFICATE}" ]]; then \
+        echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
+        && update-ca-certificates; \
+    fi
+
+# curl, unzip and zip is required by SDKMAN!
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y curl git unzip zip
 
 # Install yq
 # See https://github.com/mikefarah/yq
