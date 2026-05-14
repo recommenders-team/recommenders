@@ -46,18 +46,51 @@ rm -f "${CUDA_KEYRING}"
 sudo apt-get update
 
 echo '* Installing CUDA driver ...'
-count=0
-until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
-    apt-get install -y libnvidia-compute nvidia-dkms; do
-    echo '  + Failed to install.'
-    count=$((count + 1))
-    if [[ $count -lt 5 ]]; then
-        sleep 5
-        echo '  + Trying again ...'
-    else
-        exit 1
-    fi
-done
+sudo update-pciids
+
+if lspci | grep -i nvidia | grep -i p40; then
+    # P40 can only install drivers of version up to 580
+    echo '  + Locking to version 580 ...'
+    count=0
+    until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+        apt-get install -y nvidia-driver-pinning-580; do
+        echo '  + Failed to install.'
+        count=$((count + 1))
+        if [[ $count -lt 5 ]]; then
+            sleep 5
+            echo '  + Trying again ...'
+        else
+            exit 1
+        fi
+    done
+
+    echo '  + Installing compute-only drivers ...'
+    count=0
+    until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+        apt-get install -y libnvidia-compute-580 nvidia-dkms-580; do
+        echo '  + Failed to install.'
+        count=$((count + 1))
+        if [[ $count -lt 5 ]]; then
+            sleep 5
+            echo '  + Trying again ...'
+        else
+            exit 1
+        fi
+    done
+else
+    count=0
+    until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+        apt-get install -y libnvidia-compute nvidia-dkms; do
+        echo '  + Failed to install.'
+        count=$((count + 1))
+        if [[ $count -lt 5 ]]; then
+            sleep 5
+            echo '  + Trying again ...'
+        else
+            exit 1
+        fi
+    done
+fi
 
 echo '* Installing NVIDIA container toolkit ...'
 sudo dpkg --configure -a
