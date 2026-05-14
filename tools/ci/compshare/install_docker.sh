@@ -29,11 +29,16 @@ GPG_URL="${APT_URL}/gpg"
 APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stable"
 
 echo '* Installing prerequisites ...'
+while apt_lock_pid=$(sudo fuser /var/lib/apt/lists/lock 2>/dev/null); do
+    echo '    - Releasing /var/lib/apt/lists/lock ...'
+    sudo kill "${apt_lock_pid}"
+    sleep 5
+done
 sudo apt-get update
 sudo dpkg --configure -a
 count=0
 until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
-    apt-get install -y ca-certificates curl; do
+    apt-get install -y ca-certificates curl jq; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
@@ -90,63 +95,68 @@ sudo rm /var/run/docker.sock
 echo '  - Installing rootless Docker daemon ...'
 dockerd-rootless-setuptool.sh install
 
-echo '* Configuring proxies for Docker ...'
-update_json_config() {
-    local json_file="${1:-}"
-    local updates="${2:-}"
-    [[ -z "${updates}" || -z "${json_file}" ]] && return 1
+if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
+    || -n "${VM_HTTP_PROXY:-}" \
+    || -n "${VM_HTTPS_PROXY:-}" \
+    || -n "${VM_PIP_INDEX_URL}" ]]; then
+    echo '* Configuring proxies for Docker ...'
+    update_json_config() {
+        local json_file="${1:-}"
+        local updates="${2:-}"
+        [[ -z "${updates}" || -z "${json_file}" ]] && return 1
 
-    if [[ -f "${json_file}" ]]; then
-        echo "    ## Updating ${json_file} ..."
-        local temp_json
-        temp_json=$(jq -s '
-            def update($a; $b):
-                ($a | type) as $ta | ($b | type) as $tb |
-                if $ta == "object" and $tb == "object" then
-                    reduce ([$a, $b] | add | keys_unsorted[]) as $k ({};
-                    .[$k] = update($a[$k]; $b[$k]))
-                elif $ta == "array" and $tb == "array" then
-                    $a + $b
-                else
-                    $b // $a
-                end;
-            reduce .[] as $item (null; update(.; $item))' \
-            "${json_file}" <(echo "${updates}"))
-        echo "${temp_json}" > "${json_file}"
-    else
-        echo "    ## Creating ${json_file} ..."
-        mkdir -p "$(dirname "${json_file}")"
-        echo "${updates}" | jq '.' > "${json_file}"
+        if [[ -f "${json_file}" ]]; then
+            echo "    ## Updating ${json_file} ..."
+            local temp_json
+            temp_json=$(jq -s '
+                def update($a; $b):
+                    ($a | type) as $ta | ($b | type) as $tb |
+                    if $ta == "object" and $tb == "object" then
+                        reduce ([$a, $b] | add | keys_unsorted[]) as $k ({};
+                        .[$k] = update($a[$k]; $b[$k]))
+                    elif $ta == "array" and $tb == "array" then
+                        $a + $b
+                    else
+                        $b // $a
+                    end;
+                reduce .[] as $item (null; update(.; $item))' \
+                "${json_file}" <(echo "${updates}"))
+            echo "${temp_json}" > "${json_file}"
+        else
+            echo "    ## Creating ${json_file} ..."
+            mkdir -p "$(dirname "${json_file}")"
+            echo "${updates}" | jq '.' > "${json_file}"
+        fi
+    }
+
+    if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
+        echo '  + Setting Docker mirror URL ...'
+        update_json_config \
+            "${HOME}/.config/docker/daemon.json" \
+            "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
     fi
-}
 
-if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
-    echo '  - Setting Docker mirror URL ...'
-    update_json_config \
-        "${HOME}/.config/docker/daemon.json" \
-        "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
-fi
+    docker_config_json="${HOME}/.docker/config.json"
+    if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
+        echo '  + Setting HTTP proxy for docker build and docker run ...'
+        update_json_config "${docker_config_json}" \
+            "{ \"proxies\": { \"default\": { \"httpProxy\": \"${VM_HTTP_PROXY}\" } } }"
+    fi
 
-docker_config_json="${HOME}/.docker/config.json"
-if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
-    echo '  - Setting HTTP proxy for docker build and docker run ...'
-    update_json_config "${docker_config_json}" \
-        "{ \"proxies\": { \"default\": { \"httpProxy\": \"${VM_HTTP_PROXY}\" } } }"
-fi
+    if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
+        echo '  + Setting HTTP proxy for docker build and docker run ...'
+        update_json_config "${docker_config_json}" \
+            "{ \"proxies\": { \"default\": { \"httpsProxy\": \"${VM_HTTPS_PROXY}\" } } }"
+    fi
 
-if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
-    echo '  - Setting HTTP proxy for docker build and docker run ...'
-    update_json_config "${docker_config_json}" \
-        "{ \"proxies\": { \"default\": { \"httpsProxy\": \"${VM_HTTPS_PROXY}\" } } }"
-fi
-
-if [[ -n "${VM_PIP_INDEX_URL}" ]]; then
-    echo '  - Setting no proxy for pip index ...'
-    pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
-    pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
-    vm_no_proxy="localhost,127.0.0.1,::1${pip_index_ip}"
-    update_json_config "${docker_config_json}" \
-        "{ \"proxies\": { \"default\": { \"noProxy\": \"${vm_no_proxy}\" } } }"
+    if [[ -n "${VM_PIP_INDEX_URL}" ]]; then
+        echo '  + Setting no proxy for pip index ...'
+        pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
+        pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
+        vm_no_proxy="localhost,127.0.0.1,::1${pip_index_ip}"
+        update_json_config "${docker_config_json}" \
+            "{ \"proxies\": { \"default\": { \"noProxy\": \"${vm_no_proxy}\" } } }"
+    fi
 fi
 
 echo '* Starting rootless Docker daemon ...'

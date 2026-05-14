@@ -73,11 +73,11 @@ for index in "${!SCRIPT_SETUP[@]}"; do
     ssh -t -o StrictHostKeyChecking=no \
       -o UserKnownHostsFile=/dev/null \
       "${ssh_dest}" "\
-          export VM_DOCKER_MIRROR_URL=${VM_DOCKER_MIRROR_URL:-}; \
-          export VM_HTTP_PROXY=${VM_HTTP_PROXY:-}; \
-          export VM_HTTPS_PROXY=${VM_HTTPS_PROXY:-}; \
-          export VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL:-}; \
-          export VM_PROXY_CERTIFICATE=${VM_PROXY_CERTIFICATE:-}; \
+          export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
+          export VM_HTTP_PROXY='${VM_HTTP_PROXY:-}'; \
+          export VM_HTTPS_PROXY='${VM_HTTPS_PROXY:-}'; \
+          export VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL:-}'; \
+          export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
           bash ./${script}"
 
     echo "Removing ${script} ..."

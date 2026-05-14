@@ -272,22 +272,23 @@ allocate_vm() {
         local memory
         memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
 
-        response=$(create_instance \
-            "${vm_name}" \
-            "${encoded_password_file}" \
-            "${gpu_type}" \
-            "${cpu_cores}" \
-            "${memory}")
+        for ((j=0; j<5; j++)); do
+            response=$(create_instance \
+                "${vm_name}" \
+                "${encoded_password_file}" \
+                "${gpu_type}" \
+                "${cpu_cores}" \
+                "${memory}")
 
-        retcode="$(echo "${response}" | jq '.RetCode')"
-        if [[ ${retcode} == 0 ]]; then
-            break
-        fi
+            retcode="$(echo "${response}" | jq '.RetCode')"
+            if [[ ${retcode} == 0 ]]; then
+                return
+            fi
+            echo "ERROR: ${response}" >&2
+            sleep 5
+        done
     done
-    if [[ "${retcode}" != 0 ]]; then
-        echo "ERROR: ${response}" >&2
-        return 1
-    fi
+    [[ "${retcode}" != 0 ]] && return 1
 }
 
 get_vm_info() {
@@ -358,8 +359,8 @@ wait_for_vm_to_be_available() {
         || (echo "${ssh_response}" | grep -iq 'permission')
     do
         echo '* Still waiting ...' >&2
-        # Set timeout to (5 + 5) * 18 = 180 seconds
-        [[ "${count}" -gt 18 ]] && return 1
+        # Set timeout to (5 + 5) * 30 = 300 seconds
+        [[ "${count}" -gt 30 ]] && return 1
         count=$((count + 1))
         sleep 5
     done

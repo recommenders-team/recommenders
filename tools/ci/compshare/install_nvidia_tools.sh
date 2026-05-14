@@ -20,6 +20,11 @@ CUDA_KEYRING="cuda-keyring_1.1-1_all.deb"
 CUDA_KEYRING_URL="${CUDA_REPO}/${OS}/${ARCH}/${CUDA_KEYRING}"
 
 echo '* Installing prerequisites ...'
+while apt_lock_pid=$(sudo fuser /var/lib/apt/lists/lock 2>/dev/null); do
+    echo '    - Releasing /var/lib/apt/lists/lock ...'
+    sudo kill "${apt_lock_pid}"
+    sleep 5
+done
 sudo apt-get update
 count=0
 until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \

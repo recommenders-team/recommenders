@@ -24,43 +24,50 @@ sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 
 if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
     echo '* Adding CA certificate for HTTPS proxy ...'
-    echo '  - Installing prerequisites ...'
+    echo '  + Installing prerequisites ...'
+    while apt_lock_pid=$(sudo fuser /var/lib/apt/lists/lock 2>/dev/null); do
+        echo '    - Releasing /var/lib/apt/lists/lock ...'
+        sudo kill "${apt_lock_pid}"
+        sleep 5
+    done
     sudo apt-get update
     sudo dpkg --configure -a
     count=0
     until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
         apt-get install -y ca-certificates; do
-        echo '  + Failed to install.'
+        echo '    - Failed to install.'
         count=$((count + 1))
         if [[ $count -lt 5 ]]; then
             sleep 5
-            echo '  + Trying again ...'
+            echo '    - Trying again ...'
         else
             exit 1
         fi
     done
 
-    echo '  - Updating CA certificate ...'
+    echo '  + Updating CA certificate ...'
     echo "${VM_PROXY_CERTIFICATE}" \
         | sudo tee /usr/local/share/ca-certificates/vm_proxy_cert.crt > /dev/null
     sudo update-ca-certificates
 fi
 
-echo '* Configuring system-wide proxies ...'
-if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
-    echo '  + Configuring HTTP proxy ...'
-    sudo tee -a /etc/environment << EOF
-http_proxy="${VM_HTTP_PROXY}"
-HTTP_PROXY="${VM_HTTP_PROXY}"
+if [[ -n "${VM_HTTP_PROXY:-}" || -n "${VM_HTTPS_PROXY:-}" ]]; then
+    echo '* Configuring system-wide proxies ...'
+    if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
+        echo '  + Configuring HTTP proxy ...'
+        sudo tee -a /etc/environment > /dev/null << EOF
+    http_proxy="${VM_HTTP_PROXY}"
+    HTTP_PROXY="${VM_HTTP_PROXY}"
 EOF
-fi
+    fi
 
-if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
-    echo '  + Configuring HTTPS proxy ...'
-    sudo tee -a /etc/environment << EOF
-https_proxy="${VM_HTTPS_PROXY}"
-HTTPS_PROXY="${VM_HTTPS_PROXY}"
+    if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
+        echo '  + Configuring HTTPS proxy ...'
+        sudo tee -a /etc/environment > /dev/null << EOF
+    https_proxy="${VM_HTTPS_PROXY}"
+    HTTPS_PROXY="${VM_HTTPS_PROXY}"
 EOF
+    fi
 fi
 
 echo '* Adding extra DNS ...'
