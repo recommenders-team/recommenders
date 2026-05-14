@@ -56,16 +56,16 @@ if [[ -n "${VM_HTTP_PROXY:-}" || -n "${VM_HTTPS_PROXY:-}" ]]; then
     if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
         echo '  + Configuring HTTP proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
-    http_proxy="${VM_HTTP_PROXY}"
-    HTTP_PROXY="${VM_HTTP_PROXY}"
+http_proxy="${VM_HTTP_PROXY}"
+HTTP_PROXY="${VM_HTTP_PROXY}"
 EOF
     fi
 
     if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
         echo '  + Configuring HTTPS proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
-    https_proxy="${VM_HTTPS_PROXY}"
-    HTTPS_PROXY="${VM_HTTPS_PROXY}"
+https_proxy="${VM_HTTPS_PROXY}"
+HTTPS_PROXY="${VM_HTTPS_PROXY}"
 EOF
     fi
 fi
