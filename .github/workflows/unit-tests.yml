@@ -41,7 +41,7 @@ jobs:
       timeout-minutes: 180  # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
       type: pr_gate
     secrets:
-      COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-      COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
-      DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
-      PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
+      private_key: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+      public_key: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+      docker_url: ${{ secrets.DOCKER_MIRROR_URL }}
+      pip_url: ${{ secrets.PIP_INDEX_URL }}

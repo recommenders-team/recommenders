@@ -50,13 +50,13 @@ on:
         type: string
         description: Type of test - pr_gate or nightly
     secrets:
-      COMPSHARE_PRIVATE_KEY:
+      private_key:
         required: true
-      COMPSHARE_PUBLIC_KEY:
+      public_key:
         required: true
-      DOCKER_MIRROR_URL:
+      docker_url:
         required: true
-      PIP_INDEX_URL:
+      pip_url:
         required: true
 
 jobs:
@@ -115,9 +115,9 @@ jobs:
               || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu'))
           }}
         env:
-          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-          COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
-          DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
+          COMPSHARE_PRIVATE_KEY: ${{ secrets.private_key }}
+          COMPSHARE_PUBLIC_KEY: ${{ secrets.public_key }}
+          DOCKER_MIRROR_URL: ${{ secrets.docker_url }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
           commit="$(echo ${{ github.sha }} | head -c 5)"
@@ -134,7 +134,7 @@ jobs:
 
       - name: Build image
         env:
-          PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
+          PIP_INDEX_URL: ${{ secrets.pip_url }}
         run: |
           image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
           echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
@@ -241,8 +241,8 @@ jobs:
       - name: Clean up
         if: always()
         env:
-          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-          COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+          COMPSHARE_PRIVATE_KEY: ${{ secrets.private_key }}
+          COMPSHARE_PUBLIC_KEY: ${{ secrets.public_key }}
         run: |
           if [[ -n "${VM_NAME}" ]]; then
               bash tools/ci/compshare/delete_vm.sh "${VM_NAME}"
