@@ -98,7 +98,7 @@ dockerd-rootless-setuptool.sh install
 if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
     || -n "${VM_HTTP_PROXY:-}" \
     || -n "${VM_HTTPS_PROXY:-}" \
-    || -n "${VM_PIP_INDEX_URL}" ]]; then
+    || -n "${VM_PIP_INDEX_URL:-}" ]]; then
     echo '* Configuring proxies for Docker ...'
     update_json_config() {
         local json_file="${1:-}"
@@ -149,14 +149,10 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
             "{ \"proxies\": { \"default\": { \"httpsProxy\": \"${VM_HTTPS_PROXY}\" } } }"
     fi
 
-    if [[ -n "${VM_PIP_INDEX_URL}" ]]; then
-        echo '  + Setting no proxy for pip index ...'
-        pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
-        pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
-        vm_no_proxy="localhost,127.0.0.1,::1${pip_index_ip}"
-        update_json_config "${docker_config_json}" \
-            "{ \"proxies\": { \"default\": { \"noProxy\": \"${vm_no_proxy}\" } } }"
-    fi
+    echo '  + Setting no proxy for pip index ...'
+    pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
+    update_json_config "${docker_config_json}" \
+        "{ \"proxies\": { \"default\": { \"noProxy\": \"${pip_index_ip}\" } } }"
 fi
 
 echo '* Starting rootless Docker daemon ...'

@@ -60,7 +60,8 @@ SHELL ["/bin/bash", "-lc"]
 # Add HTTPS proxy CA certificate
 # * ca-certificates is required and installed in all base images
 RUN if [[ -n "${VM_PROXY_CERTIFICATE}" ]]; then \
-        echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
+        echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure \
+        && echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
         && update-ca-certificates; \
     fi
 
@@ -107,6 +108,7 @@ ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
 ENV UV_HTTP_TIMEOUT=300
+ARG UV_INSECURE_HOST
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 

@@ -172,7 +172,8 @@ jobs:
               echo "Building Docker image on the VM ${VM_NAME} ..."
               docker_args="${docker_args} \
                   --build-arg VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL}' \
-                  --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}'"
+                  --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}' \
+                  --build-arg UV_INSECURE_HOST='github.com'"
 
               echo '* Copying repo files to avoid git clone failure on the VM ...'
               tar cf ../recommenders.tar *
