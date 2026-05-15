@@ -358,10 +358,10 @@ wait_for_vm_to_be_available() {
             "${ssh_dest}" true 2>&1) \
         || (echo "${ssh_response}" | grep -iq 'permission')
     do
-        echo '* Still waiting ...' >&2
         # Set timeout to (5 + 5) * 30 = 300 seconds
         [[ "${count}" -gt 30 ]] && return 1
         count=$((count + 1))
+        echo '* Still waiting ...' >&2
         sleep 5
     done
 }
@@ -388,11 +388,18 @@ setup_ssh_key() {
     echo '* Deplying SSH key ...' >&2
     local -x SSHPASS
     read -r SSHPASS < <(cat "${encoded_password_file}" | tr -d '\n' | base64 -d) || true
-    sshpass -e ssh-copy-id \
+    local count=0
+    until sshpass -e ssh-copy-id \
         -i "${key_file}.pub" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${ssh_dest}"
+    do
+        [[ "${count}" -gt 5 ]] && return 1
+        count=$((count + 1))
+        sleep 5
+        echo '  + Trying again ...' >&2
+    done
 
     echo '* Disabling SSH password authentication ...' >&2
     ssh -t -o StrictHostKeyChecking=no \
