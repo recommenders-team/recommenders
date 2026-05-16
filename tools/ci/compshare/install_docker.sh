@@ -29,13 +29,11 @@ GPG_URL="${APT_URL}/gpg"
 APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stable"
 
 echo '* Installing prerequisites ...'
-while apt_lock_pid=$(sudo fuser /var/lib/apt/lists/lock 2>/dev/null); do
-    echo '    - Releasing /var/lib/apt/lists/lock ...'
-    sudo kill "${apt_lock_pid}"
+while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
+    echo '    - Waiting for processes releasing /var/lib/apt/lists/lock ...'
     sleep 5
 done
 sudo apt-get update
-sudo dpkg --configure -a
 count=0
 until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
     apt-get install -y ca-certificates curl jq; do

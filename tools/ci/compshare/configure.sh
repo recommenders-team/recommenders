@@ -25,13 +25,11 @@ sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
     echo '* Adding CA certificate for HTTPS proxy ...'
     echo '  + Installing prerequisites ...'
-    while apt_lock_pid=$(sudo fuser /var/lib/apt/lists/lock 2>/dev/null); do
-        echo '    - Releasing /var/lib/apt/lists/lock ...'
-        sudo kill "${apt_lock_pid}"
+    while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
+        echo '    - Waiting for processes releasing /var/lib/apt/lists/lock ...'
         sleep 5
     done
     sudo apt-get update
-    sudo dpkg --configure -a
     count=0
     until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
         apt-get install -y ca-certificates; do
@@ -53,6 +51,12 @@ fi
 
 if [[ -n "${VM_HTTP_PROXY:-}" || -n "${VM_HTTPS_PROXY:-}" ]]; then
     echo '* Configuring system-wide proxies ...'
+    echo '  + Configuring no proxy ...'
+    sudo tee -a /etc/environment > /dev/null << EOF
+no_proxy="mirrors.ucloud.cn,developer.download.nvidia.com"
+NO_PROXY="mirrors.ucloud.cn,developer.download.nvidia.com"
+EOF
+
     if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
         echo '  + Configuring HTTP proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
@@ -68,8 +72,9 @@ https_proxy="${VM_HTTPS_PROXY}"
 HTTPS_PROXY="${VM_HTTPS_PROXY}"
 EOF
         # Allow https proxy for APT
-        sudo tee -a /etc/apt/apt.conf.d/99https-proxy > /dev/null << EOF
+        sudo tee -a /etc/apt/apt.conf.d/99insecure-https-proxy > /dev/null << EOF
 Acquire::AllowInsecureRepositories "true";
+APT::Get::AllowUnauthenticated "true";
 EOF
     fi
 fi
