@@ -35,7 +35,7 @@ if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
         apt-get install -y ca-certificates; do
         echo '    - Failed to install.'
         count=$((count + 1))
-        if [[ $count -lt 5 ]]; then
+        if [[ $count -lt 10 ]]; then
             sleep 5
             echo '    - Trying again ...'
         else
