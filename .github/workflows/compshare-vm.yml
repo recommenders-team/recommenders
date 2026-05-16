@@ -147,7 +147,7 @@ jobs:
           VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
           VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
         run: |
-          image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
+          image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}'
 
           # Export IMAGE_TAG for subsequent steps
           echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"

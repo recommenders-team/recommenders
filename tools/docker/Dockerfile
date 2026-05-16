@@ -72,15 +72,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y curl git unzip zip
 
-# Install yq
-# See https://github.com/mikefarah/yq
-RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
-        -o yq_linux_amd64.tar.gz \
-        https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz \
-    && tar xzf yq_linux_amd64.tar.gz \
-    && rm yq_linux_amd64.tar.gz \
-    && mv yq_linux_amd64 /usr/local/bin/yq
-
 # Install SDKMAN!
 RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
         -o sdkman.sh \
