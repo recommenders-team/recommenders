@@ -188,6 +188,7 @@ pr_gate:
     - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_ndcg_at_k                                                            #    0.05s
     - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_map                                                                  #    0.02s
     - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_map_at_k                                                             #    0.02s
+    - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_map_vs_map_at_k                                                      #    0.02s
     - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_precision_at_k                                                       #    0.03s
     - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_recall_at_k                                                          #    0.02s
     - tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_auc                                                                  #    0.01s

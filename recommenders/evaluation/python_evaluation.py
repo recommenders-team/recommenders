@@ -769,7 +769,9 @@ def map(
 
     Note:
         The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
-        relevant items in the ground truth data, instead of k.
+        relevant items in the ground truth data, instead of k. If you want to report MAP@k (the value normalized by
+        ``min(k, n_relevant)``, i.e. the variant that pairs naturally with Precision@k / Recall@k / NDCG@k), use
+        :func:`map_at_k` instead.
 
     Args:
         rating_true (pandas.DataFrame): True DataFrame
@@ -819,6 +821,12 @@ def map_at_k(
 
     The implementation of MAP@k is referenced from Spark MLlib evaluation metrics.
     https://github.com/apache/spark/blob/b938ff9f520fd4e4997938284ffa0aba9ea271fc/mllib/src/main/scala/org/apache/spark/mllib/evaluation/RankingMetrics.scala#L99
+
+    Note:
+        Unlike :func:`map`, the per-user precision sum is normalized by ``min(k, n_relevant)`` rather than
+        ``n_relevant``, so the result is always in ``[0, 1]`` and is the variant typically reported alongside
+        Precision@k / Recall@k / NDCG@k. ``map_at_k(...) >= map(...)`` for the same inputs, with equality when
+        every user has at most ``k`` relevant items in the ground truth.
 
     Args:
         rating_true (pandas.DataFrame): True DataFrame
