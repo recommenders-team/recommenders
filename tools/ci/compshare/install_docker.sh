@@ -8,9 +8,6 @@
 #
 # The following environment variables may need to be set:
 # * VM_DOCKER_MIRROR_URL
-# * VM_HTTP_PROXY
-# * VM_HTTPS_PROXY
-# * VM_PIP_INDEX_URL
 #
 # See
 # * https://docs.docker.com/engine/install/ubuntu/
@@ -95,64 +92,40 @@ sudo rm /var/run/docker.sock
 echo '  - Installing rootless Docker daemon ...'
 dockerd-rootless-setuptool.sh install
 
-if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
-    || -n "${VM_HTTP_PROXY:-}" \
-    || -n "${VM_HTTPS_PROXY:-}" \
-    || -n "${VM_PIP_INDEX_URL:-}" ]]; then
-    echo '* Configuring proxies for Docker ...'
-    update_json_config() {
-        local json_file="${1:-}"
-        local updates="${2:-}"
-        [[ -z "${updates}" || -z "${json_file}" ]] && return 1
+update_json_config() {
+    local json_file="${1:-}"
+    local updates="${2:-}"
+    [[ -z "${updates}" || -z "${json_file}" ]] && return 1
 
-        if [[ -f "${json_file}" ]]; then
-            echo "    ## Updating ${json_file} ..."
-            local temp_json
-            temp_json=$(jq -s '
-                def update($a; $b):
-                    ($a | type) as $ta | ($b | type) as $tb |
-                    if $ta == "object" and $tb == "object" then
-                        reduce ([$a, $b] | add | keys_unsorted[]) as $k ({};
-                        .[$k] = update($a[$k]; $b[$k]))
-                    elif $ta == "array" and $tb == "array" then
-                        $a + $b
-                    else
-                        $b // $a
-                    end;
-                reduce .[] as $item (null; update(.; $item))' \
-                "${json_file}" <(echo "${updates}"))
-            echo "${temp_json}" > "${json_file}"
-        else
-            echo "    ## Creating ${json_file} ..."
-            mkdir -p "$(dirname "${json_file}")"
-            echo "${updates}" | jq '.' > "${json_file}"
-        fi
-    }
-
-    if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
-        echo '  + Setting Docker mirror URL ...'
-        update_json_config \
-            "${HOME}/.config/docker/daemon.json" \
-            "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
+    if [[ -f "${json_file}" ]]; then
+        echo "    ## Updating ${json_file} ..."
+        local temp_json
+        temp_json=$(jq -s '
+            def update($a; $b):
+                ($a | type) as $ta | ($b | type) as $tb |
+                if $ta == "object" and $tb == "object" then
+                    reduce ([$a, $b] | add | keys_unsorted[]) as $k ({};
+                    .[$k] = update($a[$k]; $b[$k]))
+                elif $ta == "array" and $tb == "array" then
+                    $a + $b
+                else
+                    $b // $a
+                end;
+            reduce .[] as $item (null; update(.; $item))' \
+            "${json_file}" <(echo "${updates}"))
+        echo "${temp_json}" > "${json_file}"
+    else
+        echo "    ## Creating ${json_file} ..."
+        mkdir -p "$(dirname "${json_file}")"
+        echo "${updates}" | jq '.' > "${json_file}"
     fi
+}
 
-    docker_config_json="${HOME}/.docker/config.json"
-    if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
-        echo '  + Setting HTTP proxy for docker build and docker run ...'
-        update_json_config "${docker_config_json}" \
-            "{ \"proxies\": { \"default\": { \"httpProxy\": \"${VM_HTTP_PROXY}\" } } }"
-    fi
-
-    if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
-        echo '  + Setting HTTP proxy for docker build and docker run ...'
-        update_json_config "${docker_config_json}" \
-            "{ \"proxies\": { \"default\": { \"httpsProxy\": \"${VM_HTTPS_PROXY}\" } } }"
-    fi
-
-    echo '  + Setting no proxy for pip index ...'
-    pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
-    update_json_config "${docker_config_json}" \
-        "{ \"proxies\": { \"default\": { \"noProxy\": \"${pip_index_ip}\" } } }"
+if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
+    echo '* Setting Docker mirror URL ...'
+    update_json_config \
+        "${HOME}/.config/docker/daemon.json" \
+        "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
 fi
 
 echo '* Starting rootless Docker daemon ...'

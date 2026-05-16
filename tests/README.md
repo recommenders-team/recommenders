@@ -341,16 +341,14 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
 1. Log into [Compshare console](https://passport.compshare.cn/login).
 1. Create API keys (one API private key and one API public key) for
    the shell scripts to interact with the APIs.
-1. (Optional) Create a VM as pull-through caches/mirrors for Docker,
-   PyPI index and HTTP/HTTPS proxy.
+1. (Optional) Create a VM as pull-through caches/mirrors for Docker
+   and PyPI index.
    * [devpi-server](https://pypi.org/project/devpi-server/) can be
      used for caching PyPI index.
    * [Distribution
      Registry](https://distribution.github.io/distribution/) can be
      use for caching Docker Hub.
-   * [Squid](https://www.squid-cache.org/) can be used to cache for
-     other HTTP/HTTPS requests.
-1. Create 7 repository secret
+1. Create 4 repository secret
    * Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
      $\to$
      [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
@@ -367,15 +365,6 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
      + (Optional) For PyPI index
        - Name: `VM_PIP_INDEX_URL`
        - Secret: URL of the PyPI index mirror
-     + (Optional) For HTTP proxy
-       - Name: `VM_HTTP_PROXY`
-       - Secret: URL of the HTTP proxy
-     + (Optional) For HTTPS proxy
-       - Name: `VM_HTTPS_PROXY`
-       - Secret: URL of the HTTPS proxy
-     + (Optional) For HTTPS proxy CA certificate
-       - Name: `VM_PROXY_CERTIFICATE`
-       - Secret: content of the certificate
 1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`,
    `gpu-nightly.yml` and `spark-nightly.yml` to use
    `compshare-vm.yml`.

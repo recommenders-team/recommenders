@@ -47,23 +47,12 @@ ARG PYTHON_VERSION="3.11"
 
 ARG RECO_VENV_DIR=/root/.venvs/Recommenders
 
-# HTTPS proxy certificate if needed
-ARG VM_PROXY_CERTIFICATE=''
-
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 USER root:root
 
 # uv is in /root/.local/bin and is available after using bash -l
 SHELL ["/bin/bash", "-lc"]
-
-# Add HTTPS proxy CA certificate
-# * ca-certificates is required and installed in all base images
-RUN if [[ -n "${VM_PROXY_CERTIFICATE}" ]]; then \
-        echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure \
-        && echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
-        && update-ca-certificates; \
-    fi
 
 # curl, unzip and zip is required by SDKMAN!
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -108,7 +97,6 @@ ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
 ENV UV_HTTP_TIMEOUT=300
-ARG UV_INSECURE_HOST
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
