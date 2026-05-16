@@ -56,7 +56,13 @@ on:
         required: true
       VM_DOCKER_MIRROR_URL:
         required: false
+      VM_HTTP_PROXY:
+        required: false
+      VM_HTTPS_PROXY:
+        required: false
       VM_PIP_INDEX_URL:
+        required: false
+      VM_PROXY_CERTIFICATE:
         required: false
 
 jobs:
@@ -118,6 +124,10 @@ jobs:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
           VM_DOCKER_MIRROR_URL: ${{ secrets.VM_DOCKER_MIRROR_URL }}
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
+          VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
+          VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
           commit="$(echo ${{ github.sha }} | head -c 5)"
@@ -135,6 +145,7 @@ jobs:
       - name: Build image
         env:
           VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
+          VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
         run: |
           image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
 
@@ -160,7 +171,9 @@ jobs:
           else
               echo "Building Docker image on the VM ${VM_NAME} ..."
               docker_args="${docker_args} \
-                  --build-arg VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL}'"
+                  --build-arg VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL}' \
+                  --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}' \
+                  --build-arg UV_INSECURE_HOST='github.com'"
 
               echo '* Copying repo files to avoid git clone failure on the VM ...'
               tar cf ../recommenders.tar *

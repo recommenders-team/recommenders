@@ -15,6 +15,10 @@
 #
 # The following environment variables may need to be set:
 # * VM_DOCKER_MIRROR_URL
+# * VM_HTTP_PROXY
+# * VM_HTTPS_PROXY
+# * VM_PIP_INDEX_URL
+# * VM_PROXY_CERTIFICATE
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -70,6 +74,10 @@ for index in "${!SCRIPT_SETUP[@]}"; do
       -o UserKnownHostsFile=/dev/null \
       "${ssh_dest}" "\
           export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
+          export VM_HTTP_PROXY='${VM_HTTP_PROXY:-}'; \
+          export VM_HTTPS_PROXY='${VM_HTTPS_PROXY:-}'; \
+          export VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL:-}'; \
+          export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
           bash ./${script}"
 
     echo "Removing ${script} ..."
