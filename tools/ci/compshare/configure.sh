@@ -71,11 +71,6 @@ EOF
 https_proxy="${VM_HTTPS_PROXY}"
 HTTPS_PROXY="${VM_HTTPS_PROXY}"
 EOF
-        # Allow https proxy for APT
-        sudo tee -a /etc/apt/apt.conf.d/99insecure-https-proxy > /dev/null << EOF
-Acquire::AllowInsecureRepositories "true";
-APT::Get::AllowUnauthenticated "true";
-EOF
     fi
 fi
 

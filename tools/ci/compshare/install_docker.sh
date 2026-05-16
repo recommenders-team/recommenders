@@ -149,8 +149,10 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
 
     echo '  + Setting no proxy for pip index ...'
     pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
+    pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
+    docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
     update_json_config "${docker_config_json}" \
-        "{ \"proxies\": { \"default\": { \"noProxy\": \"${pip_index_ip}\" } } }"
+        "{ \"proxies\": { \"default\": { \"noProxy\": \"${docker_no_proxy}\" } } }"
 fi
 
 echo '* Starting rootless Docker daemon ...'

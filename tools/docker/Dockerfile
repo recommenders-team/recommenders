@@ -60,8 +60,7 @@ SHELL ["/bin/bash", "-lc"]
 # Add HTTPS proxy CA certificate
 # * ca-certificates is required and installed in all base images
 RUN if [[ -n "${VM_PROXY_CERTIFICATE}" ]]; then \
-        echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99insecure-https-proxy \
-        && echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
+        echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
         && update-ca-certificates; \
     fi
 
