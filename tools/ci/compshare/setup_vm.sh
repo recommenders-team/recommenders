@@ -17,7 +17,6 @@
 # * VM_DOCKER_MIRROR_URL
 # * VM_HTTP_PROXY
 # * VM_HTTPS_PROXY
-# * VM_PIP_INDEX_URL
 # * VM_PROXY_CERTIFICATE
 ######################################################################
 set -euo pipefail
@@ -76,7 +75,6 @@ for index in "${!SCRIPT_SETUP[@]}"; do
           export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
           export VM_HTTP_PROXY='${VM_HTTP_PROXY:-}'; \
           export VM_HTTPS_PROXY='${VM_HTTPS_PROXY:-}'; \
-          export VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL:-}'; \
           export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
           bash ./${script}"
 

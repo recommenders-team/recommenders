@@ -8,9 +8,6 @@
 #
 # The following environment variables may need to be set:
 # * VM_DOCKER_MIRROR_URL
-# * VM_HTTP_PROXY
-# * VM_HTTPS_PROXY
-# * VM_PIP_INDEX_URL
 #
 # See
 # * https://docs.docker.com/engine/install/ubuntu/
@@ -93,11 +90,8 @@ sudo rm /var/run/docker.sock
 echo '  - Installing rootless Docker daemon ...'
 dockerd-rootless-setuptool.sh install
 
-if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
-    || -n "${VM_HTTP_PROXY:-}" \
-    || -n "${VM_HTTPS_PROXY:-}" \
-    || -n "${VM_PIP_INDEX_URL:-}" ]]; then
-    echo '* Configuring proxies for Docker ...'
+if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
+    echo '* Setting Docker mirror URL ...'
     update_json_config() {
         local json_file="${1:-}"
         local updates="${2:-}"
@@ -127,32 +121,9 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" \
         fi
     }
 
-    if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
-        echo '  + Setting Docker mirror URL ...'
-        update_json_config \
-            "${HOME}/.config/docker/daemon.json" \
-            "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
-    fi
-
-    docker_config_json="${HOME}/.docker/config.json"
-    if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
-        echo '  + Setting HTTP proxy for docker build and docker run ...'
-        update_json_config "${docker_config_json}" \
-            "{ \"proxies\": { \"default\": { \"httpProxy\": \"${VM_HTTP_PROXY}\" } } }"
-    fi
-
-    if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
-        echo '  + Setting HTTP proxy for docker build and docker run ...'
-        update_json_config "${docker_config_json}" \
-            "{ \"proxies\": { \"default\": { \"httpsProxy\": \"${VM_HTTPS_PROXY}\" } } }"
-    fi
-
-    echo '  + Setting no proxy for pip index ...'
-    pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
-    pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
-    docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
-    update_json_config "${docker_config_json}" \
-        "{ \"proxies\": { \"default\": { \"noProxy\": \"${docker_no_proxy}\" } } }"
+    update_json_config \
+        "${HOME}/.config/docker/daemon.json" \
+        "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
 fi
 
 echo '* Starting rootless Docker daemon ...'
