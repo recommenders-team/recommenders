@@ -347,13 +347,13 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
                 DEFAULT_PREDICTION_COL: preds,
             }
         )
-        merged = pd.merge(
-            train,
-            topk_scores,
-            on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
-            how="outer",
-        )
         if remove_seen:
+            merged = pd.merge(
+                train,
+                topk_scores,
+                on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+                how="outer",
+            )
             topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(
                 DEFAULT_RATING_COL, axis=1
             )
@@ -383,9 +383,9 @@ def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             col_user=DEFAULT_USER_COL,
             col_item=DEFAULT_ITEM_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
+            top_k=top_k,
             remove_seen=remove_seen,
         )
-        topk_scores = _get_top_k_pandas(topk_scores, top_k)
     return topk_scores, t
 
 
