@@ -1,6 +1,15 @@
 {
     "Compute": [
         {
+            "GPUType": "P40",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 24
+            },
+            "CPU": 8,
+            "Price": 0.38
+        },
+        {
             "GPUType": "2080",
             "Memory": {
                 "CPU": 40,

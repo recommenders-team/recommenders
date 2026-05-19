@@ -8,6 +8,13 @@
 # 
 # Params:
 # * VM name
+# * (optional) requirements in JSON, for example
+#   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+#     - It means the GPUType should not be 2080 and P40,
+#       GPU memory should be greater than or equal to 10GB
+#       and CPU 9GB.
+#   + {"GPUType":"2080,P40"}
+#     - It means the GPUType should be 2080 or P40.
 #
 # The following environment variables must be set:
 # * COMPSHARE_PRIVATE_KEY
@@ -24,6 +31,7 @@ shopt -s inherit_errexit
 
 SCRIPT_DIR="$(dirname "$0")"
 vm_name="${1:-}"
+requirements="${2:-}"
 [[ -z "${vm_name}" ]] && exit 1
 
 # CompShare API specification JSON file
@@ -46,7 +54,7 @@ source "${SCRIPT_UTILS}"
 
 encoded_password_file="$(mktemp)"
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 | tr -d '\n' > "${encoded_password_file}"
-allocate_vm "${vm_name}" "${encoded_password_file}"
+allocate_vm "${vm_name}" "${encoded_password_file}" "${requirements}"
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
 ssh_dest="${vm_info[1]}"
 unset COMPSHARE_PRIVATE_KEY

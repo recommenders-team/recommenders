@@ -245,8 +245,16 @@ allocate_vm() {
     # Params:
     # * VM name
     # * file containing the base64-encoded login password
+    # * (optional) requirements in JSON, for example
+    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #     - It means the GPUType should not be 2080 and P40,
+    #       GPU memory should be greater than or equal to 10GB
+    #       and CPU 9GB.
+    #   + {"GPUType":"2080,P40"}
+    #     - It means the GPUType should be 2080 or P40.
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
+    local requirements="${3:-}"
     [[ -z "${vm_name}" \
       || -z "${encoded_password_file}" ]] && return 1
 
@@ -254,14 +262,53 @@ allocate_vm() {
     local compute_spec
     compute_spec="$(get_compute_spec)"
 
-    local response
-    local retcode
     local num_computes
     num_computes="$(echo "${compute_spec}" | jq 'length')"
     for ((i=0; i<"${num_computes}"; i++)); do
         local compute
         compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
         echo "* Trying spec: ${compute}" >&2
+
+        if [[ -n "${requirements}" ]]; then
+            local match
+            match=$(jq -s '
+                def equalstr($a; $b):
+                    if ($a | startswith(" ")) then
+                        equalstr(($a | ltrimstr(" ")); $b)
+                    elif ($a | endswith(" ")) then
+                        equalstr(($a | rtrimstr(" ")); $b)
+                    else
+                        $a == $b
+                    end;
+                def compareitem($req; $spec; $i):
+                    ($req | getpath($i)) as $a
+                    | ($spec | getpath($i)) as $b
+                    | ($a | type) as $ta
+                    | if $ta == "string" then
+                        $a | if startswith("!") then
+                            $a | ltrimstr("!") | split(",")
+                            | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
+                            | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+                        else
+                            $a | split(",")
+                            | reduce .[] as $i (false; . or equalstr($i; $b))
+                            | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                        end
+                    elif $ta == "number" then
+                        $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+                    else
+                        true
+                    end;
+                .[0] as $req
+                | .[1] as $spec
+                | .[0] | [path(..)]
+                | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
+                <(echo "${requirements}") <(echo "${compute}"))
+            if [[ "${match}" != 'true' ]]; then
+                echo '  + Not match requirements.' >&2
+                continue
+            fi
+        fi
 
         local gpu_type
         gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
@@ -272,6 +319,7 @@ allocate_vm() {
         local memory
         memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
 
+        local response
         for ((j=0; j<5; j++)); do
             response=$(create_instance \
                 "${vm_name}" \
@@ -280,6 +328,7 @@ allocate_vm() {
                 "${cpu_cores}" \
                 "${memory}")
 
+            local retcode
             retcode="$(echo "${response}" | jq '.RetCode')"
             if [[ ${retcode} == 0 ]]; then
                 return
@@ -288,7 +337,7 @@ allocate_vm() {
             sleep 5
         done
     done
-    [[ "${retcode}" != 0 ]] && return 1
+    return 1
 }
 
 get_vm_info() {
