@@ -58,8 +58,6 @@ allocate_vm "${vm_name}" "${encoded_password_file}" "${requirements}"
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
-unset COMPSHARE_PRIVATE_KEY
-unset COMPSHARE_PUBLIC_KEY
 
 echo "Setting stop scheduler ..."
 count=0
@@ -78,6 +76,8 @@ while true; do
         exit 1
     fi
 done
+unset COMPSHARE_PRIVATE_KEY
+unset COMPSHARE_PUBLIC_KEY
 
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
