@@ -164,10 +164,10 @@ jobs:
           python_version="${{ matrix.python-version }}"
           docker_args="-t ${image_tag} \
               -f ${dockerfile} \
-              --build-arg COMPUTE='${compute}' \
-              --build-arg EXTRAS='${extras}' \
+              --build-arg COMPUTE=${compute} \
+              --build-arg EXTRAS=${extras} \
               --build-arg GIT_REF= \
-              --build-arg PYTHON_VERSION='${python_version}'"
+              --build-arg PYTHON_VERSION=${python_version}"
 
           if [[ -z "${SSH_DEST}" ]]; then
               echo 'Building Docker image on the current GitHub-hosted runner ...'
