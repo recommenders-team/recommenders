@@ -56,9 +56,28 @@ encoded_password_file="$(mktemp)"
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 | tr -d '\n' > "${encoded_password_file}"
 allocate_vm "${vm_name}" "${encoded_password_file}" "${requirements}"
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
+vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
 unset COMPSHARE_PRIVATE_KEY
 unset COMPSHARE_PUBLIC_KEY
+
+echo "Setting stop scheduler ..."
+count=0
+while true; do
+    response=$(update_stop_scheduler "${vm_id}")
+    retcode="$(echo "${response}" | jq '.RetCode')"
+    if [[ ${retcode} == 0 ]]; then
+        break
+    fi
+    echo "* Failed to delete the VM: ${response}"
+    count=$((count + 1))
+    if [[ $count -lt 5 ]]; then
+        sleep $(( (count+1) * 5 ))
+        echo '* Trying again ...'
+    else
+        exit 1
+    fi
+done
 
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"

@@ -75,6 +75,9 @@
         "DescribeCompShareInstance": {
             "Action": "DescribeCompShareInstance"
         },
+        "GetProjectList": {
+            "Action": "GetProjectList"
+        },
         "StopCompShareInstance": {
             "Action": "StopCompShareInstance",
             "Region": "cn-wlcb",
@@ -87,6 +90,14 @@
             "Zone": "cn-wlcb-01",
             "UHostId": "",
             "ReleaseUDisk": true
+        },
+        "UpdateCompShareStopScheduler": {
+            "Action": "UpdateCompShareStopScheduler",
+            "Region": "cn-wlcb",
+            "Zone": "cn-wlcb-01",
+            "ProjectId": "org-hmgw4i",
+            "UHostId": "",
+            "SchedulerStopTime": 1779164372
         }
     }
 }

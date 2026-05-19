@@ -187,6 +187,21 @@ describe_instance() {
     echo "${response}"
 }
 
+get_project_list() {
+    # Get the list of projects
+    # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
+    local action_spec
+    action_spec="$(get_action_template 'GetProjectList')"
+
+    local request_url
+    request_url="$(gen_request_url "${action_spec}")"
+
+    local response
+    response="$(curl -sSf "${request_url}")"
+
+    echo "${response}"
+}
+
 stop_instance() {
     # Shutdown the specified VM
     # See https://www.compshare.cn/docs/operation/api/stopcompshareinstance
@@ -225,6 +240,34 @@ terminate_instance() {
     action_spec="$(get_action_template 'TerminateCompShareInstance')"
     action_spec="$(echo "${action_spec}" \
         | jq ".UHostId = \"${vm_id}\"")"
+
+    local request_url
+    request_url="$(gen_request_url "${action_spec}")"
+
+    local response
+    response="$(curl -sSf "${request_url}")"
+
+    echo "${response}"
+}
+
+update_stop_scheduler() {
+    # Set/update scheduler to stop VM
+    # See https://www.compshare.cn/docs/gpus/instance/updatecompsharestopscheduler
+    #
+    # Params:
+    # * VM ID
+    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC)
+    local vm_id="${1:-}"
+    local stop_time="${2:-}"
+    [[ -z "${vm_id}" ]] && return 1
+    [[ -z "${vm_id}" ]] && stop_time="$(date --date='3 hours' '+%s')"
+
+    local action_spec
+    action_spec="$(get_action_template 'UpdateCompShareStopScheduler')"
+    action_spec="$(echo "${action_spec}" \
+        | jq ".UHostId = \"${vm_id}\"")"
+    action_spec="$(echo "${action_spec}" \
+        | jq ".SchedulerStopTime = ${stop_time}")"
 
     local request_url
     request_url="$(gen_request_url "${action_spec}")"
