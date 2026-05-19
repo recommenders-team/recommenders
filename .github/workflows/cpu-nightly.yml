@@ -45,4 +45,8 @@ jobs:
       compute: cpu
       timeout-minutes: 240  # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
       type: nightly
-    secrets: inherit
+    secrets:
+      COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+      COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+      DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
+      PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
