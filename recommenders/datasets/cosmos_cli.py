@@ -3,7 +3,7 @@
 import pydocumentdb.errors as errors
 
 
-def find_collection(client, dbid, id):
+def find_collection(client, dbid, id):    
     """Find whether or not a CosmosDB collection exists.
 
     Args:
