@@ -348,7 +348,7 @@ allocate_vm() {
                 | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
                 <(echo "${requirements}") <(echo "${compute}"))
             if [[ "${match}" != 'true' ]]; then
-                echo '  + Requirements mismatched.' >&2
+                echo '  + Requirements mismatch.' >&2
                 continue
             fi
         fi
@@ -363,7 +363,7 @@ allocate_vm() {
         memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
 
         local response
-        for ((j=0; j<5; j++)); do
+        for ((j=0; j<3; j++)); do
             response=$(create_instance \
                 "${vm_name}" \
                 "${encoded_password_file}" \
