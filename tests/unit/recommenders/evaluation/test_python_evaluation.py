@@ -309,6 +309,45 @@ def test_python_map_vs_map_at_k(rating_true, rating_pred):
     assert map_at_k(rating_true, rating_pred, k=5) > map(rating_true, rating_pred, k=5)
 
 
+def test_python_ranking_metrics_by_threshold_are_bounded():
+    rating_true = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 1, 1, 1],
+            DEFAULT_ITEM_COL: [1, 2, 3, 4],
+            DEFAULT_RATING_COL: [1, 1, 1, 1],
+        }
+    )
+    rating_pred = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 1, 1, 1],
+            DEFAULT_ITEM_COL: [1, 2, 3, 4],
+            DEFAULT_PREDICTION_COL: [100, 99, 98, 97],
+        }
+    )
+
+    assert precision_at_k(
+        rating_true,
+        rating_pred,
+        relevancy_method="by_threshold",
+        threshold=50,
+        k=2,
+    ) == 1.0
+    assert ndcg_at_k(
+        rating_true,
+        rating_pred,
+        relevancy_method="by_threshold",
+        threshold=50,
+        k=2,
+    ) == 1.0
+    assert map_at_k(
+        rating_true,
+        rating_pred,
+        relevancy_method="by_threshold",
+        threshold=50,
+        k=2,
+    ) == 1.0
+
+
 def test_python_precision_at_k(rating_true, rating_pred, rating_nohit):
     assert (
         precision_at_k(
