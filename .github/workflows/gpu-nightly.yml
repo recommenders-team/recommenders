@@ -40,8 +40,9 @@ on:
 
 jobs:
   run-tests:
-    uses: ./.github/workflows/tests.yml
+    uses: ./.github/workflows/compshare-vm.yml
     with:
       compute: gpu
       timeout-minutes: 240  # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
       type: nightly
+    secrets: inherit

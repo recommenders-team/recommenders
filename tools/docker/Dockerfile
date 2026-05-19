@@ -70,11 +70,19 @@ SHELL ["/bin/bash", "-lc"]
 
 # Install yq
 # See https://github.com/mikefarah/yq
-RUN curl -LsSf https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz | \
-    tar xz && mv yq_linux_amd64 /usr/local/bin/yq
+RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
+        -o yq_linux_amd64.tar.gz \
+        https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz \
+    && tar xzf yq_linux_amd64.tar.gz \
+    && rm yq_linux_amd64.tar.gz \
+    && mv yq_linux_amd64 /usr/local/bin/yq
 
 # Install SDKMAN!
-RUN curl -LsSf "https://get.sdkman.io?ci=true" | bash
+RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
+        -o sdkman.sh \
+        "https://get.sdkman.io?ci=true" \
+    && bash sdkman.sh \
+    && rm sdkman.sh
 
 # Install OpenJDK
 # sdk is available after source /root/.sdkman/bin/sdkman-init.sh
@@ -85,12 +93,17 @@ RUN if [[ "${EXTRAS}" =~ spark ]]; then \
     fi
 
 # Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | bash
+RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
+        -o uv_install.sh \
+        https://astral.sh/uv/install.sh \
+    && bash uv_install.sh \
+    && rm uv_install.sh
 
 # Create virtual environment with uv
 ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
+ENV UV_HTTP_TIMEOUT=300
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
@@ -105,6 +118,10 @@ FROM deps AS final
 # Empty value ("") indicates editable installation of current clone
 ARG GIT_REF="main"
 
+# Use PyPI as the default pip index,
+# otherwise, use the specified.
+ARG PIP_INDEX_URL=''
+
 ARG RECO_DIR="/root/Recommenders"
 
 WORKDIR ${RECO_DIR}
@@ -115,11 +132,17 @@ COPY ./ ${RECO_DIR}
 # Install Recommenders
 RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
-    if [ -z "${GIT_REF}" ]; then \
-        uv pip install "recommenders${EXTRAS} @ ."; \
-    else \
-        uv pip install recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
-    fi
+    { count=0; \
+      while true; do \
+          if [ -z "${GIT_REF}" ]; then \
+              uv pip install --index "${PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
+          else \
+              uv pip install --index "${PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
+          fi \
+          && break \
+          || { ((count++)); if [[ $count -lt 5 ]]; then sleep 5; else exit 1; fi; } \
+      done; \
+    }
 
 # Setup Jupyter notebook
 RUN source ${RECO_VENV_DIR}/bin/activate && \

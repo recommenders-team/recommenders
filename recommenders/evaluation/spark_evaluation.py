@@ -340,6 +340,11 @@ class SparkRankingEvaluation:
     def map(self):
         """Get mean average precision.
 
+        Note:
+            The per-user precision sum is normalized by the number of relevant items in the ground truth, not by k.
+            If you want MAP@k (the variant typically reported alongside Precision@k / Recall@k / NDCG@k), use
+            :meth:`map_at_k` instead.
+
         Return:
             float: MAP (min=0, max=1).
         """
@@ -349,6 +354,8 @@ class SparkRankingEvaluation:
         """Get mean average precision at k.
 
         Note:
+            Unlike :meth:`map`, the per-user precision sum is normalized by ``min(k, n_relevant)`` rather than
+            ``n_relevant``, so this is the variant that pairs naturally with Precision@k / Recall@k / NDCG@k.
             More details `on the meanAveragePrecision PySpark documentation <http://spark.apache.org/docs/3.0.0/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:

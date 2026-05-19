@@ -1,0 +1,249 @@
+# ---------------------------------------------------------
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+# This is a reusable workflow called by other workflows to run
+# different groups of tests categorized by their types.
+#
+# Tests collected in tests/test_groups.yml, are grouped based on their
+# * type
+#   + pr_gate
+#   + nightly
+#   + experimental
+# * compute
+#   + cpu
+#   + gpu
+#   + spark
+#
+# In order to speed up testing, the testing workflows will run the
+# tests in parallel according to the groups obtained from this action.
+
+name: Tests
+
+on:
+  workflow_call:
+    inputs:
+      compute:
+        required: false
+        type: string
+        default: cpu
+        description: Test compute - cpu, gpu or spark.  It is only used for
+          nightly not pr_gate
+      config-file:
+        required: false
+        type: string
+        default: tests/test_groups.yml
+        description: Path to test group configuration file relative
+          to the repo root
+      dockerfile:
+        required: false
+        type: string
+        default: tools/docker/Dockerfile
+        description: Path to the Dockerfile used for building the
+          test environment
+      timeout-minutes:
+        required: true
+        type: number
+      type:
+        required: true
+        type: string
+        description: Type of test - pr_gate or nightly
+    secrets:
+      COMPSHARE_PRIVATE_KEY:
+        required: true
+      COMPSHARE_PUBLIC_KEY:
+        required: true
+      DOCKER_MIRROR_URL:
+        required: true
+      PIP_INDEX_URL:
+        required: true
+
+jobs:
+  get-test-groups:
+    # yq is required to run .github/actions/get-test-groups, and it
+    # is preinstalled on ubuntu-24.04
+    # (https://github.com/actions/runner-images/blob/9b8c9709431a8d2b295fd46cf96f283d671f20d9/images/ubuntu/Ubuntu2404-Readme.md?plain=1#L100)
+    runs-on: ubuntu-24.04
+    outputs:
+      groups: ${{ steps.get-test-groups.outputs.groups }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+      - name: Get test group names
+        id: get-test-groups
+        shell: bash
+        run: |
+          if [[ ${{ inputs.type }} == "nightly" ]]; then
+            TEST_GROUPS_STR=$(yq -o json -I 0 \
+              '[.${{ inputs.type }} | keys | .[] | select(contains("${{ inputs.compute }}"))]' \
+              ${{ inputs.config-file }})
+          else
+            TEST_GROUPS_STR=$(yq -o json -I 0 \
+              '.${{ inputs.type }} | keys' ${{ inputs.config-file }})
+          fi
+          echo "Test Groups: ${TEST_GROUPS_STR}"
+          echo "groups=${TEST_GROUPS_STR}" >> $GITHUB_OUTPUT
+
+  execute-tests:
+    name: ${{ join(matrix.*, ', ') }}
+    needs: get-test-groups
+    # Docker and sshpass are required on the runner.
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      max-parallel: 6
+      matrix:
+        python-version:
+          - '3.9'
+          - '3.10'
+          - '3.11'
+        group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+      - name: Setup VM
+        # * GPU tests should run on GPUs.
+        # * cpu-nightly needs to run on larger CPU runner.
+        # * Otherwise, standard runner is enough.
+        if: >
+          ${{ contains(matrix.group, 'gpu')
+              || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu'))
+          }}
+        env:
+          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+          COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+          DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
+        run: |
+          echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
+          commit="$(echo ${{ github.sha }} | head -c 5)"
+          vm_name="$(mktemp -u vm_${commit}_XXXXXX)"
+          echo "VM_NAME=${vm_name}" >> "$GITHUB_ENV"
+          bash tools/ci/compshare/setup_vm.sh "${vm_name}"
+
+          echo 'Exporting VM info for subsequent steps ...'
+          COMPSHARE_SPEC_FILE='tools/ci/compshare/spec.json'
+          source tools/ci/compshare/utils.sh
+          mapfile -t vm_info < <(get_vm_info "${vm_name}")
+          ssh_dest="${vm_info[1]}"
+          echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
+
+      - name: Build image
+        env:
+          PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
+        run: |
+          image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
+          echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
+
+          dockerfile="${{ inputs.dockerfile }}"
+          compute="${{ contains(matrix.group, 'gpu') && 'gpu' || 'cpu' }}"
+          extras_gpu="${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}"
+          extras_spark="${{ contains(matrix.group, 'spark') && ',spark' || '' }}"
+          extras="[dev${extras_gpu}${extras_spark}]"
+          python_version="${{ matrix.python-version }}"
+          docker_args="-t ${image_tag} \
+              -f ${dockerfile} \
+              --build-arg COMPUTE=${compute} \
+              --build-arg EXTRAS=${extras} \
+              --build-arg GIT_REF= \
+              --build-arg PYTHON_VERSION=${python_version}"
+
+          if [[ -z "${SSH_DEST}" ]]; then
+              echo 'Building Docker image on the current GitHub-hosted runner ...'
+              docker build . ${docker_args}
+          else
+              echo "Building Docker image on the VM ${VM_NAME} ..."
+              docker_args="${docker_args} --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
+
+              echo '* Copying repo files to avoid git clone failure on the VM ...'
+              tar cf ../recommenders.tar *
+              scp -q -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  ../recommenders.tar "${SSH_DEST}":
+              rm -rf ../recommenders.tar
+              ssh -t -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  "${SSH_DEST}" "\
+                      mkdir recommenders \
+                      && tar xf recommenders.tar -C recommenders \
+                      && rm -rf recommenders.tar"
+
+              echo '* Building the base image ...'
+              count=0
+              until ssh -t -o StrictHostKeyChecking=no \
+                      -o UserKnownHostsFile=/dev/null \
+                      -o ServerAliveInterval=60 \
+                      -o ServerAliveCountMax=10 \
+                      "${SSH_DEST}" "\
+                          cd recommenders; \
+                          docker build . ${docker_args} --target deps"; do
+                  echo '  + Failed to build the base image.'
+                  count=$((count + 1))
+                  if [[ $count -lt 5 ]]; then
+                      sleep 5
+                      echo '  + Trying again ...'
+                  else
+                      exit 1
+                  fi
+              done
+
+              echo '* Building the final image ...'
+              count=0
+              until ssh -t -o StrictHostKeyChecking=no \
+                      -o UserKnownHostsFile=/dev/null \
+                      -o ServerAliveInterval=60 \
+                      -o ServerAliveCountMax=10 \
+                      "${SSH_DEST}" "\
+                          cd recommenders; \
+                          docker build . ${docker_args}"; do
+                  echo '  + Failed to build the final image'
+                  count=$((count + 1))
+                  if [[ $count -lt 5 ]]; then
+                      sleep 5
+                      echo '  + Trying again ...'
+                  else
+                      exit 1
+                  fi
+              done
+          fi
+
+      - name: Execute tests in container
+        env:
+          RECO_VENV_DIR: /root/.venvs/Recommenders
+        run: |
+          test_list="$(yq \
+              '.${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(" ")' \
+              "${{ inputs.config-file }}")"
+          test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
+              && source ${{ env.RECO_VENV_DIR }}/bin/activate \
+              && pytest --durations 0 ${test_list}"
+          gpu_arg="${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }}"
+          check_gpu="${{ contains(matrix.group, 'gpu') && 'nvidia-smi' || 'true' }}"
+
+          if [[ -z "${SSH_DEST}" ]]; then
+              # Run on current GitHub-hosted runner directly
+              docker run --rm ${IMAGE_TAG} bash -lc "${test_cmd}"
+          else
+              # Run on newly created self-hosted runner by SSH
+              ssh -t -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  -o ServerAliveInterval=60 \
+                  -o ServerAliveCountMax=10 \
+                  "${SSH_DEST}" "\
+                      ${check_gpu} \
+                      && docker run --rm ${gpu_arg} ${IMAGE_TAG} bash -lc '${test_cmd}'"
+          fi
+
+      - name: Clean up
+        if: always()
+        env:
+          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+          COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+        run: |
+          if [[ -n "${VM_NAME}" ]]; then
+              bash tools/ci/compshare/delete_vm.sh "${VM_NAME}"
+          fi

@@ -294,6 +294,21 @@ def test_python_map_at_k(rating_true, rating_pred, rating_nohit):
     assert map_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.23613, TOL)
 
 
+def test_python_map_vs_map_at_k(rating_true, rating_pred):
+    """``map_at_k`` and ``map`` differ only in the per-user normalizer.
+
+    ``map_at_k`` divides each user's hit-precision sum by ``min(k, n_relevant)``;
+    ``map`` divides by ``n_relevant`` (Spark MLlib convention). So ``map_at_k >= map``
+    in general, and they coincide when ``k >= n_relevant`` for every user.
+    """
+    # Every user in the fixture has at most 10 relevant items, so at k=10 the two metrics agree.
+    assert map_at_k(rating_true, rating_pred, k=10) == pytest.approx(
+        map(rating_true, rating_pred, k=10), TOL
+    )
+    # User 3 has 10 relevant items > k=5, so map_at_k strictly exceeds map at k=5.
+    assert map_at_k(rating_true, rating_pred, k=5) > map(rating_true, rating_pred, k=5)
+
+
 def test_python_precision_at_k(rating_true, rating_pred, rating_nohit):
     assert (
         precision_at_k(
@@ -385,6 +400,34 @@ def test_python_r_precision(rating_true, rating_pred, rating_nohit):
     assert r_precision_at_k(rating_true, rating_pred, k=10) == pytest.approx(
         0.37777, TOL
     )
+
+
+def test_python_ranking_metrics_by_threshold(rating_true, rating_pred):
+    metrics = [precision_at_k, recall_at_k, ndcg_at_k, map_at_k, map]
+
+    # Threshold above all predicted scores → no items selected → all metrics are 0.
+    for metric in metrics:
+        assert metric(
+            rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=100
+        ) == 0.0
+
+    # Threshold at or below the minimum predicted score → all items pass → matches top_k.
+    for metric in metrics:
+        assert metric(
+            rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=0
+        ) == pytest.approx(
+            metric(rating_true, rating_pred, relevancy_method="top_k", k=10), TOL
+        )
+
+    # threshold=13 keeps only pred >= 13 (top-2 per user); all are true hits.
+    # precision: 2/2 per user → 1.0
+    # recall: (2/3 + 2/5 + 2/10) / 3 = 19/45
+    assert precision_at_k(
+        rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=13
+    ) == pytest.approx(1.0, TOL)
+    assert recall_at_k(
+        rating_true, rating_pred, relevancy_method="by_threshold", k=10, threshold=13
+    ) == pytest.approx(19 / 45, TOL)
 
 
 def test_python_auc(rating_true_binary, rating_pred_binary):
