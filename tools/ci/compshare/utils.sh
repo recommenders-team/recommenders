@@ -260,7 +260,7 @@ update_stop_scheduler() {
     local vm_id="${1:-}"
     local stop_time="${2:-}"
     [[ -z "${vm_id}" ]] && return 1
-    [[ -z "${vm_id}" ]] && stop_time="$(date --date='3 hours' '+%s')"
+    [[ -z "${stop_time}" ]] && stop_time="$(date --date='3 hours' '+%s')"
 
     local action_spec
     action_spec="$(get_action_template 'UpdateCompShareStopScheduler')"
@@ -348,7 +348,7 @@ allocate_vm() {
                 | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
                 <(echo "${requirements}") <(echo "${compute}"))
             if [[ "${match}" != 'true' ]]; then
-                echo '  + Not match requirements.' >&2
+                echo '  + Requirements mismatched.' >&2
                 continue
             fi
         fi
