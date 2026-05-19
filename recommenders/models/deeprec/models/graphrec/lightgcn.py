@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import logging
 import os
-import sys
 import time
 from typing import Any
 
@@ -103,14 +102,26 @@ class LightGCN(nn.Module):
 
     @property
     def ua_embeddings(self) -> torch.Tensor:
-        """Aggregated (LGC-propagated) user embeddings."""
-        u_g, _ = self._propagate()
+        """Aggregated (LGC-propagated) user embeddings.
+
+        Each access runs a full K-layer propagation. If you need both
+        user and item embeddings, call :meth:`_propagate` directly to avoid
+        recomputing.
+        """
+        with torch.no_grad():
+            u_g, _ = self._propagate()
         return u_g
 
     @property
     def ia_embeddings(self) -> torch.Tensor:
-        """Aggregated (LGC-propagated) item embeddings."""
-        _, i_g = self._propagate()
+        """Aggregated (LGC-propagated) item embeddings.
+
+        Each access runs a full K-layer propagation. If you need both
+        user and item embeddings, call :meth:`_propagate` directly to avoid
+        recomputing.
+        """
+        with torch.no_grad():
+            _, i_g = self._propagate()
         return i_g
 
     def _propagate(self) -> tuple[torch.Tensor, torch.Tensor]:
@@ -295,7 +306,7 @@ class LightGCN(nn.Module):
 
             if np.isnan(loss):
                 logger.error("loss is nan.")
-                sys.exit()
+                raise RuntimeError("Training diverged: loss is NaN.")
 
             train_time = time.time() - train_start
 
@@ -349,7 +360,9 @@ class LightGCN(nn.Module):
         try:
             if model_path is not None and os.path.isdir(model_path):
                 model_path = os.path.join(model_path, MODEL_CHECKPOINT)
-            state_dict = torch.load(model_path, map_location=self.device)
+            state_dict = torch.load(
+                model_path, map_location=self.device, weights_only=True
+            )
             self.load_state_dict(state_dict)
         except Exception:
             raise IOError(
