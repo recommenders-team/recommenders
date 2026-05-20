@@ -227,7 +227,7 @@ create_instance() {
         \"GPUType\": \"${gpu_type}\", \
         \"CPU\": ${cpu_cores}, \
         \"Memory\": ${memory}, \
-        \"ChargeType\": ${charge_type}}"
+        \"ChargeType\": \"${charge_type}\"}"
     
     local response
     response="$(invoke_action \
