@@ -37,7 +37,7 @@
             "Price": 1.13
         },
         {
-            "GPUType": "RTX40",
+            "GPUType": "4090",
             "Memory": {
                 "CPU": 64,
                 "GPU": 24
@@ -46,7 +46,7 @@
             "Price": 1.88
         },
         {
-            "GPUType": "RTX50",
+            "GPUType": "5090",
             "Memory": {
                 "CPU": 96,
                 "GPU": 32
@@ -55,7 +55,7 @@
             "Price": 3.0
         },
         {
-            "GPUType": "RTX40",
+            "GPUType": "4090_48G",
             "Memory": {
                 "CPU": 96,
                 "GPU": 48
