@@ -100,16 +100,52 @@ gen_action_digest() {
     echo "${digest}"
 }
 
+update_json() {
+    # Update a JSON with another JSON
+    #
+    # Params:
+    # * the original JSON
+    # * the JSON with all updates
+    local original="${1:-}"
+    local updates="${2:-}"
+    [[ -z "${updates}" || -z "${original}" ]] && return 1
+
+    local res
+    res=$(jq -s '
+        def update($a; $b):
+            ($a | type) as $ta | ($b | type) as $tb |
+            if $ta == "object" and $tb == "object" then
+                reduce ([$a, $b] | add | keys_unsorted[]) as $k
+                    ({}; .[$k] = update($a[$k]; $b[$k]))
+            elif $ta == "array" and $tb == "array" then
+                $a + $b
+            else
+                $b // $a
+            end;
+        reduce .[] as $item (null; update(.; $item))' \
+        <(echo "${original}") <(echo "${updates}"))
+    echo "${res}"
+}
+
 gen_request_url() {
     # Generate the API request URL using the action specification and
     # the parameter digest
     #
     # Params:
     # * API action name
+    # * (Optional) updates for the parameters in JSON
     # * (Optional) file containing the base64-encoded login password
-    local action_spec="${1:-}"
-    local encoded_password_file="${2:-}"
-    [[ -z "${action_spec}" ]] && return 1
+    local action="${1:-}"
+    local updates="${2:-}"
+    local encoded_password_file="${3:-}"
+    [[ -z "${action}" ]] && return 1
+
+    local action_spec
+    action_spec="$(get_action_template "${action}")"
+
+    if [[ -n "${updates}" ]]; then
+        action_spec="$(update_json "${action_spec}" "${updates}")"
+    fi
 
     local digest
     digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
@@ -117,6 +153,35 @@ gen_request_url() {
     params="$(echo "${action_spec}" \
         | jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")')"
     echo "https://api.compshare.cn/?${params}&Signature=${digest}"
+}
+
+invoke_action() {
+    # Call the API for the specified action
+    #
+    # Params:
+    # * API action name
+    # * (Optional) updates for the parameters in JSON
+    # * (Optional) file containing the base64-encoded login password
+    local action="${1:-}"
+    local updates="${2:-}"
+    local encoded_password_file="${3:-}"
+
+    local request_url
+    request_url="$(gen_request_url \
+        "${action}" \
+        "${updates}" \
+        "${encoded_password_file}")"
+
+    local response
+    if [[ -n "${encoded_password_file}" ]]; then
+        response="$(curl -sSf \
+            --url-query "Password@${encoded_password_file}" \
+            "${request_url}")"
+    else
+        response="$(curl -sSf "${request_url}")"
+    fi
+
+    echo "${response}"
 }
 
 
@@ -153,36 +218,28 @@ create_instance() {
       || -z "${cpu_cores}" \
       || -z "${memory}" ]] && return 1
 
-    local action_spec
-    action_spec="$(get_action_template 'CreateCompShareInstance')"
-
-    action_spec="$(echo "${action_spec}" | jq ".Name = \"${vm_name}\"")"
-    action_spec="$(echo "${action_spec}" | jq ".GPUType = \"${gpu_type}\"")"
-    action_spec="$(echo "${action_spec}" | jq ".CPU = ${cpu_cores}")"
-    action_spec="$(echo "${action_spec}" | jq ".Memory = ${memory}")"
-
-    local request_url
-    request_url="$(gen_request_url "${action_spec}" "${encoded_password_file}")"
-
+    local updates
+    updates="{\
+        \"Name\": \"${vm_name}\", \
+        \"GPUType\": \"${gpu_type}\", \
+        \"CPU\": ${cpu_cores}, \
+        \"Memory\": ${memory} \
+        }"
+    
     local response
-    response="$(curl -sSf \
-        --url-query "Password@${encoded_password_file}" \
-        "${request_url}")"
-
+    response="$(invoke_action \
+        'CreateCompShareInstance' \
+        "${updates}" \
+        "${encoded_password_file}")"
     echo "${response}"
 }
 
 describe_instance() {
     # Get the list of VMs
     # See https://www.compshare.cn/docs/operation/api/describecompshareinstance
-    local action_spec
-    action_spec="$(get_action_template 'DescribeCompShareInstance')"
-
-    local request_url
-    request_url="$(gen_request_url "${action_spec}")"
 
     local response
-    response="$(curl -sSf "${request_url}")"
+    response="$(invoke_action 'DescribeCompShareInstance')"
 
     echo "${response}"
 }
@@ -190,14 +247,8 @@ describe_instance() {
 get_project_list() {
     # Get the list of projects
     # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
-    local action_spec
-    action_spec="$(get_action_template 'GetProjectList')"
-
-    local request_url
-    request_url="$(gen_request_url "${action_spec}")"
-
     local response
-    response="$(curl -sSf "${request_url}")"
+    response="$(invoke_action 'GetProjectList')"
 
     echo "${response}"
 }
@@ -211,17 +262,11 @@ stop_instance() {
     local vm_id="${1:-}"
     [[ -z "${vm_id}" ]] && return 1
 
-    local action_spec
-    action_spec="$(get_action_template 'StopCompShareInstance')"
-    action_spec="$(echo "${action_spec}" \
-        | jq ".UHostId = \"${vm_id}\"")"
-
-    local request_url
-    request_url="$(gen_request_url "${action_spec}")"
+    local updates
+    updates="{\"UHostId\": \"${vm_id}\"}"
 
     local response
-    response="$(curl -sSf "${request_url}")"
-
+    response="$(invoke_action 'StopCompShareInstance' "${updates}")"
     echo "${response}"
 }
 
@@ -236,17 +281,11 @@ terminate_instance() {
     local vm_id="${1:-}"
     [[ -z "${vm_id}" ]] && return 1
 
-    local action_spec
-    action_spec="$(get_action_template 'TerminateCompShareInstance')"
-    action_spec="$(echo "${action_spec}" \
-        | jq ".UHostId = \"${vm_id}\"")"
-
-    local request_url
-    request_url="$(gen_request_url "${action_spec}")"
+    local updates
+    updates="{\"UHostId\": \"${vm_id}\"}"
 
     local response
-    response="$(curl -sSf "${request_url}")"
-
+    response="$(invoke_action 'TerminateCompShareInstance' "${updates}")"
     echo "${response}"
 }
 
@@ -262,19 +301,13 @@ update_stop_scheduler() {
     [[ -z "${vm_id}" ]] && return 1
     [[ -z "${stop_time}" ]] && stop_time="$(date --date='3 hours' '+%s')"
 
-    local action_spec
-    action_spec="$(get_action_template 'UpdateCompShareStopScheduler')"
-    action_spec="$(echo "${action_spec}" \
-        | jq ".UHostId = \"${vm_id}\"")"
-    action_spec="$(echo "${action_spec}" \
-        | jq ".SchedulerStopTime = ${stop_time}")"
-
-    local request_url
-    request_url="$(gen_request_url "${action_spec}")"
+    local updates
+    updates="{\
+        \"UHostId\": \"${vm_id}\", \
+        \"SchedulerStopTime\": ${stop_time}}"
 
     local response
-    response="$(curl -sSf "${request_url}")"
-
+    response="$(invoke_action 'UpdateCompShareStopScheduler' "${updates}")"
     echo "${response}"
 }
 
@@ -299,7 +332,8 @@ allocate_vm() {
     local encoded_password_file="${2:-}"
     local requirements="${3:-}"
     [[ -z "${vm_name}" \
-      || -z "${encoded_password_file}" ]] && return 1
+      || -z "${encoded_password_file}" \
+      || ! -f "${encoded_password_file}" ]] && return 1
 
     echo "Allocating a new VM named ${vm_name} ..." >&2
     local compute_spec
@@ -466,7 +500,9 @@ setup_ssh_key() {
     # * file containing the base64-encoded login password
     local ssh_dest="${1:-}"
     local encoded_password_file="${2:-}"
-    [[ -z "${ssh_dest}" || -z "${encoded_password_file}" ]] && return 1
+    [[ -z "${ssh_dest}" \
+      || -z "${encoded_password_file}" \
+      || ! -f "${encoded_password_file}" ]] && return 1
 
     local key_file="${HOME}/.ssh/id_ed25519"
     local sshd_config="/etc/ssh/sshd_config"

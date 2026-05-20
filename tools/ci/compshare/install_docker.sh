@@ -104,8 +104,8 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
                 def update($a; $b):
                     ($a | type) as $ta | ($b | type) as $tb |
                     if $ta == "object" and $tb == "object" then
-                        reduce ([$a, $b] | add | keys_unsorted[]) as $k ({};
-                        .[$k] = update($a[$k]; $b[$k]))
+                        reduce ([$a, $b] | add | keys_unsorted[]) as $k
+                            ({}; .[$k] = update($a[$k]; $b[$k]))
                     elif $ta == "array" and $tb == "array" then
                         $a + $b
                     else
