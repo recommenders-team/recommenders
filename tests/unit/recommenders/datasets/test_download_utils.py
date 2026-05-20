@@ -71,6 +71,32 @@ def test_maybe_download_retry(caplog):
         assert "Problem downloading" in caplog.text
 
 
+def test_maybe_download_sets_default_timeout(tmp_path, monkeypatch):
+    captured = {}
+
+    class Response:
+        status_code = 200
+        headers = {"content-length": "4"}
+
+        def iter_content(self, block_size):
+            yield b"done"
+
+    def mock_get(url, stream, timeout):
+        captured["timeout"] = timeout
+        return Response()
+
+    monkeypatch.setattr("recommenders.datasets.download_utils.requests.get", mock_get)
+
+    downloaded = maybe_download(
+        "https://example.com/file.txt",
+        "file.txt",
+        work_directory=tmp_path,
+    )
+
+    assert captured["timeout"] == (10, 60)
+    assert os.path.exists(downloaded)
+
+
 def test_is_valid_zip(tmp):
     valid_zip = os.path.join(tmp, "valid.zip")
     with zipfile.ZipFile(valid_zip, "w") as zf:
