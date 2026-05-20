@@ -8,6 +8,9 @@
 # 
 # Params:
 # * VM name
+# * whether the VM will be used for more than half an hour
+#   + Unit tests require less than half hour
+#   + Nightly tests require more than half hour
 # * (optional) requirements in JSON, for example
 #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
 #     - It means the GPUType should not be 2080 and P40,
@@ -31,8 +34,9 @@ shopt -s inherit_errexit
 
 SCRIPT_DIR="$(dirname "$0")"
 vm_name="${1:-}"
-requirements="${2:-}"
-[[ -z "${vm_name}" ]] && exit 1
+more_than_half_hour="${2:-}"
+requirements="${3:-}"
+[[ -z "${vm_name}" || -z "${more_than_half_hour}" ]] && exit 1
 
 # CompShare API specification JSON file
 COMPSHARE_SPEC_FILE="${SCRIPT_DIR}/spec.json"
@@ -54,7 +58,7 @@ source "${SCRIPT_UTILS}"
 
 encoded_password_file="$(mktemp)"
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 | tr -d '\n' > "${encoded_password_file}"
-allocate_vm "${vm_name}" "${encoded_password_file}" "${requirements}"
+allocate_vm "${vm_name}" "${encoded_password_file}" "${more_than_half_hour}" "${requirements}"
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"

@@ -206,25 +206,28 @@ create_instance() {
     # * file containing the base64-encoded login password
     # * GPU type, such as P40, 3090
     # * CPU cores
-    # * Memory in MB
+    # * memory in MB
+    # * charge type
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
     local gpu_type="${3:-}"
     local cpu_cores="${4:-}"
     local memory="${5:-}"
+    local charge_type="${6:-}"
     [[ -z "${vm_name}" \
       || -z "${encoded_password_file}" \
       || -z "${gpu_type}" \
       || -z "${cpu_cores}" \
-      || -z "${memory}" ]] && return 1
+      || -z "${memory}" \
+      || -z "${charge_type}" ]] && return 1
 
     local updates
     updates="{\
         \"Name\": \"${vm_name}\", \
         \"GPUType\": \"${gpu_type}\", \
         \"CPU\": ${cpu_cores}, \
-        \"Memory\": ${memory} \
-        }"
+        \"Memory\": ${memory}, \
+        \"ChargeType\": ${charge_type}}"
     
     local response
     response="$(invoke_action \
@@ -321,6 +324,9 @@ allocate_vm() {
     # Params:
     # * VM name
     # * file containing the base64-encoded login password
+    # * whether the VM will be used for more than half an hour
+    #   + Unit tests require less than half hour
+    #   + Nightly tests require more than half hour
     # * (optional) requirements in JSON, for example
     #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
     #     - It means the GPUType should not be 2080 and P40,
@@ -330,88 +336,99 @@ allocate_vm() {
     #     - It means the GPUType should be 2080 or P40.
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
-    local requirements="${3:-}"
+    local more_than_half_hour="${3:-}"
+    local requirements="${4:-}"
     [[ -z "${vm_name}" \
       || -z "${encoded_password_file}" \
-      || ! -f "${encoded_password_file}" ]] && return 1
+      || ! -f "${encoded_password_file}" \
+      || -z "${more_than_half_hour}" ]] && return 1
 
     echo "Allocating a new VM named ${vm_name} ..." >&2
     local compute_spec
     compute_spec="$(get_compute_spec)"
 
-    local num_computes
-    num_computes="$(echo "${compute_spec}" | jq 'length')"
-    for ((i=0; i<"${num_computes}"; i++)); do
-        local compute
-        compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
-        echo "* Trying spec: ${compute}" >&2
+    local charge_type_list=('Postpay' 'Spot')
+    if [[ "${more_than_half_hour}" == 'yes' ]]; then
+        charge_type_list=('Postpay')
+    fi
+    for index in "${!charge_type_list[@]}"; do
+        charge_type="${charge_type_list[${index}]}"
 
-        if [[ -n "${requirements}" ]]; then
-            local match
-            match=$(jq -s '
-                def equalstr($a; $b):
-                    if ($a | startswith(" ")) then
-                        equalstr(($a | ltrimstr(" ")); $b)
-                    elif ($a | endswith(" ")) then
-                        equalstr(($a | rtrimstr(" ")); $b)
-                    else
-                        $a == $b
-                    end;
-                def compareitem($req; $spec; $i):
-                    ($req | getpath($i)) as $a
-                    | ($spec | getpath($i)) as $b
-                    | ($a | type) as $ta
-                    | if $ta == "string" then
-                        $a | if startswith("!") then
-                            $a | ltrimstr("!") | split(",")
-                            | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                            | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+        local num_computes
+        num_computes="$(echo "${compute_spec}" | jq 'length')"
+        for ((i=0; i<"${num_computes}"; i++)); do
+            local compute
+            compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
+            echo "* Trying spec: ${compute}" >&2
+
+            if [[ -n "${requirements}" ]]; then
+                local match
+                match=$(jq -s '
+                    def equalstr($a; $b):
+                        if ($a | startswith(" ")) then
+                            equalstr(($a | ltrimstr(" ")); $b)
+                        elif ($a | endswith(" ")) then
+                            equalstr(($a | rtrimstr(" ")); $b)
                         else
-                            $a | split(",")
-                            | reduce .[] as $i (false; . or equalstr($i; $b))
-                            | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
-                        end
-                    elif $ta == "number" then
-                        $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
-                    else
-                        true
-                    end;
-                .[0] as $req
-                | .[1] as $spec
-                | .[0] | [path(..)]
-                | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-                <(echo "${requirements}") <(echo "${compute}"))
-            if [[ "${match}" != 'true' ]]; then
-                echo '  + Requirements mismatch.' >&2
-                continue
+                            $a == $b
+                        end;
+                    def compareitem($req; $spec; $i):
+                        ($req | getpath($i)) as $a
+                        | ($spec | getpath($i)) as $b
+                        | ($a | type) as $ta
+                        | if $ta == "string" then
+                            $a | if startswith("!") then
+                                $a | ltrimstr("!") | split(",")
+                                | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
+                                | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+                            else
+                                $a | split(",")
+                                | reduce .[] as $i (false; . or equalstr($i; $b))
+                                | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                            end
+                        elif $ta == "number" then
+                            $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+                        else
+                            true
+                        end;
+                    .[0] as $req
+                    | .[1] as $spec
+                    | .[0] | [path(..)]
+                    | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
+                    <(echo "${requirements}") <(echo "${compute}"))
+                if [[ "${match}" != 'true' ]]; then
+                    echo '  + Requirements mismatch.' >&2
+                    continue
+                fi
             fi
-        fi
 
-        local gpu_type
-        gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
+            local gpu_type
+            gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
 
-        local cpu_cores
-        cpu_cores="$(echo "${compute}" | jq '.CPU')"
+            local cpu_cores
+            cpu_cores="$(echo "${compute}" | jq '.CPU')"
 
-        local memory
-        memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
+            local memory
+            memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
 
-        local response
-        for ((j=0; j<3; j++)); do
-            response=$(create_instance \
-                "${vm_name}" \
-                "${encoded_password_file}" \
-                "${gpu_type}" \
-                "${cpu_cores}" \
-                "${memory}")
+            local response
+            for ((j=0; j<3; j++)); do
+                response=$(create_instance \
+                    "${vm_name}" \
+                    "${encoded_password_file}" \
+                    "${gpu_type}" \
+                    "${cpu_cores}" \
+                    "${memory}" \
+                    "${charge_type}")
 
-            local retcode
-            retcode="$(echo "${response}" | jq '.RetCode')"
-            if [[ ${retcode} == 0 ]]; then
-                return
-            fi
-            echo "ERROR: ${response}" >&2
-            sleep 5
+                local retcode
+                retcode="$(echo "${response}" | jq '.RetCode')"
+                if [[ ${retcode} == 0 ]]; then
+                    return
+                fi
+                echo "ERROR: ${response}" >&2
+                sleep 5
+            done
         done
     done
     return 1

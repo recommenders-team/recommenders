@@ -132,10 +132,11 @@ jobs:
           commit="$(echo ${{ github.sha }} | head -c 5)"
           vm_name="$(mktemp -u vm_${commit}_XXXXXX)"
           echo "VM_NAME=${vm_name}" >> "$GITHUB_ENV"
+          more_than_half_hour="${{ contains(inputs.type, 'nightly') && 'yes' || 'no' }}"
           gputype="${{ contains(inputs.type, 'nightly') && '!2080,P40' || '!P40' }}"
           gpumem="${{ contains(inputs.type, 'nightly') && '12' || '8' }}"
           requirements="{\"GPUType\":\"${gputype}\",\"Memory\":{\"GPU\":${gpumem},\"CPU\":32}}"
-          bash tools/ci/compshare/setup_vm.sh "${vm_name}" "${requirements}"
+          bash tools/ci/compshare/setup_vm.sh "${vm_name}" "${more_than_half_hour}" "${requirements}"
 
           echo 'Exporting VM info for subsequent steps ...'
           COMPSHARE_SPEC_FILE='tools/ci/compshare/spec.json'
