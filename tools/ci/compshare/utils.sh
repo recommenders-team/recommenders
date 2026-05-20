@@ -318,6 +318,53 @@ update_stop_scheduler() {
 ######################################################################
 # Other utils
 ######################################################################
+check_vm_requirement() {
+    # Check if the VM specification match the requirements.
+    #
+    # Params:
+    # * VM specification in JSON
+    # * requirements in JSON
+    local spec="${1:-}"
+    local requirements="${2:-}"
+
+    local match
+    match=$(jq -s '
+        def equalstr($a; $b):
+            if ($a | startswith(" ")) then
+                equalstr(($a | ltrimstr(" ")); $b)
+            elif ($a | endswith(" ")) then
+                equalstr(($a | rtrimstr(" ")); $b)
+            else
+                $a == $b
+            end;
+        def compareitem($req; $spec; $i):
+            ($req | getpath($i)) as $a
+            | ($spec | getpath($i)) as $b
+            | ($a | type) as $ta
+            | if $ta == "string" then
+                $a | if startswith("!") then
+                    $a | ltrimstr("!") | split(",")
+                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
+                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+                else
+                    $a | split(",")
+                    | reduce .[] as $i (false; . or equalstr($i; $b))
+                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                end
+            elif $ta == "number" then
+                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+            else
+                true
+            end;
+        .[0] as $req
+        | .[1] as $spec
+        | .[0] | [path(..)]
+        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
+        <(echo "${requirements}") <(echo "${spec}"))
+
+    echo "${match}"
+}
+
 allocate_vm() {
     # Create a VM with random names and password from available types
     #
@@ -347,7 +394,7 @@ allocate_vm() {
     local compute_spec
     compute_spec="$(get_compute_spec)"
 
-    local charge_type_list=('Postpay' 'Spot')
+    local charge_type_list=('Spot' 'Postpay')
     if [[ "${more_than_half_hour}" == 'yes' ]]; then
         charge_type_list=('Postpay')
     fi
@@ -361,39 +408,9 @@ allocate_vm() {
 
         if [[ -n "${requirements}" ]]; then
             local match
-            match=$(jq -s '
-                def equalstr($a; $b):
-                    if ($a | startswith(" ")) then
-                        equalstr(($a | ltrimstr(" ")); $b)
-                    elif ($a | endswith(" ")) then
-                        equalstr(($a | rtrimstr(" ")); $b)
-                    else
-                        $a == $b
-                    end;
-                def compareitem($req; $spec; $i):
-                    ($req | getpath($i)) as $a
-                    | ($spec | getpath($i)) as $b
-                    | ($a | type) as $ta
-                    | if $ta == "string" then
-                        $a | if startswith("!") then
-                            $a | ltrimstr("!") | split(",")
-                            | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                            | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
-                        else
-                            $a | split(",")
-                            | reduce .[] as $i (false; . or equalstr($i; $b))
-                            | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
-                        end
-                    elif $ta == "number" then
-                        $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
-                    else
-                        true
-                    end;
-                .[0] as $req
-                | .[1] as $spec
-                | .[0] | [path(..)]
-                | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-                <(echo "${requirements}") <(echo "${compute}"))
+            match="$(check_vm_requirement \
+                "${compute}" \
+                "${requirements}")"
             if [[ "${match}" != 'true' ]]; then
                 echo '  + Requirements mismatch.' >&2
                 continue

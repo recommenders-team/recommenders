@@ -62,6 +62,33 @@
             },
             "CPU": 16,
             "Price": 3.13
+        },
+        {
+            "GPUType": "A800",
+            "Memory": {
+                "CPU": 240,
+                "GPU": 80
+            },
+            "CPU": 16,
+            "Price": 5.92
+        },
+        {
+            "GPUType": "H20",
+            "Memory": {
+                "CPU": 240,
+                "GPU": 96
+            },
+            "CPU": 16,
+            "Price": 7.12
+        },
+        {
+            "GPUType": "A100",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 80
+            },
+            "CPU": 16,
+            "Price": 10.21
         }
     ],
     "Action": {
