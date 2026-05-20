@@ -351,66 +351,66 @@ allocate_vm() {
     if [[ "${more_than_half_hour}" == 'yes' ]]; then
         charge_type_list=('Postpay')
     fi
-    for index in "${!charge_type_list[@]}"; do
-        charge_type="${charge_type_list[${index}]}"
 
-        local num_computes
-        num_computes="$(echo "${compute_spec}" | jq 'length')"
-        for ((i=0; i<"${num_computes}"; i++)); do
-            local compute
-            compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
-            echo "* Trying spec: ${compute}" >&2
+    local num_computes
+    num_computes="$(echo "${compute_spec}" | jq 'length')"
+    for ((i=0; i<"${num_computes}"; i++)); do
+        local compute
+        compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
+        echo "* Trying spec: ${compute}" >&2
 
-            if [[ -n "${requirements}" ]]; then
-                local match
-                match=$(jq -s '
-                    def equalstr($a; $b):
-                        if ($a | startswith(" ")) then
-                            equalstr(($a | ltrimstr(" ")); $b)
-                        elif ($a | endswith(" ")) then
-                            equalstr(($a | rtrimstr(" ")); $b)
+        if [[ -n "${requirements}" ]]; then
+            local match
+            match=$(jq -s '
+                def equalstr($a; $b):
+                    if ($a | startswith(" ")) then
+                        equalstr(($a | ltrimstr(" ")); $b)
+                    elif ($a | endswith(" ")) then
+                        equalstr(($a | rtrimstr(" ")); $b)
+                    else
+                        $a == $b
+                    end;
+                def compareitem($req; $spec; $i):
+                    ($req | getpath($i)) as $a
+                    | ($spec | getpath($i)) as $b
+                    | ($a | type) as $ta
+                    | if $ta == "string" then
+                        $a | if startswith("!") then
+                            $a | ltrimstr("!") | split(",")
+                            | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
+                            | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
                         else
-                            $a == $b
-                        end;
-                    def compareitem($req; $spec; $i):
-                        ($req | getpath($i)) as $a
-                        | ($spec | getpath($i)) as $b
-                        | ($a | type) as $ta
-                        | if $ta == "string" then
-                            $a | if startswith("!") then
-                                $a | ltrimstr("!") | split(",")
-                                | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                                | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
-                            else
-                                $a | split(",")
-                                | reduce .[] as $i (false; . or equalstr($i; $b))
-                                | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
-                            end
-                        elif $ta == "number" then
-                            $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
-                        else
-                            true
-                        end;
-                    .[0] as $req
-                    | .[1] as $spec
-                    | .[0] | [path(..)]
-                    | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-                    <(echo "${requirements}") <(echo "${compute}"))
-                if [[ "${match}" != 'true' ]]; then
-                    echo '  + Requirements mismatch.' >&2
-                    continue
-                fi
+                            $a | split(",")
+                            | reduce .[] as $i (false; . or equalstr($i; $b))
+                            | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                        end
+                    elif $ta == "number" then
+                        $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+                    else
+                        true
+                    end;
+                .[0] as $req
+                | .[1] as $spec
+                | .[0] | [path(..)]
+                | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
+                <(echo "${requirements}") <(echo "${compute}"))
+            if [[ "${match}" != 'true' ]]; then
+                echo '  + Requirements mismatch.' >&2
+                continue
             fi
+        fi
 
-            local gpu_type
-            gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
+        local gpu_type
+        gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
 
-            local cpu_cores
-            cpu_cores="$(echo "${compute}" | jq '.CPU')"
+        local cpu_cores
+        cpu_cores="$(echo "${compute}" | jq '.CPU')"
 
-            local memory
-            memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
+        local memory
+        memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
 
+        for index in "${!charge_type_list[@]}"; do
+            charge_type="${charge_type_list[${index}]}"
             local response
             for ((j=0; j<3; j++)); do
                 response=$(create_instance \
