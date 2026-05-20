@@ -47,7 +47,7 @@ sudo apt-get update
 echo '* Installing CUDA driver ...'
 sudo update-pciids
 
-if lspci | grep -i nvidia | grep -i p40; then
+if lspci | grep -i nvidia | grep -Ei 'p40|v100s'; then
     # P40 can only install drivers of version up to 580
     echo '  + Locking to version 580 ...'
     count=0
