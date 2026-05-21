@@ -1,6 +1,24 @@
 {
     "Compute": [
         {
+            "GPUType": "P40",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 24
+            },
+            "CPU": 8,
+            "Price": 0.38
+        },
+        {
+            "GPUType": "2080",
+            "Memory": {
+                "CPU": 40,
+                "GPU": 8
+            },
+            "CPU": 8,
+            "Price": 0.39
+        },
+        {
             "GPUType": "3080Ti",
             "Memory": {
                 "CPU": 32,
@@ -19,29 +37,65 @@
             "Price": 1.13
         },
         {
-            "GPUType": "V100S",
-            "Memory": {
-                "CPU": 64,
-                "GPU": 32
-            },
-            "CPU": 10,
-            "Price": 1.34
-        },
-        {
-            "GPUType": "RTX40",
+            "GPUType": "4090",
             "Memory": {
                 "CPU": 64,
                 "GPU": 24
             },
             "CPU": 16,
-            "Price": 1.58
+            "Price": 1.88
+        },
+        {
+            "GPUType": "5090",
+            "Memory": {
+                "CPU": 96,
+                "GPU": 32
+            },
+            "CPU": 16,
+            "Price": 3.0
+        },
+        {
+            "GPUType": "4090_48G",
+            "Memory": {
+                "CPU": 96,
+                "GPU": 48
+            },
+            "CPU": 16,
+            "Price": 3.13
+        },
+        {
+            "GPUType": "A800",
+            "Memory": {
+                "CPU": 240,
+                "GPU": 80
+            },
+            "CPU": 16,
+            "Price": 5.92
+        },
+        {
+            "GPUType": "H20",
+            "Memory": {
+                "CPU": 240,
+                "GPU": 96
+            },
+            "CPU": 16,
+            "Price": 7.12
+        },
+        {
+            "GPUType": "A100",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 80
+            },
+            "CPU": 16,
+            "Price": 10.21
         }
     ],
     "Action": {
         "CreateCompShareInstance": {
             "Action": "CreateCompShareInstance",
             "ChargeType": "Postpay",
-            "CompShareImageId": "compshareImage-1b6bx62uvf70",
+            "CompShareImageId": "compshareImage-12rjyhwynazd",
             "Disks.0.IsBoot": true,
             "Disks.0.Size": 100,
             "Disks.0.Type": "CLOUD_SSD",
@@ -57,6 +111,9 @@
         "DescribeCompShareInstance": {
             "Action": "DescribeCompShareInstance"
         },
+        "GetProjectList": {
+            "Action": "GetProjectList"
+        },
         "StopCompShareInstance": {
             "Action": "StopCompShareInstance",
             "Region": "cn-wlcb",
@@ -69,6 +126,14 @@
             "Zone": "cn-wlcb-01",
             "UHostId": "",
             "ReleaseUDisk": true
+        },
+        "UpdateCompShareStopScheduler": {
+            "Action": "UpdateCompShareStopScheduler",
+            "Region": "cn-wlcb",
+            "Zone": "cn-wlcb-01",
+            "ProjectId": "org-hmgw4i",
+            "UHostId": "",
+            "SchedulerStopTime": 1779164372
         }
     }
 }

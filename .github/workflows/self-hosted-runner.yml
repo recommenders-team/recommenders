@@ -105,20 +105,28 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v6
       - name: Build image
-        env:
-          IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
         run: |
-          docker build . \
-            -t ${IMAGE_TAG} \
-            -f ${{ inputs.dockerfile }} \
-            --build-arg COMPUTE=${{ contains(matrix.group, 'gpu') && 'gpu' || 'cpu' }} \
-            --build-arg EXTRAS=[dev${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}${{ contains(matrix.group, 'spark') && ',spark' || '' }}] \
-            --build-arg GIT_REF= \
-            --build-arg PYTHON_VERSION=${{ matrix.python-version }}
+          image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}'
+
+          # Export IMAGE_TAG for subsequent steps
+          echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
+
+          dockerfile="${{ inputs.dockerfile }}"
+          compute="${{ contains(matrix.group, 'gpu') && 'gpu' || 'cpu' }}"
+          extras_gpu="${{ contains(matrix.group, 'gpu') && ',gpu' || '' }}"
+          extras_spark="${{ contains(matrix.group, 'spark') && ',spark' || '' }}"
+          extras="[dev${extras_gpu}${extras_spark}]"
+          python_version="${{ matrix.python-version }}"
+          docker_args="-t ${image_tag} \
+              -f ${dockerfile} \
+              --build-arg COMPUTE='${compute}' \
+              --build-arg EXTRAS='${extras}' \
+              --build-arg GIT_REF= \
+              --build-arg PYTHON_VERSION='${python_version}'"
+          docker build . ${docker_args}
 
       - name: Execute tests in container
         env:
-          IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
         run: |
           # Check hardware specs
@@ -126,28 +134,27 @@ jobs:
           echo "Memory:"
           free -h
 
+          test_list="$(yq \
+              '.${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(" ")' \
+              "${{ inputs.config-file }}")"
+          test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
+              && source ${{ env.RECO_VENV_DIR }}/bin/activate \
+              && pytest --durations 0 ${test_list}"
+
           # Run tests
           if [[ ${{ matrix.group }} =~ 'gpu' ]]; then
             nvidia-smi && \
-            docker run --rm --gpus all ${IMAGE_TAG} \
-              bash -lc 'source /root/.sdkman/bin/sdkman-init.sh && source ${{ env.RECO_VENV_DIR }}/bin/activate && \
-                        pytest --durations 0 \
-                          $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
+            docker run --rm --gpus all "${IMAGE_TAG}" bash -lc "${test_cmd}"
           else
-            docker run --rm ${IMAGE_TAG} \
-              bash -lc 'source /root/.sdkman/bin/sdkman-init.sh && source ${{ env.RECO_VENV_DIR }}/bin/activate && \
-                        pytest --durations 0 \
-                          $(yq ".${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(\" \")" "${{ inputs.config-file }}")'
+            docker run --rm "${IMAGE_TAG}" bash -lc "${test_cmd}"
           fi
 
       - name: Clean up
         if: always()
-        env:
-          IMAGE_TAG: reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}
         run: |
-          if docker image ls | grep ${IMAGE_TAG} > /dev/null; then
-            if docker container ls -a | grep ${IMAGE_TAG} > /dev/null; then
+          if [[ -n "${IMAGE_TAG}" ]] && docker image ls | grep "${IMAGE_TAG}" > /dev/null; then
+            if docker container ls -a | grep "${IMAGE_TAG}" > /dev/null; then
               docker container rm -f $(docker ps -a | grep "${IMAGE_TAG}" | awk '{print $1}')
             fi
-            docker image rm ${IMAGE_TAG}
+            docker image rm "${IMAGE_TAG}"
           fi
