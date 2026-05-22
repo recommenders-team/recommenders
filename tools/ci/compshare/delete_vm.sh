@@ -30,8 +30,8 @@ echo 'Importing utility functions ...'
 source "${SCRIPT_UTILS}"
 
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
-vm_id="${vm_info[0]}"
-if [[ -n "${vm_id}" ]]; then
+if [[ -n "${vm_info:-}" ]]; then
+    vm_id="${vm_info[0]}"
     echo "Stopping the VM ${vm_name} ..."
     count=0
     while true; do

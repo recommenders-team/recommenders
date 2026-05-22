@@ -6,8 +6,8 @@
 ######################################################################
 # Install Docker in rootless mode
 #
-# The following environment variables must be set:
-# * DOCKER_MIRROR_URL
+# The following environment variables may need to be set:
+# * VM_DOCKER_MIRROR_URL
 #
 # See
 # * https://docs.docker.com/engine/install/ubuntu/
@@ -26,10 +26,14 @@ GPG_URL="${APT_URL}/gpg"
 APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stable"
 
 echo '* Installing prerequisites ...'
+while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
+    echo '    - Waiting for processes releasing /var/lib/apt/lists/lock ...'
+    sleep 5
+done
 sudo apt-get update
-sudo dpkg --configure -a
 count=0
-until sudo apt-get install -y ca-certificates curl; do
+until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    apt-get install -y ca-certificates curl jq; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
@@ -46,13 +50,14 @@ sudo curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${GPG_URL}" -o "$
 sudo chmod a+r "${GPG_PATH}"
 
 echo '* Setting APT repo source for Docker ...'
-sudo mkdir -p "${APT_LIST%/*}"
+sudo mkdir -p "$(dirname "${APT_LIST}")"
 echo "${APT_ENTRY}" | sudo tee "${APT_LIST}" > /dev/null
 sudo apt-get update
 
 echo '* Installing the latest Docker community edition ...'
 count=0
-until sudo apt-get install -y docker-ce; do
+until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    apt-get install -y docker-ce; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
@@ -66,7 +71,8 @@ done
 echo '* Configuring Docker daemon in rootless mode ...'
 echo '  - Installing prerequisites ...'
 count=0
-until sudo apt-get install -y uidmap docker-ce-rootless-extras; do
+until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    apt-get install -y uidmap docker-ce-rootless-extras; do
     echo '  + Failed to install.'
     count=$((count + 1))
     if [[ $count -lt 5 ]]; then
@@ -84,23 +90,45 @@ sudo rm /var/run/docker.sock
 echo '  - Installing rootless Docker daemon ...'
 dockerd-rootless-setuptool.sh install
 
-if [[ -n "${DOCKER_MIRROR_URL:-}" ]]; then
-    echo '  - Setting Docker mirror URL ...'
-    DAEMON_JSON="${HOME}/.config/docker/daemon.json"
-    if [[ -f "${DAEMON_JSON}" ]]; then
-        echo "    ## Appending to ${DAEMON_JSON} ..."
-        TEMP_JSON=$(jq ".\"registry-mirrors\" += [ \"${DOCKER_MIRROR_URL}\" ]" "${DAEMON_JSON}")
-        echo "${TEMP_JSON}" > "${DAEMON_JSON}"
-    else
-        echo "    ## Creating ${DAEMON_JSON} ..."
-        mkdir -p "${DAEMON_JSON%/*}"
-        echo "{ \"registry-mirrors\": [ \"${DOCKER_MIRROR_URL}\" ] }" > "${DAEMON_JSON}"
-    fi
+if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
+    echo '* Setting Docker mirror URL ...'
+    update_json_config() {
+        local json_file="${1:-}"
+        local updates="${2:-}"
+        [[ -z "${updates}" || -z "${json_file}" ]] && return 1
+
+        if [[ -f "${json_file}" ]]; then
+            echo "    ## Updating ${json_file} ..."
+            local temp_json
+            temp_json=$(jq -s '
+                def update($a; $b):
+                    ($a | type) as $ta | ($b | type) as $tb |
+                    if $ta == "object" and $tb == "object" then
+                        reduce ([$a, $b] | add | keys_unsorted[]) as $k
+                            ({}; .[$k] = update($a[$k]; $b[$k]))
+                    elif $ta == "array" and $tb == "array" then
+                        $a + $b
+                    else
+                        $b // $a
+                    end;
+                reduce .[] as $item (null; update(.; $item))' \
+                "${json_file}" <(echo "${updates}"))
+            echo "${temp_json}" > "${json_file}"
+        else
+            echo "    ## Creating ${json_file} ..."
+            mkdir -p "$(dirname "${json_file}")"
+            echo "${updates}" | jq '.' > "${json_file}"
+        fi
+    }
+
+    update_json_config \
+        "${HOME}/.config/docker/daemon.json" \
+        "{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
 fi
 
-echo '  - Starting rootless Docker daemon ...'
+echo '* Starting rootless Docker daemon ...'
 systemctl --user start docker
 
-echo '  - Enabling Docker service and launch the daemon on startup ...'
+echo '* Enabling Docker service and launch the daemon on startup ...'
 systemctl --user enable docker
 sudo loginctl enable-linger "$(whoami)"
