@@ -243,9 +243,8 @@ def test_model_sum(deeprec_resource_path, deeprec_config_path):
 
 
 @pytest.mark.gpu
-def test_model_lightgcn(deeprec_resource_path, deeprec_config_path):
+def test_model_lightgcn(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
-    yaml_file = os.path.join(deeprec_config_path, "lightgcn.yaml")
     user_file = os.path.join(data_path, r"user_embeddings.csv")
     item_file = os.path.join(data_path, r"item_embeddings.csv")
 
@@ -254,11 +253,13 @@ def test_model_lightgcn(deeprec_resource_path, deeprec_config_path):
 
     data = ImplicitCF(train=train, test=test)
 
-    hparams = prepare_hparams(yaml_file, epochs=1)
-    model = LightGCN(hparams, data)
-
+    model = LightGCN(
+        n_users=data.n_users,
+        n_items=data.n_items,
+        norm_adj=data.get_norm_adj_mat(),
+    )
+    model.fit(data, epochs=1)
     assert model.run_eval() is not None
-    model.fit()
     assert model.recommend_k_items(test) is not None
     model.infer_embedding(user_file, item_file)
     assert os.path.getsize(user_file) != 0

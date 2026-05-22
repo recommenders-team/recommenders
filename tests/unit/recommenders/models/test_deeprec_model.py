@@ -337,25 +337,23 @@ def test_sum_component_definition(sequential_files, deeprec_config_path):
 
 
 @pytest.mark.gpu
-def test_lightgcn_component_definition(deeprec_config_path):
-    yaml_file = os.path.join(deeprec_config_path, "lightgcn.yaml")
-
+def test_lightgcn_component_definition():
     df = movielens.load_pandas_df(size="100k")
     train, test = python_stratified_split(df, ratio=0.75)
 
     data = ImplicitCF(train=train, test=test)
 
-    hparams = prepare_hparams(yaml_file, embed_size=64)
-    model = LightGCN(hparams, data)
+    model = LightGCN(
+        n_users=data.n_users,
+        n_items=data.n_items,
+        norm_adj=data.get_norm_adj_mat(),
+        embed_size=64,
+        n_layers=3,
+    )
 
     assert model.norm_adj is not None
-    assert model.ua_embeddings.shape == [943, 64]
-    assert model.ia_embeddings.shape == [1682, 64]
-    assert model.u_g_embeddings is not None
-    assert model.pos_i_g_embeddings is not None
-    assert model.neg_i_g_embeddings is not None
-    assert model.batch_ratings is not None
-    assert model.loss is not None
-    assert model.opt is not None
-    assert model.batch_size == 1024
-    assert model.epochs == 1000
+    assert model.user_embedding.weight.shape == (943, 64)
+    assert model.item_embedding.weight.shape == (1682, 64)
+    assert model.ua_embeddings.shape == (943, 64)
+    assert model.ia_embeddings.shape == (1682, 64)
+    assert model.n_layers == 3

@@ -54,7 +54,6 @@ except (ImportError, NameError):
     pass  # skip this import if we are not in a Spark environment
 
 try:
-    from recommenders.models.deeprec.deeprec_utils import prepare_hparams
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
     from recommenders.models.ncf.ncf_singlenode import NCF
@@ -385,10 +384,32 @@ def prepare_training_lightgcn(train, test):
 
 
 def train_lightgcn(params, data):
-    hparams = prepare_hparams(**params)
-    model = LightGCN(hparams, data)
+    ctor_keys = {"embed_size", "n_layers", "seed"}
+    fit_keys = {
+        "epochs",
+        "learning_rate",
+        "batch_size",
+        "decay",
+        "eval_epoch",
+        "top_k",
+        "metrics",
+        "save_model",
+        "save_epoch",
+    }
+
+    ctor_kwargs = {k: params[k] for k in ctor_keys if k in params}
+    fit_kwargs = {k: params[k] for k in fit_keys if k in params}
+    if "MODEL_DIR" in params:
+        fit_kwargs["model_dir"] = params["MODEL_DIR"]
+
+    model = LightGCN(
+        n_users=data.n_users,
+        n_items=data.n_items,
+        norm_adj=data.get_norm_adj_mat(),
+        **ctor_kwargs,
+    )
     with Timer() as t:
-        model.fit()
+        model.fit(data, **fit_kwargs)
     return model, t
 
 
