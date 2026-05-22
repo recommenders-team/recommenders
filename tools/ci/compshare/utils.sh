@@ -171,6 +171,7 @@ invoke_action() {
         "${action}" \
         "${updates}" \
         "${encoded_password_file}")"
+    echo "${request_url}" >&2
 
     local response
     if [[ -n "${encoded_password_file}" ]]; then
