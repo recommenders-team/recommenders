@@ -135,18 +135,17 @@ Independent or incubating algorithms and utilities are candidates for the [contr
 
 ### Algorithm Comparison
 
-We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a machine with 4 CPUs, 30Gb of RAM, and 1 GPU GeForce GTX 1660 Ti with 6Gb of memory. Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k, running the algorithms for 15 epochs.
+We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a machine with 24 CPUs, 30Gb of RAM, and 1 GPU GeForce RTX 5090 Laptop GPU with 24Gb of memory. Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k, running the algorithms for 15 epochs.
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [ALS](examples/00_quick_start/als_movielens.ipynb) | 0.004732 |	0.044239 |	0.048462 |	0.017796 | 0.965038 |	0.753001 |	0.255647 |	0.251648 |
-| [BiVAE](examples/02_model_collaborative_filtering/cornac_bivae_deep_dive.ipynb) | 0.146126	| 0.475077 |	0.411771 |	0.219145 | N/A |	N/A |	N/A |	N/A |
-| [BPR](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | 0.132478	| 0.441997 |	0.388229 |	0.212522 | N/A |	N/A |	N/A |	N/A |
-| [embdotbias](examples/00_quick_start/embdotbias_movielens.ipynb) | 0.018954 |	0.117810 |	0.104242 |	0.042450 | 0.992760 | 0.776040 | 0.223344 |	0.223393 |
-| [LightGCN](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | 0.088526 | 0.419846 | 0.379626 | 0.144336 | N/A | N/A | N/A | N/A |
-| [NCF](examples/02_model_collaborative_filtering/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A | N/A | N/A | N/A |
-| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
-| [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
+| [ALS](examples/00_quick_start/als_movielens.ipynb) | 0.011097 | 0.034615 | 0.040297 | 0.013737 | 0.966732 | 0.752552 | 0.267438 | 0.263534 |
+| [BiVAE](examples/02_model_collaborative_filtering/cornac_bivae_deep_dive.ipynb) | 0.329962 | 0.471722 | 0.411347 | 0.224300 | N/A | N/A | N/A | N/A |
+| [BPR](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | 0.126664 | 0.197100 | 0.139394 | 0.121061 | N/A | N/A | N/A | N/A |
+| [embdotbias](examples/00_quick_start/embdotbias_movielens.ipynb) | 0.053549 | 0.117810 | 0.104242 | 0.042450 | 0.992760 | 0.776040 | 0.223344 | 0.223393 |
+| [LightGCN](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | 0.276474 | 0.416597 | 0.361612 | 0.195064 | N/A | N/A | N/A | N/A |
+| [NCF](examples/02_model_collaborative_filtering/ncf_deep_dive.ipynb) | 0.255924 | 0.386901 | 0.342948 | 0.174579 | N/A | N/A | N/A | N/A |
+| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.258452 | 0.393819 | 0.340615 | 0.185377 | N/A | N/A | N/A | N/A |
 
 ## Contributing
 
