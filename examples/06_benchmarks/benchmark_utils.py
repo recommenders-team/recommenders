@@ -7,15 +7,6 @@ import pandas as pd
 from tempfile import TemporaryDirectory
 import cornac
 
-try:
-    from pyspark.ml.recommendation import ALS
-    from pyspark.sql import Window
-    from pyspark.sql.functions import row_number
-    from pyspark.sql.types import StructType, StructField
-    from pyspark.sql.types import FloatType, IntegerType, LongType
-except ImportError:
-    pass  # skip this import if we are not in a Spark environment
-
 from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
     COL_DICT,
@@ -43,25 +34,24 @@ from recommenders.evaluation.python_evaluation import (
 )
 
 try:
+    from pyspark.ml.recommendation import ALS
+    from pyspark.sql import Window
+    from pyspark.sql.functions import row_number
+    from pyspark.sql.types import StructType, StructField
+    from pyspark.sql.types import FloatType, IntegerType, LongType
     from recommenders.utils.spark_utils import start_or_get_spark
     from recommenders.evaluation.spark_evaluation import (
         SparkRatingEvaluation,
         SparkRankingEvaluation,
     )
 except (ImportError, NameError):
-    pass  # skip this import if we are not in a Spark environment
+    pass  # skip if not in a Spark environment
 
 try:
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-except ImportError:
-    pass  # skip if not in a GPU environment
-try:
     from recommenders.models.ncf.ncf_singlenode import NCF
     from recommenders.models.ncf.dataset import Dataset as NCFDataset
-except ImportError:
-    pass  # skip if not in a GPU environment
-try:
     from recommenders.models.embdotbias.model import EmbeddingDotBias
     from recommenders.models.embdotbias.data_loader import RecoDataLoader
     from recommenders.models.embdotbias.training_utils import Trainer
