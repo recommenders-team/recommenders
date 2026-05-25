@@ -310,9 +310,20 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
+RATING_THRESHOLD = 3.5
+
+
 def prepare_training_cornac(train, test):
     return cornac.data.Dataset.from_uir(
         train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
+        seed=SEED,
+    )
+
+
+def prepare_training_bpr(train, test):
+    train_filtered = train[train[DEFAULT_RATING_COL] >= RATING_THRESHOLD]
+    return cornac.data.Dataset.from_uir(
+        train_filtered.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
         seed=SEED,
     )
 
