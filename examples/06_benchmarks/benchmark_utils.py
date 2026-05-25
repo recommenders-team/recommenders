@@ -331,6 +331,13 @@ def prepare_training_bpr(train, test):
     )
 
 
+def prepare_metrics_bpr(train, test):
+    test = test.copy()
+    test[DEFAULT_RATING_COL] = binarize(test[DEFAULT_RATING_COL].values, RATING_THRESHOLD)
+    test = test[test[DEFAULT_RATING_COL] > 0].reset_index(drop=True)
+    return train, test
+
+
 def train_bpr(params, data):
     model = BPR(**params)
     with Timer() as t:
