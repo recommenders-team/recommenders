@@ -42,6 +42,10 @@ on:
         default: tools/docker/Dockerfile
         description: Path to the Dockerfile used for building the
           test environment
+      pr_code_dir:
+        required: false
+        type: string
+        default: pr_${{ github.event.number }}
       timeout-minutes:
         required: true
         type: number
@@ -74,8 +78,10 @@ jobs:
     outputs:
       groups: ${{ steps.get-test-groups.outputs.groups }}
     steps:
-      - name: Check out repository code
+      - name: Check out repository code from PR
         uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ github.event.number }}/merge
 
       - name: Get test group names
         id: get-test-groups
@@ -110,8 +116,9 @@ jobs:
           - '3.11'
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     steps:
-      - name: Check out repository code
+      - name: Check out repository code from main
         uses: actions/checkout@v6
+
       - name: Setup VM
         # * GPU tests should run on GPUs.
         # * cpu-nightly needs to run on larger CPU runner.
@@ -129,8 +136,8 @@ jobs:
           VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
-          commit="$(echo ${{ github.sha }} | head -c 5)"
-          vm_name="$(mktemp -u vm_${commit}_XXXXXX)"
+          commit="$(echo ${{ github.event.pull_request.head.sha }} | head -c 5)"
+          vm_name="$(mktemp -u vm_${{ github.event.number }}_${commit}_XXXXXX)"
           echo "VM_NAME=${vm_name}" >> "$GITHUB_ENV"
           more_than_half_hour="${{ contains(inputs.type, 'nightly') && 'yes' || 'no' }}"
           gputype="${{ contains(inputs.type, 'nightly') && '!2080,P40' || '!P40' }}"
@@ -145,12 +152,19 @@ jobs:
           ssh_dest="${vm_info[1]}"
           echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
+      - name: Check out repository code from PR
+        uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ github.event.number }}/merge
+          path: ${{ inputs.pr_code_dir }}
+
       - name: Build image
         env:
           VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
           VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
           VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
           VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
+        working-directory: ${{ inputs.pr_code_dir }}
         run: |
           image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}'
 
@@ -226,6 +240,7 @@ jobs:
         env:
           VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
+        working-directory: ${{ inputs.pr_code_dir }}
         run: |
           test_list="$(yq \
               '.${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(" ")' \
