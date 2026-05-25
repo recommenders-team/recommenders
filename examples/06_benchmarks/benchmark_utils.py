@@ -15,10 +15,6 @@ try:
     from pyspark.sql.types import FloatType, IntegerType, LongType
 except ImportError:
     pass  # skip this import if we are not in a Spark environment
-try:
-    import surprise  # Put SVD surprise back in core deps when #2224 is fixed
-except ImportError:
-    pass
 
 from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
@@ -34,10 +30,6 @@ from recommenders.utils.constants import (
 from recommenders.models.sar import SAR
 from recommenders.models.cornac.bpr import BPR
 from recommenders.models.cornac.cornac_utils import predict_ranking
-from recommenders.models.surprise.surprise_utils import (
-    predict,
-    compute_ranking_predictions,
-)
 from recommenders.evaluation.python_evaluation import (
     exp_var,
     get_top_k_items,
@@ -175,45 +167,6 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         topk_scores = _get_top_k_spark(topk_scores, top_k)
     return topk_scores, t
 
-
-def prepare_training_svd(train, test):
-    reader = surprise.Reader("ml-100k", rating_scale=(1, 5))
-    return surprise.Dataset.load_from_df(
-        train.drop(DEFAULT_TIMESTAMP_COL, axis=1), reader=reader
-    ).build_full_trainset()
-
-
-def train_svd(params, data):
-    model = surprise.SVD(**params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-
-
-def predict_svd(model, test):
-    with Timer() as t:
-        preds = predict(
-            model,
-            test,
-            usercol=DEFAULT_USER_COL,
-            itemcol=DEFAULT_ITEM_COL,
-            predcol=DEFAULT_PREDICTION_COL,
-        )
-    return preds, t
-
-
-def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
-    with Timer() as t:
-        topk_scores = compute_ranking_predictions(
-            model,
-            train,
-            usercol=DEFAULT_USER_COL,
-            itemcol=DEFAULT_ITEM_COL,
-            predcol=DEFAULT_PREDICTION_COL,
-            remove_seen=remove_seen,
-        )
-        topk_scores = _get_top_k_pandas(topk_scores, top_k)
-    return topk_scores, t
 
 
 def prepare_training_embdotbias(train, test):
