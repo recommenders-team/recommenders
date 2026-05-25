@@ -36,6 +36,11 @@ on:
         default: tests/test_groups.yml
         description: Path to test group configuration file relative
           to the repo root
+      compshare_tools_dir:
+        required: false
+        type: string
+        default: .github/workflows/tools/compshare
+        description: Path to the CompShare tools
       dockerfile:
         required: false
         type: string
@@ -143,11 +148,11 @@ jobs:
           gputype="${{ contains(inputs.type, 'nightly') && '!2080,P40' || '!P40' }}"
           gpumem="${{ contains(inputs.type, 'nightly') && '12' || '8' }}"
           requirements="{\"GPUType\":\"${gputype}\",\"Memory\":{\"GPU\":${gpumem},\"CPU\":32}}"
-          bash tools/ci/compshare/setup_vm.sh "${vm_name}" "${more_than_half_hour}" "${requirements}"
+          bash '${{ inputs.compshare_tools_dir }}/setup_vm.sh' "${vm_name}" "${more_than_half_hour}" "${requirements}"
 
           echo 'Exporting VM info for subsequent steps ...'
-          COMPSHARE_SPEC_FILE='tools/ci/compshare/spec.json'
-          source tools/ci/compshare/utils.sh
+          COMPSHARE_SPEC_FILE='${{ inputs.compshare_tools_dir }}/spec.json'
+          source '${{ inputs.compshare_tools_dir }}/utils.sh'
           mapfile -t vm_info < <(get_vm_info "${vm_name}")
           ssh_dest="${vm_info[1]}"
           echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
@@ -275,5 +280,5 @@ jobs:
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
         run: |
           if [[ -n "${VM_NAME}" ]]; then
-              bash tools/ci/compshare/delete_vm.sh "${VM_NAME}"
+              bash '${{ inputs.compshare_tools_dir }}/delete_vm.sh' "${VM_NAME}"
           fi
