@@ -54,15 +54,20 @@ except (ImportError, NameError):
 try:
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+except ImportError:
+    pass  # skip if not in a GPU environment
+try:
     from recommenders.models.ncf.ncf_singlenode import NCF
     from recommenders.models.ncf.dataset import Dataset as NCFDataset
+except ImportError:
+    pass  # skip if not in a GPU environment
+try:
     from recommenders.models.embdotbias.model import EmbeddingDotBias
     from recommenders.models.embdotbias.data_loader import RecoDataLoader
     from recommenders.models.embdotbias.training_utils import Trainer
     from recommenders.models.embdotbias.utils import cartesian_product, score
-
 except ImportError:
-    pass  # skip this import if we are not in a GPU environment
+    pass  # skip if not in a GPU environment
 
 # Helpers
 tmp_dir = TemporaryDirectory()
