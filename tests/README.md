@@ -334,8 +334,8 @@ management and provisioning,
 [Terraform](https://developer.hashicorp.com/terraform) can be used.
 Alas, since Terraform is not supported by the current service provider
 Compshare, we develop some shell scripts under
-[`tools/ci/compshare/`](../tools/ci/compshare/) for our basic usage of
-VM allocation from Compshare.
+[`.github/workflows/tools/compshare/`](../.github/workflows/tools/compshare/)
+for our basic usage of VM allocation from Compshare.
 
 Before using `compshare-vm.yml`, follow the steps below for the setup:
 1. Log into [Compshare console](https://passport.compshare.cn/login).
@@ -379,6 +379,22 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
 1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`,
    `gpu-nightly.yml` and `spark-nightly.yml` to use
    `compshare-vm.yml`.
+
+NOTE: By default, secrets are not passed to workflows triggered by the
+[`pull_request`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)
+event from forked repositories according to [the
+doc](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflows-in-forked-repositories).
+So we use the
+[`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target)
+event to trigger PR gates.
+* If there are any changes to the infrastructure that modifies the
+  workflow for PR gates (i.e., changes made into
+  [`./github/workflows/`](../.github/workflows/)), they should be
+  merged into the `main` branch to take effect.
+* Other changes not related to the infrastructure, such as changes
+  made into [`recommenders/`](../recommenders/),
+  [`tests/`](../tests/), and [`examples`](../examples/), can take
+  effect immediately in PR gates without having to merge into `main`.
 
 
 ## How to execute tests in your local environment
