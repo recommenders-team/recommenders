@@ -60,6 +60,8 @@ try:
 except ImportError:
     pass  # skip if not in a GPU environment
 
+RATING_THRESHOLD = 3.5
+
 # Helpers
 tmp_dir = TemporaryDirectory()
 TRAIN_FILE = os.path.join(tmp_dir.name, "df_train.csv")
@@ -309,9 +311,6 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         topk_scores = _get_top_k_pandas(topk_scores, top_k)
     # Remove temp files
     return topk_scores, t
-
-
-RATING_THRESHOLD = 3.5
 
 
 def prepare_training_cornac(train, test):
