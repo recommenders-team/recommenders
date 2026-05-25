@@ -46,7 +46,6 @@ class BPR(CBPR):
         users = np.array(list(self.train_set.uid_map.keys()))
         n_users = len(users)
         n_items = len(items)
-        top_k = n_items if top_k is None else min(top_k, n_items)
 
         # Compute user and item indices
         user_indices = np.array([self.train_set.uid_map[u] for u in users])
@@ -64,37 +63,39 @@ class BPR(CBPR):
         # Compute score matrix for all user-item pairs
         preds_matrix = U @ V.T + B  # Shape: (n_users, n_items)
 
+        # Mask seen items before top-k selection so they are never chosen
+        if remove_seen:
+            seen = data[[col_user, col_item]].drop_duplicates()
+            user_pos = pd.Series(range(n_users), index=users)
+            item_pos = pd.Series(range(n_items), index=items)
+            seen_u = seen[col_user].map(user_pos)
+            seen_i = seen[col_item].map(item_pos)
+            valid = seen_u.notna() & seen_i.notna()
+            preds_matrix[
+                seen_u[valid].astype(int).values,
+                seen_i[valid].astype(int).values,
+            ] = -np.inf
+
         # Select top-k items per user
-        top_k_indices = np.argpartition(preds_matrix, -top_k, axis=1)[
-            :, -top_k:
-        ]  # Shape: (n_users, top_k)
+        k = n_items if top_k is None else min(top_k, n_items)
+        top_k_indices = np.argpartition(preds_matrix, -k, axis=1)[
+            :, -k:
+        ]  # Shape: (n_users, k)
         sorted_indices = np.argsort(
             -preds_matrix[np.arange(n_users)[:, None], top_k_indices], axis=1
         )
         top_k_indices = top_k_indices[
             np.arange(n_users)[:, None], sorted_indices
-        ]  # Shape: (n_users, top_k)
+        ]  # Shape: (n_users, k)
 
-        # Extract items and scores
-        user_array = np.repeat(users, top_k)  # Shape: (n_users * top_k,)
-        item_array = items[top_k_indices].flatten()  # Shape: (n_users * top_k,)
-        pred_array = np.take_along_axis(
-            preds_matrix, top_k_indices, axis=1
-        ).flatten()  # Shape: (n_users * top_k,)
+        # Extract items and scores, dropping any -inf placeholders
+        user_array = np.repeat(users, k)
+        item_array = items[top_k_indices].flatten()
+        pred_array = np.take_along_axis(preds_matrix, top_k_indices, axis=1).flatten()
 
-        # Create DataFrame
         all_predictions = pd.DataFrame(
             {col_user: user_array, col_item: item_array, col_prediction: pred_array}
         )
-
-        if remove_seen:
-            seen = data[[col_user, col_item]].drop_duplicates()
-            merged = all_predictions.merge(
-                seen, on=[col_user, col_item], how="left", indicator=True
-            )
-            return (
-                merged[merged["_merge"] == "left_only"]
-                .drop(columns=["_merge"])
-                .reset_index(drop=True)
-            )
-        return all_predictions
+        return all_predictions[all_predictions[col_prediction] > -np.inf].reset_index(
+            drop=True
+        )
