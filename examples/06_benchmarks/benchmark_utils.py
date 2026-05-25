@@ -18,6 +18,7 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     SEED,
 )
+from recommenders.utils.python_utils import binarize
 from recommenders.models.sar import SAR
 from recommenders.models.cornac.bpr import BPR
 from recommenders.models.cornac.cornac_utils import predict_ranking
@@ -321,9 +322,11 @@ def prepare_training_cornac(train, test):
 
 
 def prepare_training_bpr(train, test):
-    train_filtered = train[train[DEFAULT_RATING_COL] >= RATING_THRESHOLD]
+    train = train.copy()
+    train[DEFAULT_RATING_COL] = binarize(train[DEFAULT_RATING_COL].values, RATING_THRESHOLD)
+    train = train[train[DEFAULT_RATING_COL] > 0].reset_index(drop=True)
     return cornac.data.Dataset.from_uir(
-        train_filtered.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
+        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
         seed=SEED,
     )
 
