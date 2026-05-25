@@ -1,0 +1,74 @@
+{
+    "Compute": [
+        {
+            "GPUType": "3080Ti",
+            "Memory": {
+                "CPU": 32,
+                "GPU": 12
+            },
+            "CPU": 12,
+            "Price": 0.7
+        },
+        {
+            "GPUType": "3090",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 24
+            },
+            "CPU": 16,
+            "Price": 1.13
+        },
+        {
+            "GPUType": "V100S",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 32
+            },
+            "CPU": 10,
+            "Price": 1.34
+        },
+        {
+            "GPUType": "RTX40",
+            "Memory": {
+                "CPU": 64,
+                "GPU": 24
+            },
+            "CPU": 16,
+            "Price": 1.58
+        }
+    ],
+    "Action": {
+        "CreateCompShareInstance": {
+            "Action": "CreateCompShareInstance",
+            "ChargeType": "Postpay",
+            "CompShareImageId": "compshareImage-1b6bx62uvf70",
+            "Disks.0.IsBoot": true,
+            "Disks.0.Size": 100,
+            "Disks.0.Type": "CLOUD_SSD",
+            "GPU": 1,
+            "GPUType": "",
+            "MachineType": "G",
+            "Memory": 65536,
+            "Name": "",
+            "Region": "cn-wlcb",
+            "Zone": "cn-wlcb-01",
+            "CPU": 8
+        },
+        "DescribeCompShareInstance": {
+            "Action": "DescribeCompShareInstance"
+        },
+        "StopCompShareInstance": {
+            "Action": "StopCompShareInstance",
+            "Region": "cn-wlcb",
+            "Zone": "cn-wlcb-01",
+            "UHostId": ""
+        },
+        "TerminateCompShareInstance": {
+            "Action": "TerminateCompShareInstance",
+            "Region": "cn-wlcb",
+            "Zone": "cn-wlcb-01",
+            "UHostId": "",
+            "ReleaseUDisk": true
+        }
+    }
+}
