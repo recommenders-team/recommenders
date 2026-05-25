@@ -11,12 +11,19 @@ from tempfile import TemporaryDirectory
 from tqdm import tqdm
 from retrying import retry
 
-
 log = logging.getLogger(__name__)
+
+DEFAULT_DOWNLOAD_TIMEOUT = (10, 60)
 
 
 @retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
-def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
+def maybe_download(
+    url,
+    filename=None,
+    work_directory=".",
+    expected_bytes=None,
+    timeout=DEFAULT_DOWNLOAD_TIMEOUT,
+):
     """Download a file if it is not already downloaded.
 
     Args:
@@ -24,6 +31,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         work_directory (str): Working directory.
         url (str): URL of the file to download.
         expected_bytes (int): Expected file size in bytes.
+        timeout (float|tuple): Requests timeout for the download.
 
     Returns:
         str: File path of the file downloaded.
@@ -39,7 +47,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         else:
             log.info(f"File {filepath} already downloaded")
     if not os.path.exists(filepath):
-        r = requests.get(url, stream=True)
+        r = requests.get(url, stream=True, timeout=timeout)
         if r.status_code == 200:
             log.info(f"Downloading {url}")
             total_size = int(r.headers.get("content-length", 0))
