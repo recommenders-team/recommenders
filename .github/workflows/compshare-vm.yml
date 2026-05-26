@@ -36,12 +36,25 @@ on:
         default: tests/test_groups.yml
         description: Path to test group configuration file relative
           to the repo root
+      compshare_tools_dir:
+        required: false
+        type: string
+        default: .github/workflows/tools/compshare
+        description: Path to the CompShare tools
       dockerfile:
         required: false
         type: string
         default: tools/docker/Dockerfile
         description: Path to the Dockerfile used for building the
           test environment
+      pr_code_dir:
+        required: false
+        type: string
+        default: >
+          ${{ github.event_name == 'pull_request_target'
+              && format('pr_{0}', github.event.number)
+              || ''
+          }}
       timeout-minutes:
         required: true
         type: number
@@ -54,10 +67,16 @@ on:
         required: true
       COMPSHARE_PUBLIC_KEY:
         required: true
-      DOCKER_MIRROR_URL:
-        required: true
-      PIP_INDEX_URL:
-        required: true
+      VM_DOCKER_MIRROR_URL:
+        required: false
+      VM_HTTP_PROXY:
+        required: false
+      VM_HTTPS_PROXY:
+        required: false
+      VM_PIP_INDEX_URL:
+        required: false
+      VM_PROXY_CERTIFICATE:
+        required: false
 
 jobs:
   get-test-groups:
@@ -68,8 +87,14 @@ jobs:
     outputs:
       groups: ${{ steps.get-test-groups.outputs.groups }}
     steps:
-      - name: Check out repository code
+      - name: Check out repository code from PR
         uses: actions/checkout@v6
+        with:
+          ref: >
+            ${{ github.event_name == 'pull_request_target'
+                && format('refs/pull/{0}/merge', github.event.number)
+                || github.ref
+            }}
 
       - name: Get test group names
         id: get-test-groups
@@ -104,8 +129,9 @@ jobs:
           - '3.11'
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     steps:
-      - name: Check out repository code
+      - name: Check out repository code from main
         uses: actions/checkout@v6
+
       - name: Setup VM
         # * GPU tests should run on GPUs.
         # * cpu-nightly needs to run on larger CPU runner.
@@ -117,26 +143,50 @@ jobs:
         env:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
-          DOCKER_MIRROR_URL: ${{ secrets.DOCKER_MIRROR_URL }}
+          VM_DOCKER_MIRROR_URL: ${{ secrets.VM_DOCKER_MIRROR_URL }}
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
+          VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
-          commit="$(echo ${{ github.sha }} | head -c 5)"
-          vm_name="$(mktemp -u vm_${commit}_XXXXXX)"
+          commit="$(echo ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }} | head -c 5)"
+          vm_name="$(mktemp -u vm_${{ github.event_name == 'pull_request_target' && format('{0}_', github.event.number) || '' }}${commit}_XXXXXX)"
           echo "VM_NAME=${vm_name}" >> "$GITHUB_ENV"
-          bash tools/ci/compshare/setup_vm.sh "${vm_name}"
+          more_than_half_hour="${{ contains(inputs.type, 'nightly') && 'yes' || 'no' }}"
+          gputype="${{ contains(inputs.type, 'nightly') && '!2080,P40' || '!P40' }}"
+          gpumem="${{ contains(inputs.type, 'nightly') && '12' || '8' }}"
+          requirements="{\"GPUType\":\"${gputype}\",\"Memory\":{\"GPU\":${gpumem},\"CPU\":32}}"
+          bash '${{ inputs.compshare_tools_dir }}/setup_vm.sh' "${vm_name}" "${more_than_half_hour}" "${requirements}"
 
           echo 'Exporting VM info for subsequent steps ...'
-          COMPSHARE_SPEC_FILE='tools/ci/compshare/spec.json'
-          source tools/ci/compshare/utils.sh
+          COMPSHARE_SPEC_FILE='${{ inputs.compshare_tools_dir }}/spec.json'
+          source '${{ inputs.compshare_tools_dir }}/utils.sh'
           mapfile -t vm_info < <(get_vm_info "${vm_name}")
           ssh_dest="${vm_info[1]}"
           echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
+      - name: Check out repository code from PR
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ github.event.number }}/merge
+          path: ${{ inputs.pr_code_dir }}
+
       - name: Build image
         env:
-          PIP_INDEX_URL: ${{ secrets.PIP_INDEX_URL }}
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
+          VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
+          VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
+        working-directory: >
+          ${{ github.event_name == 'pull_request_target'
+            && inputs.pr_code_dir
+            || github.workspace
+          }}
         run: |
-          image_tag="reco-${{ github.sha }}-${{ github.run_attempt }}"
+          image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}'
+
+          # Export IMAGE_TAG for subsequent steps
           echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
 
           dockerfile="${{ inputs.dockerfile }}"
@@ -157,7 +207,19 @@ jobs:
               docker build . ${docker_args}
           else
               echo "Building Docker image on the VM ${VM_NAME} ..."
-              docker_args="${docker_args} --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
+              pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
+              pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
+              docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
+              docker_args="${docker_args} \
+                  --build-arg HTTP_PROXY='${VM_HTTP_PROXY}' \
+                  --build-arg http_proxy='${VM_HTTP_PROXY}' \
+                  --build-arg HTTPS_PROXY='${VM_HTTPS_PROXY}' \
+                  --build-arg https_proxy='${VM_HTTPS_PROXY}' \
+                  --build-arg NO_PROXY='${docker_no_proxy}' \
+                  --build-arg no_proxy='${docker_no_proxy}' \
+                  --build-arg VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL}' \
+                  --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}' \
+                  --build-arg UV_INSECURE_HOST='github.com'"
 
               echo '* Copying repo files to avoid git clone failure on the VM ...'
               tar cf ../recommenders.tar *
@@ -171,25 +233,6 @@ jobs:
                       mkdir recommenders \
                       && tar xf recommenders.tar -C recommenders \
                       && rm -rf recommenders.tar"
-
-              echo '* Building the base image ...'
-              count=0
-              until ssh -t -o StrictHostKeyChecking=no \
-                      -o UserKnownHostsFile=/dev/null \
-                      -o ServerAliveInterval=60 \
-                      -o ServerAliveCountMax=10 \
-                      "${SSH_DEST}" "\
-                          cd recommenders; \
-                          docker build . ${docker_args} --target deps"; do
-                  echo '  + Failed to build the base image.'
-                  count=$((count + 1))
-                  if [[ $count -lt 5 ]]; then
-                      sleep 5
-                      echo '  + Trying again ...'
-                  else
-                      exit 1
-                  fi
-              done
 
               echo '* Building the final image ...'
               count=0
@@ -213,7 +256,13 @@ jobs:
 
       - name: Execute tests in container
         env:
+          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
+        working-directory: >
+          ${{ github.event_name == 'pull_request_target'
+            && inputs.pr_code_dir
+            || github.workspace
+          }}
         run: |
           test_list="$(yq \
               '.${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(" ")' \
@@ -221,21 +270,24 @@ jobs:
           test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
               && source ${{ env.RECO_VENV_DIR }}/bin/activate \
               && pytest --durations 0 ${test_list}"
-          gpu_arg="${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }}"
-          check_gpu="${{ contains(matrix.group, 'gpu') && 'nvidia-smi' || 'true' }}"
 
           if [[ -z "${SSH_DEST}" ]]; then
               # Run on current GitHub-hosted runner directly
               docker run --rm ${IMAGE_TAG} bash -lc "${test_cmd}"
           else
               # Run on newly created self-hosted runner by SSH
+              check_gpu="${{ contains(matrix.group, 'gpu') && 'nvidia-smi' || 'true' }}"
+              gpu_arg="${{ contains(matrix.group, 'gpu') && '--gpus all' || '' }}"
+              docker_args="${gpu_arg} \
+                  --env HTTP_PROXY='${VM_HTTP_PROXY}' \
+                  --env http_proxy='${VM_HTTP_PROXY}'"
               ssh -t -o StrictHostKeyChecking=no \
                   -o UserKnownHostsFile=/dev/null \
                   -o ServerAliveInterval=60 \
                   -o ServerAliveCountMax=10 \
                   "${SSH_DEST}" "\
                       ${check_gpu} \
-                      && docker run --rm ${gpu_arg} ${IMAGE_TAG} bash -lc '${test_cmd}'"
+                      && docker run --rm ${docker_args} ${IMAGE_TAG} bash -lc '${test_cmd}'"
           fi
 
       - name: Clean up
@@ -245,5 +297,5 @@ jobs:
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
         run: |
           if [[ -n "${VM_NAME}" ]]; then
-              bash tools/ci/compshare/delete_vm.sh "${VM_NAME}"
+              bash '${{ inputs.compshare_tools_dir }}/delete_vm.sh' "${VM_NAME}"
           fi
