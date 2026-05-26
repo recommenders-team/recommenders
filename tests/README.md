@@ -334,21 +334,23 @@ management and provisioning,
 [Terraform](https://developer.hashicorp.com/terraform) can be used.
 Alas, since Terraform is not supported by the current service provider
 Compshare, we develop some shell scripts under
-[`tools/ci/compshare/`](../tools/ci/compshare/) for our basic usage of
-VM allocation from Compshare.
+[`.github/workflows/tools/compshare/`](../.github/workflows/tools/compshare/)
+for our basic usage of VM allocation from Compshare.
 
 Before using `compshare-vm.yml`, follow the steps below for the setup:
 1. Log into [Compshare console](https://passport.compshare.cn/login).
 1. Create API keys (one API private key and one API public key) for
    the shell scripts to interact with the APIs.
-1. (Optional) Create a VM as pull-through caches/mirrors for Docker
-   and PyPI index.
+1. (Optional) Create a VM as pull-through caches/mirrors for Docker,
+   PyPI index and HTTP/HTTPS proxy.
    * [devpi-server](https://pypi.org/project/devpi-server/) can be
      used for caching PyPI index.
    * [Distribution
      Registry](https://distribution.github.io/distribution/) can be
      use for caching Docker Hub.
-1. Create 4 repository secret
+   * [Squid](https://www.squid-cache.org/) can be used to cache for
+     other HTTP/HTTPS requests.
+1. Create 7 repository secret
    * Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
      $\to$
      [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
@@ -360,14 +362,39 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
        - Name: `COMPSHARE_PUBLIC_KEY`
        - Secret: value of the API public key
      + (Optional) For Docker Hub
-       - Name: `DOCKER_MIRROR_URL`
+       - Name: `VM_DOCKER_MIRROR_URL`
        - Secret: URL of the Docker Hub mirror
      + (Optional) For PyPI index
-       - Name: `PIP_INDEX_URL`
+       - Name: `VM_PIP_INDEX_URL`
        - Secret: URL of the PyPI index mirror
+     + (Optional) For HTTP proxy
+       - Name: `VM_HTTP_PROXY`
+       - Secret: URL of the HTTP proxy
+     + (Optional) For HTTPS proxy
+       - Name: `VM_HTTPS_PROXY`
+       - Secret: URL of the HTTPS proxy
+     + (Optional) For HTTPS proxy CA certificate
+       - Name: `VM_PROXY_CERTIFICATE`
+       - Secret: content of the certificate
 1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`,
    `gpu-nightly.yml` and `spark-nightly.yml` to use
    `compshare-vm.yml`.
+
+NOTE: By default, secrets are not passed to workflows triggered by the
+[`pull_request`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)
+event from forked repositories according to [the
+doc](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflows-in-forked-repositories).
+So we use the
+[`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target)
+event to trigger PR gates.
+* If there are any changes to the infrastructure that modifies the
+  workflow for PR gates (i.e., changes made into
+  [`./github/workflows/`](../.github/workflows/)), they should be
+  merged into the `main` branch to take effect.
+* Other changes not related to the infrastructure, such as changes
+  made into [`recommenders/`](../recommenders/),
+  [`tests/`](../tests/), and [`examples`](../examples/), can take
+  effect immediately in PR gates without having to merge into `main`.
 
 
 ## How to execute tests in your local environment

@@ -6,7 +6,7 @@
 name: unit-tests
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - staging
       - main
@@ -40,4 +40,11 @@ jobs:
     with:
       timeout-minutes: 180  # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
       type: pr_gate
-    secrets: inherit
+    secrets:
+      COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+      COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+      VM_DOCKER_MIRROR_URL: ${{ secrets.VM_DOCKER_MIRROR_URL }}
+      VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
+      VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
+      VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
+      VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}

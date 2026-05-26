@@ -16,32 +16,18 @@ ARG COMPUTE="cpu"
 # Choose an appropriate CPU compute image
 #####################################################################
 # * [buildpack-deps:24.04](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/noble/Dockerfile)
-#   + [Created on 2025-11-14](https://hub.docker.com/layers/library/buildpack-deps/noble/images/sha256-40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3)
-FROM buildpack-deps:24.04@sha256:40ee16e3f341497dfd8ae089abe47e60447f714389028726a8c21a75ac405be3 AS cpu
-
-# unzip and zip is required by SDKMAN!
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y zip unzip
+#   + [Created on 2026-04-19](https://hub.docker.com/layers/library/buildpack-deps/24.04/images/sha256-6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673)
+FROM buildpack-deps:24.04@sha256:6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673 AS cpu
 
 
 #####################################################################
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
-# * [nvidia/cuda:12.8.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.8.1/ubuntu2404/devel/Dockerfile?ref_type=heads)
-#   + [Created on 2025-03-14](https://hub.docker.com/layers/nvidia/cuda/12.8.1-devel-ubuntu24.04/images/sha256-4b9ed5fa8361736996499f64ecebf25d4ec37ff56e4d11323ccde10aa36e0c43)
+# * [nvidia/cuda:13.2.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/13.2.1/ubuntu2404/devel/Dockerfile)
+#   + [Created on 2026-04-20](https://hub.docker.com/layers/nvidia/cuda/13.2.1-devel-ubuntu24.04/images/sha256-0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf)
 # * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
-FROM nvidia/cuda:12.8.1-devel-ubuntu24.04@sha256:4b9ed5fa8361736996499f64ecebf25d4ec37ff56e4d11323ccde10aa36e0c43 AS gpu
-
-# curl, unzip and zip is required by SDKMAN!
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y git zip unzip curl
+FROM nvidia/cuda:13.2.1-devel-ubuntu24.04@sha256:0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf AS gpu
 
 
 #####################################################################
@@ -53,13 +39,16 @@ FROM ${COMPUTE} AS deps
 
 ARG COMPUTE
 
-# Valid versions: 3.9, 3.10, 3.11
-ARG PYTHON_VERSION="3.11"
-
 # Extra dependencies: dev, gpu, spark
 ARG EXTRAS=""
 
+# Valid versions: 3.9, 3.10, 3.11
+ARG PYTHON_VERSION="3.11"
+
 ARG RECO_VENV_DIR=/root/.venvs/Recommenders
+
+# HTTPS proxy certificate if needed
+ARG VM_PROXY_CERTIFICATE=''
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -68,14 +57,19 @@ USER root:root
 # uv is in /root/.local/bin and is available after using bash -l
 SHELL ["/bin/bash", "-lc"]
 
-# Install yq
-# See https://github.com/mikefarah/yq
-RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
-        -o yq_linux_amd64.tar.gz \
-        https://github.com/mikefarah/yq/releases/download/v4.49.2/yq_linux_amd64.tar.gz \
-    && tar xzf yq_linux_amd64.tar.gz \
-    && rm yq_linux_amd64.tar.gz \
-    && mv yq_linux_amd64 /usr/local/bin/yq
+# Add HTTPS proxy CA certificate
+# * ca-certificates is required and installed in all base images
+RUN if [[ -n "${VM_PROXY_CERTIFICATE}" ]]; then \
+        echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
+        && update-ca-certificates; \
+    fi
+
+# curl, unzip and zip is required by SDKMAN!
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y curl git unzip zip
 
 # Install SDKMAN!
 RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
@@ -87,9 +81,9 @@ RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
 # Install OpenJDK
 # sdk is available after source /root/.sdkman/bin/sdkman-init.sh
 RUN if [[ "${EXTRAS}" =~ spark ]]; then \
-      source /root/.sdkman/bin/sdkman-init.sh; \
-      sdk install java 21.0.2-open; \
-      sdk use java 21.0.2-open; \
+      source /root/.sdkman/bin/sdkman-init.sh \
+      && sdk install java 21.0.2-open \
+      && sdk use java 21.0.2-open; \
     fi
 
 # Install uv
@@ -104,6 +98,7 @@ ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
 ENV UV_HTTP_TIMEOUT=300
+ARG UV_INSECURE_HOST
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
     uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
@@ -120,7 +115,7 @@ ARG GIT_REF="main"
 
 # Use PyPI as the default pip index,
 # otherwise, use the specified.
-ARG PIP_INDEX_URL=''
+ARG VM_PIP_INDEX_URL=''
 
 ARG RECO_DIR="/root/Recommenders"
 
@@ -135,9 +130,9 @@ RUN --mount=type=cache,target=/opt/uv-cache/ \
     { count=0; \
       while true; do \
           if [ -z "${GIT_REF}" ]; then \
-              uv pip install --index "${PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
+              uv pip install --index "${VM_PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
           else \
-              uv pip install --index "${PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
+              uv pip install --index "${VM_PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \
           fi \
           && break \
           || { ((count++)); if [[ $count -lt 5 ]]; then sleep 5; else exit 1; fi; } \
