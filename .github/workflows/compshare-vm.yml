@@ -50,11 +50,7 @@ on:
       pr_code_dir:
         required: false
         type: string
-        default: >
-          ${{ github.event_name == 'pull_request_target'
-              && format('pr_{0}', github.event.number)
-              || ''
-          }}
+        default: ${{ github.event_name == 'pull_request_target' && format('pr_{0}', github.event.number) || '' }}
       timeout-minutes:
         required: true
         type: number
@@ -90,11 +86,7 @@ jobs:
       - name: Check out repository code from PR
         uses: actions/checkout@v6
         with:
-          ref: >
-            ${{ github.event_name == 'pull_request_target'
-                && format('refs/pull/{0}/merge', github.event.number)
-                || github.ref
-            }}
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.number) || github.ref }}
 
       - name: Get test group names
         id: get-test-groups
@@ -136,10 +128,7 @@ jobs:
         # * GPU tests should run on GPUs.
         # * cpu-nightly needs to run on larger CPU runner.
         # * Otherwise, standard runner is enough.
-        if: >
-          ${{ contains(matrix.group, 'gpu')
-              || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu'))
-          }}
+        if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         env:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
@@ -178,11 +167,7 @@ jobs:
           VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
           VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
           VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
-        working-directory: >
-          ${{ github.event_name == 'pull_request_target'
-            && inputs.pr_code_dir
-            || github.workspace
-          }}
+        working-directory: ${{ github.event_name == 'pull_request_target' && inputs.pr_code_dir || github.workspace }}
         run: |
           image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}'
 
@@ -258,11 +243,7 @@ jobs:
         env:
           VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
-        working-directory: >
-          ${{ github.event_name == 'pull_request_target'
-            && inputs.pr_code_dir
-            || github.workspace
-          }}
+        working-directory: ${{ github.event_name == 'pull_request_target' && inputs.pr_code_dir || github.workspace }}
         run: |
           test_list="$(yq \
               '.${{ inputs.type }}.${{ matrix.group }} | map(@sh) | join(" ")' \
