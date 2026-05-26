@@ -25,6 +25,10 @@ try:
         data_preprocessing,
     )
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+    from recommenders.models.deeprec.models.sequential.gru import GRUModel
+    from recommenders.models.deeprec.io.torch.sequential_iterator import (
+        SequentialIterator as SequentialIteratorTorch,
+    )
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
 
 except ImportError:
@@ -240,6 +244,78 @@ def test_model_sum(deeprec_resource_path, deeprec_config_path):
         model.fit(train_file, valid_file, valid_num_ngs=valid_num_ngs), BaseModel
     )
     assert model.predict(valid_file, output_file) is not None
+
+
+@pytest.mark.gpu
+def test_model_gru(deeprec_resource_path):
+    data_path = os.path.join(deeprec_resource_path, "slirec")
+    train_file = os.path.join(data_path, r"train_data")
+    valid_file = os.path.join(data_path, r"valid_data")
+    test_file = os.path.join(data_path, r"test_data")
+    output_file = os.path.join(data_path, "output.txt")
+    user_vocab = os.path.join(data_path, r"user_vocab.pkl")
+    item_vocab = os.path.join(data_path, r"item_vocab.pkl")
+    cate_vocab = os.path.join(data_path, r"category_vocab.pkl")
+
+    train_num_ngs = 4
+    valid_num_ngs = 4
+    test_num_ngs = 9
+
+    if not os.path.exists(train_file):
+        reviews_name = "reviews_Movies_and_TV_5.json"
+        meta_name = "meta_Movies_and_TV.json"
+        reviews_file = os.path.join(data_path, reviews_name)
+        meta_file = os.path.join(data_path, meta_name)
+        sample_rate = 0.005
+
+        input_files = [
+            reviews_file,
+            meta_file,
+            train_file,
+            valid_file,
+            test_file,
+            user_vocab,
+            item_vocab,
+            cate_vocab,
+        ]
+        download_and_extract(reviews_name, reviews_file)
+        download_and_extract(meta_name, meta_file)
+        data_preprocessing(
+            *input_files,
+            sample_rate=sample_rate,
+            valid_num_ngs=valid_num_ngs,
+            test_num_ngs=test_num_ngs
+        )
+
+    iterator = SequentialIteratorTorch(
+        user_vocab=user_vocab,
+        item_vocab=item_vocab,
+        cate_vocab=cate_vocab,
+        max_seq_length=50,
+        batch_size=400,
+    )
+
+    model = GRUModel(
+        user_vocab_length=iterator.user_vocab_length,
+        item_vocab_length=iterator.item_vocab_length,
+        cate_vocab_length=iterator.cate_vocab_length,
+    )
+    assert isinstance(
+        model.fit(
+            train_file=train_file,
+            valid_file=valid_file,
+            user_vocab=user_vocab,
+            item_vocab=item_vocab,
+            cate_vocab=cate_vocab,
+            valid_num_ngs=valid_num_ngs,
+            train_num_ngs=train_num_ngs,
+            epochs=1,
+            learning_rate=0.01,
+        ),
+        GRUModel,
+    )
+    assert model.run_eval(valid_file, num_ngs=valid_num_ngs) is not None
+    assert model.predict(test_file, output_file) is not None
 
 
 @pytest.mark.gpu

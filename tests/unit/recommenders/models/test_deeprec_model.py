@@ -28,6 +28,7 @@ try:
     from recommenders.models.deeprec.models.dkn import DKN
     from recommenders.models.deeprec.models.dkn_item2item import DKNItem2Item
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+    from recommenders.models.deeprec.models.sequential.gru import GRUModel
     from recommenders.models.deeprec.models.sequential.nextitnet import (
         NextItNetModel,
     )
@@ -334,6 +335,40 @@ def test_sum_component_definition(sequential_files, deeprec_config_path):
     assert model_sum.hparams.embed_l2 == 0.0
     assert model_sum.hparams.layer_l2 == 0.0
     assert model_sum.hparams.need_sample is True
+
+
+@pytest.mark.gpu
+def test_gru_component_definition(sequential_files, deeprec_config_path):
+    _, user_vocab, item_vocab, cate_vocab = sequential_files
+    from recommenders.models.deeprec.deeprec_utils import load_dict
+
+    user_vocab_length = len(load_dict(user_vocab))
+    item_vocab_length = len(load_dict(item_vocab))
+    cate_vocab_length = len(load_dict(cate_vocab))
+
+    model = GRUModel(
+        user_vocab_length=user_vocab_length,
+        item_vocab_length=item_vocab_length,
+        cate_vocab_length=cate_vocab_length,
+        user_embedding_dim=16,
+        item_embedding_dim=32,
+        cate_embedding_dim=8,
+        max_seq_length=50,
+        hidden_size=40,
+        layer_sizes=(100, 64),
+        activations=("relu", "relu"),
+        dropout=(0.3, 0.3),
+        enable_BN=True,
+    )
+
+    assert model.user_embedding.weight.shape == (user_vocab_length, 16)
+    assert model.item_embedding.weight.shape == (item_vocab_length, 32)
+    assert model.cate_embedding.weight.shape == (cate_vocab_length, 8)
+    assert model.hidden_size == 40
+    assert model.max_seq_length == 50
+    assert model.gru.input_size == 32 + 8
+    assert model.gru.hidden_size == 40
+    assert model.fcn.out.out_features == 1
 
 
 @pytest.mark.gpu
