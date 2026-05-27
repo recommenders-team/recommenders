@@ -38,9 +38,6 @@ more_than_half_hour="${2:-}"
 requirements="${3:-}"
 [[ -z "${vm_name}" || -z "${more_than_half_hour}" ]] && exit 1
 
-# CompShare API specification JSON file
-COMPSHARE_SPEC_FILE="${SCRIPT_DIR}/spec.json"
-
 # Utility functions
 SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
 

@@ -10,35 +10,110 @@
 # functions:
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
-# * COMPSHARE_SPEC_FILE
 ######################################################################
 
 #---------------------------------------------------------------------
 # Utils used by other CompShare API wrappers and utils
 #---------------------------------------------------------------------
 get_compute_spec() {
-    # Get the specification for all computes available in the
-    # CompShare specification file, which is in the form below:
-    #
-    #   {
-    #       "Compute": [  # available computes ranked by their hourly price
-    #           {
-    #               "GPUType": "P40",
-    #               "Price": 0.38,
-    #               ...
-    #           },
-    #           ...
-    #       ]
-    #       "Action": {
-    #           "DescribeCompShareInstance": {
-    #               ...
-    #           },
-    #           ...
-    #       }
-    #   }
+    # Return the specification for all available CompShare computes.
     local compute_spec
-    # COMPSHARE_SPEC_FILE is not set directly in the script
-    compute_spec="$(jq '.Compute | sort_by(.Price)' "${COMPSHARE_SPEC_FILE}")"
+    compute_spec="$(cat << 'EOF'
+        [
+            {
+                "GPUType": "P40",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 24
+                },
+                "CPU": 8,
+                "Price": 0.38
+            },
+            {
+                "GPUType": "2080",
+                "Memory": {
+                    "CPU": 40,
+                    "GPU": 8
+                },
+                "CPU": 8,
+                "Price": 0.39
+            },
+            {
+                "GPUType": "3080Ti",
+                "Memory": {
+                    "CPU": 32,
+                    "GPU": 12
+                },
+                "CPU": 12,
+                "Price": 0.7
+            },
+            {
+                "GPUType": "3090",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 24
+                },
+                "CPU": 16,
+                "Price": 1.13
+            },
+            {
+                "GPUType": "4090",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 24
+                },
+                "CPU": 16,
+                "Price": 1.88
+            },
+            {
+                "GPUType": "5090",
+                "Memory": {
+                    "CPU": 96,
+                    "GPU": 32
+                },
+                "CPU": 16,
+                "Price": 3.0
+            },
+            {
+                "GPUType": "4090_48G",
+                "Memory": {
+                    "CPU": 96,
+                    "GPU": 48
+                },
+                "CPU": 16,
+                "Price": 3.13
+            },
+            {
+                "GPUType": "A800",
+                "Memory": {
+                    "CPU": 240,
+                    "GPU": 80
+                },
+                "CPU": 16,
+                "Price": 5.92
+            },
+            {
+                "GPUType": "H20",
+                "Memory": {
+                    "CPU": 240,
+                    "GPU": 96
+                },
+                "CPU": 16,
+                "Price": 7.12
+            },
+            {
+                "GPUType": "A100",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 80
+                },
+                "CPU": 16,
+                "Price": 10.21
+            }
+        ]
+EOF
+    )"
+    compute_spec="$(echo "${compute_spec}" | jq 'sort_by(.Price)')"
     echo "${compute_spec}"
 }
 
@@ -51,8 +126,56 @@ get_action_template() {
     [[ -z "${action}" ]] && return 1
 
     local action_template
-    # COMPSHARE_SPEC_FILE is not set directly in the script
-    action_template="$(jq ".Action.${action}" "${COMPSHARE_SPEC_FILE}")"
+    action_template="$(cat << 'EOF'
+        [
+            {
+                "Action": "CreateCompShareInstance",
+                "ChargeType": "Postpay",
+                "CompShareImageId": "compshareImage-12rjyhwynazd",
+                "Disks.0.IsBoot": true,
+                "Disks.0.Size": 100,
+                "Disks.0.Type": "CLOUD_SSD",
+                "GPU": 1,
+                "GPUType": "",
+                "MachineType": "G",
+                "Memory": 65536,
+                "Name": "",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "CPU": 8
+            },
+            {
+                "Action": "DescribeCompShareInstance"
+            },
+            {
+                "Action": "GetProjectList"
+            },
+            {
+                "Action": "StopCompShareInstance",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "UHostId": ""
+            },
+            {
+                "Action": "TerminateCompShareInstance",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "UHostId": "",
+                "ReleaseUDisk": true
+            },
+            {
+                "Action": "UpdateCompShareStopScheduler",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "ProjectId": "org-hmgw4i",
+                "UHostId": "",
+                "SchedulerStopTime": 1779164372
+            }
+        ]
+EOF
+    )"
+    action_template="$(echo "${action_template}" \
+        | jq ".[] | select(.Action == \"${action}\"")"
 
     # COMPSHARE_PUBLIC_KEY is not set directly in the script
     action_template="$(echo "${action_template}" \
