@@ -4,13 +4,18 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# The following environment variables must be set:
+# Utils for CompShare APIs
+#
+# The following environment variables must be set when using these
+# functions:
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
 # * COMPSHARE_SPEC_FILE
 ######################################################################
-# Utils used by other functions
-######################################################################
+
+#---------------------------------------------------------------------
+# Utils used by other CompShare API wrappers and utils
+#---------------------------------------------------------------------
 get_compute_spec() {
     # Get the specification for all computes available in the
     # CompShare specification file, which is in the form below:
@@ -100,33 +105,6 @@ gen_action_digest() {
     echo "${digest}"
 }
 
-update_json() {
-    # Update a JSON with another JSON
-    #
-    # Params:
-    # * the original JSON
-    # * the JSON with all updates
-    local original="${1:-}"
-    local updates="${2:-}"
-    [[ -z "${updates}" || -z "${original}" ]] && return 1
-
-    local res
-    res=$(jq -s '
-        def update($a; $b):
-            ($a | type) as $ta | ($b | type) as $tb |
-            if $ta == "object" and $tb == "object" then
-                reduce ([$a, $b] | add | keys_unsorted[]) as $k
-                    ({}; .[$k] = update($a[$k]; $b[$k]))
-            elif $ta == "array" and $tb == "array" then
-                $a + $b
-            else
-                $b // $a
-            end;
-        reduce .[] as $item (null; update(.; $item))' \
-        <(echo "${original}") <(echo "${updates}"))
-    echo "${res}"
-}
-
 gen_request_url() {
     # Generate the API request URL using the action specification and
     # the parameter digest
@@ -185,9 +163,9 @@ invoke_action() {
 }
 
 
-######################################################################
-# Functions for CompShare APIs
-######################################################################
+#---------------------------------------------------------------------
+# CompShare API wrappers
+#---------------------------------------------------------------------
 create_instance() {
     # Create a VM instance
     # See https://www.compshare.cn/docs/operation/api/createcompshareinstance
@@ -315,56 +293,9 @@ update_stop_scheduler() {
 }
 
 
-######################################################################
-# Other utils
-######################################################################
-check_vm_requirement() {
-    # Check if the VM specification match the requirements.
-    #
-    # Params:
-    # * VM specification in JSON
-    # * requirements in JSON
-    local spec="${1:-}"
-    local requirements="${2:-}"
-
-    local match
-    match=$(jq -s '
-        def equalstr($a; $b):
-            if ($a | startswith(" ")) then
-                equalstr(($a | ltrimstr(" ")); $b)
-            elif ($a | endswith(" ")) then
-                equalstr(($a | rtrimstr(" ")); $b)
-            else
-                $a == $b
-            end;
-        def compareitem($req; $spec; $i):
-            ($req | getpath($i)) as $a
-            | ($spec | getpath($i)) as $b
-            | ($a | type) as $ta
-            | if $ta == "string" then
-                $a | if startswith("!") then
-                    $a | ltrimstr("!") | split(",")
-                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
-                else
-                    $a | split(",")
-                    | reduce .[] as $i (false; . or equalstr($i; $b))
-                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
-                end
-            elif $ta == "number" then
-                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
-            else
-                true
-            end;
-        .[0] as $req
-        | .[1] as $spec
-        | .[0] | [path(..)]
-        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-        <(echo "${requirements}") <(echo "${spec}"))
-
-    echo "${match}"
-}
-
+#---------------------------------------------------------------------
+# CompShare API utils
+#---------------------------------------------------------------------
 allocate_vm() {
     # Create a VM with random names and password from available types
     #
@@ -428,24 +359,13 @@ allocate_vm() {
 
         for index in "${!charge_type_list[@]}"; do
             charge_type="${charge_type_list[${index}]}"
-            local response
-            for ((j=0; j<3; j++)); do
-                response=$(create_instance \
-                    "${vm_name}" \
-                    "${encoded_password_file}" \
-                    "${gpu_type}" \
-                    "${cpu_cores}" \
-                    "${memory}" \
-                    "${charge_type}")
-
-                local retcode
-                retcode="$(echo "${response}" | jq '.RetCode')"
-                if [[ ${retcode} == 0 ]]; then
-                    return
-                fi
-                echo "ERROR: ${response}" >&2
-                sleep 5
-            done
+            api_call_retry 3 create_instance \
+                "${vm_name}" \
+                "${encoded_password_file}" \
+                "${gpu_type}" \
+                "${cpu_cores}" \
+                "${memory}" \
+                "${charge_type}" > /dev/null && return
         done
     done
     return 1
@@ -465,23 +385,7 @@ get_vm_info() {
 
     echo "Getting info of the VM ..." >&2
     local response
-    local retcode
-    local count=0
-    while true; do
-        response="$(describe_instance)"
-        retcode="$(echo "${response}" | jq '.RetCode')"
-        if [[ ${retcode} == 0 ]]; then
-            break
-        fi
-        echo "* Failed to get the info: ${response}." >&2
-        count=$((count + 1))
-        if [[ $count -lt 5 ]]; then
-            sleep $(( (count+1) * 5 ))
-            echo '* Trying again ...' >&2
-        else
-            return 1
-        fi
-    done
+    response="$(api_call_retry describe_instance)"
 
     local vm_info
     vm_info="$(echo "${response}" \
@@ -497,6 +401,120 @@ get_vm_info() {
 
     echo "${vm_id}"
     echo "${ssh_dest}"
+}
+
+api_call_retry() {
+    # Run the API call in "$@" and retry max_attempts
+    # ("$1" if provided) on failure.
+    # 
+    local max_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        max_attempts="$1"
+        shift
+    fi
+
+    local delay=5
+    local attempt=1
+    local response
+    while true; do
+        response="$("$@")"
+
+        local retcode
+        retcode="$(echo "${response}" | jq '.RetCode')"
+        if [[ ${retcode} == 0 ]]; then
+            break
+        fi
+        echo "ERROR: ${response}" >&2
+        if ((attempt >= max_attempts)); then
+            echo "ERROR: API call failed after ${max_attempts} attempts." >&2
+            return 1
+        fi
+        echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
+        sleep "${delay}"
+        ((attempt++))
+    done
+
+    echo "${response}"
+}
+
+
+######################################################################
+# Non Compshare API utils
+#
+# These utils do not require any preset environment variables.
+######################################################################
+update_json() {
+    # Update a JSON with another JSON
+    #
+    # Params:
+    # * the original JSON
+    # * the JSON with all updates
+    local original="${1:-}"
+    local updates="${2:-}"
+    [[ -z "${updates}" || -z "${original}" ]] && return 1
+
+    local res
+    res=$(jq -s '
+        def update($a; $b):
+            ($a | type) as $ta | ($b | type) as $tb |
+            if $ta == "object" and $tb == "object" then
+                reduce ([$a, $b] | add | keys_unsorted[]) as $k
+                    ({}; .[$k] = update($a[$k]; $b[$k]))
+            elif $ta == "array" and $tb == "array" then
+                $a + $b
+            else
+                $b // $a
+            end;
+        reduce .[] as $item (null; update(.; $item))' \
+        <(echo "${original}") <(echo "${updates}"))
+    echo "${res}"
+}
+
+check_vm_requirement() {
+    # Check if the VM specification match the requirements.
+    #
+    # Params:
+    # * VM specification in JSON
+    # * requirements in JSON
+    local spec="${1:-}"
+    local requirements="${2:-}"
+
+    local match
+    match=$(jq -s '
+        def equalstr($a; $b):
+            if ($a | startswith(" ")) then
+                equalstr(($a | ltrimstr(" ")); $b)
+            elif ($a | endswith(" ")) then
+                equalstr(($a | rtrimstr(" ")); $b)
+            else
+                $a == $b
+            end;
+        def compareitem($req; $spec; $i):
+            ($req | getpath($i)) as $a
+            | ($spec | getpath($i)) as $b
+            | ($a | type) as $ta
+            | if $ta == "string" then
+                $a | if startswith("!") then
+                    $a | ltrimstr("!") | split(",")
+                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
+                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+                else
+                    $a | split(",")
+                    | reduce .[] as $i (false; . or equalstr($i; $b))
+                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                end
+            elif $ta == "number" then
+                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+            else
+                true
+            end;
+        .[0] as $req
+        | .[1] as $spec
+        | .[0] | [path(..)]
+        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
+        <(echo "${requirements}") <(echo "${spec}"))
+
+    echo "${match}"
 }
 
 wait_for_vm_to_be_available() {
@@ -550,18 +568,11 @@ setup_ssh_key() {
     echo '* Deplying SSH key ...' >&2
     local -x SSHPASS
     read -r SSHPASS < <(cat "${encoded_password_file}" | tr -d '\n' | base64 -d) || true
-    local count=0
-    until sshpass -e ssh-copy-id \
+    run_cmd_retry sshpass -e ssh-copy-id \
         -i "${key_file}.pub" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${ssh_dest}"
-    do
-        [[ "${count}" -gt 5 ]] && return 1
-        count=$((count + 1))
-        sleep 5
-        echo '  + Trying again ...' >&2
-    done
 
     echo '* Disabling SSH password authentication ...' >&2
     ssh -t -o StrictHostKeyChecking=no \
@@ -569,4 +580,41 @@ setup_ssh_key() {
         "${ssh_dest}" "\
             sudo sed -i -E 's/^[[:space:]#]*PasswordAuthentication.*/PasswordAuthentication no/' ${sshd_config}; \
             sudo systemctl reload ssh"
+}
+
+apt_install_retry() {
+    # Run apt-get install "$@" and retry max_attempts
+    # ("$1" if provided) on failure.
+    run_cmd_retry sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+        apt-get install -y "$@"
+}
+
+run_cmd_retry() {
+    # Run the command in "$@" and retry max_attempts
+    # ("$1" if provided) on failure.
+    local max_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        max_attempts="$1"
+        shift
+    fi
+
+    local delay=5
+    local attempt=1
+    until "$@"; do
+        if ((attempt >= max_attempts)); then
+            echo "ERROR: Failed after ${max_attempts} attempts." >&2
+            return 1
+        fi
+        echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
+        sleep "${delay}"
+        ((attempt++))
+    done
+}
+
+wait_for_apt_lock() {
+    # Wait for processes releasing /var/lib/apt/lists/lock
+    while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
+        echo 'Waiting for processes releasing /var/lib/apt/lists/lock ...' >&2
+        sleep 5
+    done
 }
