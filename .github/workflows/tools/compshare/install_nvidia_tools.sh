@@ -33,7 +33,7 @@ sudo apt-get update
 apt_install_retry gcc "linux-headers-$(uname -r)"
 
 echo '* Installing cuda-keyring ...'
-curl -fsSL --retry 5 --retry-delay 10 --retry-all-errors "${CUDA_KEYRING_URL}" -o "${CUDA_KEYRING}"
+run_cmd_retry curl -fsSL "${CUDA_KEYRING_URL}" -o "${CUDA_KEYRING}"
 sudo dpkg -i "${CUDA_KEYRING}"
 rm -f "${CUDA_KEYRING}"
 sudo apt-get update
