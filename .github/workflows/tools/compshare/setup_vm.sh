@@ -108,12 +108,3 @@ for index in "${!SCRIPTS_SETUP[@]}"; do
         wait_for_vm_to_be_available "${ssh_dest}"
     fi
 done
-
-echo 'Removing uploaded scripts on the VM ...'
-for index in "${!SCRIPTS_ALL[@]}"; do
-    script="$(basename "${SCRIPTS_ALL[${index}]}")"
-    echo "* Removing ${script} ..."
-    ssh -t -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "rm -rf ./${script}"
-done
