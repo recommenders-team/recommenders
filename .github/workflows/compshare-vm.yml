@@ -61,18 +61,6 @@ on:
     secrets:
       COMPSHARE_PRIVATE_KEY:
         required: true
-      COMPSHARE_PUBLIC_KEY:
-        required: true
-      VM_DOCKER_MIRROR_URL:
-        required: false
-      VM_HTTP_PROXY:
-        required: false
-      VM_HTTPS_PROXY:
-        required: false
-      VM_PIP_INDEX_URL:
-        required: false
-      VM_PROXY_CERTIFICATE:
-        required: false
 
 jobs:
   get-test-groups:
@@ -131,11 +119,11 @@ jobs:
         if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         env:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-          COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
-          VM_DOCKER_MIRROR_URL: ${{ secrets.VM_DOCKER_MIRROR_URL }}
-          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
-          VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
-          VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
+          COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
+          VM_DOCKER_MIRROR_URL: ${{ vars.VM_DOCKER_MIRROR_URL }}
+          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
+          VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
         run: |
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
           commit="$(echo ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }} | head -c 5)"
@@ -162,10 +150,10 @@ jobs:
 
       - name: Build image
         env:
-          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
-          VM_HTTPS_PROXY: ${{ secrets.VM_HTTPS_PROXY }}
-          VM_PIP_INDEX_URL: ${{ secrets.VM_PIP_INDEX_URL }}
-          VM_PROXY_CERTIFICATE: ${{ secrets.VM_PROXY_CERTIFICATE }}
+          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
+          VM_PIP_INDEX_URL: ${{ vars.VM_PIP_INDEX_URL }}
+          VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
         working-directory: ${{ github.event_name == 'pull_request_target' && inputs.pr_code_dir || github.workspace }}
         run: |
           image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}'
@@ -231,7 +219,7 @@ jobs:
 
       - name: Execute tests in container
         env:
-          VM_HTTP_PROXY: ${{ secrets.VM_HTTP_PROXY }}
+          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
           RECO_VENV_DIR: /root/.venvs/Recommenders
         working-directory: ${{ github.event_name == 'pull_request_target' && inputs.pr_code_dir || github.workspace }}
         run: |
@@ -265,7 +253,7 @@ jobs:
         if: always()
         env:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-          COMPSHARE_PUBLIC_KEY: ${{ secrets.COMPSHARE_PUBLIC_KEY }}
+          COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
         run: |
           if [[ -n "${VM_NAME}" ]]; then
               bash '${{ inputs.compshare_tools_dir }}/delete_vm.sh' "${VM_NAME}"
