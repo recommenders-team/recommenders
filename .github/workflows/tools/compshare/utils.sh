@@ -175,7 +175,7 @@ get_action_template() {
 EOF
     )"
     action_template="$(echo "${action_template}" \
-        | jq ".[] | select(.Action == \"${action}\"")"
+        | jq ".[] | select(.Action == \"${action}\")")"
 
     # COMPSHARE_PUBLIC_KEY is not set directly in the script
     action_template="$(echo "${action_template}" \
