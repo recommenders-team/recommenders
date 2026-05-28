@@ -535,7 +535,7 @@ api_call_retry() {
     # (5 by default) on failure.
     #
     # Params:
-    # * number of attempts
+    # * (optional) number of attempts
     local num_attempts=5
     if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
         num_attempts="$1"
@@ -647,7 +647,8 @@ check_vm_requirement() {
 }
 
 wait_for_vm_to_be_available() {
-    # Check and wait for the VM being available
+    # Check and wait for the VM being available.
+    # It will fail if the VM cannot be accessed after 300 seconds.
     #
     # Params:
     # * SSH destination, in the format like `user@ip_address`
@@ -712,26 +713,39 @@ setup_ssh_key() {
 }
 
 apt_install_retry() {
-    # Run apt-get install "$@" and retry max_attempts
-    # ("$1" if provided) on failure.
-    run_cmd_retry sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+    # Run apt-get install "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # Params:
+    # * (optional) number of attempts
+    local num_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        num_attempts="$1"
+        shift
+    fi
+
+    run_cmd_retry "${num_attempts}" \
+        sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
         apt-get install -y "$@"
 }
 
 run_cmd_retry() {
-    # Run the command in "$@" and retry max_attempts
-    # ("$1" if provided) on failure.
-    local max_attempts=5
+    # Run the command in "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # Params:
+    # * (optional) number of attempts
+    local num_attempts=5
     if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
-        max_attempts="$1"
+        num_attempts="$1"
         shift
     fi
 
     local delay=5
     local attempt=1
     until "$@"; do
-        if ((attempt >= max_attempts)); then
-            echo "ERROR: Failed after ${max_attempts} attempts." >&2
+        if ((attempt >= num_attempts)); then
+            echo "ERROR: Failed after ${num_attempts} attempts." >&2
             return 1
         fi
         echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
