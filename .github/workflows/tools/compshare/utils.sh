@@ -266,6 +266,7 @@ invoke_action() {
     local action="${1:-}"
     local updates="${2:-}"
     local encoded_password_file="${3:-}"
+    [[ -z "${action}" ]] && return 1
 
     local request_url
     request_url="$(gen_request_url \
