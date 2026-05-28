@@ -461,6 +461,7 @@ allocate_vm() {
         compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
         echo "* Trying spec: ${compute}" >&2
 
+        # Check if the compute satisfy requirements
         if [[ -n "${requirements}" ]]; then
             local match
             match="$(check_vm_requirement \
@@ -483,6 +484,8 @@ allocate_vm() {
 
         for index in "${!charge_type_list[@]}"; do
             charge_type="${charge_type_list[${index}]}"
+
+            # Try to create the VM 3 times
             api_call_retry 3 create_instance \
                 "${vm_name}" \
                 "${encoded_password_file}" \
@@ -528,12 +531,14 @@ get_vm_info() {
 }
 
 api_call_retry() {
-    # Run the API call in "$@" and retry max_attempts
-    # ("$1" if provided) on failure.
-    # 
-    local max_attempts=5
+    # Run the API call in "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # Params:
+    # * number of attempts
+    local num_attempts=5
     if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
-        max_attempts="$1"
+        num_attempts="$1"
         shift
     fi
 
@@ -549,8 +554,8 @@ api_call_retry() {
             break
         fi
         echo "ERROR: ${response}" >&2
-        if ((attempt >= max_attempts)); then
-            echo "ERROR: API call failed after ${max_attempts} attempts." >&2
+        if ((attempt >= num_attempts)); then
+            echo "ERROR: API call failed after ${num_attempts} attempts." >&2
             return 1
         fi
         echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
