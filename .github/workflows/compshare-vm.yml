@@ -191,6 +191,19 @@ jobs:
               docker build . ${docker_args}
           else
               echo "Building Docker image on the VM ${VM_NAME} ..."
+              echo '* Copying repo files to avoid git clone failure on the VM ...'
+              tar cf ../recommenders.tar *
+              scp -q -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  ../recommenders.tar "${SSH_DEST}":
+              rm -rf ../recommenders.tar
+              ssh -t -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  "${SSH_DEST}" "\
+                      mkdir recommenders \
+                      && tar xf recommenders.tar -C recommenders \
+                      && rm -rf recommenders.tar"
+
               pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" | sed -e 's|^.*://||' -e 's|:.*$||')"
               pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
               docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
@@ -205,37 +218,15 @@ jobs:
                   --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}' \
                   --build-arg UV_INSECURE_HOST='github.com'"
 
-              echo '* Copying repo files to avoid git clone failure on the VM ...'
-              tar cf ../recommenders.tar *
-              scp -q -o StrictHostKeyChecking=no \
-                  -o UserKnownHostsFile=/dev/null \
-                  ../recommenders.tar "${SSH_DEST}":
-              rm -rf ../recommenders.tar
-              ssh -t -o StrictHostKeyChecking=no \
-                  -o UserKnownHostsFile=/dev/null \
-                  "${SSH_DEST}" "\
-                      mkdir recommenders \
-                      && tar xf recommenders.tar -C recommenders \
-                      && rm -rf recommenders.tar"
-
               echo '* Building the final image ...'
-              count=0
-              until ssh -t -o StrictHostKeyChecking=no \
-                      -o UserKnownHostsFile=/dev/null \
-                      -o ServerAliveInterval=60 \
-                      -o ServerAliveCountMax=10 \
-                      "${SSH_DEST}" "\
-                          cd recommenders; \
-                          docker build . ${docker_args}"; do
-                  echo '  + Failed to build the final image'
-                  count=$((count + 1))
-                  if [[ $count -lt 5 ]]; then
-                      sleep 5
-                      echo '  + Trying again ...'
-                  else
-                      exit 1
-                  fi
-              done
+              source '${{ inputs.compshare_tools_dir }}/utils.sh'
+              run_cmd_retry ssh -t -o StrictHostKeyChecking=no \
+                  -o UserKnownHostsFile=/dev/null \
+                  -o ServerAliveInterval=60 \
+                  -o ServerAliveCountMax=10 \
+                  "${SSH_DEST}" "\
+                      cd recommenders; \
+                      docker build . ${docker_args}"
           fi
 
       - name: Execute tests in container
