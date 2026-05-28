@@ -400,7 +400,7 @@ update_stop_scheduler() {
     #
     # Params:
     # * VM ID
-    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC)
+    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC), in 3 hours by default
     local vm_id="${1:-}"
     local stop_time="${2:-}"
     [[ -z "${vm_id}" ]] && return 1
