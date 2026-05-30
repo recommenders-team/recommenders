@@ -177,11 +177,14 @@ class GRUModel(nn.Module):
         # (1, B, H); the trailing dim matches TF dynamic_rnn output.
         self.gru = nn.GRU(rnn_in, hidden_size, batch_first=True)
 
-        # Model output concatenates the GRU final state with the target item
-        # embedding (item + cate), matching the TF _build_seq_graph.
+        # Model output concatenates the GRU final state, the target item
+        # embedding (item + cate), and the user embedding. The TF reference
+        # built ``self.user_embedding`` but never consumed it in the GRU
+        # variant; wiring it into the FCN input (a per-instance, time-
+        # invariant feature) is a small improvement, not a port-time bug.
         self.target_dim = item_embedding_dim + cate_embedding_dim
         self.fcn = _FCN(
-            in_dim=hidden_size + self.target_dim,
+            in_dim=hidden_size + self.target_dim + user_embedding_dim,
             layer_sizes=layer_sizes,
             activations=activations,
             dropout=dropout,
@@ -205,6 +208,7 @@ class GRUModel(nn.Module):
 
     def forward(
         self,
+        users: torch.Tensor,
         items: torch.Tensor,
         cates: torch.Tensor,
         item_history: torch.Tensor,
@@ -214,6 +218,7 @@ class GRUModel(nn.Module):
         """Compute the per-instance logit.
 
         Args:
+            users (LongTensor): ``(B,)`` user ids.
             items (LongTensor): ``(B,)`` target item ids.
             cates (LongTensor): ``(B,)`` target category ids.
             item_history (LongTensor): ``(B, T)`` history item ids.
@@ -239,7 +244,8 @@ class GRUModel(nn.Module):
         target_emb = torch.cat(
             [self.item_embedding(items), self.cate_embedding(cates)], dim=1
         )
-        model_output = torch.cat([final_state, target_emb], dim=1)
+        user_emb = self.user_embedding(users)
+        model_output = torch.cat([final_state, target_emb, user_emb], dim=1)
         return self.fcn(model_output)
 
     # --- losses & regularization ---------------------------------------------
@@ -292,6 +298,7 @@ class GRUModel(nn.Module):
     def _to_device(self, batch: dict[str, np.ndarray]) -> dict[str, torch.Tensor]:
         return {
             "labels": torch.from_numpy(batch["labels"]).float().to(self.device),
+            "users": torch.from_numpy(batch["users"].astype(np.int64)).to(self.device),
             "items": torch.from_numpy(batch["items"].astype(np.int64)).to(self.device),
             "cates": torch.from_numpy(batch["cates"].astype(np.int64)).to(self.device),
             "item_history": torch.from_numpy(
@@ -427,7 +434,7 @@ class GRUModel(nn.Module):
 
                 self.optimizer.zero_grad(set_to_none=True)
                 logit = self.forward(
-                    t["items"], t["cates"], t["item_history"],
+                    t["users"], t["items"], t["cates"], t["item_history"],
                     t["item_cate_history"], t["mask"],
                 )
                 data_loss = self._data_loss(logit, t["labels"])
@@ -517,7 +524,7 @@ class GRUModel(nn.Module):
                     continue
                 t = self._to_device(batch)
                 logit = self.forward(
-                    t["items"], t["cates"], t["item_history"],
+                    t["users"], t["items"], t["cates"], t["item_history"],
                     t["item_cate_history"], t["mask"],
                 )
                 pred = torch.sigmoid(logit).reshape(-1).cpu().numpy()
@@ -544,7 +551,7 @@ class GRUModel(nn.Module):
                     continue
                 t = self._to_device(batch)
                 logit = self.forward(
-                    t["items"], t["cates"], t["item_history"],
+                    t["users"], t["items"], t["cates"], t["item_history"],
                     t["item_cate_history"], t["mask"],
                 )
                 pred = torch.sigmoid(logit).reshape(-1).cpu().numpy()
@@ -552,10 +559,21 @@ class GRUModel(nn.Module):
                 wt.write("\n")
         return self
 
-    def load(self, model_path: str) -> None:
-        """Load weights from a ``.pt`` file (or directory containing ``model.pt``)."""
+    def load(
+        self,
+        model_path: str,
+        filename: str = f"best_{MODEL_CHECKPOINT}",
+    ) -> None:
+        """Load weights from a ``.pt`` file, or from ``model_path/<filename>`` if a directory.
+
+        Args:
+            model_path: Path to a ``.pt`` file, or a directory containing one.
+            filename: Checkpoint name to load when ``model_path`` is a directory.
+                Defaults to the best checkpoint written by ``fit(save_model=True)``;
+                pass e.g. ``f"epoch_3_{MODEL_CHECKPOINT}"`` to load a specific epoch.
+        """
         if os.path.isdir(model_path):
-            model_path = os.path.join(model_path, MODEL_CHECKPOINT)
+            model_path = os.path.join(model_path, filename)
         state_dict = torch.load(
             model_path, map_location=self.device, weights_only=True
         )

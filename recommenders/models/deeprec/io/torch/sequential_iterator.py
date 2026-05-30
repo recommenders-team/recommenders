@@ -101,6 +101,13 @@ class SequentialIterator:
 
         time_range = 3600 * 24
 
+        # The three time features below (time_diff, time_from_first_action,
+        # time_to_now) are emitted for the time-aware sequential models
+        # (SLi-Rec consumes them via Time4LSTMCell). GRU intentionally ignores
+        # them; its forward() and _to_device() do not reference these keys,
+        # so the per-batch cost is Python-side computation only (no GPU
+        # transfer). Kept here so the same iterator can serve future
+        # SLi-Rec / time-aware migrations without forking the parser.
         time_diff = []
         for i in range(len(time_history_sequence) - 1):
             diff = (
@@ -309,7 +316,14 @@ class SequentialIterator:
                 item_all.append(positive_item)
                 item_cate_all.append(item_cate_list[i])
                 count = 0
-                while True:
+                attempts = 0
+                while count < batch_num_ngs:
+                    attempts += 1
+                    if attempts > 100 * batch_num_ngs:
+                        raise ValueError(
+                            "could not sample enough distinct negatives; "
+                            "batch has too few unique items"
+                        )
                     j = random.randint(0, instance_cnt - 1)
                     negative_item = item_list[j]
                     if negative_item == positive_item:
@@ -318,8 +332,6 @@ class SequentialIterator:
                     item_all.append(negative_item)
                     item_cate_all.append(item_cate_list[j])
                     count += 1
-                    if count == batch_num_ngs:
-                        break
 
             return {
                 "labels": np.asarray(label_all, dtype=np.float32).reshape(-1, 1),
