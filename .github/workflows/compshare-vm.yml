@@ -224,7 +224,7 @@ jobs:
                       && tar xf recommenders.tar -C recommenders \
                       && rm -rf recommenders.tar"
 
-              pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}"
+              pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" \
                   | sed -e 's|^.*://||' -e 's|:.*$||')"
               pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
               docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
