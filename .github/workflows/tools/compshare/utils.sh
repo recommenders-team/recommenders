@@ -518,6 +518,7 @@ allocate_vm() {
             if jq -e "map(. == \"${charge_type}\") 
                 | any" <<< "${available_charge_type}" > /dev/null
             then
+                echo "  + Trying charge type: ${charge_type} ..." >&2
                 # Try to create the VM 3 times
                 api_call_retry 3 create_instance \
                     "${vm_name}" \
