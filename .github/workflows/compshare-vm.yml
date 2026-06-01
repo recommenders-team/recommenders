@@ -183,7 +183,7 @@ jobs:
         run: |
           if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
           then
-              commit="$(echo ${{ github.event.pull_request.head.sha }}
+              commit="$(echo ${{ github.event.pull_request.head.sha }} \
                   | head -c 5)"
           else
               commit="$(echo ${{ github.sha }} | head -c 5)"
