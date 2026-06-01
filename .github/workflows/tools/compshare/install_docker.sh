@@ -69,7 +69,7 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
     else
         echo "  ## Creating ${daemon_json} ..."
         mkdir -p "$(dirname "${daemon_json}")"
-        echo "${updates}" | jq '.' > "${daemon_json}"
+        jq '.' > "${daemon_json}" <<< "${updates}"
     fi
 fi
 

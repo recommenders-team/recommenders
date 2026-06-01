@@ -27,7 +27,10 @@ get_compute_spec() {
                     "GPU": 24
                 },
                 "CPU": 8,
-                "Price": 0.38
+                "Price": 0.38,
+                "ChargeType": [
+                    "Postpay"
+                ]
             },
             {
                 "GPUType": "2080",
@@ -36,7 +39,10 @@ get_compute_spec() {
                     "GPU": 8
                 },
                 "CPU": 8,
-                "Price": 0.39
+                "Price": 0.39,
+                "ChargeType": [
+                    "Postpay"
+                ]
             },
             {
                 "GPUType": "3080Ti",
@@ -45,7 +51,11 @@ get_compute_spec() {
                     "GPU": 12
                 },
                 "CPU": 12,
-                "Price": 0.7
+                "Price": 0.7,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
             },
             {
                 "GPUType": "3090",
@@ -54,7 +64,11 @@ get_compute_spec() {
                     "GPU": 24
                 },
                 "CPU": 16,
-                "Price": 1.13
+                "Price": 1.13,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
             },
             {
                 "GPUType": "4090",
@@ -63,7 +77,11 @@ get_compute_spec() {
                     "GPU": 24
                 },
                 "CPU": 16,
-                "Price": 1.88
+                "Price": 1.88,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
             },
             {
                 "GPUType": "5090",
@@ -72,7 +90,11 @@ get_compute_spec() {
                     "GPU": 32
                 },
                 "CPU": 16,
-                "Price": 3.0
+                "Price": 3.0,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
             },
             {
                 "GPUType": "4090_48G",
@@ -81,7 +103,10 @@ get_compute_spec() {
                     "GPU": 48
                 },
                 "CPU": 16,
-                "Price": 3.13
+                "Price": 3.13,
+                "ChargeType": [
+                    "Postpay"
+                ]
             },
             {
                 "GPUType": "A800",
@@ -90,7 +115,10 @@ get_compute_spec() {
                     "GPU": 80
                 },
                 "CPU": 16,
-                "Price": 5.92
+                "Price": 5.92,
+                "ChargeType": [
+                    "Postpay"
+                ]
             },
             {
                 "GPUType": "H20",
@@ -99,7 +127,10 @@ get_compute_spec() {
                     "GPU": 96
                 },
                 "CPU": 16,
-                "Price": 7.12
+                "Price": 7.12,
+                "ChargeType": [
+                    "Postpay"
+                ]
             },
             {
                 "GPUType": "A100",
@@ -108,12 +139,16 @@ get_compute_spec() {
                     "GPU": 80
                 },
                 "CPU": 16,
-                "Price": 10.21
+                "Price": 10.21,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
             }
         ]
 EOF
     )"
-    compute_spec="$(echo "${compute_spec}" | jq 'sort_by(.Price)')"
+    compute_spec="$(jq 'sort_by(.Price)' <<< "${compute_spec}")"
     echo "${compute_spec}"
 }
 
@@ -174,12 +209,12 @@ get_action_template() {
         ]
 EOF
     )"
-    action_template="$(echo "${action_template}" \
-        | jq ".[] | select(.Action == \"${action}\")")"
+    action_template="$(jq ".[] | select(.Action == \"${action}\")" \
+        <<< "${action_template}")"
 
     # COMPSHARE_PUBLIC_KEY is not set directly in the script
-    action_template="$(echo "${action_template}" \
-        | jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"")"
+    action_template="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
+        <<< "${action_template}")"
 
     echo "${action_template}"
 }
@@ -251,8 +286,8 @@ gen_request_url() {
     local digest
     digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
     local params
-    params="$(echo "${action_spec}" \
-        | jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")')"
+    params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
+        <<< "${action_spec}")"
     echo "https://api.compshare.cn/?${params}&Signature=${digest}"
 }
 
@@ -426,10 +461,7 @@ allocate_vm() {
     # Params:
     # * VM name
     # * file containing the base64-encoded login password
-    # * whether the VM will be used for more than half an hour
-    #   + Unit tests require less than half hour
-    #   + Nightly tests require more than half hour
-    # * (optional) requirements in JSON, for example
+    # * requirements in JSON, for example
     #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
     #     - It means the GPUType should not be 2080 and P40,
     #       GPU memory should be greater than or equal to 10GB
@@ -438,35 +470,29 @@ allocate_vm() {
     #     - It means the GPUType should be 2080 or P40.
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
-    local more_than_half_hour="${3:-}"
-    local requirements="${4:-}"
+    local requirements="${3:-}"
     [[ -z "${vm_name}" \
       || -z "${encoded_password_file}" \
       || ! -f "${encoded_password_file}" \
-      || -z "${more_than_half_hour}" ]] && return 1
+      || -z "${requirements}" ]] && return 1
 
     echo "Allocating a new VM named ${vm_name} ..." >&2
     local compute_spec
     compute_spec="$(get_compute_spec)"
 
-    local charge_type_list=('Spot' 'Postpay')
-    if [[ "${more_than_half_hour}" == 'yes' ]]; then
-        charge_type_list=('Postpay')
-    fi
-
     local num_computes
-    num_computes="$(echo "${compute_spec}" | jq 'length')"
+    num_computes="$(jq 'length' <<< "${compute_spec}")"
     for ((i=0; i<"${num_computes}"; i++)); do
         local compute
-        compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
+        compute="$(jq -c ".[${i}]" <<< "${compute_spec}")"
         echo "* Trying spec: ${compute}" >&2
 
         # Check if the compute satisfy requirements
-        if [[ -n "${requirements}" ]]; then
+        local reqt
+        reqt="$(jq -e 'del(.ChargeType)' <<< "${requirements}")"
+        if jq -e 'length != 0' <<< "${reqt}" > /dev/null; then
             local match
-            match="$(check_vm_requirement \
-                "${compute}" \
-                "${requirements}")"
+            match="$(check_vm_requirement "${compute}" "${reqt}")"
             if [[ "${match}" != 'true' ]]; then
                 echo '  + Requirements mismatch.' >&2
                 continue
@@ -474,17 +500,18 @@ allocate_vm() {
         fi
 
         local gpu_type
-        gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
+        gpu_type="$(jq -r '.GPUType' <<< "${compute}")"
 
         local cpu_cores
-        cpu_cores="$(echo "${compute}" | jq '.CPU')"
+        cpu_cores="$(jq '.CPU' <<< "${compute}")"
 
         local memory
-        memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
+        memory="$(jq '.Memory.CPU * 1024' <<< "${compute}")"
 
-        for index in "${!charge_type_list[@]}"; do
-            charge_type="${charge_type_list[${index}]}"
-
+        local charge_type_list
+        mapfile -t charge_type_list < \
+            <(jq -rc '.ChargeType.[]' <<< "${requirements}")
+        for charge_type in "${charge_type_list[@]}"; do
             # Try to create the VM 3 times
             api_call_retry 3 create_instance \
                 "${vm_name}" \
@@ -515,16 +542,16 @@ get_vm_info() {
     response="$(api_call_retry describe_instance)"
 
     local vm_info
-    vm_info="$(echo "${response}" \
-        | jq ".UHostSet.[] | select(.Name == \"${vm_name}\")")"
+    vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
+        <<< "${response}")"
     [[ -z "${vm_info}" ]] && return 1
     
     local vm_id
-    vm_id="$(echo "${vm_info}" | jq -r '.UHostId')"
+    vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
 
     local ssh_dest
-    ssh_dest="$(echo "${vm_info}" \
-        | jq -r '.SshLoginCommand' | cut -d ' ' -f 2)"
+    ssh_dest="$(jq -r '.SshLoginCommand' <<< "${vm_info}" \
+        | cut -d ' ' -f 2)"
 
     echo "${vm_id}"
     echo "${ssh_dest}"
@@ -549,7 +576,7 @@ api_call_retry() {
         response="$("$@")"
 
         local retcode
-        retcode="$(echo "${response}" | jq '.RetCode')"
+        retcode="$(jq '.RetCode' <<< "${response}")"
         if [[ ${retcode} == 0 ]]; then
             break
         fi
@@ -604,7 +631,13 @@ check_vm_requirement() {
     #
     # Params:
     # * VM specification in JSON
-    # * requirements in JSON
+    # * requirements in JSON, for example
+    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #     - It means the GPUType should not be 2080 and P40,
+    #       GPU memory should be greater than or equal to 10GB
+    #       and CPU 9GB.
+    #   + {"GPUType":"2080,P40"}
+    #     - It means the GPUType should be 2080 or P40.
     local spec="${1:-}"
     local requirements="${2:-}"
 
@@ -664,7 +697,7 @@ wait_for_vm_to_be_available() {
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             "${ssh_dest}" true 2>&1) \
-        || (echo "${ssh_response}" | grep -iq 'permission')
+        || grep -iq 'permission' <<< "${ssh_response}"
     do
         # Set timeout to (5 + 5) * 30 = 300 seconds
         [[ "${count}" -gt 30 ]] && return 1
