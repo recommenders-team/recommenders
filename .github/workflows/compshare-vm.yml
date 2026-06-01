@@ -136,7 +136,7 @@ jobs:
           echo "::add-mask::$COMPSHARE_PRIVATE_KEY"
           if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
           then
-              commit="$(echo ${{ github.event.pull_request.head.sha }}
+              commit="$(echo ${{ github.event.pull_request.head.sha }} \
                   | head -c 5)"
               vm_name="vm_${{ github.event.number }}_${commit}_XXXXXX"
           else
