@@ -83,7 +83,7 @@ jobs:
         shell: bash
         run: |
           if [[ ${{ inputs.type }} == "nightly" ]]; then
-            TEST_GROUPS_STR=$(yq -o json -I 0 '
+            test_groups_str=$(yq -o json -I 0 '
               [ .${{ inputs.type }}
                 | keys
                 | .[]
@@ -91,11 +91,11 @@ jobs:
               ]' \
               ${{ inputs.config-file }})
           else
-            TEST_GROUPS_STR=$(yq -o json -I 0 \
+            test_groups_str=$(yq -o json -I 0 \
               '.${{ inputs.type }} | keys' ${{ inputs.config-file }})
           fi
-          echo "Test Groups: ${TEST_GROUPS_STR}"
-          echo "groups=${TEST_GROUPS_STR}" >> $GITHUB_OUTPUT
+          echo "Test Groups: ${test_groups_str}"
+          echo "groups=${test_groups_str}" >> ${GITHUB_OUTPUT}
 
   execute-tests:
     name: ${{ join(matrix.*, ', ') }}
