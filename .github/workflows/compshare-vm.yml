@@ -188,7 +188,7 @@ jobs:
           else
               commit="$(echo ${{ github.sha }} | head -c 5)"
           fi
-          image_tag='reco-${commit}-${{ github.run_attempt }}'
+          image_tag="reco-${commit}-${{ github.run_attempt }}"
 
           # Export IMAGE_TAG for subsequent steps
           echo "IMAGE_TAG=${image_tag}" >> "${GITHUB_ENV}"
