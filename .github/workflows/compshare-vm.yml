@@ -127,6 +127,7 @@ jobs:
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
           SCRIPT_SETUP: ${{ inputs.compshare_tools_dir }}/setup_vm.sh
+          SCRIPT_UTILS: ${{ inputs.compshare_tools_dir }}/utils.sh
           VM_DOCKER_MIRROR_URL: ${{ vars.VM_DOCKER_MIRROR_URL }}
           VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
           VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
@@ -157,6 +158,12 @@ jobs:
           fi
           requirements="{${gpu_type}, ${gpu_mem}, ${charge_type}}"
           bash "${SCRIPT_SETUP}" "${vm_name}" "${requirements}"
+
+          echo 'Exporting VM info for subsequent steps ...'
+          source "${SCRIPT_UTILS}"
+          mapfile -t vm_info < <(get_vm_info "${vm_name}")
+          ssh_dest="${vm_info[1]}"
+          echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
       - name: Check out repository code from PR
         if: ${{ github.event_name == 'pull_request_target' }}

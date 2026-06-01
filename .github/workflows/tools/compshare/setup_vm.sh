@@ -66,11 +66,6 @@ mapfile -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
 
-if [[ -n "${GITHUB_ENV}" && -f "${GITHUB_ENV}" ]]; then
-    echo 'Exporting VM info for subsequent steps ...'
-    echo "SSH_DEST=${ssh_dest}" >> "${GITHUB_ENV}"
-fi
-
 echo 'Setting stop scheduler ...'
 api_call_retry update_stop_scheduler "${vm_id}" > /dev/null
 
