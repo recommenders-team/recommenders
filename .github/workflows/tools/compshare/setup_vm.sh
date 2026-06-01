@@ -61,13 +61,14 @@ mktemp -u XXXXXXXXXX | tr -d '\n' | base64 \
 allocate_vm \
     "${vm_name}" \
     "${encoded_password_file}" \
-    "${requirements}"
+    "$(jq 'del(.SchedulerStopTime)' <<< "${requirements}")"
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
 
 echo 'Setting stop scheduler ...'
-api_call_retry update_stop_scheduler "${vm_id}" > /dev/null
+stop_time="$(jq '.SchedulerStopTime' <<< "${requirements}")"
+api_call_retry update_stop_scheduler "${vm_id}" "${stop_time}" > /dev/null
 
 unset COMPSHARE_PRIVATE_KEY
 unset COMPSHARE_PUBLIC_KEY

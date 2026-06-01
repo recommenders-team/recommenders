@@ -230,7 +230,8 @@ gen_action_digest() {
     local encoded_password_file="${2:-}"
     [[ -z "${action_spec}" ]] && return 1
 
-    # Store the spec into a file to hide the password from being visible
+    # Store the spec into a file to hide the password from being
+    # visible
     local action_spec_file
     action_spec_file="$(mktemp)"
     echo "${action_spec}" > "${action_spec_file}"

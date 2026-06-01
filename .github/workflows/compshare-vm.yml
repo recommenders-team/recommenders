@@ -151,12 +151,19 @@ jobs:
               gpu_type='"GPUType": "!2080,P40"'
               gpu_mem='"Memory": {"GPU": 12, "CPU": 32}'
               charge_type='"ChargeType": ["Postpay"]'
+              stop_time="$(date --date='3 hours' '+%s')"
           else
               gpu_type='"GPUType": "!P40"'
               gpu_mem='"Memory": {"GPU": 8, "CPU": 32}'
               charge_type='"ChargeType": ["Spot","Postpay"]'
+              stop_time="$(date --date='1 hours' '+%s')"
           fi
-          requirements="{${gpu_type}, ${gpu_mem}, ${charge_type}}"
+          stop_time="\"SchedulerStopTime\": ${stop_time}"
+          requirements="{\
+              ${gpu_type}, \
+              ${gpu_mem}, \
+              ${charge_type}, \
+              ${stop_time}}"
           bash "${SCRIPT_SETUP}" "${vm_name}" "${requirements}"
 
           echo 'Exporting VM info for subsequent steps ...'
