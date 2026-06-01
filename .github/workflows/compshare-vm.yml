@@ -181,7 +181,14 @@ jobs:
           VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
         working-directory: ${{ github.event_name == 'pull_request_target' && inputs.pr_code_dir || github.workspace }}
         run: |
-          image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}'
+          if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
+          then
+              commit="$(echo ${{ github.event.pull_request.head.sha }}
+                  | head -c 5)"
+          else
+              commit="$(echo ${{ github.sha }} | head -c 5)"
+          fi
+          image_tag='reco-${commit}-${{ github.run_attempt }}'
 
           # Export IMAGE_TAG for subsequent steps
           echo "IMAGE_TAG=${image_tag}" >> "${GITHUB_ENV}"
