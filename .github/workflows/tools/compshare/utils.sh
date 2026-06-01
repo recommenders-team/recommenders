@@ -508,18 +508,25 @@ allocate_vm() {
         local memory
         memory="$(jq '.Memory.CPU * 1024' <<< "${compute}")"
 
-        local charge_type_list
-        mapfile -t charge_type_list < \
+        local available_charge_type
+        available_charge_type="$(jq '.ChargeType' <<< "${compute}")"
+
+        local required_charge_types
+        mapfile -t required_charge_types < \
             <(jq -rc '.ChargeType.[]' <<< "${requirements}")
-        for charge_type in "${charge_type_list[@]}"; do
-            # Try to create the VM 3 times
-            api_call_retry 3 create_instance \
-                "${vm_name}" \
-                "${encoded_password_file}" \
-                "${gpu_type}" \
-                "${cpu_cores}" \
-                "${memory}" \
-                "${charge_type}" > /dev/null && return
+        for charge_type in "${required_charge_types[@]}"; do
+            if jq -e "map(. == \"${charge_type}\") 
+                | any" <<< "${available_charge_type}" > /dev/null
+            then
+                # Try to create the VM 3 times
+                api_call_retry 3 create_instance \
+                    "${vm_name}" \
+                    "${encoded_password_file}" \
+                    "${gpu_type}" \
+                    "${cpu_cores}" \
+                    "${memory}" \
+                    "${charge_type}" > /dev/null && return
+            fi
         done
     done
     return 1
