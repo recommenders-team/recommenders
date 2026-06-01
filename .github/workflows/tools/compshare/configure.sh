@@ -16,13 +16,8 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-SCRIPT_DIR="$(dirname "$0")"
-
-# Utility functions
-SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
-
 echo '* Importing utility functions ...'
-source "${SCRIPT_UTILS}"
+source "$(dirname "$0")/utils.sh"
 
 echo '* Configuring APT lock ...'
 sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer

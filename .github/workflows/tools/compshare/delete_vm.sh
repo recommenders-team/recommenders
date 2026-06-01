@@ -16,15 +16,11 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-SCRIPT_DIR="$(dirname "$0")"
 vm_name="${1:-}"
 [[ -z "${vm_name}" ]] && exit 1
 
-# Utility functions
-SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
-
 echo 'Importing utility functions ...'
-source "${SCRIPT_UTILS}"
+source "$(dirname "$0")/utils.sh"
 
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
 if [[ -n "${vm_info:-}" ]]; then

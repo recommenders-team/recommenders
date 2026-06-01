@@ -13,19 +13,14 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-SCRIPT_DIR="$(dirname "$0")"
-
-# Utility functions
-SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
-
 echo '* Importing utility functions ...'
-source "${SCRIPT_UTILS}"
+source "$(dirname "$0")/utils.sh"
 
-OS="$(. /etc/os-release && echo "${NAME}${VERSION_ID}" | tr -d '.' | tr '[:upper:]' '[:lower:]')"
-ARCH="$(uname -m)"
-CUDA_REPO="https://developer.download.nvidia.com/compute/cuda/repos"
-CUDA_KEYRING="cuda-keyring_1.1-1_all.deb"
-CUDA_KEYRING_URL="${CUDA_REPO}/${OS}/${ARCH}/${CUDA_KEYRING}"
+os="$(. /etc/os-release && echo "${NAME}${VERSION_ID}" | tr -d '.' | tr '[:upper:]' '[:lower:]')"
+arch="$(uname -m)"
+cuda_repo="https://developer.download.nvidia.com/compute/cuda/repos"
+cuda_keyring="cuda-keyring_1.1-1_all.deb"
+cuda_keyring_url="${cuda_repo}/${os}/${arch}/${cuda_keyring}"
 
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
@@ -33,9 +28,9 @@ sudo apt-get update
 apt_install_retry gcc "linux-headers-$(uname -r)"
 
 echo '* Installing cuda-keyring ...'
-run_cmd_retry curl -fsSL "${CUDA_KEYRING_URL}" -o "${CUDA_KEYRING}"
-sudo dpkg -i "${CUDA_KEYRING}"
-rm -f "${CUDA_KEYRING}"
+run_cmd_retry curl -fsSL "${cuda_keyring_url}" -o "${cuda_keyring}"
+sudo dpkg -i "${cuda_keyring}"
+rm -f "${cuda_keyring}"
 sudo apt-get update
 
 echo '* Installing CUDA driver ...'

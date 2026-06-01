@@ -32,29 +32,29 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-SCRIPT_DIR="$(dirname "$0")"
+script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 more_than_half_hour="${2:-}"
 requirements="${3:-}"
 [[ -z "${vm_name}" || -z "${more_than_half_hour}" ]] && exit 1
 
 # Utility functions
-SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
+script_utils="${script_dir}/utils.sh"
 
 # Setup scripts for configuring network,
 # installing Docker and NVIDIA container toolkit
-SCRIPTS_SETUP=("${SCRIPT_DIR}/configure.sh" \
-              "${SCRIPT_DIR}/install_docker.sh" \
-              "${SCRIPT_DIR}/install_nvidia_tools.sh")
+scripts_setup=("${script_dir}/configure.sh" \
+              "${script_dir}/install_docker.sh" \
+              "${script_dir}/install_nvidia_tools.sh")
 
 # Indicators for whether reboot is required after running each setup
 # script
-REBOOT_REQUERED=('yes' 'no' 'yes')
+reboot_requered=('yes' 'no' 'yes')
 
-SCRIPTS_ALL=("${SCRIPT_UTILS}" "${SCRIPTS_SETUP[@]}")
+scripts_all=("${script_utils}" "${scripts_setup[@]}")
 
 echo 'Importing utility functions ...'
-source "${SCRIPT_UTILS}"
+source "${script_utils}"
 
 encoded_password_file="$(mktemp)"
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 \
@@ -79,15 +79,15 @@ setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
 rm -rf "${encoded_password_file}"
 
 echo 'Uploading scripts to the VM ...'
-for script in "${SCRIPTS_ALL[@]}"; do
+for script in "${scripts_all[@]}"; do
     echo "* ${script}"
     scp -q -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${script}" "${ssh_dest}":
 done
 
-for index in "${!SCRIPTS_SETUP[@]}"; do
-    script="$(basename "${SCRIPTS_SETUP[${index}]}")"
+for index in "${!scripts_setup[@]}"; do
+    script="$(basename "${scripts_setup[${index}]}")"
 
     wait_for_vm_to_be_available "${ssh_dest}"
     echo "Running ${script} on the VM ..."
@@ -100,7 +100,7 @@ for index in "${!SCRIPTS_SETUP[@]}"; do
             export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
             bash ./${script}"
 
-    if [[ "${REBOOT_REQUERED[${index}]}" == 'yes' ]]; then
+    if [[ "${reboot_requered[${index}]}" == 'yes' ]]; then
         echo 'Rebooting for setup to take effect ...'
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \

@@ -16,22 +16,17 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-SCRIPT_DIR="$(dirname "$0")"
-
-# Utility functions
-SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
-
 echo '* Importing utility functions ...'
-source "${SCRIPT_UTILS}"
+source "$(dirname "$0")/utils.sh"
 
-ARCH="$(dpkg --print-architecture)"
-CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
-APT_URL="https://download.docker.com/linux/ubuntu"
-APT_LIST="/etc/apt/sources.list.d/docker.list"
-KEYRING_DIR="/etc/apt/keyrings"
-GPG_PATH="${KEYRING_DIR}/docker.asc"
-GPG_URL="${APT_URL}/gpg"
-APT_ENTRY="deb [arch=${ARCH} signed-by=${GPG_PATH}] ${APT_URL} ${CODENAME} stable"
+arch="$(dpkg --print-architecture)"
+codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+apt_url="https://download.docker.com/linux/ubuntu"
+apt_list="/etc/apt/sources.list.d/docker.list"
+keyring_dir="/etc/apt/keyrings"
+gpg_path="${keyring_dir}/docker.asc"
+gpg_url="${apt_url}/gpg"
+apt_entry="deb [arch=${arch} signed-by=${gpg_path}] ${apt_url} ${codename} stable"
 
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
@@ -39,14 +34,14 @@ sudo apt-get update
 apt_install_retry ca-certificates curl jq
 
 echo '* Adding Docker official GPG key ...'
-sudo install -m 0755 -d "${KEYRING_DIR}"
+sudo install -m 0755 -d "${keyring_dir}"
 
-run_cmd_retry sudo curl -fsSL "${GPG_URL}" -o "${GPG_PATH}"
-sudo chmod a+r "${GPG_PATH}"
+run_cmd_retry sudo curl -fsSL "${gpg_url}" -o "${gpg_path}"
+sudo chmod a+r "${gpg_path}"
 
 echo '* Setting APT repo source for Docker ...'
-sudo mkdir -p "$(dirname "${APT_LIST}")"
-echo "${APT_ENTRY}" | sudo tee "${APT_LIST}" > /dev/null
+sudo mkdir -p "$(dirname "${apt_list}")"
+echo "${apt_entry}" | sudo tee "${apt_list}" > /dev/null
 sudo apt-get update
 
 echo '* Installing the latest Docker community edition ...'
