@@ -154,7 +154,7 @@ jobs:
           else
               gpu_type="\\"GPUType\\": \\"!P40\\""
               gpu_mem="\\"Memory\\": {\\"GPU\\": 8, \\"CPU\\": 32}"
-              charge_type="\\"ChargeType\\": [\\"Postpay\\",\\"Spot\\"]"
+              charge_type="\\"ChargeType\\": [\\"Spot\\",\\"Postpay\\"]"
           fi
           requirements="{${gpu_type}, ${gpu_mem}, ${charge_type}}"
           bash "${SCRIPT_SETUP}" "${vm_name}" "${requirements}"
