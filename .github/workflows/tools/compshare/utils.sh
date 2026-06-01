@@ -519,8 +519,8 @@ allocate_vm() {
                 | any" <<< "${available_charge_type}" > /dev/null
             then
                 echo "  + Trying charge type: ${charge_type} ..." >&2
-                # Try to create the VM 3 times
-                api_call_retry 3 create_instance \
+                # Try to create the VM 2 times
+                api_call_retry 2 create_instance \
                     "${vm_name}" \
                     "${encoded_password_file}" \
                     "${gpu_type}" \
