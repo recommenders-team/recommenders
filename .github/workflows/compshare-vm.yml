@@ -278,6 +278,4 @@ jobs:
           COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
           SCRIPT_DELETE: ${{ inputs.compshare_tools_dir }}/delete_vm.sh
         run: |
-          if [[ -n "${VM_NAME}" ]]; then
-              bash "${SCRIPT_DELETE}" "${VM_NAME}"
-          fi
+          bash "${SCRIPT_DELETE}" "${VM_NAME}"

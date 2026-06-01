@@ -17,7 +17,7 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 vm_name="${1:-}"
-[[ -z "${vm_name}" ]] && exit 1
+[[ -z "${vm_name}" ]] && { echo 'No VM specified.'; exit 0; }
 
 echo 'Importing utility functions ...'
 source "$(dirname "$0")/utils.sh"
