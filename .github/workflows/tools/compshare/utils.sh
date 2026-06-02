@@ -775,6 +775,9 @@ run_cmd_retry() {
     # Run the command in "$@" and retry "$1" times
     # (5 by default) on failure.
     #
+    # NOTE: This function is only for a single command without
+    #       redirection, not for multiple commands.
+    #
     # Params:
     # * (optional) number of attempts
     local num_attempts=5

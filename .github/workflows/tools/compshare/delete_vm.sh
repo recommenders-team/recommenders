@@ -22,12 +22,24 @@ vm_name="${1:-}"
 echo 'Importing utility functions ...'
 source "$(dirname "$0")/utils.sh"
 
-mapfile -t vm_info < <(get_vm_info "${vm_name}")
-if [[ -n "${vm_info:-}" ]]; then
-    vm_id="${vm_info[0]}"
-    echo "Stopping the VM ${vm_name} ..."
-    api_call_retry stop_instance "${vm_id}" > /dev/null
+delay=5
+num_attempts=6
+attempt=1
+while true; do
+    mapfile -t vm_info < <(get_vm_info "${vm_name}")
+    if [[ -n "${vm_info:-}" ]]; then
+        vm_id="${vm_info[0]}"
+        echo "Stopping the VM ${vm_name} ..."
+        api_call_retry stop_instance "${vm_id}" > /dev/null
 
-    echo "Deleting the VM ${vm_name} ..."
-    api_call_retry terminate_instance "${vm_id}" > /dev/null
-fi
+        echo "Deleting the VM ${vm_name} ..."
+        api_call_retry terminate_instance "${vm_id}" > /dev/null
+        break
+    fi
+
+    if (( attempt >= num_attempts )); then
+        return 0
+    fi
+    sleep "${delay}"
+    ((attempt++))
+done
