@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 MODEL_CHECKPOINT = "model.pt"
 
 DEFAULT_METRICS = ("auc", "logloss")
-DEFAULT_PAIRWISE_METRICS = ("mean_mrr", "ndcg@2;4;6", "group_auc")
+DEFAULT_PAIRWISE_METRICS = ("mean_mrr", "ndcg@10", "group_auc")
 
 _ACTIVATIONS = {
     "relu": F.relu,
