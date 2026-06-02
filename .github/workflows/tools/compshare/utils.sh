@@ -312,11 +312,14 @@ invoke_action() {
 
     local response
     if [[ -n "${encoded_password_file}" ]]; then
-        response="$(curl -sSf \
+        response="$(curl -LsSf \
+            --retry 5 --retry-delay 5 --retry-all-errors \
             --url-query "Password@${encoded_password_file}" \
             "${request_url}")"
     else
-        response="$(curl -sSf "${request_url}")"
+        response="$(curl -LsSf \
+            --retry 5 --retry-delay 5 --retry-all-errors \
+            "${request_url}")"
     fi
 
     echo "${response}"
