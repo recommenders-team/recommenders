@@ -38,7 +38,7 @@ while true; do
     fi
 
     if (( attempt >= num_attempts )); then
-        return 0
+        exit 0
     fi
     sleep "${delay}"
     ((attempt++))
