@@ -8,7 +8,6 @@ import logging
 from numba import cuda
 from numba.cuda.cudadrv.error import CudaSupportError
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -41,6 +40,23 @@ def get_gpu_info():
     """
     gpus = []
     try:
+        import torch
+
+        if torch.cuda.is_available():
+            for device_id in range(torch.cuda.device_count()):
+                free_memory, total_memory = torch.cuda.mem_get_info(device_id)
+                gpus.append(
+                    {
+                        "device_name": torch.cuda.get_device_name(device_id),
+                        "total_memory": total_memory / 1048576,  # Mb
+                        "free_memory": free_memory / 1048576,  # Mb
+                    }
+                )
+            return gpus
+    except (ImportError, ModuleNotFoundError):
+        pass
+
+    try:
         for gpu in cuda.gpus:
             with gpu:
                 meminfo = cuda.current_context().get_memory_info()
@@ -50,7 +66,7 @@ def get_gpu_info():
                     "free_memory": meminfo[0] / 1048576,  # Mb
                 }
                 gpus.append(g)
-    except CudaSupportError:
+    except Exception:
         pass
 
     return gpus

@@ -38,6 +38,50 @@ def test_get_number_gpus_without_torch(monkeypatch):
     assert gpu_utils.get_number_gpus() == 2
 
 
+def test_get_gpu_info_uses_torch_cuda(monkeypatch):
+    class FakeCuda:
+        @staticmethod
+        def is_available():
+            return True
+
+        @staticmethod
+        def device_count():
+            return 1
+
+        @staticmethod
+        def mem_get_info(device):
+            assert device == 0
+            return 256 * 1048576, 1024 * 1048576
+
+        @staticmethod
+        def get_device_name(device):
+            assert device == 0
+            return "Test GPU"
+
+    class BrokenNumbaGpu:
+        def __enter__(self):
+            raise AssertionError("numba should not be used when torch has CUDA")
+
+    fake_torch = SimpleNamespace(cuda=FakeCuda)
+    real_import = builtins.__import__
+
+    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if name == "torch":
+            return fake_torch
+        return real_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(gpu_utils, "cuda", SimpleNamespace(gpus=[BrokenNumbaGpu()]))
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+
+    assert gpu_utils.get_gpu_info() == [
+        {
+            "device_name": "Test GPU",
+            "total_memory": 1024,
+            "free_memory": 256,
+        }
+    ]
+
+
 @pytest.mark.gpu
 def test_get_gpu_info():
     assert len(get_gpu_info()) >= 1
