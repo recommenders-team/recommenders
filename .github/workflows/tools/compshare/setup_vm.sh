@@ -67,7 +67,7 @@ vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
 
 echo 'Setting stop scheduler ...'
-stop_time="$(jq '.SchedulerStopTime' <<< "${requirements}")"
+stop_time="$(jq '.SchedulerStopTime // empty' <<< "${requirements}")"
 api_call_retry update_stop_scheduler "${vm_id}" "${stop_time}" > /dev/null
 
 unset COMPSHARE_PRIVATE_KEY
