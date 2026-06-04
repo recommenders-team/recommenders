@@ -33,7 +33,7 @@ while true; do
         api_call_retry stop_instance "${vm_id}" > /dev/null
 
         echo "Deleting the VM ${vm_name} ..."
-        api_call_retry terminate_instance "${vm_id}" > /dev/null
+        api_call_retry 10 terminate_instance "${vm_id}" > /dev/null
         break
     fi
 
