@@ -26,6 +26,10 @@ on:
   # Enable manual trigger
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   SARPLUS_ROOT: ${{ github.workspace }}/contrib/sarplus
   PYTHON_ROOT: ${{ github.workspace }}/contrib/sarplus/python

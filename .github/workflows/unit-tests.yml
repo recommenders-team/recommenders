@@ -33,6 +33,10 @@ on:
         description: 'Tags to label this manual run (optional)'
         default: 'Manual trigger'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
 jobs:
   run-tests:
     uses: ./.github/workflows/compshare-vm.yml
