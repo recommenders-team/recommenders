@@ -38,8 +38,10 @@ while true; do
     fi
 
     if (( attempt >= num_attempts )); then
+        echo "The VM ${vm_name} may not be created."
         exit 0
     fi
+    echo "Attempt ${attempt} failed! The VM info may not be available. Retrying in ${delay} seconds ..." >&2
     sleep "${delay}"
     ((attempt++))
 done
