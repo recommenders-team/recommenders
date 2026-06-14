@@ -44,7 +44,9 @@ if lspci | grep -i nvidia | grep -Ei 'p40|v100s'; then
     echo '  + Installing compute-only drivers ...'
     apt_install_retry libnvidia-compute-580 nvidia-dkms-580
 else
-    apt_install_retry libnvidia-compute nvidia-dkms
+    # GPU architecture from and above Turing (including 2080 and T4)
+    # should use open kernel modules.
+    apt_install_retry libnvidia-compute nvidia-dkms-open
 fi
 
 echo '* Installing NVIDIA container toolkit ...'
