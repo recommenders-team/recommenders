@@ -12,9 +12,25 @@ TOL = 0.1
 ABS_TOL = 0.05
 
 
+def _assert_tensorflow_gpu_available():
+    import tensorflow as tf
+
+    if not tf.config.list_physical_devices("GPU"):
+        pytest.fail(
+            "TensorFlow cannot see a GPU. Check CUDA/cuDNN availability before "
+            "running TensorFlow-backed GPU notebooks; otherwise they fall back to "
+            "CPU and can time out after an hour."
+        )
+
+
 @pytest.mark.gpu
 def test_gpu_vm():
     assert get_number_gpus() >= 1
+
+
+@pytest.mark.gpu
+def test_tensorflow_gpu_vm():
+    _assert_tensorflow_gpu_available()
 
 
 @pytest.mark.gpu
@@ -565,6 +581,8 @@ def test_lightgcn_deep_dive_functional(
 @pytest.mark.gpu
 @pytest.mark.notebooks
 def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
+    _assert_tensorflow_gpu_available()
+
     notebook_path = notebooks["dkn_quickstart"]
     execute_notebook(
         notebook_path,
