@@ -74,7 +74,7 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
 fi
 
 echo '* Starting rootless Docker daemon ...'
-systemctl --user start docker
+systemctl --user restart docker
 
 echo '* Enabling Docker service and launch the daemon on startup ...'
 systemctl --user enable docker
