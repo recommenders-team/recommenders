@@ -327,7 +327,7 @@ class TfidfRecommender:
         """
 
         # Return row
-        rec_info = metadata.iloc[int(np.where(metadata[self.id_col] == rec_id)[0])]
+        rec_info = metadata.iloc[int(np.where(metadata[self.id_col] == rec_id)[0][0])]
 
         return rec_info
 
