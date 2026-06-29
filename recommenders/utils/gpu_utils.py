@@ -1,12 +1,9 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import sys
-import os
-import glob
 import logging
-from numba import cuda
-from numba.cuda.cudadrv.error import CudaSupportError
+
+import torch
 
 logger = logging.getLogger(__name__)
 
@@ -19,16 +16,7 @@ def get_number_gpus():
     Returns:
         int: Number of GPUs.
     """
-    try:
-        import torch
-
-        return torch.cuda.device_count()
-    except (ImportError, ModuleNotFoundError):
-        pass
-    try:
-        return len(cuda.gpus)
-    except Exception:  # numba.cuda.cudadrv.error.CudaSupportError:
-        return 0
+    return torch.cuda.device_count()
 
 
 def get_gpu_info():
@@ -39,33 +27,24 @@ def get_gpu_info():
         Returns an empty list if there is no cuda device available.
     """
     gpus = []
-    try:
-        import torch
-
-        if torch.cuda.is_available():
-            for device_id in range(torch.cuda.device_count()):
-                free_memory, total_memory = torch.cuda.mem_get_info(device_id)
-                gpus.append(
-                    {
-                        "device_name": torch.cuda.get_device_name(device_id),
-                        "total_memory": total_memory / 1048576,  # Mb
-                        "free_memory": free_memory / 1048576,  # Mb
-                    }
-                )
-            return gpus
-    except (ImportError, ModuleNotFoundError):
-        pass
-
+    if torch.cuda.is_available():
+        for device_id in range(torch.cuda.device_count()):
+            free_memory, total_memory = torch.cuda.mem_get_info(device_id)
+            gpus.append(
+                {
+                    "device_name": torch.cuda.get_device_name(device_id),
+                    "total_memory": total_memory / 1048576,  # Mb
+                    "free_memory": free_memory / 1048576,  # Mb
+                }
+            )
     return gpus
 
 
 def clear_memory_all_gpus():
     """Clear memory of all GPUs."""
-    try:
-        for gpu in cuda.gpus:
-            with gpu:
-                cuda.current_context().deallocations.clear()
-    except CudaSupportError:
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    else:
         logger.info("No CUDA available")
 
 
@@ -75,30 +54,7 @@ def get_cuda_version():
     Returns:
         str: Version of the library.
     """
-    try:
-        import torch
-
-        return torch.version.cuda
-    except (ImportError, ModuleNotFoundError):
-        path = ""
-        if sys.platform == "win32":
-            candidate = (
-                "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v*\\version.txt"
-            )
-            path_list = glob.glob(candidate)
-            if path_list:
-                path = path_list[0]
-        elif sys.platform == "linux" or sys.platform == "darwin":
-            path = "/usr/local/cuda/version.txt"
-        else:
-            raise ValueError("Not in Windows, Linux or Mac")
-
-        if os.path.isfile(path):
-            with open(path, "r") as f:
-                data = f.read().replace("\n", "")
-            return data
-        else:
-            return None
+    return torch.version.cuda
 
 
 def get_cudnn_version():
@@ -107,45 +63,4 @@ def get_cudnn_version():
     Returns:
         str: Version of the library.
     """
-
-    def find_cudnn_in_headers(candiates):
-        for c in candidates:
-            file = glob.glob(c)
-            if file:
-                break
-        if file:
-            with open(file[0], "r") as f:
-                version = ""
-                for line in f:
-                    if "#define CUDNN_MAJOR" in line:
-                        version = line.split()[-1]
-                    if "#define CUDNN_MINOR" in line:
-                        version += "." + line.split()[-1]
-                    if "#define CUDNN_PATCHLEVEL" in line:
-                        version += "." + line.split()[-1]
-            if version:
-                return version
-            else:
-                return None
-        else:
-            return None
-
-    try:
-        import torch
-
-        return str(torch.backends.cudnn.version())
-    except (ImportError, ModuleNotFoundError):
-        if sys.platform == "win32":
-            candidates = [r"C:\NVIDIA\cuda\include\cudnn.h"]
-        elif sys.platform == "linux":
-            candidates = [
-                "/usr/include/cudnn_version.h",
-                "/usr/include/x86_64-linux-gnu/cudnn_v[0-99].h",
-                "/usr/local/cuda/include/cudnn.h",
-                "/usr/include/cudnn.h",
-            ]
-        elif sys.platform == "darwin":
-            candidates = ["/usr/local/cuda/include/cudnn.h", "/usr/include/cudnn.h"]
-        else:
-            raise ValueError("Not in Windows, Linux or Mac")
-        return find_cudnn_in_headers(candidates)
+    return str(torch.backends.cudnn.version())
