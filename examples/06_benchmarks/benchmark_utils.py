@@ -177,6 +177,7 @@ def prepare_training_embdotbias(train, test):
         item_name=DEFAULT_ITEM_COL,
         rating_name=DEFAULT_RATING_COL,
         valid_pct=0.1,
+        seed=SEED,
     )
     return data
 
