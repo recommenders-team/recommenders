@@ -390,6 +390,12 @@ def train_sar(params, data):
     return model, t
 
 
+def predict_sar(model, test):
+    with Timer() as t:
+        preds = model.predict(test)
+    return preds, t
+
+
 def recommend_k_sar(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         topk_scores = model.recommend_k_items(
