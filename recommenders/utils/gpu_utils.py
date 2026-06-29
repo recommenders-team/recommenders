@@ -56,19 +56,6 @@ def get_gpu_info():
     except (ImportError, ModuleNotFoundError):
         pass
 
-    try:
-        for gpu in cuda.gpus:
-            with gpu:
-                meminfo = cuda.current_context().get_memory_info()
-                g = {
-                    "device_name": gpu.name.decode("ASCII"),
-                    "total_memory": meminfo[1] / 1048576,  # Mb
-                    "free_memory": meminfo[0] / 1048576,  # Mb
-                }
-                gpus.append(g)
-    except Exception:
-        pass
-
     return gpus
 
 
