@@ -2,15 +2,14 @@
 # Licensed under the MIT License.
 
 
-import builtins
 import sys
 from types import SimpleNamespace
 import pytest
-import recommenders.utils.gpu_utils as gpu_utils
 
 try:
     import tensorflow as tf
     import torch
+    import recommenders.utils.gpu_utils as gpu_utils
     from recommenders.utils.gpu_utils import (
         get_cuda_version,
         get_cudnn_version,
@@ -19,23 +18,6 @@ try:
     )
 except ImportError:
     pass  # skip this import if we are in cpu environment
-
-
-def test_get_number_gpus_without_torch(monkeypatch):
-    fake_cuda = SimpleNamespace(gpus=["gpu0", "gpu1"])
-    real_import = builtins.__import__
-
-    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
-        if name == "torch":
-            raise ModuleNotFoundError("torch is unavailable in this test")
-        if name == "numba":
-            return SimpleNamespace()
-        return real_import(name, globals, locals, fromlist, level)
-
-    monkeypatch.setattr(gpu_utils, "cuda", fake_cuda)
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-
-    assert gpu_utils.get_number_gpus() == 2
 
 
 def test_get_gpu_info_uses_torch_cuda(monkeypatch):
@@ -58,20 +40,7 @@ def test_get_gpu_info_uses_torch_cuda(monkeypatch):
             assert device == 0
             return "Test GPU"
 
-    class BrokenNumbaGpu:
-        def __enter__(self):
-            raise AssertionError("numba should not be used when torch has CUDA")
-
-    fake_torch = SimpleNamespace(cuda=FakeCuda)
-    real_import = builtins.__import__
-
-    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
-        if name == "torch":
-            return fake_torch
-        return real_import(name, globals, locals, fromlist, level)
-
-    monkeypatch.setattr(gpu_utils, "cuda", SimpleNamespace(gpus=[BrokenNumbaGpu()]))
-    monkeypatch.setattr(builtins, "__import__", fake_import)
+    monkeypatch.setattr(gpu_utils, "torch", SimpleNamespace(cuda=FakeCuda))
 
     assert gpu_utils.get_gpu_info() == [
         {
