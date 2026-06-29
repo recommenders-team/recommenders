@@ -16,6 +16,9 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+echo '* Importing utility functions ...'
+source "$(dirname "$0")/utils.sh"
+
 echo '* Configuring APT lock ...'
 sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer
 sudo systemctl mask apt-daily.timer apt-daily-upgrade.timer
@@ -25,23 +28,9 @@ sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
     echo '* Adding CA certificate for HTTPS proxy ...'
     echo '  + Installing prerequisites ...'
-    while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
-        echo '    - Waiting for processes releasing /var/lib/apt/lists/lock ...'
-        sleep 5
-    done
+    wait_for_apt_lock
     sudo apt-get update
-    count=0
-    until sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
-        apt-get install -y ca-certificates; do
-        echo '    - Failed to install.'
-        count=$((count + 1))
-        if [[ $count -lt 10 ]]; then
-            sleep 5
-            echo '    - Trying again ...'
-        else
-            exit 1
-        fi
-    done
+    apt_install_retry ca-certificates
 
     echo '  + Updating CA certificate ...'
     echo "${VM_PROXY_CERTIFICATE}" \
