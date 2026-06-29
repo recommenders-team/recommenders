@@ -216,6 +216,7 @@ pr_gate:
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_stop_words
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_recommend_top_k_items
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations                                                             #    0.03s
+    - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations_scalar_index
     - tests/unit/recommenders/models/test_cornac_utils.py::test_predict                                                                              #    0.05s
     - tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items                                                                    #    0.13s
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_init

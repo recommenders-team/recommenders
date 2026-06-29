@@ -117,3 +117,29 @@ def test_get_top_k_recommendations(model_fit, df_clean):
     query_id = "ej795nks"
     displayed_top_k = model_fit.get_top_k_recommendations(df_clean, query_id=query_id)
     assert len(displayed_top_k.data) == K
+
+
+def test_get_top_k_recommendations_scalar_index():
+    # Regression test for #2353: get_top_k_recommendations must not raise on
+    # NumPy >= 2 ("only 0-dimensional arrays can be converted to Python
+    # scalars"). top_k_recommendations is set directly so the metadata lookup
+    # path is exercised without fitting a model.
+    recommender = TfidfRecommender(id_col="cord_uid", tokenization_method="none")
+    recommender.top_k_recommendations = pd.DataFrame(
+        {
+            "cord_uid": ["q", "q"],
+            "rec_cord_uid": ["9mzs5dl4", "u7lz3spe"],
+            "rec_rank": [1, 2],
+            "rec_score": [0.9, 0.8],
+        }
+    )
+    metadata = pd.DataFrame(
+        {
+            "cord_uid": ["q", "9mzs5dl4", "u7lz3spe"],
+            "title": ["Query", "Second", "Third"],
+        }
+    )
+    result = recommender.get_top_k_recommendations(
+        metadata, query_id="q", verbose=False
+    )
+    assert list(result["title"]) == ["Second", "Third"]
