@@ -39,6 +39,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from recommenders.models.deeprec.deeprec_utils import cal_metric, load_dict
+from recommenders.models.deeprec.io.sequential_dataset_pytorch import SequentialDataset
 
 MODEL_CHECKPOINT = "best_model"
 
@@ -173,11 +174,36 @@ class Attention(nn.Module):
 
 
 class SequentialBaseModel(nn.Module, abc.ABC):
-    """Base class for PyTorch sequential recommenders (SLi-Rec and future ports)."""
+    """Base class for PyTorch sequential recommenders (SLi-Rec and future ports).
 
-    def __init__(self, hparams, iterator_creator, seed: int | None = None) -> None:
+    Every hyper-parameter is an explicit constructor / method argument — there is no
+    ``hparams`` object — mirroring ``graphrec/lightgcn.py``: architecture on the
+    constructor, training knobs on :meth:`fit`, evaluation knobs on :meth:`run_eval`.
+
+    Subclasses set any model-specific architecture attributes, then call
+    :meth:`_finalize` (after ``super().__init__``) to build the encoder and the MLP
+    head with the correct RNG order.
+    """
+
+    def __init__(
+        self,
+        user_vocab: str,
+        item_vocab: str,
+        cate_vocab: str,
+        max_seq_length: int = 50,
+        item_embedding_dim: int = 32,
+        cate_embedding_dim: int = 8,
+        user_embedding_dim: int = 16,
+        layer_sizes: list[int] | None = None,
+        activation: list[str] | None = None,
+        dropout: list[float] | None = None,
+        user_dropout: bool = True,
+        enable_BN: bool = True,
+        init_method: str = "tnormal",
+        init_value: float = 0.01,
+        seed: int | None = None,
+    ) -> None:
         super().__init__()
-        self.hparams = hparams
         self.seed = seed
         if seed is not None:
             torch.manual_seed(seed)
@@ -186,39 +212,64 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             if torch.cuda.is_available():
                 torch.cuda.manual_seed_all(seed)
 
-        self.iterator = iterator_creator(hparams)
-        self.train_num_ngs = hparams.train_num_ngs
+        self.user_vocab = user_vocab
+        self.item_vocab = item_vocab
+        self.cate_vocab = cate_vocab
+        self.max_seq_length = max_seq_length
+        self.item_embedding_dim = item_embedding_dim
+        self.cate_embedding_dim = cate_embedding_dim
+        self.user_embedding_dim = user_embedding_dim
+        self.layer_sizes = layer_sizes if layer_sizes is not None else [100, 64]
+        self.activation = activation if activation is not None else ["relu", "relu"]
+        self.dropout = dropout if dropout is not None else [0.3, 0.3]
+        self.user_dropout = user_dropout
+        self.enable_BN = enable_BN
+        self.init_method = init_method
+        self.init_value = init_value
         self.min_seq_length = 1
 
-        self.init_method = hparams.init_method
-        self.init_value = hparams.init_value
+        self.iterator = SequentialDataset(
+            user_vocab, item_vocab, cate_vocab, max_seq_length
+        )
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self._build_embedding()
+
+        # Training/eval defaults; fit()/run_eval() override these.
+        self.optimizer = None
+        self.best_epoch = 0
+        self.batch_size = 400
+        self.train_num_ngs = 4
+        self.embed_l2 = 0.0
+        self.embed_l1 = 0.0
+        self.layer_l2 = 0.0
+        self.layer_l1 = 0.0
+        self.metrics = ["auc", "logloss"]
+        self.pairwise_metrics = ["mean_mrr", "ndcg@2;4;6", "group_auc"]
+
+    def _finalize(self) -> None:
+        """Build the encoder and MLP head, then move to device.
+
+        Called by subclasses after ``super().__init__`` and after they set their
+        model-specific architecture attributes.
+        """
         model_output_dim = self._build_seq_graph()
         self.logit_fcn = FcnNet(
             model_output_dim,
-            hparams.layer_sizes,
-            hparams.activation,
-            hparams.dropout,
-            hparams.user_dropout,
-            hparams.enable_BN,
+            self.layer_sizes,
+            self.activation,
+            self.dropout,
+            self.user_dropout,
+            self.enable_BN,
             self.init_method,
             self.init_value,
         )
-
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.to(self.device)
-        self.optimizer: torch.optim.Optimizer | None = None
-        self.best_epoch = 0
 
     def _build_embedding(self) -> None:
-        h = self.hparams
-        self.user_vocab_length = len(load_dict(h.user_vocab))
-        self.item_vocab_length = len(load_dict(h.item_vocab))
-        self.cate_vocab_length = len(load_dict(h.cate_vocab))
-        self.item_embedding_dim = h.item_embedding_dim
-        self.cate_embedding_dim = h.cate_embedding_dim
-        self.user_embedding_dim = h.user_embedding_dim
+        self.user_vocab_length = len(load_dict(self.user_vocab))
+        self.item_vocab_length = len(load_dict(self.item_vocab))
+        self.cate_vocab_length = len(load_dict(self.cate_vocab))
 
         self.user_lookup = nn.Embedding(self.user_vocab_length, self.user_embedding_dim)
         self.item_lookup = nn.Embedding(self.item_vocab_length, self.item_embedding_dim)
@@ -271,9 +322,8 @@ class SequentialBaseModel(nn.Module, abc.ABC):
         return -group * torch.mean(torch.log(pos_softmax))
 
     def _regular_loss(self, batch: dict) -> torch.Tensor:
-        h = self.hparams
         reg = torch.zeros((), device=self.device)
-        if h.embed_l2 > 0 or h.embed_l1 > 0:
+        if self.embed_l2 > 0 or self.embed_l1 > 0:
             involved_items = torch.unique(
                 torch.cat([batch["item_history"].reshape(-1), batch["items"]])
             )
@@ -282,13 +332,13 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             )
             item_e = self.item_lookup(involved_items)
             cate_e = self.cate_lookup(involved_cates)
-            if h.embed_l2 > 0:
-                reg = reg + h.embed_l2 * 0.5 * (
+            if self.embed_l2 > 0:
+                reg = reg + self.embed_l2 * 0.5 * (
                     item_e.pow(2).sum() + cate_e.pow(2).sum()
                 )
-            if h.embed_l1 > 0:
-                reg = reg + h.embed_l1 * (item_e.abs().sum() + cate_e.abs().sum())
-        if h.layer_l2 > 0 or h.layer_l1 > 0:
+            if self.embed_l1 > 0:
+                reg = reg + self.embed_l1 * (item_e.abs().sum() + cate_e.abs().sum())
+        if self.layer_l2 > 0 or self.layer_l1 > 0:
             emb_params = set(
                 id(p)
                 for m in (self.user_lookup, self.item_lookup, self.cate_lookup)
@@ -297,31 +347,78 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             for p in self.parameters():
                 if id(p) in emb_params:
                     continue
-                if h.layer_l2 > 0:
-                    reg = reg + h.layer_l2 * 0.5 * p.pow(2).sum()
-                if h.layer_l1 > 0:
-                    reg = reg + h.layer_l1 * p.abs().sum()
+                if self.layer_l2 > 0:
+                    reg = reg + self.layer_l2 * 0.5 * p.pow(2).sum()
+                if self.layer_l1 > 0:
+                    reg = reg + self.layer_l1 * p.abs().sum()
         return reg
 
     def fit(
         self,
         train_file: str,
         valid_file: str,
-        valid_num_ngs: int,
-        eval_metric="group_auc",
+        epochs: int = 50,
+        batch_size: int = 400,
+        learning_rate: float = 0.001,
+        train_num_ngs: int = 4,
+        valid_num_ngs: int = 4,
+        embed_l2: float = 0.0,
+        layer_l2: float = 0.0,
+        embed_l1: float = 0.0,
+        layer_l1: float = 0.0,
+        is_clip_norm: bool = False,
+        max_grad_norm: float = 2.0,
+        eval_metric: str = "group_auc",
+        metrics: list[str] | None = None,
+        pairwise_metrics: list[str] | None = None,
+        show_step: int = 100,
+        save_model: bool = False,
+        model_dir: str | None = None,
+        early_stop: int = 10,
     ):
-        """Train, evaluating on ``valid_file`` each epoch with early stopping."""
-        h = self.hparams
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=h.learning_rate)
+        """Train, evaluating on ``valid_file`` each epoch with early stopping.
+
+        Args:
+            train_file (str): Training data (positives only when sampling negatives).
+            valid_file (str): Validation data, grouped as ``1 + valid_num_ngs``.
+            epochs (int): Number of training epochs.
+            batch_size (int): Positive instances per mini-batch.
+            learning_rate (float): Adam learning rate.
+            train_num_ngs (int): In-batch negatives sampled per positive (loss group
+                size is ``train_num_ngs + 1``).
+            valid_num_ngs (int): Negatives per positive in ``valid_file``.
+            embed_l2, layer_l2, embed_l1, layer_l1 (float): Regularization coefficients.
+            is_clip_norm (bool): Enable per-parameter gradient-norm clipping.
+            max_grad_norm (float): Clip value when ``is_clip_norm`` is set.
+            eval_metric (str): Validation metric driving early stopping / best model.
+            metrics (list[str]): Pointwise metrics. Defaults to ``["auc", "logloss"]``.
+            pairwise_metrics (list[str]): Group metrics. Defaults to
+                ``["mean_mrr", "ndcg@2;4;6", "group_auc"]``.
+            show_step (int): Print training loss every ``show_step`` steps.
+            save_model (bool): Save the best-by-validation model under ``model_dir``.
+            model_dir (str): Directory for the ``best_model`` checkpoint.
+            early_stop (int): Stop if the metric does not improve for this many epochs.
+        """
+        self.batch_size = batch_size
+        self.train_num_ngs = train_num_ngs
+        self.embed_l2, self.layer_l2 = embed_l2, layer_l2
+        self.embed_l1, self.layer_l1 = embed_l1, layer_l1
+        if metrics is not None:
+            self.metrics = metrics
+        if pairwise_metrics is not None:
+            self.pairwise_metrics = pairwise_metrics
+
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
         best_metric, self.best_epoch = 0, 0
 
-        for epoch in range(1, h.epochs + 1):
+        for epoch in range(1, epochs + 1):
             self.train()
-            step, epoch_loss = 0, 0.0
+            step = 0
             for np_batch in self.iterator.load_data_from_file(
                 train_file,
+                batch_size=batch_size,
                 min_seq_length=self.min_seq_length,
-                batch_num_ngs=self.train_num_ngs,
+                batch_num_ngs=train_num_ngs,
             ):
                 if not np_batch:
                     continue
@@ -331,32 +428,31 @@ class SequentialBaseModel(nn.Module, abc.ABC):
                 data_loss = self._softmax_loss(logit, batch["labels"])
                 loss = data_loss + self._regular_loss(batch)
                 loss.backward()
-                if h.is_clip_norm:
+                if is_clip_norm:
                     for p in self.parameters():
                         if p.grad is not None:
-                            nn.utils.clip_grad_norm_(p, h.max_grad_norm)
+                            nn.utils.clip_grad_norm_(p, max_grad_norm)
                 self.optimizer.step()
-                epoch_loss += loss.item()
                 step += 1
-                if step % h.show_step == 0:
+                if step % show_step == 0:
                     print(
                         "step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(
                             step, loss.item(), data_loss.item()
                         )
                     )
 
-            valid_res = self.run_eval(valid_file, valid_num_ngs)
+            valid_res = self.run_eval(valid_file, valid_num_ngs, batch_size=batch_size)
             print("eval valid at epoch {0}: {1}".format(epoch, valid_res))
 
             if valid_res[eval_metric] > best_metric:
                 best_metric = valid_res[eval_metric]
                 self.best_epoch = epoch
-                if h.save_model and h.MODEL_DIR:
-                    os.makedirs(h.MODEL_DIR, exist_ok=True)
+                if save_model and model_dir:
+                    os.makedirs(model_dir, exist_ok=True)
                     torch.save(
-                        self.state_dict(), os.path.join(h.MODEL_DIR, MODEL_CHECKPOINT)
+                        self.state_dict(), os.path.join(model_dir, MODEL_CHECKPOINT)
                     )
-            elif h.EARLY_STOP > 0 and epoch - self.best_epoch >= h.EARLY_STOP:
+            elif early_stop > 0 and epoch - self.best_epoch >= early_stop:
                 print("early stop at epoch {0}!".format(epoch))
                 break
 
@@ -364,13 +460,35 @@ class SequentialBaseModel(nn.Module, abc.ABC):
         return self
 
     @torch.no_grad()
-    def run_eval(self, filename: str, num_ngs: int) -> dict:
-        """Evaluate ``filename``; returns the metric dict (pointwise + pairwise)."""
+    def run_eval(
+        self,
+        filename: str,
+        num_ngs: int,
+        batch_size: int | None = None,
+        metrics: list[str] | None = None,
+        pairwise_metrics: list[str] | None = None,
+    ) -> dict:
+        """Evaluate ``filename``; returns the metric dict (pointwise + pairwise).
+
+        Args:
+            filename (str): Evaluation file, grouped as ``1 + num_ngs`` consecutive rows.
+            num_ngs (int): Negatives per positive in ``filename``.
+            batch_size (int): Batch size; defaults to the value used in ``fit``.
+            metrics, pairwise_metrics (list[str]): Override the reported metrics.
+        """
+        batch_size = batch_size if batch_size is not None else self.batch_size
+        metrics = metrics if metrics is not None else self.metrics
+        pairwise_metrics = (
+            pairwise_metrics if pairwise_metrics is not None else self.pairwise_metrics
+        )
         self.eval()
         preds, labels, group_preds, group_labels = [], [], [], []
         group = num_ngs + 1
         for np_batch in self.iterator.load_data_from_file(
-            filename, min_seq_length=self.min_seq_length, batch_num_ngs=0
+            filename,
+            batch_size=batch_size,
+            min_seq_length=self.min_seq_length,
+            batch_num_ngs=0,
         ):
             if not np_batch:
                 continue
@@ -383,20 +501,24 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             group_preds.extend(np.reshape(pred, (-1, group)))
             group_labels.extend(np.reshape(step_labels, (-1, group)))
 
-        res = cal_metric(labels, preds, self.hparams.metrics)
-        res_pairwise = cal_metric(
-            group_labels, group_preds, self.hparams.pairwise_metrics
-        )
+        res = cal_metric(labels, preds, metrics)
+        res_pairwise = cal_metric(group_labels, group_preds, pairwise_metrics)
         res.update(res_pairwise)
         return res
 
     @torch.no_grad()
-    def predict(self, infile_name: str, outfile_name: str):
+    def predict(
+        self, infile_name: str, outfile_name: str, batch_size: int | None = None
+    ):
         """Write per-instance prediction scores (one per line) to ``outfile_name``."""
+        batch_size = batch_size if batch_size is not None else self.batch_size
         self.eval()
         with open(outfile_name, "w") as wt:
             for np_batch in self.iterator.load_data_from_file(
-                infile_name, min_seq_length=self.min_seq_length, batch_num_ngs=0
+                infile_name,
+                batch_size=batch_size,
+                min_seq_length=self.min_seq_length,
+                batch_num_ngs=0,
             ):
                 if not np_batch:
                     continue
@@ -407,10 +529,13 @@ class SequentialBaseModel(nn.Module, abc.ABC):
                 wt.write("\n")
         return self
 
-    def load_model(self, model_path: str | None = None):
-        """Restore parameters from a ``state_dict`` checkpoint."""
-        if model_path is None:
-            model_path = os.path.join(self.hparams.MODEL_DIR, MODEL_CHECKPOINT)
+    def load_model(self, model_path: str):
+        """Restore parameters from a ``state_dict`` checkpoint.
+
+        Args:
+            model_path (str): Path to the checkpoint file, or a directory containing
+                the ``best_model`` checkpoint.
+        """
         if os.path.isdir(model_path):
             model_path = os.path.join(model_path, MODEL_CHECKPOINT)
         state = torch.load(model_path, map_location=self.device, weights_only=True)

@@ -30,27 +30,29 @@ __all__ = ["SequentialDataset"]
 class SequentialDataset:
     """Parse sequential-recommendation files into padded NumPy batches.
 
-    Mirrors ``SequentialIterator``'s public data method ``load_data_from_file`` so it
-    can be passed as the ``iterator_creator`` to the PyTorch SLi-Rec model.
+    Mirrors ``SequentialIterator``'s public data method ``load_data_from_file``; the
+    PyTorch SLi-Rec model builds one of these internally from the vocabulary paths.
     """
 
-    def __init__(self, hparams, graph=None, col_spliter="\t"):
+    def __init__(
+        self, user_vocab, item_vocab, cate_vocab, max_seq_length, col_spliter="\t"
+    ):
         """Initialize the loader.
 
         Args:
-            hparams (object): Hyper-parameters exposing ``user_vocab``, ``item_vocab``,
-                ``cate_vocab``, ``max_seq_length`` and ``batch_size``.
-            graph: Unused; accepted for signature compatibility with the TF iterator.
+            user_vocab (str): Path to the user token→id vocabulary pickle.
+            item_vocab (str): Path to the item token→id vocabulary pickle.
+            cate_vocab (str): Path to the category token→id vocabulary pickle.
+            max_seq_length (int): Maximum history length (padding/truncation target).
             col_spliter (str): Column splitter within a line.
         """
         self.col_spliter = col_spliter
         self.userdict, self.itemdict, self.catedict = (
-            load_dict(hparams.user_vocab),
-            load_dict(hparams.item_vocab),
-            load_dict(hparams.cate_vocab),
+            load_dict(user_vocab),
+            load_dict(item_vocab),
+            load_dict(cate_vocab),
         )
-        self.max_seq_length = hparams.max_seq_length
-        self.batch_size = hparams.batch_size
+        self.max_seq_length = max_seq_length
         self.iter_data = dict()
 
     def parse_file(self, input_file):
@@ -138,11 +140,14 @@ class SequentialDataset:
             time_to_now,
         )
 
-    def load_data_from_file(self, infile, batch_num_ngs=0, min_seq_length=1):
+    def load_data_from_file(
+        self, infile, batch_size, batch_num_ngs=0, min_seq_length=1
+    ):
         """Read and parse ``infile``, yielding one NumPy-dict batch at a time.
 
         Args:
             infile (str): Input file; each line is one instance.
+            batch_size (int): Number of positive instances accumulated per batch.
             batch_num_ngs (int): In-batch negatives per positive. ``0`` disables
                 sampling (evaluation path) and preserves file order.
             min_seq_length (int): Instances with a shorter history are skipped.
@@ -203,7 +208,7 @@ class SequentialDataset:
             time_to_now_list.append(time_to_now)
 
             cnt += 1
-            if cnt == self.batch_size:
+            if cnt == batch_size:
                 yield self._convert_data(
                     label_list,
                     user_list,

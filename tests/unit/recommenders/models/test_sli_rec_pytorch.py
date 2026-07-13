@@ -10,7 +10,6 @@ import pytest
 try:
     import torch
 
-    from recommenders.models.deeprec.deeprec_utils import prepare_hparams
     from recommenders.models.deeprec.io.sequential_dataset_pytorch import (
         SequentialDataset,
     )
@@ -28,20 +27,6 @@ try:
     )
 except ImportError:
     pass  # skip if torch is not installed
-
-
-CONFIG_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "..",
-    "..",
-    "..",
-    "..",
-    "recommenders",
-    "models",
-    "deeprec",
-    "config",
-    "sli_rec.yaml",
-)
 
 
 @pytest.fixture(scope="module")
@@ -110,23 +95,21 @@ def synthetic_slirec(tmp_path_factory):
     }
 
 
-@pytest.fixture(scope="module")
-def hparams(synthetic_slirec):
-    return prepare_hparams(
-        CONFIG_PATH,
-        embed_l2=0.0,
-        layer_l2=0.0,
-        learning_rate=0.001,
-        epochs=1,
-        batch_size=100,
-        show_step=1000,
-        MODEL_DIR=os.path.join(synthetic_slirec["dir"], "model"),
-        user_vocab=synthetic_slirec["user_vocab"],
-        item_vocab=synthetic_slirec["item_vocab"],
-        cate_vocab=synthetic_slirec["cate_vocab"],
-        need_sample=True,
-        train_num_ngs=4,
+def _build_model(paths, **overrides):
+    kwargs = dict(
+        user_vocab=paths["user_vocab"],
+        item_vocab=paths["item_vocab"],
+        cate_vocab=paths["cate_vocab"],
+        item_embedding_dim=32,
+        cate_embedding_dim=8,
+        user_embedding_dim=16,
+        hidden_size=40,
+        attention_size=40,
+        max_seq_length=50,
+        seed=42,
     )
+    kwargs.update(overrides)
+    return SLI_RECModel(**kwargs)
 
 
 # --------------------------- Time4LSTMCell ---------------------------
@@ -235,13 +218,12 @@ def test_fcn_net_output_shape_2d_and_3d():
 
 
 def test_dataset_time_features_floor_and_log(synthetic_slirec):
-    hp = prepare_hparams(
-        CONFIG_PATH,
-        user_vocab=synthetic_slirec["user_vocab"],
-        item_vocab=synthetic_slirec["item_vocab"],
-        cate_vocab=synthetic_slirec["cate_vocab"],
+    ds = SequentialDataset(
+        synthetic_slirec["user_vocab"],
+        synthetic_slirec["item_vocab"],
+        synthetic_slirec["cate_vocab"],
+        max_seq_length=50,
     )
-    ds = SequentialDataset(hp)
     # two history stamps 1 day apart, current 2 days after last
     line = "1\tU1\tI1\tC1\t1300172800\tI2,I3\tC1,C1\t1300000000,1300086400"
     parsed = ds.parser_one_line(line)
@@ -255,29 +237,41 @@ def test_dataset_time_features_floor_and_log(synthetic_slirec):
     assert len(tdiff) == len(tffa) == len(ttn) == 2
 
 
-def test_dataset_eval_batch_shapes_and_mask(hparams):
-    ds = SequentialDataset(hparams)
+def test_dataset_eval_batch_shapes_and_mask(synthetic_slirec):
+    ds = SequentialDataset(
+        synthetic_slirec["user_vocab"],
+        synthetic_slirec["item_vocab"],
+        synthetic_slirec["cate_vocab"],
+        max_seq_length=50,
+    )
     batch = next(
         b
         for b in ds.load_data_from_file(
-            os.path.join(os.path.dirname(hparams.user_vocab), "test_data"),
+            os.path.join(synthetic_slirec["dir"], "test_data"),
+            batch_size=100,
             batch_num_ngs=0,
         )
         if b
     )
     n = batch["labels"].shape[0]
-    assert batch["item_history"].shape == (n, hparams.max_seq_length)
-    assert batch["mask"].shape == (n, hparams.max_seq_length)
+    assert batch["item_history"].shape == (n, 50)
+    assert batch["mask"].shape == (n, 50)
     # mask row sum equals number of valid history steps (>=1)
     assert (batch["mask"].sum(axis=1) >= 1).all()
 
 
-def test_dataset_train_negative_sampling_pattern(hparams):
-    ds = SequentialDataset(hparams)
+def test_dataset_train_negative_sampling_pattern(synthetic_slirec):
+    ds = SequentialDataset(
+        synthetic_slirec["user_vocab"],
+        synthetic_slirec["item_vocab"],
+        synthetic_slirec["cate_vocab"],
+        max_seq_length=50,
+    )
     batch = next(
         b
         for b in ds.load_data_from_file(
-            os.path.join(os.path.dirname(hparams.user_vocab), "train_data"),
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            batch_size=100,
             batch_num_ngs=4,
         )
         if b
@@ -286,7 +280,7 @@ def test_dataset_train_negative_sampling_pattern(hparams):
     assert (labels[:, 0] == 1).all()  # positive first
     assert (labels[:, 1:] == 0).all()  # then negatives
     # history is duplicated across the group
-    ih = batch["item_history"].reshape(-1, 5, hparams.max_seq_length)
+    ih = batch["item_history"].reshape(-1, 5, 50)
     assert (ih[:, 0:1] == ih).all()
 
 
@@ -294,25 +288,18 @@ def test_dataset_train_negative_sampling_pattern(hparams):
 
 
 def test_slirec_dimension_coupling_asserted(synthetic_slirec):
-    bad = prepare_hparams(
-        CONFIG_PATH,
-        hidden_size=64,  # != item(32)+cate(8)=40
-        user_vocab=synthetic_slirec["user_vocab"],
-        item_vocab=synthetic_slirec["item_vocab"],
-        cate_vocab=synthetic_slirec["cate_vocab"],
-        train_num_ngs=4,
-    )
     with pytest.raises(ValueError):
-        SLI_RECModel(bad, SequentialDataset, seed=42)
+        _build_model(synthetic_slirec, hidden_size=64)  # != item(32)+cate(8)=40
 
 
-def test_slirec_forward_shapes(hparams):
-    model = SLI_RECModel(hparams, SequentialDataset, seed=42)
+def test_slirec_forward_shapes(synthetic_slirec):
+    model = _build_model(synthetic_slirec)
     ds = model.iterator
     np_batch = next(
         b
         for b in ds.load_data_from_file(
-            os.path.join(os.path.dirname(hparams.user_vocab), "test_data"),
+            os.path.join(synthetic_slirec["dir"], "test_data"),
+            batch_size=100,
             batch_num_ngs=0,
         )
         if b
@@ -324,13 +311,18 @@ def test_slirec_forward_shapes(hparams):
     assert logit.shape == (n, 1)
 
 
-def test_slirec_fit_and_eval_smoke(hparams):
-    model = SLI_RECModel(hparams, SequentialDataset, seed=42)
-    d = os.path.dirname(hparams.user_vocab)
+def test_slirec_fit_and_eval_smoke(synthetic_slirec):
+    model = _build_model(synthetic_slirec)
+    d = synthetic_slirec["dir"]
     model.fit(
-        os.path.join(d, "train_data"), os.path.join(d, "valid_data"), valid_num_ngs=4
+        os.path.join(d, "train_data"),
+        os.path.join(d, "valid_data"),
+        epochs=1,
+        batch_size=100,
+        train_num_ngs=4,
+        valid_num_ngs=4,
     )
-    res = model.run_eval(os.path.join(d, "test_data"), num_ngs=4)
+    res = model.run_eval(os.path.join(d, "test_data"), num_ngs=4, batch_size=100)
     for key in [
         "auc",
         "logloss",
