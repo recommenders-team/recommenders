@@ -114,13 +114,6 @@ NextItNet
     :special-members: __init__
 
 
-RNN Cells
-******************************
-.. automodule:: recommenders.models.deeprec.models.sequential.rnn_cell_implement
-    :members:
-    :special-members: __init__
-
-
 SUM
 ******************************
 .. automodule:: recommenders.models.deeprec.models.sequential.sum
@@ -133,7 +126,13 @@ SUM
 
 SLIRec
 ******************************
-.. automodule:: recommenders.models.deeprec.models.sequential.sli_rec
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.sli_rec_pytorch
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.sequential_base_pytorch
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.rnn_cell_pytorch
     :members:
     :special-members: __init__
 

@@ -66,7 +66,6 @@ nightly:
     - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_dkn                                                                          #  140.12s
     - tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional                                                                #  644.52s
     - tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional                                                             #  432.14s
-    - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_slirec                                                                       #  119.35s
 
   group_gpu_002:                                                                                                                                     # Total: 1100.08s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm                                                                                         #    2.42s (Always the first test to check the GPU works)
@@ -407,7 +406,6 @@ pr_gate:
     # - tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
     - tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition                                                            #    1.99s
     - tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition                                                  #    0.70s
-    - tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition                                                         #  129.06s
     - tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition                                                      #    7.85s
     # - tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
     - tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition                                                       #    3.06s
