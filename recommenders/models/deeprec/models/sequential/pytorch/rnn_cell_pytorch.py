@@ -153,13 +153,17 @@ class Time4LSTMCell(nn.Module):
         t_last_score = inputs[:, d : d + 1]
         t_now_score = inputs[:, d + 1 : d + 2]
 
-        t_now_input = torch.tanh(t_now_score * self.time_input_w1 + self.time_input_bias1)
+        t_now_input = torch.tanh(
+            t_now_score * self.time_input_w1 + self.time_input_bias1
+        )
         t_last_input = torch.tanh(
             t_last_score * self.time_input_w2 + self.time_input_bias2
         )
 
         t_now_state = (
-            x @ self.time_kernel_w1 + t_now_input @ self.time_kernel_t1 + self.time_bias1
+            x @ self.time_kernel_w1
+            + t_now_input @ self.time_kernel_t1
+            + self.time_bias1
         )
         t_last_state = (
             x @ self.time_kernel_w2
