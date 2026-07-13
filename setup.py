@@ -37,7 +37,7 @@ install_requires = [
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numpy<2.0.0",  # See https://github.com/recommenders-team/recommenders/issues/2224
     "pandas>2.0.0,<3.0.0",  # requires numpy
-    "protobuf>=6.33.6,<8",
+    "protobuf>=3.20,<5",  # Capped at <5 for tensorflow<2.16 (gpu extra) compatibility; will change when #2073 is closed
     "pyarrow>=10.0.1",
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
