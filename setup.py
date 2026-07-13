@@ -35,7 +35,6 @@ install_requires = [
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
-    "numba>=0.57.0,<1",
     "numpy<2.0.0",  # See https://github.com/recommenders-team/recommenders/issues/2224
     "pandas>2.0.0,<3.0.0",  # requires numpy
     "protobuf>=6.33.6,<8",
@@ -77,6 +76,7 @@ extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
     # nni needs to be upgraded
     "nni==1.5",
+    "numba>=0.57.0,<1",  # only used by geoimc and rlrmc, which require pymanopt
     "pymanopt>=0.2.5",
     "lightfm>=1.17,<2",
     "scikit-surprise>=1.1.3",  # Put back in core deps when #2224 is fixed
