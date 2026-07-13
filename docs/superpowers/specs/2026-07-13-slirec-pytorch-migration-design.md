@@ -79,3 +79,27 @@ untrained baseline auc ≈ 0.4857.
 6. Training loop + optimizer + early stopping; untrained baseline check.
 7. Full functional-metric match (AUC ≈ 0.7183) via the rewritten notebook.
 8. Regression: existing TF deeprec tests still pass.
+
+## Results (validated)
+
+Component parity (weights copied TF→PyTorch, on the real slirec data):
+
+- **Time4LSTMCell + scan**: single-step `m`/`c` diff ~1e-7; full padded-sequence
+  `rnn_outputs` diff ~6e-8; padded steps exactly 0.
+- **SequentialDataset**: parser, eval-batch arrays, and train-batch arrays
+  (including in-batch negative sampling under a shared RNG seed) all bit-identical
+  to the TF `SequentialIterator`.
+
+End-to-end training (10 epochs, batch 400, seed 42, `embed_l2=layer_l2=0`):
+
+| | untrained | epoch 1 | epoch 10 (valid) | **test** |
+|---|---|---|---|---|
+| PyTorch AUC | 0.480 | 0.506 | 0.761 | **0.7361** |
+| TF AUC | 0.4857 | 0.4975 | 0.7369 | 0.7174 |
+
+The functional test asserts `auc == pytest.approx(0.7183, rel=0.1, abs=0.05)`
+(accepts `[0.6465, 0.7901]`); the PyTorch test AUC **0.7361** passes comfortably and
+exceeds both the target and the TF reference. group_auc 0.722 vs TF 0.7073.
+
+Unit tests: 12/12 pass on CPU. The five other TF sequential models are byte-identical
+to staging (untouched).
