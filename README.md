@@ -145,7 +145,7 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 | [embdotbias](examples/00_quick_start/embdotbias_movielens.ipynb) | 0.054900 | 0.119000 | 0.107000 | 0.042300 | 0.992760 | 0.776040 | 0.223344 | 0.223393 |
 | [LightGCN](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | 0.277200 | 0.419100 | 0.359900 | 0.197100 | N/A | N/A | N/A | N/A |
 | [NCF](examples/02_model_collaborative_filtering/ncf_deep_dive.ipynb) | 0.260300 | 0.393100 | 0.346900 | 0.181900 | N/A | N/A | N/A | N/A |
-| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.258500 | 0.393800 | 0.340600 | 0.185400 | N/A | N/A | N/A | N/A |
+| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.258500 | 0.393800 | 0.340600 | 0.185400 | 1.229103 | 1.035996 | -0.487843 | 0.097283 |
 
 ## Contributing
 
