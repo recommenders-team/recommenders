@@ -391,6 +391,15 @@ def train_sar(params, data):
     return model, t
 
 
+def predict_sar(model, test, top_k=DEFAULT_K, remove_seen=True):
+    # SAR has no rating prediction; with normalize=True its recommendation
+    # scores are rescaled to the original rating range, so the rating metrics
+    # are evaluated on the top-k recommendations (as in the SAR quickstart).
+    with Timer() as t:
+        preds = model.recommend_k_items(test, top_k=top_k, remove_seen=remove_seen)
+    return preds, t
+
+
 def recommend_k_sar(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         topk_scores = model.recommend_k_items(
