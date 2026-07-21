@@ -21,15 +21,7 @@ class RBM(nn.Module):
         possible_ratings,
         visible_units,
         hidden_units=500,
-        keep_prob=0.7,
         init_stdv=0.1,
-        learning_rate=0.004,
-        minibatch_size=100,
-        training_epoch=20,
-        display_epoch=10,
-        sampling_protocol=[50, 70, 80, 90, 100],
-        debug=False,
-        with_metrics=False,
         seed=42,
     ):
         """Implementation of a multinomial Restricted Boltzmann Machine for collaborative filtering
@@ -40,6 +32,11 @@ class RBM(nn.Module):
 
         In this implementation we use multinomial units instead of the one-hot-encoded used in
         the paper. This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
+
+        Only the properties that define the model itself (its architecture and how its
+        parameters are initialized) are set here. Everything that controls *how the model
+        is trained* (number of epochs, minibatch size, learning rate, dropout, Gibbs
+        sampling protocol, metrics) is passed to :meth:`fit` instead.
 
         Basic mechanics:
 
@@ -71,38 +68,25 @@ class RBM(nn.Module):
         4) Inference:
         Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
         for unrated items for all users
+
+        Args:
+            possible_ratings (list or numpy.ndarray): Sorted list of the unique rating values
+                (e.g. ``[1, 2, 3, 4, 5]``). Its length is the number of multinomial classes
+                of each visible unit.
+            visible_units (int): Number of visible units, i.e. the number of items.
+            hidden_units (int): Number of hidden units (latent variables of the model).
+            init_stdv (float): Standard deviation used to initialize the weight matrix.
+            seed (int): Random seed for reproducible parameter initialization and training.
         """
 
         super().__init__()
 
-        # RBM parameters
+        # ----------------------Model properties---------------------------------
         self.n_hidden = hidden_units  # number of hidden units
-        self.keep = keep_prob  # keep probability for dropout regularization
+        self.n_visible = visible_units  # number of items
 
         # standard deviation used to initialize the weights matrices
         self.stdv = init_stdv
-
-        # learning rate used in the update method of the optimizer
-        self.learning_rate = learning_rate
-
-        # size of the minibatch used in the random minibatches training; setting to 1 corresponds to
-        # stochastic gradient descent, and it is considerably slower. Good performance is achieved
-        # for a size of ~100.
-        self.minibatch = minibatch_size
-        self.epochs = training_epoch + 1  # number of epochs used to train the model
-
-        # number of epochs to show the mse error during training
-        self.display_epoch = display_epoch
-
-        # protocol to increase Gibbs sampling's step. Array containing the
-        # percentage of the total training epoch when the step increases by 1
-        self.sampling_protocol = sampling_protocol
-
-        # if true, functions print their control parameters and/or outputs
-        self.debug = debug
-
-        # if true, compute msre and accuracy during training
-        self.with_metrics = with_metrics
 
         # Seed
         self.seed = seed
@@ -110,8 +94,6 @@ class RBM(nn.Module):
         torch.manual_seed(self.seed)
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(self.seed)
-
-        self.n_visible = visible_units  # number of items
 
         # ----------------------Initializers-------------------------------------
 
@@ -132,7 +114,11 @@ class RBM(nn.Module):
 
         self.init_parameters()
 
-        # optimizer is instantiated in fit(); mask of seen items is populated there too
+        # Dropout is disabled at inference (eval mode), so this default only matters if
+        # fit() is never called; fit() overwrites it with the requested keep probability.
+        self.keep = 1.0
+
+        # Training state, populated by fit().
         self.optimizer = None
         self.seen_mask = None
 
@@ -468,7 +454,18 @@ class RBM(nn.Module):
 
         return epoch_tr_err
 
-    def fit(self, xtr):
+    def fit(
+        self,
+        xtr,
+        training_epoch=20,
+        minibatch_size=100,
+        learning_rate=0.004,
+        keep_prob=0.7,
+        sampling_protocol=[50, 70, 80, 90, 100],
+        display_epoch=10,
+        with_metrics=False,
+        debug=False,
+    ):
         """Fit method
 
         Training in generative models takes place in two steps:
@@ -480,9 +477,44 @@ class RBM(nn.Module):
         model and the empirical free energy. Note that while the unit's configuration space is sampled,
         the weights are determined via maximum likelihood (saddle point).
 
+        All the arguments below control the training process only; the model architecture is
+        fixed at construction time.
+
         Args:
-            xtr (numpy.ndarray, integers): the user/affinity matrix for the train set
+            xtr (numpy.ndarray, integers): the user/affinity matrix for the train set.
+            training_epoch (int): number of epochs used to train the model.
+            minibatch_size (int): size of the minibatch used in training. Setting it to 1
+                corresponds to stochastic gradient descent and is considerably slower. Good
+                performance is achieved for a size of ~100.
+            learning_rate (float): learning rate used by the optimizer.
+            keep_prob (float): keep probability for dropout regularization of the hidden units.
+            sampling_protocol (list): percentages of the total training epochs at which the
+                number of Gibbs sampling steps is incremented by one.
+            display_epoch (int): number of epochs after which the training rmse is logged.
+            with_metrics (bool): if True, compute the rmse during training (stored in
+                ``self.rmse_train``).
+            debug (bool): if True, functions print their control parameters and/or outputs.
         """
+
+        # A minibatch larger than the train set yields zero minibatches per epoch, which
+        # would silently return an untrained model. Fail fast instead.
+        n_users = xtr.shape[0]
+        if minibatch_size > n_users:
+            raise ValueError(
+                f"minibatch_size ({minibatch_size}) cannot be larger than the number of "
+                f"users in the train set ({n_users}), otherwise no minibatch is created "
+                f"and the model is never updated."
+            )
+
+        # store the training hyperparameters on the instance for the training helpers
+        self.epochs = training_epoch  # number of epochs used to train the model
+        self.minibatch = minibatch_size  # size of the training minibatches
+        self.learning_rate = learning_rate  # optimizer learning rate
+        self.keep = keep_prob  # keep probability for dropout regularization
+        self.sampling_protocol = sampling_protocol  # Gibbs sampling step protocol
+        self.display_epoch = display_epoch  # epochs between rmse logs
+        self.with_metrics = with_metrics  # whether to compute rmse during training
+        self.debug = debug  # verbose control parameters/outputs
 
         # keep the position of the items in the train set so that they can be optionally exluded from recommendation
         self.seen_mask = np.not_equal(xtr, 0)
