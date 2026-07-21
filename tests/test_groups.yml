@@ -216,6 +216,7 @@ pr_gate:
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_stop_words
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_recommend_top_k_items
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations                                                             #    0.03s
+    - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations_scalar_index
     - tests/unit/recommenders/models/test_cornac_utils.py::test_predict                                                                              #    0.05s
     - tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items                                                                    #    0.13s
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_init
@@ -389,7 +390,7 @@ pr_gate:
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sampler # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_ssept # FIXME: it takes too long to run
-    - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus_without_torch
+    - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info_uses_torch_cuda
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_clear_memory_all_gpus

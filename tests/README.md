@@ -350,7 +350,7 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
      use for caching Docker Hub.
    * [Squid](https://www.squid-cache.org/) can be used to cache for
      other HTTP/HTTPS requests.
-1. Create 7 repository secret
+1. Create 1 repository secret
    * Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
      $\to$
      [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
@@ -358,24 +358,29 @@ Before using `compshare-vm.yml`, follow the steps below for the setup:
      + For the API private key
        - Name: `COMPSHARE_PRIVATE_KEY`
        - Secret: value of the API private key
+1. Create 6 repository variables
+   * Go to Recommenders repo $\to$ Settings $\to$ Secrets and variables
+     $\to$
+     [Actions](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+     $\to$ Click the "Variables" tab $\to$ New repository variable
      + For the API public key
        - Name: `COMPSHARE_PUBLIC_KEY`
-       - Secret: value of the API public key
+       - Value: value of the API public key
      + (Optional) For Docker Hub
        - Name: `VM_DOCKER_MIRROR_URL`
-       - Secret: URL of the Docker Hub mirror
+       - Value: URL of the Docker Hub mirror
      + (Optional) For PyPI index
        - Name: `VM_PIP_INDEX_URL`
-       - Secret: URL of the PyPI index mirror
+       - Value: URL of the PyPI index mirror
      + (Optional) For HTTP proxy
        - Name: `VM_HTTP_PROXY`
-       - Secret: URL of the HTTP proxy
+       - Value: URL of the HTTP proxy
      + (Optional) For HTTPS proxy
        - Name: `VM_HTTPS_PROXY`
-       - Secret: URL of the HTTPS proxy
+       - Value: URL of the HTTPS proxy
      + (Optional) For HTTPS proxy CA certificate
        - Name: `VM_PROXY_CERTIFICATE`
-       - Secret: content of the certificate
+       - Value: content of the certificate
 1. Modify the workflows `unit-tests.yml`, `cpu-nightly.yml`,
    `gpu-nightly.yml` and `spark-nightly.yml` to use
    `compshare-vm.yml`.
