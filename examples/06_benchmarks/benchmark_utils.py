@@ -7,19 +7,6 @@ import pandas as pd
 from tempfile import TemporaryDirectory
 import cornac
 
-try:
-    from pyspark.ml.recommendation import ALS
-    from pyspark.sql import Window
-    from pyspark.sql.functions import row_number
-    from pyspark.sql.types import StructType, StructField
-    from pyspark.sql.types import FloatType, IntegerType, LongType
-except ImportError:
-    pass  # skip this import if we are not in a Spark environment
-try:
-    import surprise  # Put SVD surprise back in core deps when #2224 is fixed
-except ImportError:
-    pass
-
 from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
     COL_DICT,
@@ -31,13 +18,10 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     SEED,
 )
+from recommenders.utils.python_utils import binarize
 from recommenders.models.sar import SAR
 from recommenders.models.cornac.bpr import BPR
 from recommenders.models.cornac.cornac_utils import predict_ranking
-from recommenders.models.surprise.surprise_utils import (
-    predict,
-    compute_ranking_predictions,
-)
 from recommenders.evaluation.python_evaluation import (
     exp_var,
     get_top_k_items,
@@ -51,13 +35,18 @@ from recommenders.evaluation.python_evaluation import (
 )
 
 try:
+    from pyspark.ml.recommendation import ALS
+    from pyspark.sql import Window
+    from pyspark.sql.functions import row_number
+    from pyspark.sql.types import StructType, StructField
+    from pyspark.sql.types import FloatType, IntegerType, LongType
     from recommenders.utils.spark_utils import start_or_get_spark
     from recommenders.evaluation.spark_evaluation import (
         SparkRatingEvaluation,
         SparkRankingEvaluation,
     )
 except (ImportError, NameError):
-    pass  # skip this import if we are not in a Spark environment
+    pass  # skip if not in a Spark environment
 
 try:
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
@@ -68,9 +57,10 @@ try:
     from recommenders.models.embdotbias.data_loader import RecoDataLoader
     from recommenders.models.embdotbias.training_utils import Trainer
     from recommenders.models.embdotbias.utils import cartesian_product, score
-
 except ImportError:
-    pass  # skip this import if we are not in a GPU environment
+    pass  # skip if not in a GPU environment
+
+RATING_THRESHOLD = 3.5
 
 # Helpers
 tmp_dir = TemporaryDirectory()
@@ -176,45 +166,6 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
-def prepare_training_svd(train, test):
-    reader = surprise.Reader("ml-100k", rating_scale=(1, 5))
-    return surprise.Dataset.load_from_df(
-        train.drop(DEFAULT_TIMESTAMP_COL, axis=1), reader=reader
-    ).build_full_trainset()
-
-
-def train_svd(params, data):
-    model = surprise.SVD(**params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-
-
-def predict_svd(model, test):
-    with Timer() as t:
-        preds = predict(
-            model,
-            test,
-            usercol=DEFAULT_USER_COL,
-            itemcol=DEFAULT_ITEM_COL,
-            predcol=DEFAULT_PREDICTION_COL,
-        )
-    return preds, t
-
-
-def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
-    with Timer() as t:
-        topk_scores = compute_ranking_predictions(
-            model,
-            train,
-            usercol=DEFAULT_USER_COL,
-            itemcol=DEFAULT_ITEM_COL,
-            predcol=DEFAULT_PREDICTION_COL,
-            remove_seen=remove_seen,
-        )
-        topk_scores = _get_top_k_pandas(topk_scores, top_k)
-    return topk_scores, t
-
 
 def prepare_training_embdotbias(train, test):
     train_df = train.copy()
@@ -226,6 +177,7 @@ def prepare_training_embdotbias(train, test):
         item_name=DEFAULT_ITEM_COL,
         rating_name=DEFAULT_RATING_COL,
         valid_pct=0.1,
+        seed=SEED,
     )
     return data
 
@@ -369,6 +321,23 @@ def prepare_training_cornac(train, test):
     )
 
 
+def prepare_training_bpr(train, test):
+    train = train.copy()
+    train[DEFAULT_RATING_COL] = binarize(train[DEFAULT_RATING_COL].values, RATING_THRESHOLD)
+    train = train[train[DEFAULT_RATING_COL] > 0].reset_index(drop=True)
+    return cornac.data.Dataset.from_uir(
+        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
+        seed=SEED,
+    )
+
+
+def prepare_metrics_bpr(train, test):
+    test = test.copy()
+    test[DEFAULT_RATING_COL] = binarize(test[DEFAULT_RATING_COL].values, RATING_THRESHOLD)
+    test = test[test[DEFAULT_RATING_COL] > 0].reset_index(drop=True)
+    return train, test
+
+
 def train_bpr(params, data):
     model = BPR(**params)
     with Timer() as t:
@@ -420,6 +389,15 @@ def train_sar(params, data):
     with Timer() as t:
         model.fit(data)
     return model, t
+
+
+def predict_sar(model, test, top_k=DEFAULT_K, remove_seen=True):
+    # SAR has no rating prediction; with normalize=True its recommendation
+    # scores are rescaled to the original rating range, so the rating metrics
+    # are evaluated on the top-k recommendations (as in the SAR quickstart).
+    with Timer() as t:
+        preds = model.recommend_k_items(test, top_k=top_k, remove_seen=remove_seen)
+    return preds, t
 
 
 def recommend_k_sar(model, test, train, top_k=DEFAULT_K, remove_seen=True):
