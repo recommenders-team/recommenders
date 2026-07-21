@@ -16,11 +16,11 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from recommenders.models.deeprec.models.sequential.pytorch.rnn_cell_pytorch import (
+from recommenders.models.deeprec.models.sequential.pytorch.rnn_cell import (
     Time4LSTMCell,
     time4lstm_scan,
 )
-from recommenders.models.deeprec.models.sequential.pytorch.sequential_base_pytorch import (
+from recommenders.models.deeprec.models.sequential.pytorch.sequential_base import (
     Attention,
     FcnNet,
     SequentialBaseModel,

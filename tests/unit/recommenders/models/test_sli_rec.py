@@ -10,18 +10,18 @@ import pytest
 try:
     import torch
 
-    from recommenders.models.deeprec.io.sequential_dataset_pytorch import (
+    from recommenders.models.deeprec.io.sequential_dataset import (
         SequentialDataset,
     )
-    from recommenders.models.deeprec.models.sequential.pytorch.rnn_cell_pytorch import (
+    from recommenders.models.deeprec.models.sequential.pytorch.rnn_cell import (
         Time4LSTMCell,
         time4lstm_scan,
     )
-    from recommenders.models.deeprec.models.sequential.pytorch.sequential_base_pytorch import (
+    from recommenders.models.deeprec.models.sequential.pytorch.sequential_base import (
         Attention,
         FcnNet,
     )
-    from recommenders.models.deeprec.models.sequential.pytorch.sli_rec_pytorch import (
+    from recommenders.models.deeprec.models.sequential.pytorch.sli_rec import (
         AttentionFcn,
         SLI_RECModel,
     )

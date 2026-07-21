@@ -16,7 +16,7 @@ Concrete numeric conventions preserved from TF:
 
 * Model weights (embeddings, attention, FCN) use ``tnormal`` init
   (``trunc_normal_(std=init_value)``); biases are zero. The time-aware LSTM cell uses
-  ``glorot_uniform`` (see :mod:`.rnn_cell_pytorch`).
+  ``glorot_uniform`` (see :mod:`.rnn_cell`).
 * BatchNorm: TF ``momentum=0.95`` -> PyTorch ``momentum=0.05``; ``eps=1e-4``.
 * Dropout is applied BEFORE the activation, only on hidden layers, only when
   ``user_dropout`` is set.
@@ -39,7 +39,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from recommenders.models.deeprec.deeprec_utils import cal_metric, load_dict
-from recommenders.models.deeprec.io.sequential_dataset_pytorch import SequentialDataset
+from recommenders.models.deeprec.io.sequential_dataset import SequentialDataset
 
 MODEL_CHECKPOINT = "best_model"
 

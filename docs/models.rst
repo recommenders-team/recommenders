@@ -126,13 +126,13 @@ SUM
 
 SLIRec
 ******************************
-.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.sli_rec_pytorch
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.sli_rec
     :members:
     :special-members: __init__
-.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.sequential_base_pytorch
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.sequential_base
     :members:
     :special-members: __init__
-.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.rnn_cell_pytorch
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.rnn_cell
     :members:
     :special-members: __init__
 
