@@ -360,10 +360,17 @@ pr_gate:
   group_gpu:                                                                                                                                         # Total: 379.31s
   # group_gpu_001:                                                                                                                                     # Total: 39.29s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
-    - tests/unit/recommenders/models/test_rbm.py::test_class_init                                                                                    #    0.14s
-    - tests/unit/recommenders/models/test_rbm.py::test_sampling_funct                                                                                #    0.43s
-    - tests/unit/recommenders/models/test_rbm.py::test_train_param_init                                                                              #    0.33s
-    - tests/unit/recommenders/models/test_rbm.py::test_save_load                                                                                     #    0.30s
+    - tests/unit/recommenders/models/test_rbm.py::test_class_init                                                                                    #    0.18s
+    - tests/unit/recommenders/models/test_rbm.py::test_to_one_hot                                                                                    #    0.02s
+    - tests/unit/recommenders/models/test_rbm.py::test_sampling_funct                                                                                #    0.10s
+    - tests/unit/recommenders/models/test_rbm.py::test_multinomial_sampling_is_categorical                                                           #    0.05s
+    - tests/unit/recommenders/models/test_rbm.py::test_train_param_init                                                                              #    1.43s
+    - tests/unit/recommenders/models/test_rbm.py::test_predict_is_deterministic                                                                      #    0.09s
+    - tests/unit/recommenders/models/test_rbm.py::test_recommend_k_items_removes_seen                                                                #    0.08s
+    - tests/unit/recommenders/models/test_rbm.py::test_save_load                                                                                     #    0.10s
+    - tests/unit/recommenders/models/test_rbm.py::test_gibbs_protocol                                                                                #    0.17s
+    - tests/unit/recommenders/models/test_rbm.py::test_resume_training_keeps_visible_bias                                                            #    0.11s
+    - tests/unit/recommenders/models/test_rbm.py::test_fit_raises_when_minibatch_larger_than_train_set                                               #    0.01s
     - tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init                                                                         #    0.04s
     - tests/unit/recommenders/models/test_ncf_dataset.py::test_train_loader                                                                          #    0.10s
     - tests/unit/recommenders/models/test_ncf_dataset.py::test_test_loader                                                                           #    0.24s
