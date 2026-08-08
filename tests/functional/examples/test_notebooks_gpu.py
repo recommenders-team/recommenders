@@ -257,10 +257,9 @@ def test_wide_deep_functional(
 @pytest.mark.gpu
 @pytest.mark.notebooks
 @pytest.mark.parametrize(
-    "yaml_file, data_path, epochs, batch_size, expected_values, seed",
+    "data_path, epochs, batch_size, expected_values, seed",
     [
         (
-            "recommenders/models/deeprec/config/sli_rec.yaml",
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
             400,
@@ -275,7 +274,6 @@ def test_slirec_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
-    yaml_file,
     data_path,
     epochs,
     batch_size,
@@ -285,7 +283,6 @@ def test_slirec_quickstart_functional(
     notebook_path = notebooks["slirec_quickstart"]
 
     params = {
-        "yaml_file": yaml_file,
         "data_path": data_path,
         "EPOCHS": epochs,
         "BATCH_SIZE": batch_size,
