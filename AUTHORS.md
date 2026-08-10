@@ -135,6 +135,7 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Wook Lee](https://github.com/ds-wook)**
    * LightGBM ranking notebook with MovieLens dataset and LambdaRank documentation
    * LightGBM Ranker integration and unit tests for ranking support
+   * Implemented the migration of deep learning models from TensorFlow-based implementations to PyTorch-based implementations
 * **[Yan Zhang](https://github.com/YanZhangADS)**
    * Diversity metrics including coverage, novelty, diversity, and serendipity
    * Diversity metrics evaluation sample notebook
