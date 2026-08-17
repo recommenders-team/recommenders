@@ -115,7 +115,7 @@ The table below lists the recommendation algorithms currently available in the r
 | Riemannian Low-rank Matrix Completion (RLRMC)<sup>*</sup> | Collaborative Filtering | Matrix factorization algorithm using Riemannian conjugate gradients optimization with small memory consumption to predict user/item interactions. It works in the CPU environment. | [Quick start](examples/00_quick_start/rlrmc_movielens.ipynb) |
 | Simple Algorithm for Recommendation (SAR)<sup>*</sup> | Collaborative Filtering | Similarity-based algorithm for implicit user/item feedback.  It works in the CPU environment. | [Quick start](examples/00_quick_start/sar_movielens.ipynb) / [Deep dive](examples/02_model_collaborative_filtering/sar_deep_dive.ipynb) |
 | Self-Attentive Sequential Recommendation (SASRec) | Collaborative Filtering | Transformer based algorithm for sequential recommendation. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sasrec_amazon.ipynb) |
-| Short-term and Long-term Preference Integrated Recommender (SLi-Rec)<sup>*</sup> | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Short-term and Long-term Preference Integrated Recommender (SLi-Rec)<sup>*</sup> | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/slirec_amazon.ipynb) |
 | Multi-Interest-Aware Sequential User Modeling (SUM)<sup>*</sup> | Collaborative Filtering | An enhanced memory network-based sequential user model which aims to capture users' multiple interests. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
 | Sequential Recommendation Via Personalized Transformer (SSEPT) | Collaborative Filtering | Transformer based algorithm for sequential recommendation with User embedding. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sasrec_amazon.ipynb) |
 | Standard VAE | Collaborative Filtering | Generative Model for predicting user/item interactions.  It works in the CPU/GPU environment. | [Deep dive](examples/02_model_collaborative_filtering/standard_vae_deep_dive.ipynb) |
@@ -135,18 +135,17 @@ Independent or incubating algorithms and utilities are candidates for the [contr
 
 ### Algorithm Comparison
 
-We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a machine with 4 CPUs, 30Gb of RAM, and 1 GPU GeForce GTX 1660 Ti with 6Gb of memory. Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k, running the algorithms for 15 epochs.
+We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a machine with 24 CPUs, 30Gb of RAM, and 1 GPU GeForce RTX 5090 GPU with 24Gb of memory. Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k. For BPR, ratings are binarized with a threshold of 3.5 (ratings ≥ 4 treated as positive implicit feedback) for both training and evaluation.
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [ALS](examples/00_quick_start/als_movielens.ipynb) | 0.004732 |	0.044239 |	0.048462 |	0.017796 | 0.965038 |	0.753001 |	0.255647 |	0.251648 |
-| [BiVAE](examples/02_model_collaborative_filtering/cornac_bivae_deep_dive.ipynb) | 0.146126	| 0.475077 |	0.411771 |	0.219145 | N/A |	N/A |	N/A |	N/A |
-| [BPR](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | 0.132478	| 0.441997 |	0.388229 |	0.212522 | N/A |	N/A |	N/A |	N/A |
-| [embdotbias](examples/00_quick_start/embdotbias_movielens.ipynb) | 0.018954 |	0.117810 |	0.104242 |	0.042450 | 0.992760 | 0.776040 | 0.223344 |	0.223393 |
-| [LightGCN](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | 0.088526 | 0.419846 | 0.379626 | 0.144336 | N/A | N/A | N/A | N/A |
-| [NCF](examples/02_model_collaborative_filtering/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A | N/A | N/A | N/A |
-| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
-| [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
+| [ALS](examples/00_quick_start/als_movielens.ipynb) | 0.010400 | 0.032800 | 0.038100 | 0.013200 | 0.966732 | 0.752552 | 0.267438 | 0.263534 |
+| [BiVAE](examples/02_model_collaborative_filtering/cornac_bivae_deep_dive.ipynb) | 0.330000 | 0.471700 | 0.411300 | 0.224300 | N/A | N/A | N/A | N/A |
+| [BPR](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | 0.229200 | 0.362300 | 0.285500 | 0.251700 | N/A | N/A | N/A | N/A |
+| [embdotbias](examples/00_quick_start/embdotbias_movielens.ipynb) | 0.054900 | 0.119000 | 0.107000 | 0.042300 | 0.992760 | 0.776040 | 0.223344 | 0.223393 |
+| [LightGCN](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | 0.277200 | 0.419100 | 0.359900 | 0.197100 | N/A | N/A | N/A | N/A |
+| [NCF](examples/02_model_collaborative_filtering/ncf_deep_dive.ipynb) | 0.260300 | 0.393100 | 0.346900 | 0.181900 | N/A | N/A | N/A | N/A |
+| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.258500 | 0.393800 | 0.340600 | 0.185400 | 1.229103 | 1.035996 | -0.487843 | 0.097283 |
 
 ## Contributing
 

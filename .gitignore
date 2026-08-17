@@ -188,3 +188,6 @@ pip-wheel*
 # Claude Code
 CLAUDE.md
 .claude/
+
+# Superpowers specs / design docs
+docs/superpowers/

@@ -21,13 +21,22 @@ In addition to the pip installable package, several extras are provided, includi
 
 Follow the [Getting Started](./README.md#Getting-Started) section in the [README](./README.md) to install the package and run the examples.
 
+Before installing optional extras, make sure the intended virtual environment is active:
+
+```bash
+which python
+python --version
+```
+
+When using the `uv` environment created in the README, prefer `uv pip install ...` so packages are installed into that environment.
+
 ## Setup for GPU
 
 ```bash
 # 1. Make sure CUDA is installed.
 
-# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the gpu extra to the pip install command:
-pip install recommenders[gpu]
+# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the gpu extra to the uv pip install command:
+uv pip install "recommenders[gpu]"
 
 # 3. Within VSCode:
 #   a. Open a notebook with a GPU model, e.g., examples/00_quick_start/wide_deep_movielens.ipynb;
@@ -41,8 +50,8 @@ pip install recommenders[gpu]
 # 1. Make sure JDK is installed.  For example, OpenJDK 11 can be installed using the command
 # sudo apt-get install openjdk-11-jdk
 
-# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the spark extra to the pip install command:
-pip install recommenders[spark]
+# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the spark extra to the uv pip install command:
+uv pip install "recommenders[spark]"
 
 # 3. Within VSCode:
 #   a. Open a notebook with a Spark model, e.g., examples/00_quick_start/als_movielens.ipynb;  
@@ -256,4 +265,3 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`r
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
 1. Install twine: `pip install twine`
 1. Publish the wheel and tar.gz to PyPI: `twine upload recommenders*`
-

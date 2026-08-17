@@ -32,54 +32,44 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-SCRIPT_DIR="$(dirname "$0")"
+script_dir="$(dirname "$0")"
 vm_name="${1:-}"
-more_than_half_hour="${2:-}"
-requirements="${3:-}"
-[[ -z "${vm_name}" || -z "${more_than_half_hour}" ]] && exit 1
-
-# CompShare API specification JSON file
-COMPSHARE_SPEC_FILE="${SCRIPT_DIR}/spec.json"
+requirements="${2:-}"
+[[ -z "${vm_name}" ]] && exit 1
 
 # Utility functions
-SCRIPT_UTILS="${SCRIPT_DIR}/utils.sh"
+script_utils="${script_dir}/utils.sh"
 
 # Setup scripts for configuring network,
 # installing Docker and NVIDIA container toolkit
-SCRIPT_SETUP=("${SCRIPT_DIR}/configure.sh" \
-              "${SCRIPT_DIR}/install_docker.sh" \
-              "${SCRIPT_DIR}/install_nvidia_tools.sh")
+scripts_setup=("${script_dir}/configure.sh" \
+              "${script_dir}/install_docker.sh" \
+              "${script_dir}/install_nvidia_tools.sh")
 
-# Indicators for whether reboot is required after running each setup script
-REBOOT_REQUERED=('yes' 'no' 'yes')
+# Indicators for whether reboot is required after running each setup
+# script
+reboot_requered=('yes' 'no' 'yes')
+
+scripts_all=("${script_utils}" "${scripts_setup[@]}")
 
 echo 'Importing utility functions ...'
-source "${SCRIPT_UTILS}"
+source "${script_utils}"
 
 encoded_password_file="$(mktemp)"
-mktemp -u XXXXXXXXXX | tr -d '\n' | base64 | tr -d '\n' > "${encoded_password_file}"
-allocate_vm "${vm_name}" "${encoded_password_file}" "${more_than_half_hour}" "${requirements}"
+mktemp -u XXXXXXXXXX | tr -d '\n' | base64 \
+    | tr -d '\n' > "${encoded_password_file}"
+allocate_vm \
+    "${vm_name}" \
+    "${encoded_password_file}" \
+    "$(jq 'del(.SchedulerStopTime)' <<< "${requirements}")"
 mapfile -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
 
-echo "Setting stop scheduler ..."
-count=0
-while true; do
-    response=$(update_stop_scheduler "${vm_id}")
-    retcode="$(echo "${response}" | jq '.RetCode')"
-    if [[ ${retcode} == 0 ]]; then
-        break
-    fi
-    echo "* Failed to delete the VM: ${response}"
-    count=$((count + 1))
-    if [[ $count -lt 5 ]]; then
-        sleep $(( (count+1) * 5 ))
-        echo '* Trying again ...'
-    else
-        exit 1
-    fi
-done
+echo 'Setting stop scheduler ...'
+stop_time="$(jq '.SchedulerStopTime // empty' <<< "${requirements}")"
+api_call_retry update_stop_scheduler "${vm_id}" "${stop_time}" > /dev/null
+
 unset COMPSHARE_PRIVATE_KEY
 unset COMPSHARE_PUBLIC_KEY
 
@@ -87,34 +77,29 @@ wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
 rm -rf "${encoded_password_file}"
 
-echo "Uploading scripts to the VM ..."
-for script in "${SCRIPT_SETUP[@]}"; do
+echo 'Uploading scripts to the VM ...'
+for script in "${scripts_all[@]}"; do
     echo "* ${script}"
     scp -q -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${script}" "${ssh_dest}":
 done
 
-for index in "${!SCRIPT_SETUP[@]}"; do
-    script="$(basename "${SCRIPT_SETUP[${index}]}")"
+for index in "${!scripts_setup[@]}"; do
+    script="$(basename "${scripts_setup[${index}]}")"
 
     wait_for_vm_to_be_available "${ssh_dest}"
     echo "Running ${script} on the VM ..."
     ssh -t -o StrictHostKeyChecking=no \
-      -o UserKnownHostsFile=/dev/null \
-      "${ssh_dest}" "\
-          export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
-          export VM_HTTP_PROXY='${VM_HTTP_PROXY:-}'; \
-          export VM_HTTPS_PROXY='${VM_HTTPS_PROXY:-}'; \
-          export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
-          bash ./${script}"
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "\
+            export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
+            export VM_HTTP_PROXY='${VM_HTTP_PROXY:-}'; \
+            export VM_HTTPS_PROXY='${VM_HTTPS_PROXY:-}'; \
+            export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
+            bash ./${script}"
 
-    echo "Removing ${script} ..."
-    ssh -t -o StrictHostKeyChecking=no \
-      -o UserKnownHostsFile=/dev/null \
-      "${ssh_dest}" "rm -rf ./${script}"
-
-    if [[ "${REBOOT_REQUERED[${index}]}" == 'yes' ]]; then
+    if [[ "${reboot_requered[${index}]}" == 'yes' ]]; then
         echo 'Rebooting for setup to take effect ...'
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \

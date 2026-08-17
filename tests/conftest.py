@@ -245,7 +245,7 @@ def notebooks():
             folder_notebooks, "00_quick_start", "wide_deep_movielens.ipynb"
         ),
         "slirec_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "sequential_recsys_amazondataset.ipynb"
+            folder_notebooks, "00_quick_start", "slirec_amazon.ipynb"
         ),
         "nrms_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "nrms_MIND.ipynb"

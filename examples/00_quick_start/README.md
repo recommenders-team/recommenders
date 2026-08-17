@@ -13,7 +13,7 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [ncf](ncf_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Neural Collaborative Filtering (NCF) [1] to predict movie ratings in a Python+GPU (TensorFlow) environment.
 | [npa](npa_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Personalized Attention (NPA) [10] for news recommendation, in a Python+GPU (Tensorflow) environment.  
 | [nrms](nrms_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Multi-Head Self-Attention (NRMS) [8] for news recommendation, in a Python+GPU (Tensorflow) environment.  
-| [rbm](rbm_movielens.ipynb)| MovieLens | Python CPU, GPU | Utilizing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in a Python+GPU (TensorFlow) environment.
+| [rbm](rbm_movielens.ipynb)| MovieLens | Python CPU, GPU | Utilizing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in a Python+GPU (PyTorch) environment.
 | [rlrmc](rlrmc_movielens.ipynb) | Movielens | Python CPU | Utilizing the Riemannian Low-rank Matrix Completion (RLRMC) [6] to predict movie rating in a Python+CPU environment
 | [sar](sar_movielens.ipynb) | MovieLens | Python CPU | Utilizing Simple Algorithm for Recommendation (SAR) algorithm to predict movie ratings in a Python+CPU environment.
 | [sar_azureml](sar_movielens_with_azureml.ipynb) | MovieLens | Python CPU | An example of how to utilize and evaluate SAR using the [Azure Machine Learning service](https://docs.microsoft.com/azure/machine-learning/service/overview-what-is-azure-ml) (AzureML). It takes the content of the [sar quickstart notebook](sar_movielens.ipynb) and demonstrates how to use the power of the cloud to manage data, switch to powerful GPU machines, and monitor runs while training a model.
@@ -22,7 +22,7 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [caser](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use Caser [12] to predict a set of movies the user is going to interact in a short time. |
 | [gru](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use GRU [13] to predict a set of movies the user is going to interact in a short time. |
 | [nextitnet](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use NextItNet [14] to predict a set of movies the user is going to interact in a short time. |
-| [sli-rec](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use SLi-Rec [11] to predict a set of movies the user is going to interact in a short time. |
+| [sli-rec](slirec_amazon.ipynb) | Amazon | Python CPU, GPU | Use SLi-Rec [11] (PyTorch) to predict a set of movies the user is going to interact in a short time. |
 | [wide-and-deep](wide_deep_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Wide-and-Deep Model (Wide-and-Deep) [5] to predict movie ratings in a Python+GPU (TensorFlow) environment.
 | [xdeepfm](xdeepfm_criteo.ipynb) | Criteo | Python CPU, GPU |  Utilizing the eXtreme Deep Factorization Machine (xDeepFM) [3] to learn both low and high order feature interactions for predicting CTR, in a Python+GPU (TensorFlow) environment.
 

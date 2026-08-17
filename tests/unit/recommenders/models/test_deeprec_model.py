@@ -31,7 +31,6 @@ try:
     from recommenders.models.deeprec.models.sequential.nextitnet import (
         NextItNetModel,
     )
-    from recommenders.models.deeprec.models.sequential.sli_rec import SLI_RECModel
     from recommenders.models.deeprec.models.sequential.sum import SUMModel
     from recommenders.models.deeprec.models.xDeepFM import XDeepFMModel
 except ImportError:
@@ -221,43 +220,6 @@ def test_dkn_item2item_component_definition(dkn_files):
     assert model_item2item.hparams.optimizer == "adam"
     assert model_item2item.hparams.max_grad_norm == 0.5
     assert model_item2item.hparams.his_size == 20
-
-
-@pytest.mark.gpu
-def test_slirec_component_definition(sequential_files, deeprec_config_path):
-    yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
-    data_path, user_vocab, item_vocab, cate_vocab = sequential_files
-
-    hparams = prepare_hparams(
-        yaml_file,
-        train_num_ngs=4,
-        embed_l2=0.0,
-        layer_l2=0.0,
-        learning_rate=0.001,
-        epochs=1,
-        MODEL_DIR=os.path.join(data_path, "model"),
-        SUMMARIES_DIR=os.path.join(data_path, "summary"),
-        user_vocab=user_vocab,
-        item_vocab=item_vocab,
-        cate_vocab=cate_vocab,
-        need_sample=True,
-    )
-
-    model = SLI_RECModel(hparams, SequentialIterator)
-    assert model.logit is not None
-    assert model.update is not None
-    assert model.iterator is not None
-    assert model.hparams is not None
-    assert model.hparams.model_type == "sli_rec"
-    assert model.hparams.epochs == 1
-    assert model.hparams.batch_size == 400
-    assert model.hparams.learning_rate == 0.001
-    assert model.hparams.loss == "softmax"
-    assert model.hparams.optimizer == "adam"
-    assert model.hparams.train_num_ngs == 4
-    assert model.hparams.embed_l2 == 0.0
-    assert model.hparams.layer_l2 == 0.0
-    assert model.hparams.need_sample is True
 
 
 @pytest.mark.gpu

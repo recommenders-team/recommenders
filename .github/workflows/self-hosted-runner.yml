@@ -60,7 +60,7 @@ jobs:
       groups: ${{ steps.get-test-groups.outputs.groups }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Get test group names
         id: get-test-groups
@@ -103,7 +103,7 @@ jobs:
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Build image
         run: |
           image_tag='reco-${{ github.sha }}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}'

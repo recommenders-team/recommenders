@@ -4,36 +4,151 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# The following environment variables must be set:
+# Utils for CompShare APIs
+#
+# The following environment variables must be set when using these
+# functions:
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
-# * COMPSHARE_SPEC_FILE
 ######################################################################
-# Utils used by other functions
-######################################################################
+
+#---------------------------------------------------------------------
+# Utils used by other CompShare API wrappers and utils
+#---------------------------------------------------------------------
 get_compute_spec() {
-    # Get the specification for all computes available in the
-    # CompShare specification file, which is in the form below:
-    #
-    #   {
-    #       "Compute": [  # available computes ranked by their hourly price
-    #           {
-    #               "GPUType": "P40",
-    #               "Price": 0.38,
-    #               ...
-    #           },
-    #           ...
-    #       ]
-    #       "Action": {
-    #           "DescribeCompShareInstance": {
-    #               ...
-    #           },
-    #           ...
-    #       }
-    #   }
+    # Return the specification for all available CompShare computes.
     local compute_spec
-    # COMPSHARE_SPEC_FILE is not set directly in the script
-    compute_spec="$(jq '.Compute | sort_by(.Price)' "${COMPSHARE_SPEC_FILE}")"
+    compute_spec="$(cat << 'EOF'
+        [
+            {
+                "GPUType": "P40",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 24
+                },
+                "CPU": 8,
+                "Price": 0.38,
+                "ChargeType": [
+                    "Postpay"
+                ]
+            },
+            {
+                "GPUType": "2080",
+                "Memory": {
+                    "CPU": 40,
+                    "GPU": 8
+                },
+                "CPU": 8,
+                "Price": 0.39,
+                "ChargeType": [
+                    "Postpay"
+                ]
+            },
+            {
+                "GPUType": "3080Ti",
+                "Memory": {
+                    "CPU": 32,
+                    "GPU": 12
+                },
+                "CPU": 12,
+                "Price": 0.7,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
+            },
+            {
+                "GPUType": "3090",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 24
+                },
+                "CPU": 16,
+                "Price": 1.13,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
+            },
+            {
+                "GPUType": "4090",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 24
+                },
+                "CPU": 16,
+                "Price": 1.88,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
+            },
+            {
+                "GPUType": "5090",
+                "Memory": {
+                    "CPU": 96,
+                    "GPU": 32
+                },
+                "CPU": 16,
+                "Price": 3.0,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
+            },
+            {
+                "GPUType": "4090_48G",
+                "Memory": {
+                    "CPU": 96,
+                    "GPU": 48
+                },
+                "CPU": 16,
+                "Price": 3.13,
+                "ChargeType": [
+                    "Postpay"
+                ]
+            },
+            {
+                "GPUType": "A800",
+                "Memory": {
+                    "CPU": 240,
+                    "GPU": 80
+                },
+                "CPU": 16,
+                "Price": 5.92,
+                "ChargeType": [
+                    "Postpay"
+                ]
+            },
+            {
+                "GPUType": "H20",
+                "Memory": {
+                    "CPU": 240,
+                    "GPU": 96
+                },
+                "CPU": 16,
+                "Price": 7.12,
+                "ChargeType": [
+                    "Postpay"
+                ]
+            },
+            {
+                "GPUType": "A100",
+                "Memory": {
+                    "CPU": 64,
+                    "GPU": 80
+                },
+                "CPU": 16,
+                "Price": 10.21,
+                "ChargeType": [
+                    "Postpay",
+                    "Spot"
+                ]
+            }
+        ]
+EOF
+    )"
+    compute_spec="$(jq 'sort_by(.Price)' <<< "${compute_spec}")"
     echo "${compute_spec}"
 }
 
@@ -46,12 +161,60 @@ get_action_template() {
     [[ -z "${action}" ]] && return 1
 
     local action_template
-    # COMPSHARE_SPEC_FILE is not set directly in the script
-    action_template="$(jq ".Action.${action}" "${COMPSHARE_SPEC_FILE}")"
+    action_template="$(cat << 'EOF'
+        [
+            {
+                "Action": "CreateCompShareInstance",
+                "ChargeType": "Postpay",
+                "CompShareImageId": "compshareImage-12rjyhwynazd",
+                "Disks.0.IsBoot": true,
+                "Disks.0.Size": 100,
+                "Disks.0.Type": "CLOUD_SSD",
+                "GPU": 1,
+                "GPUType": "",
+                "MachineType": "G",
+                "Memory": 65536,
+                "Name": "",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "CPU": 8
+            },
+            {
+                "Action": "DescribeCompShareInstance"
+            },
+            {
+                "Action": "GetProjectList"
+            },
+            {
+                "Action": "StopCompShareInstance",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "UHostId": ""
+            },
+            {
+                "Action": "TerminateCompShareInstance",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "UHostId": "",
+                "ReleaseUDisk": true
+            },
+            {
+                "Action": "UpdateCompShareStopScheduler",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "ProjectId": "org-hmgw4i",
+                "UHostId": "",
+                "SchedulerStopTime": 1779164372
+            }
+        ]
+EOF
+    )"
+    action_template="$(jq ".[] | select(.Action == \"${action}\")" \
+        <<< "${action_template}")"
 
     # COMPSHARE_PUBLIC_KEY is not set directly in the script
-    action_template="$(echo "${action_template}" \
-        | jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"")"
+    action_template="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
+        <<< "${action_template}")"
 
     echo "${action_template}"
 }
@@ -67,7 +230,8 @@ gen_action_digest() {
     local encoded_password_file="${2:-}"
     [[ -z "${action_spec}" ]] && return 1
 
-    # Store the spec into a file to hide the password from being visible
+    # Store the spec into a file to hide the password from being
+    # visible
     local action_spec_file
     action_spec_file="$(mktemp)"
     echo "${action_spec}" > "${action_spec_file}"
@@ -100,33 +264,6 @@ gen_action_digest() {
     echo "${digest}"
 }
 
-update_json() {
-    # Update a JSON with another JSON
-    #
-    # Params:
-    # * the original JSON
-    # * the JSON with all updates
-    local original="${1:-}"
-    local updates="${2:-}"
-    [[ -z "${updates}" || -z "${original}" ]] && return 1
-
-    local res
-    res=$(jq -s '
-        def update($a; $b):
-            ($a | type) as $ta | ($b | type) as $tb |
-            if $ta == "object" and $tb == "object" then
-                reduce ([$a, $b] | add | keys_unsorted[]) as $k
-                    ({}; .[$k] = update($a[$k]; $b[$k]))
-            elif $ta == "array" and $tb == "array" then
-                $a + $b
-            else
-                $b // $a
-            end;
-        reduce .[] as $item (null; update(.; $item))' \
-        <(echo "${original}") <(echo "${updates}"))
-    echo "${res}"
-}
-
 gen_request_url() {
     # Generate the API request URL using the action specification and
     # the parameter digest
@@ -150,8 +287,8 @@ gen_request_url() {
     local digest
     digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
     local params
-    params="$(echo "${action_spec}" \
-        | jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")')"
+    params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
+        <<< "${action_spec}")"
     echo "https://api.compshare.cn/?${params}&Signature=${digest}"
 }
 
@@ -165,6 +302,7 @@ invoke_action() {
     local action="${1:-}"
     local updates="${2:-}"
     local encoded_password_file="${3:-}"
+    [[ -z "${action}" ]] && return 1
 
     local request_url
     request_url="$(gen_request_url \
@@ -174,20 +312,23 @@ invoke_action() {
 
     local response
     if [[ -n "${encoded_password_file}" ]]; then
-        response="$(curl -sSf \
+        response="$(curl -LsSf \
+            --retry 5 --retry-delay 5 --retry-all-errors \
             --url-query "Password@${encoded_password_file}" \
             "${request_url}")"
     else
-        response="$(curl -sSf "${request_url}")"
+        response="$(curl -LsSf \
+            --retry 5 --retry-delay 5 --retry-all-errors \
+            "${request_url}")"
     fi
 
     echo "${response}"
 }
 
 
-######################################################################
-# Functions for CompShare APIs
-######################################################################
+#---------------------------------------------------------------------
+# CompShare API wrappers
+#---------------------------------------------------------------------
 create_instance() {
     # Create a VM instance
     # See https://www.compshare.cn/docs/operation/api/createcompshareinstance
@@ -298,7 +439,7 @@ update_stop_scheduler() {
     #
     # Params:
     # * VM ID
-    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC)
+    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC), in 3 hours by default
     local vm_id="${1:-}"
     local stop_time="${2:-}"
     [[ -z "${vm_id}" ]] && return 1
@@ -315,15 +456,200 @@ update_stop_scheduler() {
 }
 
 
+#---------------------------------------------------------------------
+# CompShare API utils
+#---------------------------------------------------------------------
+allocate_vm() {
+    # Create a VM with random names and password from available types
+    #
+    # Params:
+    # * VM name
+    # * file containing the base64-encoded login password
+    # * requirements in JSON, for example
+    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #     - It means the GPUType should not be 2080 and P40,
+    #       GPU memory should be greater than or equal to 10GB
+    #       and CPU 9GB.
+    #   + {"GPUType":"2080,P40"}
+    #     - It means the GPUType should be 2080 or P40.
+    local vm_name="${1:-}"
+    local encoded_password_file="${2:-}"
+    local requirements="${3:-}"
+    [[ -z "${vm_name}" \
+      || -z "${encoded_password_file}" \
+      || ! -f "${encoded_password_file}" \
+      || -z "${requirements}" ]] && return 1
+
+    echo "Allocating a new VM named ${vm_name} ..." >&2
+    local compute_spec
+    compute_spec="$(get_compute_spec)"
+
+    local num_computes
+    num_computes="$(jq 'length' <<< "${compute_spec}")"
+    for ((i=0; i<"${num_computes}"; i++)); do
+        local compute
+        compute="$(jq -c ".[${i}]" <<< "${compute_spec}")"
+        echo "* Trying spec: ${compute}" >&2
+
+        # Check if the compute satisfy requirements
+        local reqt
+        reqt="$(jq -e 'del(.ChargeType)' <<< "${requirements}")"
+        if jq -e 'length != 0' <<< "${reqt}" > /dev/null; then
+            local match
+            match="$(check_vm_requirement "${compute}" "${reqt}")"
+            if [[ "${match}" != 'true' ]]; then
+                echo '  + Requirements mismatch.' >&2
+                continue
+            fi
+        fi
+
+        local gpu_type
+        gpu_type="$(jq -r '.GPUType' <<< "${compute}")"
+
+        local cpu_cores
+        cpu_cores="$(jq '.CPU' <<< "${compute}")"
+
+        local memory
+        memory="$(jq '.Memory.CPU * 1024' <<< "${compute}")"
+
+        local available_charge_type
+        available_charge_type="$(jq '.ChargeType' <<< "${compute}")"
+
+        local required_charge_types
+        mapfile -t required_charge_types < \
+            <(jq -rc '.ChargeType.[]' <<< "${requirements}")
+        for charge_type in "${required_charge_types[@]}"; do
+            if jq -e "map(. == \"${charge_type}\") 
+                | any" <<< "${available_charge_type}" > /dev/null
+            then
+                echo "  + Trying charge type: ${charge_type} ..." >&2
+                # Try to create the VM 2 times
+                api_call_retry 2 create_instance \
+                    "${vm_name}" \
+                    "${encoded_password_file}" \
+                    "${gpu_type}" \
+                    "${cpu_cores}" \
+                    "${memory}" \
+                    "${charge_type}" > /dev/null && return
+            fi
+        done
+    done
+    return 1
+}
+
+get_vm_info() {
+    # Get VM info
+    #
+    # Returns:
+    # * VM ID
+    # * SSH destination, in the format like `user@ip_address`
+    #
+    # Params:
+    # * VM name
+    local vm_name="${1:-}"
+    [[ -z "${vm_name}" ]] && return 1
+
+    echo "Getting info of the VM ..." >&2
+    local response
+    response="$(api_call_retry describe_instance)"
+
+    local vm_info
+    vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
+        <<< "${response}")"
+    [[ -z "${vm_info}" ]] && return 1
+    
+    local vm_id
+    vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
+
+    local ssh_dest
+    ssh_dest="$(jq -r '.SshLoginCommand' <<< "${vm_info}" \
+        | cut -d ' ' -f 2)"
+
+    echo "${vm_id}"
+    echo "${ssh_dest}"
+}
+
+api_call_retry() {
+    # Run the API call in "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # Params:
+    # * (optional) number of attempts
+    local num_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        num_attempts="$1"
+        shift
+    fi
+
+    local delay=5
+    local attempt=1
+    local response
+    while true; do
+        response="$("$@")"
+
+        local retcode
+        retcode="$(jq '.RetCode' <<< "${response}")"
+        if [[ ${retcode} == 0 ]]; then
+            break
+        fi
+        echo "ERROR: ${response}" >&2
+        if ((attempt >= num_attempts)); then
+            echo "ERROR: API call failed after ${num_attempts} attempts." >&2
+            return 1
+        fi
+        echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
+        sleep "${delay}"
+        ((attempt++))
+    done
+
+    echo "${response}"
+}
+
+
 ######################################################################
-# Other utils
+# Non Compshare API utils
+#
+# These utils do not require any preset environment variables.
 ######################################################################
+update_json() {
+    # Update a JSON with another JSON
+    #
+    # Params:
+    # * the original JSON
+    # * the JSON with all updates
+    local original="${1:-}"
+    local updates="${2:-}"
+    [[ -z "${updates}" || -z "${original}" ]] && return 1
+
+    local res
+    res=$(jq -s '
+        def update($a; $b):
+            ($a | type) as $ta | ($b | type) as $tb |
+            if $ta == "object" and $tb == "object" then
+                reduce ([$a, $b] | add | keys_unsorted[]) as $k
+                    ({}; .[$k] = update($a[$k]; $b[$k]))
+            elif $ta == "array" and $tb == "array" then
+                $a + $b
+            else
+                $b // $a
+            end;
+        reduce .[] as $item (null; update(.; $item))' \
+        <(echo "${original}") <(echo "${updates}"))
+    echo "${res}"
+}
+
 check_vm_requirement() {
     # Check if the VM specification match the requirements.
     #
     # Params:
     # * VM specification in JSON
-    # * requirements in JSON
+    # * requirements in JSON, for example
+    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #     - It means the GPUType should not be 2080 and P40,
+    #       GPU memory should be greater than or equal to 10GB
+    #       and CPU 9GB.
+    #   + {"GPUType":"2080,P40"}
+    #     - It means the GPUType should be 2080 or P40.
     local spec="${1:-}"
     local requirements="${2:-}"
 
@@ -365,142 +691,9 @@ check_vm_requirement() {
     echo "${match}"
 }
 
-allocate_vm() {
-    # Create a VM with random names and password from available types
-    #
-    # Params:
-    # * VM name
-    # * file containing the base64-encoded login password
-    # * whether the VM will be used for more than half an hour
-    #   + Unit tests require less than half hour
-    #   + Nightly tests require more than half hour
-    # * (optional) requirements in JSON, for example
-    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
-    #     - It means the GPUType should not be 2080 and P40,
-    #       GPU memory should be greater than or equal to 10GB
-    #       and CPU 9GB.
-    #   + {"GPUType":"2080,P40"}
-    #     - It means the GPUType should be 2080 or P40.
-    local vm_name="${1:-}"
-    local encoded_password_file="${2:-}"
-    local more_than_half_hour="${3:-}"
-    local requirements="${4:-}"
-    [[ -z "${vm_name}" \
-      || -z "${encoded_password_file}" \
-      || ! -f "${encoded_password_file}" \
-      || -z "${more_than_half_hour}" ]] && return 1
-
-    echo "Allocating a new VM named ${vm_name} ..." >&2
-    local compute_spec
-    compute_spec="$(get_compute_spec)"
-
-    local charge_type_list=('Spot' 'Postpay')
-    if [[ "${more_than_half_hour}" == 'yes' ]]; then
-        charge_type_list=('Postpay')
-    fi
-
-    local num_computes
-    num_computes="$(echo "${compute_spec}" | jq 'length')"
-    for ((i=0; i<"${num_computes}"; i++)); do
-        local compute
-        compute="$(echo "${compute_spec}" | jq -c ".[${i}]")"
-        echo "* Trying spec: ${compute}" >&2
-
-        if [[ -n "${requirements}" ]]; then
-            local match
-            match="$(check_vm_requirement \
-                "${compute}" \
-                "${requirements}")"
-            if [[ "${match}" != 'true' ]]; then
-                echo '  + Requirements mismatch.' >&2
-                continue
-            fi
-        fi
-
-        local gpu_type
-        gpu_type="$(echo "${compute}" | jq -r '.GPUType')"
-
-        local cpu_cores
-        cpu_cores="$(echo "${compute}" | jq '.CPU')"
-
-        local memory
-        memory="$(echo "${compute}" | jq '.Memory.CPU * 1024')"
-
-        for index in "${!charge_type_list[@]}"; do
-            charge_type="${charge_type_list[${index}]}"
-            local response
-            for ((j=0; j<3; j++)); do
-                response=$(create_instance \
-                    "${vm_name}" \
-                    "${encoded_password_file}" \
-                    "${gpu_type}" \
-                    "${cpu_cores}" \
-                    "${memory}" \
-                    "${charge_type}")
-
-                local retcode
-                retcode="$(echo "${response}" | jq '.RetCode')"
-                if [[ ${retcode} == 0 ]]; then
-                    return
-                fi
-                echo "ERROR: ${response}" >&2
-                sleep 5
-            done
-        done
-    done
-    return 1
-}
-
-get_vm_info() {
-    # Get VM info
-    #
-    # Returns:
-    # * VM ID
-    # * SSH destination, in the format like `user@ip_address`
-    #
-    # Params:
-    # * VM name
-    local vm_name="${1:-}"
-    [[ -z "${vm_name}" ]] && return 1
-
-    echo "Getting info of the VM ..." >&2
-    local response
-    local retcode
-    local count=0
-    while true; do
-        response="$(describe_instance)"
-        retcode="$(echo "${response}" | jq '.RetCode')"
-        if [[ ${retcode} == 0 ]]; then
-            break
-        fi
-        echo "* Failed to get the info: ${response}." >&2
-        count=$((count + 1))
-        if [[ $count -lt 5 ]]; then
-            sleep $(( (count+1) * 5 ))
-            echo '* Trying again ...' >&2
-        else
-            return 1
-        fi
-    done
-
-    local vm_info
-    vm_info="$(echo "${response}" \
-        | jq ".UHostSet.[] | select(.Name == \"${vm_name}\")")"
-    [[ -z "${vm_info}" ]] && return 1
-    
-    local vm_id
-    vm_id="$(echo "${vm_info}" | jq -r '.UHostId')"
-
-    local ssh_dest
-    ssh_dest="$(echo "${vm_info}" \
-        | jq -r '.SshLoginCommand' | cut -d ' ' -f 2)"
-
-    echo "${vm_id}"
-    echo "${ssh_dest}"
-}
-
 wait_for_vm_to_be_available() {
-    # Check and wait for the VM being available
+    # Check and wait for the VM being available.
+    # It will fail if the VM cannot be accessed after 300 seconds.
     #
     # Params:
     # * SSH destination, in the format like `user@ip_address`
@@ -516,7 +709,7 @@ wait_for_vm_to_be_available() {
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             "${ssh_dest}" true 2>&1) \
-        || (echo "${ssh_response}" | grep -iq 'permission')
+        || grep -iq 'permission' <<< "${ssh_response}"
     do
         # Set timeout to (5 + 5) * 30 = 300 seconds
         [[ "${count}" -gt 30 ]] && return 1
@@ -550,18 +743,11 @@ setup_ssh_key() {
     echo '* Deplying SSH key ...' >&2
     local -x SSHPASS
     read -r SSHPASS < <(cat "${encoded_password_file}" | tr -d '\n' | base64 -d) || true
-    local count=0
-    until sshpass -e ssh-copy-id \
+    run_cmd_retry sshpass -e ssh-copy-id \
         -i "${key_file}.pub" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${ssh_dest}"
-    do
-        [[ "${count}" -gt 5 ]] && return 1
-        count=$((count + 1))
-        sleep 5
-        echo '  + Trying again ...' >&2
-    done
 
     echo '* Disabling SSH password authentication ...' >&2
     ssh -t -o StrictHostKeyChecking=no \
@@ -569,4 +755,57 @@ setup_ssh_key() {
         "${ssh_dest}" "\
             sudo sed -i -E 's/^[[:space:]#]*PasswordAuthentication.*/PasswordAuthentication no/' ${sshd_config}; \
             sudo systemctl reload ssh"
+}
+
+apt_install_retry() {
+    # Run apt-get install "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # Params:
+    # * (optional) number of attempts
+    local num_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        num_attempts="$1"
+        shift
+    fi
+
+    run_cmd_retry "${num_attempts}" \
+        sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+        apt-get install -y "$@"
+}
+
+run_cmd_retry() {
+    # Run the command in "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # NOTE: This function is only for a single command without
+    #       redirection, not for multiple commands.
+    #
+    # Params:
+    # * (optional) number of attempts
+    local num_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        num_attempts="$1"
+        shift
+    fi
+
+    local delay=5
+    local attempt=1
+    until "$@"; do
+        if ((attempt >= num_attempts)); then
+            echo "ERROR: Failed after ${num_attempts} attempts." >&2
+            return 1
+        fi
+        echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
+        sleep "${delay}"
+        ((attempt++))
+    done
+}
+
+wait_for_apt_lock() {
+    # Wait for processes releasing /var/lib/apt/lists/lock
+    while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
+        echo 'Waiting for processes releasing /var/lib/apt/lists/lock ...' >&2
+        sleep 5
+    done
 }
