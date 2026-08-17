@@ -23,7 +23,7 @@ try:
     )
     from recommenders.models.deeprec.models.sequential.pytorch.sli_rec import (
         AttentionFcn,
-        SLI_RECModel,
+        SLiRecModel,
     )
 except ImportError:
     pass  # skip if torch is not installed
@@ -109,7 +109,7 @@ def _build_model(paths, **overrides):
         seed=42,
     )
     kwargs.update(overrides)
-    return SLI_RECModel(**kwargs)
+    return SLiRecModel(**kwargs)
 
 
 # --------------------------- Time4LSTMCell ---------------------------

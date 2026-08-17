@@ -3,8 +3,8 @@
 
 """PyTorch port of SLi-Rec (Adaptive User Modeling with Long/Short-Term Preferences).
 
-Reproduces ``SLI_RECModel._build_seq_graph`` / ``_attention_fcn`` from
-``recommenders/models/deeprec/models/sequential/sli_rec.py`` (TF-1.x) as a standalone
+Reproduces ``_build_seq_graph`` / ``_attention_fcn`` from the TF-1.x ``SLI_RECModel``
+in ``recommenders/models/deeprec/models/sequential/sli_rec.py`` as a standalone
 ``nn.Module`` built on :class:`SequentialBaseModel`. It fuses a long-term ASVD
 attention pooling of the history with a short-term Time4LSTM branch attended against
 the target item, blends the two with a per-example sigmoid gate (alpha), and
@@ -27,7 +27,7 @@ from recommenders.models.deeprec.models.sequential.pytorch.sequential_base impor
     init_weight_,
 )
 
-__all__ = ["SLI_RECModel"]
+__all__ = ["SLiRecModel"]
 
 _MASK_PADDING = -(2**32) + 1  # matches TF's masked-softmax sentinel
 
@@ -79,7 +79,7 @@ class AttentionFcn(nn.Module):
         return user_embedding * att_weights.unsqueeze(-1)
 
 
-class SLI_RECModel(SequentialBaseModel):
+class SLiRecModel(SequentialBaseModel):
     """SLi-Rec model (PyTorch).
 
     :Citation:
