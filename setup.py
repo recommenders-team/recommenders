@@ -51,7 +51,6 @@ extras_require = {
     "gpu": [
         "nvidia-ml-py>=11.525.84",
         "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",  # Fixed TF due to constant security problems and breaking changes #2073
-        "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
     ],
     "spark": [
