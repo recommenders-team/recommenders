@@ -93,14 +93,26 @@ RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
     && bash uv_install.sh \
     && rm uv_install.sh
 
+# Install python system-wide to avoid uv downloading from GitHub
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y software-properties-common \
+    && add-apt-repository -y ppa:deadsnakes/ppa \
+    && apt-get install -y \
+        python${PYTHON_VERSION}-dev \
+        python${PYTHON_VERSION}-distutils
+
 # Create virtual environment with uv
 ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_CACHE_DIR=/opt/uv-cache/uv/python
 ENV UV_CACHE_DIR=/opt/uv-cache/
 ENV UV_HTTP_TIMEOUT=300
 ARG UV_INSECURE_HOST
+# Use system python
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
-    uv venv --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
+    uv venv --no-managed-python --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
 
 
 #####################################################################
