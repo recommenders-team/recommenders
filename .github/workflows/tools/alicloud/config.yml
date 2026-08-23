@@ -1,1 +1,3 @@
 apt_mirror: mirrors.cloud.aliyuncs.com
+docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
+rootless_docker: false

@@ -1,1 +1,2 @@
 apt_mirror: "mirrors.ucloud.cn"
+rootless_docker: true

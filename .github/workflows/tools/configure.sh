@@ -17,8 +17,14 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+script_dir="$(dirname "$0")"
+config_file=''
+if [[ -n ${CLOUD_VENDER:-} ]]; then
+    config_file="${script_dir}/${CLOUD_VENDER@L}/config.yml"
+fi
+
 echo '* Importing utility functions ...'
-source "$(dirname "$0")/utils.sh"
+source "${script_dir}/utils.sh"
 
 echo '* Configuring APT lock ...'
 sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer
@@ -26,7 +32,7 @@ sudo systemctl mask apt-daily.timer apt-daily-upgrade.timer
 sudo systemctl stop apt-daily.service apt-daily-upgrade.service
 sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 
-if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
+if [[ -n ${VM_PROXY_CERTIFICATE:-} ]]; then
     echo '* Adding CA certificate for HTTPS proxy ...'
     echo '  + Installing prerequisites ...'
     wait_for_apt_lock
@@ -39,25 +45,19 @@ if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
     sudo update-ca-certificates
 fi
 
-if [[ -n "${VM_HTTP_PROXY:-}" || -n "${VM_HTTPS_PROXY:-}" ]]; then
+if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
-    case "${CLOUD_VENDER:-}" in
-        compshare|CompShare|COMPSHARE)
-            apt_mirror='mirrors.ucloud.cn,'
-            ;;
-        alicloud|AliCloud|ALICLOUD)
-            apt_mirror='mirrors.aliyun.com,mirrors.cloud.aliyuncs.com,'
-            ;;
-        *)
-            apt_mirror=''
-    esac
+    if [[ -n ${config_file} ]]; then
+        apt_mirror="$(yq '.apt_mirror // ""' "${config_file}")"
+    fi
+    apt_mirror="${apt_mirror:+$apt_mirror,}"
     sudo tee -a /etc/environment > /dev/null << EOF
 no_proxy="${apt_mirror}developer.download.nvidia.com"
 NO_PROXY="${apt_mirror}developer.download.nvidia.com"
 EOF
 
-    if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
+    if [[ -n ${VM_HTTP_PROXY:-} ]]; then
         echo '  + Configuring HTTP proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
 http_proxy="${VM_HTTP_PROXY}"
@@ -65,7 +65,7 @@ HTTP_PROXY="${VM_HTTP_PROXY}"
 EOF
     fi
 
-    if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
+    if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
         echo '  + Configuring HTTPS proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
 https_proxy="${VM_HTTPS_PROXY}"
@@ -74,8 +74,8 @@ EOF
     fi
 fi
 
-case "${CLOUD_VENDER:-}" in
-    compshare|CompShare|COMPSHARE)
+case "${CLOUD_VENDER@L}" in
+    compshare)
         echo '* Adding extra DNS ...'
         sudo awk -i inplace \
             '/nameservers:/ {start=1}; \
@@ -91,7 +91,7 @@ case "${CLOUD_VENDER:-}" in
         echo '* Applying network configuration ...'
         sudo netplan apply
         ;;
-    alicloud|AliCloud|ALICLOUD)
+    alicloud)
         echo '* Installing prerequisites ...'
         wait_for_apt_lock
         sudo apt-get update

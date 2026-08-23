@@ -20,20 +20,22 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+script_dir="$(dirname "$0")"
+config_file=''
+if [[ -n ${CLOUD_VENDER:-} ]]; then
+    config_file="${script_dir}/${CLOUD_VENDER@L}/config.yml"
+fi
+
 echo '* Importing utility functions ...'
-source "$(dirname "$0")/utils.sh"
+source "${script_dir}/utils.sh"
 
 arch="$(dpkg --print-architecture)"
 codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
-case "${CLOUD_VENDER:-}" in
-    alicloud|AliCloud|ALICLOUD)
-        apt_url="http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu"
-        ;;
-    *)
-        apt_url="https://download.docker.com/linux/ubuntu"
-esac
-
+if [[ -n ${config_file} ]]; then
+    apt_url="$(yq '.docker_download_mirror // ""' "${config_file}")"
+fi
+apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
 apt_list="/etc/apt/sources.list.d/docker.list"
 keyring_dir="/etc/apt/keyrings"
 gpg_path="${keyring_dir}/docker.asc"
@@ -59,16 +61,10 @@ sudo apt-get update
 echo '* Installing the latest Docker community edition ...'
 apt_install_retry docker-ce
 
-case "${CLOUD_VENDER:-}" in
-    compshare|CompShare|COMPSHARE)
-        rootless=true
-        ;;
-    alicloud|AliCloud|ALICLOUD)
-        rootless=false
-        ;;
-    *)
-        rootless=true
-esac
+if [[ -n ${config_file} ]]; then
+    rootless="$(yq '.rootless_docker // ""' "${config_file}")"
+fi
+rootless="${rootless:-true}"
 
 if [[ ${rootless} = true ]]; then
     echo '* Configuring Docker daemon in rootless mode ...'
@@ -84,7 +80,7 @@ if [[ ${rootless} = true ]]; then
 fi
 
 
-if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
+if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     echo '* Setting Docker mirror URL ...'
     if [[ ${rootless} = true ]]; then
         daemon_json="${HOME}/.config/docker/daemon.json"
@@ -95,7 +91,7 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
     mirrors="${VM_DOCKER_MIRROR_URL//*( );*( )/\",\"}"
     shopt -u extglob
     updates="{ \"registry-mirrors\": [ \"${mirrors}\" ] }"
-    if [[ -f "${daemon_json}" ]]; then
+    if [[ -f ${daemon_json} ]]; then
         echo "  ## Updating ${daemon_json} ..."
         res="$(update_json <(cat "${daemon_json}") "${updates}")"
         echo "${res}" > "${daemon_json}"

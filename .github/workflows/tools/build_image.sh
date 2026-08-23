@@ -29,6 +29,16 @@ dockerfile="${2:-}"
 test_group="${3:-}"
 python_version="${4:-}"
 
+[[ -z ${image_tag} \
+  || -z ${dockerfile} \
+  || -z ${test_group} \
+  || -z ${python_version} ]] && exit 1
+
+config_file=''
+if [[ -n ${CLOUD_VENDER:-} ]]; then
+    config_file="${script_dir}/${CLOUD_VENDER@L}/config.yml"
+fi
+
 # Utility functions
 script_utils="${script_dir}/utils.sh"
 
@@ -47,7 +57,7 @@ docker_args="-t ${image_tag} \
     --build-arg GIT_REF= \
     --build-arg PYTHON_VERSION=${python_version}"
 
-if [[ -z "${SSH_DEST}" ]]; then
+if [[ -z ${SSH_DEST} ]]; then
     echo 'Building Docker image on current GitHub-hosted runner ...'
     docker build . ${docker_args}
 else
@@ -79,13 +89,15 @@ else
         "${dockerfile}"
 
     echo '  + Configuring APT in Dockerfile ...'
-    if [[ -n ${CLOUD_VENDER:-} ]]; then
-        apt_mirror="$(yq '.apt_mirror' "${script_dir}/${CLOUD_VENDER@L}/config.yml")"
-        sed -i "/SHELL /a \
-            RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
-                    -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
-                    /etc/apt/sources.list.d/ubuntu.sources" \
-            "${dockerfile}"
+    if [[ -n ${config_file} ]]; then
+        apt_mirror="$(yq '.apt_mirror // ""' "${config_file}")"
+        if [[ -n ${apt_mirror} ]]; then
+            sed -i "/SHELL /a \
+                RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
+                        -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
+                        /etc/apt/sources.list.d/ubuntu.sources" \
+                "${dockerfile}"
+        fi
     fi
 
     echo '  + Uploading recommenders ...'
@@ -104,7 +116,7 @@ else
     docker_args="${docker_args} \
         --build-arg UV_INSECURE_HOST='github.com'"
 
-    if [[ -n "${VM_HTTP_PROXY:-}" || -n "${VM_HTTPS_PROXY:-}" ]]; then
+    if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
         pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" \
             | sed -e 's|^.*://||' -e 's|:.*$||')"
         pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
@@ -113,25 +125,25 @@ else
             --build-arg NO_PROXY='${docker_no_proxy}' \
             --build-arg no_proxy='${docker_no_proxy}'"
 
-        if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
+        if [[ -n ${VM_HTTP_PROXY:-} ]]; then
             docker_args="${docker_args} \
                 --build-arg HTTP_PROXY='${VM_HTTP_PROXY}' \
                 --build-arg http_proxy='${VM_HTTP_PROXY}'"
         fi
 
-        if [[ -n "${VM_HTTPS_PROXY:-}" ]]; then
+        if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
             docker_args="${docker_args} \
                 --build-arg HTTPS_PROXY='${VM_HTTPS_PROXY}' \
                 --build-arg https_proxy='${VM_HTTPS_PROXY}'"
         fi
     fi
 
-    if [[ -n "${VM_PIP_INDEX_URL:-}" ]]; then
+    if [[ -n ${VM_PIP_INDEX_URL:-} ]]; then
         docker_args="${docker_args} \
             --build-arg VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL}'"
     fi
 
-    if [[ -n "${VM_PROXY_CERTIFICATE:-}" ]]; then
+    if [[ -n ${VM_PROXY_CERTIFICATE:-} ]]; then
         docker_args="${docker_args} \
             --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}'"
     fi
