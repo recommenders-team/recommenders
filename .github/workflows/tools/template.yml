@@ -1,0 +1,192 @@
+# ---------------------------------------------------------
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+# This is a reusable workflow called by other workflows to run
+# different groups of tests categorized by their types.
+#
+# Tests collected in tests/test_groups.yml, are grouped based on
+# their
+# * type
+#   + pr_gate
+#   + nightly
+#   + experimental
+# * compute
+#   + cpu
+#   + gpu
+#   + spark
+#
+# In order to speed up testing, the testing workflows will run the
+# tests in parallel according to the groups obtained from this
+# action.
+
+name: Tests
+
+on:
+  workflow_call:
+    inputs:
+      compute:
+        required: false
+        type: string
+        default: cpu
+        description: Test compute - cpu, gpu or spark.  It is only
+          used for nightly not pr_gate
+      config-file:
+        required: false
+        type: string
+        default: tests/test_groups.yml
+        description: Path to test group configuration file relative
+          to the repo root
+      dockerfile:
+        required: false
+        type: string
+        default: tools/docker/Dockerfile
+        description: Path to the Dockerfile used for building the
+          test environment
+      pr_code_dir:
+        required: false
+        type: string
+        default: ${{ github.event_name == 'pull_request_target' && format('pr_{0}', github.event.number) || '' }}
+      timeout-minutes:
+        required: true
+        type: number
+      tools_dir:
+        required: false
+        type: string
+        default: .github/workflows/tools
+        description: Path to the workflow tools
+      tools_dir_alicloud:
+        required: false
+        type: string
+        default: .github/workflows/tools/alicloud
+        description: Path to the AliCloud tools
+      tools_dir_compshare:
+        required: false
+        type: string
+        default: .github/workflows/tools/compshare
+        description: Path to the CompShare tools
+      type:
+        required: true
+        type: string
+        description: Type of test - pr_gate or nightly
+    secrets:
+      COMPSHARE_PRIVATE_KEY:
+        required: true
+
+jobs:
+  get-test-groups:
+    # yq is required to run .github/actions/get-test-groups, and it
+    # is preinstalled on ubuntu-24.04
+    # (https://github.com/actions/runner-images/blob/9b8c9709431a8d2b295fd46cf96f283d671f20d9/images/ubuntu/Ubuntu2404-Readme.md?plain=1#L100)
+    runs-on: ubuntu-24.04
+    outputs:
+      groups: ${{ steps.get-test-groups.outputs.groups }}
+    steps:
+      - name: Check out repository code from the PR
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.number) || github.ref }}
+          allow-unsafe-pr-checkout: true
+
+      - name: Get test group names
+        id: get-test-groups
+        shell: bash
+        run: |
+          bash '${{ inputs.tools_dir }}/get_test_groups.sh' \
+               '${{ inputs.config-file }}' \
+               '${{ inputs.type }}' \
+               '${{ inputs.compute }}'
+
+  execute-tests:
+    name: ${{ join(matrix.*, ', ') }}
+    needs: get-test-groups
+    # Docker and sshpass are required on the runner.
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      max-parallel: 6
+      matrix:
+        python-version:
+          - '3.10'
+          - '3.11'
+        group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
+    steps:
+      - name: Check out repository code from the PR
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.number) || github.ref }}
+          allow-unsafe-pr-checkout: true
+      
+      - name: Generate unique VM name and Docker image tag
+        run: |
+          if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
+          then
+              commit="$(echo ${{ github.event.pull_request.head.sha }} | head -c 5)"
+              vm_name_template="vm_${{ github.event.number }}_${commit}_XXXXXX"
+          else
+              commit="$(echo ${{ github.sha }} | head -c 5)"
+              vm_name_template="vm_${commit}_XXXXXX"
+          fi
+          image_tag="reco-${commit}-${{ github.run_attempt }}"
+          vm_name="$(mktemp -u ${vm_name_template})"
+
+          # Export VM_NAME and IMAGE_TAG for subsequent steps
+          echo "IMAGE_TAG=${image_tag}" >> "${GITHUB_ENV}"
+          echo "VM_NAME=${vm_name}" >> "${GITHUB_ENV}"
+
+      - name: Setup VM
+        # * GPU tests should run on GPUs.
+        # * cpu-nightly needs to run on larger CPU runner.
+        # * Otherwise, standard runner is enough.
+        if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
+        env:
+          CLOUD_VENDER: ${{ vars.CLOUD_VENDER }}
+          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+          COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
+          VM_DOCKER_MIRROR_URL: ${{ vars.VM_DOCKER_MIRROR_URL }}
+          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
+          VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
+        run: |
+          config_file="${{ inputs.tools_dir }}/${CLOUD_VENDER@L}/config.yml"
+          setup_vm_script="$(yq -e '.scripts.setup_vm' "${config_file}")"
+          bash "${setup_vm_script}" "${VM_NAME}" '${{ inputs.type }}'
+
+      - name: Build image
+        env:
+          CLOUD_VENDER: ${{ vars.CLOUD_VENDER }}
+          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
+          VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
+          VM_PIP_INDEX_URL: ${{ vars.VM_PIP_INDEX_URL }}
+          VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
+        run: |
+          bash '${{ inputs.tools_dir }}/build_image.sh' \
+               "${IMAGE_TAG}" \
+               '${{ inputs.dockerfile }}' \
+               '${{ matrix.group }}' \
+               '${{ matrix.python-version }}'
+
+      - name: Execute tests in container
+        env:
+          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
+        run: |
+          bash '${{ inputs.tools_dir }}/run_tests.sh' \
+               "${IMAGE_TAG}" \
+               '${{ inputs.config-file }}' \
+               '${{ inputs.type }}' \
+               '${{ matrix.group }}'
+
+      - name: Clean up
+        if: always()
+        env:
+          CLOUD_VENDER: ${{ vars.CLOUD_VENDER }}
+          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+          COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
+        run: |
+          config_file="${{ inputs.tools_dir }}/${CLOUD_VENDER@L}/config.yml"
+          delete_vm_script="$(yq -e '.scripts.delete_vm' "${config_file}")"
+          bash "${delete_vm_script}" "${VM_NAME}"
