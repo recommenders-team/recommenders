@@ -1,2 +1,5 @@
 apt_mirror: "mirrors.ucloud.cn"
 rootless_docker: true
+scripts:
+    setup_vm: setup_vm.sh
+    delete_vm: delete_vm.sh
