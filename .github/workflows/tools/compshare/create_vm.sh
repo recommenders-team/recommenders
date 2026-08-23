@@ -35,7 +35,7 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 requirements="${2:-}"
-[[ -z "${vm_name}" ]] && exit 1
+[[ -z ${vm_name} ]] && exit 1
 
 # Utility functions
 script_utils="${script_dir}/utils.sh"

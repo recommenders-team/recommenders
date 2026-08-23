@@ -59,7 +59,7 @@ SHELL ["/bin/bash", "-lc"]
 
 # Add HTTPS proxy CA certificate
 # * ca-certificates is required and installed in all base images
-RUN if [[ -n "${VM_PROXY_CERTIFICATE}" ]]; then \
+RUN if [[ -n ${VM_PROXY_CERTIFICATE} ]]; then \
         echo "${VM_PROXY_CERTIFICATE}" > /usr/local/share/ca-certificates/vm_proxy_cert.crt \
         && update-ca-certificates; \
     fi
@@ -141,7 +141,7 @@ RUN --mount=type=cache,target=/opt/uv-cache/ \
     source ${RECO_VENV_DIR}/bin/activate && \
     { count=0; \
       while true; do \
-          if [ -z "${GIT_REF}" ]; then \
+          if [[ -z ${GIT_REF} ]]; then \
               uv pip install --index "${VM_PIP_INDEX_URL}" "recommenders${EXTRAS} @ ."; \
           else \
               uv pip install --index "${VM_PIP_INDEX_URL}" recommenders${EXTRAS} @ git+https://github.com/recommenders-team/recommenders@${GIT_REF}; \

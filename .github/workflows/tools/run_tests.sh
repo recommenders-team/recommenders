@@ -33,7 +33,7 @@ test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && source ${reco_venv_dir}/bin/activate \
     && pytest --durations 0 ${test_list}"
 
-if [[ -z "${SSH_DEST}" ]]; then
+if [[ -z ${SSH_DEST} ]]; then
     echo 'Running tests on current GitHub-hosted runner ...'
     docker run --rm "${image_tag}" bash -lc "${test_cmd}"
 else
@@ -46,7 +46,7 @@ else
         docker_args=''
     fi
 
-    if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
+    if [[ -n ${VM_HTTP_PROXY:-} ]]; then
         docker_args="${docker_args} \
             --env HTTP_PROXY='${VM_HTTP_PROXY}' \
             --env http_proxy='${VM_HTTP_PROXY}'"

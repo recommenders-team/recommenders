@@ -14,7 +14,7 @@ update_json() {
     # * the JSON with all updates
     local original="${1:-}"
     local updates="${2:-}"
-    [[ -z "${updates}" || -z "${original}" ]] && return 1
+    [[ -z ${updates} || -z ${original} ]] && return 1
 
     local res
     res=$(jq -s '
@@ -40,7 +40,7 @@ wait_for_vm_to_be_available() {
     # Params:
     # * SSH destination, in the format like `user@ip_address`
     local ssh_dest="${1:-}"
-    [[ -z "${ssh_dest}" ]] && return 1
+    [[ -z ${ssh_dest} ]] && return 1
 
     echo 'Waiting for the VM to be available ...' >&2
     # Wait some time for the operation to be completed.
@@ -71,16 +71,16 @@ setup_ssh_key() {
     # * file containing the base64-encoded login password
     local ssh_dest="${1:-}"
     local encoded_password_file="${2:-}"
-    [[ -z "${ssh_dest}" \
-      || -z "${encoded_password_file}" \
-      || ! -f "${encoded_password_file}" ]] && return 1
+    [[ -z ${ssh_dest} \
+      || -z ${encoded_password_file} \
+      || ! -f ${encoded_password_file} ]] && return 1
 
     local key_file="${HOME}/.ssh/id_ed25519"
     local sshd_config="/etc/ssh/sshd_config"
 
     echo 'Setting up SSH key for login ...' >&2
     echo '* Generating SSH key ...' >&2
-    if [[ ! -f "${key_file}" || ! -f "${key_file}.pub" ]]; then
+    if [[ ! -f ${key_file} || ! -f ${key_file}.pub ]]; then
         ssh-keygen -q -t ed25519 -N '' -f "${key_file}"
     fi
 

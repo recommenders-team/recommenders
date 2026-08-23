@@ -17,7 +17,7 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 vm_name="${1:-}"
-[[ -z "${vm_name}" ]] && { echo 'No VM specified.'; exit 0; }
+[[ -z ${vm_name} ]] && { echo 'No VM specified.'; exit 0; }
 
 echo 'Importing utility functions ...'
 source "$(dirname "$0")/utils.sh"
@@ -27,7 +27,7 @@ num_attempts=6
 attempt=1
 while true; do
     mapfile -t vm_info < <(get_vm_info "${vm_name}")
-    if [[ -n "${vm_info:-}" ]]; then
+    if [[ -n ${vm_info:-} ]]; then
         vm_id="${vm_info[0]}"
         echo "Stopping the VM ${vm_name} ..."
         api_call_retry stop_instance "${vm_id}" > /dev/null
