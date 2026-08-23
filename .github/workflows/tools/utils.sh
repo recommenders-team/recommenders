@@ -43,6 +43,8 @@ wait_for_vm_to_be_available() {
     [[ -z "${ssh_dest}" ]] && return 1
 
     echo 'Waiting for the VM to be available ...' >&2
+    # Wait some time for the operation to be completed.
+    sleep 5
     local count=0
     local ssh_response
     until ssh_response=$(\

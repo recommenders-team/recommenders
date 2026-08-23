@@ -42,9 +42,9 @@ script_utils="${script_dir}/utils.sh"
 
 # Setup scripts for configuring network,
 # installing Docker and NVIDIA container toolkit
-scripts_setup=("${script_dir}/configure.sh" \
-              "${script_dir}/install_docker.sh" \
-              "${script_dir}/install_nvidia_tools.sh")
+scripts_setup=("${script_dir}/../configure.sh" \
+              "${script_dir}/../install_docker.sh" \
+              "${script_dir}/../install_nvidia_tools.sh")
 
 # Indicators for whether reboot is required after running each setup
 # script

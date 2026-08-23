@@ -7,11 +7,15 @@
 # Install Docker in rootless mode
 #
 # The following environment variables may need to be set:
+# * CLOUD_VENDER
 # * VM_DOCKER_MIRROR_URL
+#   + semicolon separated URLs
 #
 # See
 # * https://docs.docker.com/engine/install/ubuntu/
 # * https://docs.docker.com/engine/security/rootless/
+# * Docker CE mirror at AliCloud
+#   + https://developer.aliyun.com/mirror/docker-ce
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -21,7 +25,15 @@ source "$(dirname "$0")/utils.sh"
 
 arch="$(dpkg --print-architecture)"
 codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
-apt_url="https://download.docker.com/linux/ubuntu"
+
+case "${CLOUD_VENDER:-}" in
+    alicloud|AliCloud|ALICLOUD)
+        apt_url="http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu"
+        ;;
+    *)
+        apt_url="https://download.docker.com/linux/ubuntu"
+esac
+
 apt_list="/etc/apt/sources.list.d/docker.list"
 keyring_dir="/etc/apt/keyrings"
 gpg_path="${keyring_dir}/docker.asc"
@@ -31,12 +43,12 @@ apt_entry="deb [arch=${arch} signed-by=${gpg_path}] ${apt_url} ${codename} stabl
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl jq
+apt_install_retry ca-certificates curl jq gnupg
 
 echo '* Adding Docker official GPG key ...'
 sudo install -m 0755 -d "${keyring_dir}"
 
-run_cmd_retry sudo curl -fsSL "${gpg_url}" -o "${gpg_path}"
+run_cmd_retry 10 sudo curl -fsSL "${gpg_url}" -o "${gpg_path}"
 sudo chmod a+r "${gpg_path}"
 
 echo '* Setting APT repo source for Docker ...'
@@ -47,21 +59,42 @@ sudo apt-get update
 echo '* Installing the latest Docker community edition ...'
 apt_install_retry docker-ce
 
-echo '* Configuring Docker daemon in rootless mode ...'
-echo '  - Installing prerequisites ...'
-apt_install_retry uidmap docker-ce-rootless-extras
+case "${CLOUD_VENDER:-}" in
+    compshare|CompShare|COMPSHARE)
+        rootless=true
+        ;;
+    alicloud|AliCloud|ALICLOUD)
+        rootless=false
+        ;;
+    *)
+        rootless=true
+esac
 
-echo '  - Disabling system-wide Docker daemon ...'
-sudo systemctl disable --now docker.service docker.socket
-sudo rm /var/run/docker.sock
+if [[ ${rootless} = true ]]; then
+    echo '* Configuring Docker daemon in rootless mode ...'
+    echo '  - Installing prerequisites ...'
+    apt_install_retry uidmap docker-ce-rootless-extras
 
-echo '  - Installing rootless Docker daemon ...'
-dockerd-rootless-setuptool.sh install
+    echo '  - Disabling system-wide Docker daemon ...'
+    sudo systemctl disable --now docker.service docker.socket
+    sudo rm /var/run/docker.sock
+
+    echo '  - Installing rootless Docker daemon ...'
+    dockerd-rootless-setuptool.sh install
+fi
+
 
 if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
     echo '* Setting Docker mirror URL ...'
-    daemon_json="${HOME}/.config/docker/daemon.json"
-    updates="{ \"registry-mirrors\": [ \"${VM_DOCKER_MIRROR_URL}\" ] }"
+    if [[ ${rootless} = true ]]; then
+        daemon_json="${HOME}/.config/docker/daemon.json"
+    else
+        daemon_json="/etc/docker/daemon.json"
+    fi
+    shopt -s extglob
+    mirrors="${VM_DOCKER_MIRROR_URL//*( );*( )/\",\"}"
+    shopt -u extglob
+    updates="{ \"registry-mirrors\": [ \"${mirrors}\" ] }"
     if [[ -f "${daemon_json}" ]]; then
         echo "  ## Updating ${daemon_json} ..."
         res="$(update_json <(cat "${daemon_json}") "${updates}")"
@@ -73,9 +106,14 @@ if [[ -n "${VM_DOCKER_MIRROR_URL:-}" ]]; then
     fi
 fi
 
-echo '* Starting rootless Docker daemon ...'
-systemctl --user restart docker
+if [[ ${rootless} = true ]]; then
+    echo '* Starting rootless Docker daemon ...'
+    systemctl --user restart docker
 
-echo '* Enabling Docker service and launch the daemon on startup ...'
-systemctl --user enable docker
-sudo loginctl enable-linger "$(whoami)"
+    echo '* Enabling Docker service and launch the daemon on startup ...'
+    systemctl --user enable docker
+    sudo loginctl enable-linger "$(whoami)"
+else
+    echo '* Starting Docker daemon ...'
+    sudo systemctl restart docker
+fi

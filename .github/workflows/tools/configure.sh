@@ -7,6 +7,7 @@
 # Configure APT and network for speedup (**reboot required**)
 #
 # The following environment variables may need to be set:
+# * CLOUD_VENDER
 # * VM_HTTP_PROXY
 # * VM_HTTPS_PROXY
 # * VM_PROXY_CERTIFICATE
@@ -41,9 +42,19 @@ fi
 if [[ -n "${VM_HTTP_PROXY:-}" || -n "${VM_HTTPS_PROXY:-}" ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
+    case "${CLOUD_VENDER:-}" in
+        compshare|CompShare|COMPSHARE)
+            apt_mirror='mirrors.ucloud.cn,'
+            ;;
+        alicloud|AliCloud|ALICLOUD)
+            apt_mirror='mirrors.aliyun.com,mirrors.cloud.aliyuncs.com,'
+            ;;
+        *)
+            apt_mirror=''
+    esac
     sudo tee -a /etc/environment > /dev/null << EOF
-no_proxy="mirrors.ucloud.cn,developer.download.nvidia.com"
-NO_PROXY="mirrors.ucloud.cn,developer.download.nvidia.com"
+no_proxy="${apt_mirror}developer.download.nvidia.com"
+NO_PROXY="${apt_mirror}developer.download.nvidia.com"
 EOF
 
     if [[ -n "${VM_HTTP_PROXY:-}" ]]; then
@@ -63,17 +74,29 @@ EOF
     fi
 fi
 
-echo '* Adding extra DNS ...'
-sudo awk -i inplace \
-    '/nameservers:/ {start=1}; \
-    start && /addresses:/ && !done { \
-        print; \
-        print "                - 100.90.90.90"; \
-        print "                - 100.90.90.100"; \
-        done=1; \
-        next \
-    } 1' \
-    /etc/netplan/50-cloud-init.yaml
+case "${CLOUD_VENDER:-}" in
+    compshare|CompShare|COMPSHARE)
+        echo '* Adding extra DNS ...'
+        sudo awk -i inplace \
+            '/nameservers:/ {start=1}; \
+            start && /addresses:/ && !done { \
+                print; \
+                print "                - 100.90.90.90"; \
+                print "                - 100.90.90.100"; \
+                done=1; \
+                next \
+            } 1' \
+            /etc/netplan/50-cloud-init.yaml
 
-echo '* Applying network configuration ...'
-sudo netplan apply
+        echo '* Applying network configuration ...'
+        sudo netplan apply
+        ;;
+    alicloud|AliCloud|ALICLOUD)
+        echo '* Installing prerequisites ...'
+        wait_for_apt_lock
+        sudo apt-get update
+        apt_install_retry git-all
+        ;;
+    *)
+        ;;
+esac
