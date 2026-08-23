@@ -10,14 +10,19 @@
 # * VM name
 #
 # The following environment variables must be set:
-# * COMPSHARE_PRIVATE_KEY
-# * COMPSHARE_PUBLIC_KEY
+# * CLOUD_SERVICE_SECRET
+# * CLOUD_SERVICE_EXTRA_DATA
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
 
 vm_name="${1:-}"
 [[ -z ${vm_name} ]] && { echo 'No VM specified.'; exit 0; }
+
+COMPSHARE_PUBLIC_KEY="$(jq -r '.COMPSHARE_PUBLIC_KEY' \
+    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
+export COMPSHARE_PUBLIC_KEY
 
 echo 'Importing utility functions ...'
 source "$(dirname "$0")/utils.sh"

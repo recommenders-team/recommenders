@@ -11,14 +11,8 @@
 # * Test type
 #
 # The following environment variables must be set:
-# * COMPSHARE_PRIVATE_KEY
-# * COMPSHARE_PUBLIC_KEY
-#
-# The following environment variables may need to be set:
-# * VM_DOCKER_MIRROR_URL
-# * VM_HTTP_PROXY
-# * VM_HTTPS_PROXY
-# * VM_PROXY_CERTIFICATE
+# * CLOUD_SERVICE_SECRET
+# * CLOUD_SERVICE_EXTRA_DATA
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -31,6 +25,24 @@ test_type="${2:-}"
 # Utility functions
 script_utils="${script_dir}/utils.sh"
 script_create="${script_dir}/create_vm.sh"
+
+COMPSHARE_PUBLIC_KEY="$(jq -r '.COMPSHARE_PUBLIC_KEY' \
+    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+VM_DOCKER_MIRROR_URL="$(jq -r '.VM_DOCKER_MIRROR_URL // ""' \
+    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+VM_HTTP_PROXY="$(jq -r '.VM_HTTP_PROXY // ""' \
+    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+VM_HTTPS_PROXY="$(jq -r '.VM_HTTPS_PROXY // ""' \
+    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+VM_PROXY_CERTIFICATE="$(jq -r '.VM_PROXY_CERTIFICATE // ""' \
+    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+
+export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
+export COMPSHARE_PUBLIC_KEY
+export VM_DOCKER_MIRROR_URL
+export VM_HTTP_PROXY
+export VM_HTTPS_PROXY
+export VM_PROXY_CERTIFICATE
 
 # All VMs from CompShare have GPUs.
 # Nightly tests require more time and more GPU memory.

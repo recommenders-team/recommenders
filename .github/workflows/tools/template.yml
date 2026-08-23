@@ -145,8 +145,8 @@ jobs:
         if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         env:
           CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
-          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-          COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
+          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
+          CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
           VM_DOCKER_MIRROR_URL: ${{ vars.VM_DOCKER_MIRROR_URL }}
           VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
           VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
@@ -159,6 +159,7 @@ jobs:
       - name: Build image
         env:
           CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
+          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
           VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
           VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
           VM_PIP_INDEX_URL: ${{ vars.VM_PIP_INDEX_URL }}
@@ -172,6 +173,7 @@ jobs:
 
       - name: Execute tests in container
         env:
+          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
           VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
         run: |
           bash '${{ inputs.tools_dir }}/run_tests.sh' \
@@ -184,8 +186,8 @@ jobs:
         if: always()
         env:
           CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
-          COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
-          COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
+          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
+          CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         run: |
           config_file="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}/config.yml"
           delete_vm_script="$(yq -e '.scripts.delete_vm' "${config_file}")"
