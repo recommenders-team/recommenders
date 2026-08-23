@@ -144,7 +144,7 @@ jobs:
         # * Otherwise, standard runner is enough.
         if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         env:
-          CLOUD_VENDER: ${{ vars.CLOUD_VENDER }}
+          CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
           VM_DOCKER_MIRROR_URL: ${{ vars.VM_DOCKER_MIRROR_URL }}
@@ -152,13 +152,13 @@ jobs:
           VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
           VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
         run: |
-          config_file="${{ inputs.tools_dir }}/${CLOUD_VENDER@L}/config.yml"
+          config_file="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}/config.yml"
           setup_vm_script="$(yq -e '.scripts.setup_vm' "${config_file}")"
           bash "${setup_vm_script}" "${VM_NAME}" '${{ inputs.type }}'
 
       - name: Build image
         env:
-          CLOUD_VENDER: ${{ vars.CLOUD_VENDER }}
+          CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
           VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
           VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
           VM_PIP_INDEX_URL: ${{ vars.VM_PIP_INDEX_URL }}
@@ -183,10 +183,10 @@ jobs:
       - name: Clean up
         if: always()
         env:
-          CLOUD_VENDER: ${{ vars.CLOUD_VENDER }}
+          CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
           COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
           COMPSHARE_PUBLIC_KEY: ${{ vars.COMPSHARE_PUBLIC_KEY }}
         run: |
-          config_file="${{ inputs.tools_dir }}/${CLOUD_VENDER@L}/config.yml"
+          config_file="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}/config.yml"
           delete_vm_script="$(yq -e '.scripts.delete_vm' "${config_file}")"
           bash "${delete_vm_script}" "${VM_NAME}"

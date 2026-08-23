@@ -13,7 +13,7 @@
 # * Python version
 #
 # The following environment variables may need to be set:
-# * CLOUD_VENDER
+# * CLOUD_SERVICE
 # * SSH_DEST
 # * VM_HTTP_PROXY
 # * VM_HTTPS_PROXY
@@ -35,8 +35,8 @@ python_version="${4:-}"
   || -z ${python_version} ]] && exit 1
 
 config_file=''
-if [[ -n ${CLOUD_VENDER:-} ]]; then
-    config_file="${script_dir}/${CLOUD_VENDER@L}/config.yml"
+if [[ -n ${CLOUD_SERVICE:-} ]]; then
+    config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
 fi
 
 # Utility functions

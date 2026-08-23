@@ -7,7 +7,7 @@
 # Configure APT and network for speedup (**reboot required**)
 #
 # The following environment variables may need to be set:
-# * CLOUD_VENDER
+# * CLOUD_SERVICE
 # * VM_HTTP_PROXY
 # * VM_HTTPS_PROXY
 # * VM_PROXY_CERTIFICATE
@@ -19,8 +19,8 @@ shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
 config_file=''
-if [[ -n ${CLOUD_VENDER:-} ]]; then
-    config_file="${script_dir}/${CLOUD_VENDER@L}/config.yml"
+if [[ -n ${CLOUD_SERVICE:-} ]]; then
+    config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
 fi
 
 echo '* Importing utility functions ...'
@@ -74,7 +74,7 @@ EOF
     fi
 fi
 
-case "${CLOUD_VENDER@L}" in
+case "${CLOUD_SERVICE@L}" in
     compshare)
         echo '* Adding extra DNS ...'
         sudo awk -i inplace \
