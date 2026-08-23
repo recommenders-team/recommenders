@@ -79,17 +79,8 @@ else
         "${dockerfile}"
 
     echo '  + Configuring APT in Dockerfile ...'
-    case "${CLOUD_VENDER:-}" in
-        compshare|CompShare|COMPSHARE)
-            apt_mirror='mirrors.ucloud.cn'
-            ;;
-        alicloud|AliCloud|ALICLOUD)
-            apt_mirror='mirrors.cloud.aliyuncs.com'
-            ;;
-        *)
-            apt_mirror=''
-    esac
-    if [[ -n ${apt_mirror} ]]; then
+    if [[ -n ${CLOUD_VENDER:-} ]]; then
+        apt_mirror="$(yq '.apt_mirror' "${script_dir}/${CLOUD_VENDER@L}/config.yml")"
         sed -i "/SHELL /a \
             RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
                     -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
