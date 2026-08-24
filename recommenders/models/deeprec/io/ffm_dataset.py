@@ -153,7 +153,5 @@ class FFMDataset:
             "labels": np.asarray(labels, dtype=np.float32).reshape(-1, 1),
             "feat_ids": np.asarray(feat_ids, dtype=np.int64)[order],
             "feat_values": np.asarray(feat_values, dtype=np.float32)[order],
-            "dnn_offsets": np.concatenate(([0], np.cumsum(counts[:-1]))).astype(
-                np.int64
-            ),
+            "dnn_offsets": np.cumsum(counts) - counts,
         }

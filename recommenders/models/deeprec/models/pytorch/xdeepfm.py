@@ -213,7 +213,6 @@ class XDeepFMModel(nn.Module):
             if torch.cuda.is_available():
                 torch.cuda.manual_seed_all(seed)
 
-        self.feature_count = feature_count
         self.field_count = field_count
         self.dim = dim
         self.method = method
@@ -227,7 +226,6 @@ class XDeepFMModel(nn.Module):
 
         self.embedding = nn.Parameter(torch.empty(feature_count, dim))
         init_weight_(self.embedding, init_method, init_value)
-        self.embed_params = [self.embedding]
         self.layer_params = []
         self.cross_params = []
 
@@ -251,11 +249,12 @@ class XDeepFMModel(nn.Module):
             self.layer_params += [self.cin.w_out, self.cin.b_out]
 
         if use_dnn_part:
+            layer_sizes = layer_sizes if layer_sizes is not None else [100, 100]
             self.dnn = FcnNet(
                 field_count * dim,
-                layer_sizes if layer_sizes is not None else [100, 100],
-                activation if activation is not None else ["relu", "relu"],
-                dropout if dropout is not None else [0.0, 0.0],
+                layer_sizes,
+                activation if activation is not None else ["relu"] * len(layer_sizes),
+                dropout if dropout is not None else [0.0] * len(layer_sizes),
                 user_dropout,
                 enable_BN,
                 init_method,
@@ -365,19 +364,16 @@ class XDeepFMModel(nn.Module):
         }
 
     def _data_loss(
-        self,
-        logit: torch.Tensor,
-        pred: torch.Tensor,
-        labels: torch.Tensor,
-        loss: str,
+        self, logit: torch.Tensor, labels: torch.Tensor, loss: str
     ) -> torch.Tensor:
-        logit, pred, labels = logit.view(-1), pred.view(-1), labels.view(-1)
+        logit, labels = logit.view(-1), labels.view(-1)
         if loss == "cross_entropy_loss":
             return F.binary_cross_entropy_with_logits(logit, labels)
         elif loss == "square_loss":
-            return torch.sqrt(F.mse_loss(pred, labels))
+            return torch.sqrt(F.mse_loss(self._get_pred(logit), labels))
         elif loss == "log_loss":
             epsilon = 1e-7
+            pred = self._get_pred(logit)
             return torch.mean(
                 -labels * torch.log(pred + epsilon)
                 - (1 - labels) * torch.log(1 - pred + epsilon)
@@ -386,17 +382,19 @@ class XDeepFMModel(nn.Module):
 
     def _regular_loss(self) -> torch.Tensor:
         reg = torch.zeros((), device=self.device)
-        if self.embed_l2 > 0 or self.embed_l1 > 0:
-            for param in self.embed_params:
-                reg = reg + self.embed_l2 * 0.5 * param.pow(2).sum()
-                reg = reg + self.embed_l1 * param.abs().sum()
-        if self.layer_l2 > 0 or self.layer_l1 > 0:
-            for param in self.layer_params:
+        if self.embed_l2 > 0:
+            reg = reg + self.embed_l2 * 0.5 * self.embedding.pow(2).sum()
+        if self.embed_l1 > 0:
+            reg = reg + self.embed_l1 * self.embedding.abs().sum()
+        for param in self.layer_params:
+            if self.layer_l2 > 0:
                 reg = reg + self.layer_l2 * 0.5 * param.pow(2).sum()
+            if self.layer_l1 > 0:
                 reg = reg + self.layer_l1 * param.abs().sum()
-        if self.cross_l2 > 0 or self.cross_l1 > 0:
-            for param in self.cross_params:
+        for param in self.cross_params:
+            if self.cross_l1 > 0:
                 reg = reg + self.cross_l1 * param.abs().sum()
+            if self.cross_l2 > 0:
                 # tf.norm(..., ord=2) is the Frobenius norm, not the squared one.
                 reg = reg + self.cross_l2 * param.pow(2).sum().sqrt()
         return reg
@@ -468,9 +466,7 @@ class XDeepFMModel(nn.Module):
                 batch = self._to_tensors(np_batch)
                 optimizer.zero_grad(set_to_none=True)
                 logit = self.forward(batch)
-                data_loss = self._data_loss(
-                    logit, self._get_pred(logit), batch["labels"], loss
-                )
+                data_loss = self._data_loss(logit, batch["labels"], loss)
                 step_loss = data_loss + self._regular_loss()
                 step_loss.backward()
                 if is_clip_norm:
