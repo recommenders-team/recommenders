@@ -20,7 +20,8 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 config_file=''
 if [[ -n ${CLOUD_SERVICE:-} ]]; then
-    config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
+    cloud_service_dir="${script_dir}/${CLOUD_SERVICE@L}"
+    config_file="${cloud_service_dir}/config.yml"
 fi
 
 echo '* Importing utility functions ...'
@@ -74,29 +75,7 @@ EOF
     fi
 fi
 
-case "${CLOUD_SERVICE@L}" in
-    compshare)
-        echo '* Adding extra DNS ...'
-        sudo awk -i inplace \
-            '/nameservers:/ {start=1}; \
-            start && /addresses:/ && !done { \
-                print; \
-                print "                - 100.90.90.90"; \
-                print "                - 100.90.90.100"; \
-                done=1; \
-                next \
-            } 1' \
-            /etc/netplan/50-cloud-init.yaml
-
-        echo '* Applying network configuration ...'
-        sudo netplan apply
-        ;;
-    alicloud)
-        echo '* Installing prerequisites ...'
-        wait_for_apt_lock
-        sudo apt-get update
-        apt_install_retry git-all
-        ;;
-    *)
-        ;;
-esac
+if [[ -n ${config_file} ]]; then
+    config_script="$(yq -e '.scripts.configure' "${config_file}")"
+    bash "${cloud_service_dir}/${config_script}"
+fi

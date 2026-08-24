@@ -4,3 +4,4 @@ rootless_docker: false
 scripts:
     setup_vm: setup_vm.sh
     delete_vm: delete_vm.sh
+    configure: configure.sh
