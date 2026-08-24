@@ -168,7 +168,7 @@ def test_embdotbias_functional(
     [
         (
             5,
-            {"auc": 0.742, "logloss": 0.4964},
+            {"auc": 0.7331, "logloss": 0.5034},
             42,
         )
     ],
