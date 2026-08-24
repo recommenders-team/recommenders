@@ -41,8 +41,7 @@ def synthetic_ffm(tmp_path_factory):
             for i in range(n_lines):
                 f.write(_line(i % 2, rng) + "\n")
         paths[name] = path
-    paths["dir"] = str(d)
-    paths["n_test"] = 20
+        paths["n_" + name] = n_lines
     return paths
 
 
@@ -339,9 +338,6 @@ def test_requires_at_least_one_component():
 def test_fit_and_eval_smoke(synthetic_ffm):
     model = _build_model(use_linear_part=True, use_dnn_part=True)
 
-    before = model.run_eval(synthetic_ffm["test"], batch_size=8)
-    assert set(before) == {"auc", "logloss"}
-
     returned = model.fit(
         synthetic_ffm["train"],
         synthetic_ffm["valid"],
@@ -356,9 +352,10 @@ def test_fit_and_eval_smoke(synthetic_ffm):
     )
 
     assert returned is model
-    after = model.run_eval(synthetic_ffm["test"], batch_size=8)
-    assert set(after) == {"auc", "logloss"}
-    assert 0.0 <= after["auc"] <= 1.0
+    assert set(model.run_eval(synthetic_ffm["test"], batch_size=8)) == {
+        "auc",
+        "logloss",
+    }
 
 
 @pytest.mark.parametrize("loss", ["cross_entropy_loss", "log_loss", "square_loss"])

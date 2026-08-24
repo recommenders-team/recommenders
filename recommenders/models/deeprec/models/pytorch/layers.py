@@ -92,7 +92,6 @@ class FcnNet(nn.Module):
     ) -> None:
         super().__init__()
         self.user_dropout = user_dropout
-        self.enable_BN = enable_BN
         self.acts = [ACTIVATIONS[a] for a in activation]
 
         self.linears = nn.ModuleList()
