@@ -74,7 +74,13 @@ DKN item-to-item
 
 xDeepFM
 ******************************
-.. automodule:: recommenders.models.deeprec.models.xDeepFM
+.. automodule:: recommenders.models.deeprec.models.pytorch.xdeepfm
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.deeprec.models.pytorch.layers
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.deeprec.io.ffm_dataset
     :members:
     :special-members: __init__
 
