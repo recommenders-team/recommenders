@@ -56,16 +56,6 @@ on:
         type: string
         default: .github/workflows/tools
         description: Path to the workflow tools
-      tools_dir_alicloud:
-        required: false
-        type: string
-        default: .github/workflows/tools/alicloud
-        description: Path to the AliCloud tools
-      tools_dir_compshare:
-        required: false
-        type: string
-        default: .github/workflows/tools/compshare
-        description: Path to the CompShare tools
       type:
         required: true
         type: string
