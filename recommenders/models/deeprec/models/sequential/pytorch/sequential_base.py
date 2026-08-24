@@ -5,10 +5,10 @@
 
 Port of the reusable pieces of ``base_model.py`` / ``sequential_base_model.py`` that
 SLi-Rec needs: the shared user/item/category embeddings, the soft-alignment
-``Attention`` (long-term ASVD, unmasked), the ``FcnNet`` MLP head
-(Linear -> BN -> Dropout -> Activation, matching the TF layer order), the softmax
-pairwise ranking loss, the unique-embedding regularization, and the
-``fit`` / ``run_eval`` / ``predict`` lifecycle. It mirrors the standalone
+``Attention`` (long-term ASVD, unmasked), the softmax pairwise ranking loss, the
+unique-embedding regularization, and the ``fit`` / ``run_eval`` / ``predict``
+lifecycle. The MLP head and the weight initializers live in
+:mod:`recommenders.models.deeprec.models.pytorch.layers`. It mirrors the standalone
 ``nn.Module`` shape of ``graphrec/lightgcn.py`` and reuses ``deeprec_utils.cal_metric``
 verbatim so reported numbers are directly comparable to the TF model.
 
@@ -17,9 +17,6 @@ Concrete numeric conventions preserved from TF:
 * Model weights (embeddings, attention, FCN) use ``tnormal`` init
   (``trunc_normal_(std=init_value)``); biases are zero. The time-aware LSTM cell uses
   ``glorot_uniform`` (see :mod:`.rnn_cell`).
-* BatchNorm: TF ``momentum=0.95`` -> PyTorch ``momentum=0.05``; ``eps=1e-4``.
-* Dropout is applied BEFORE the activation, only on hidden layers, only when
-  ``user_dropout`` is set.
 * Softmax loss ``= -group * mean(log(pos_softmax))`` over the full ``(N, group)``
   tensor (negatives replaced by 1 so their ``log`` is 0).
 * Regularization uses ``tf.nn.l2_loss``'s ``0.5`` factor and only the UNIQUE involved
@@ -36,21 +33,12 @@ import random
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from recommenders.models.deeprec.deeprec_utils import cal_metric, load_dict
 from recommenders.models.deeprec.io.sequential_dataset import SequentialDataset
+from recommenders.models.deeprec.models.pytorch.layers import FcnNet, init_weight_
 
 MODEL_CHECKPOINT = "best_model"
-
-_ACTIVATIONS = {
-    "sigmoid": torch.sigmoid,
-    "softmax": lambda x: torch.softmax(x, dim=-1),
-    "relu": F.relu,
-    "tanh": torch.tanh,
-    "elu": F.elu,
-    "identity": lambda x: x,
-}
 
 _LONG_KEYS = ("users", "items", "cates", "item_history", "item_cate_history")
 _FLOAT_KEYS = (
@@ -61,96 +49,6 @@ _FLOAT_KEYS = (
     "time_from_first_action",
     "time_to_now",
 )
-
-
-def init_weight_(tensor: torch.Tensor, init_method: str, init_value: float) -> None:
-    """Initialize a weight tensor to match the TF ``self.initializer``.
-
-    Only ``tnormal`` (the SLi-Rec config) is reproduced exactly; other methods fall
-    back to a sensible torch equivalent.
-    """
-    if init_method == "tnormal":
-        nn.init.trunc_normal_(tensor, std=init_value)
-    elif init_method == "normal":
-        nn.init.normal_(tensor, std=init_value)
-    elif init_method == "uniform":
-        nn.init.uniform_(tensor, -init_value, init_value)
-    elif init_method in ("xavier_normal", "xavier_uniform"):
-        (
-            nn.init.xavier_normal_
-            if "normal" in init_method
-            else nn.init.xavier_uniform_
-        )(tensor)
-    elif init_method in ("he_normal", "he_uniform"):
-        (
-            nn.init.kaiming_normal_
-            if "normal" in init_method
-            else nn.init.kaiming_uniform_
-        )(tensor)
-    else:
-        nn.init.trunc_normal_(tensor, std=init_value)
-
-
-class FcnNet(nn.Module):
-    """MLP head matching TF ``_fcn_net``.
-
-    Per hidden layer: ``Linear -> [BatchNorm] -> [Dropout] -> Activation``; a final
-    ``Linear(-, 1)`` with no BN/dropout/activation. Works on 2-D ``[B, F]`` and 3-D
-    ``[B, T, F]`` inputs (Linear/BN act on the last dimension).
-    """
-
-    def __init__(
-        self,
-        input_dim: int,
-        layer_sizes: list[int],
-        activation: list[str],
-        dropout: list[float],
-        user_dropout: bool,
-        enable_BN: bool,
-        init_method: str,
-        init_value: float,
-    ) -> None:
-        super().__init__()
-        self.user_dropout = user_dropout
-        self.enable_BN = enable_BN
-        self.acts = [_ACTIVATIONS[a] for a in activation]
-
-        self.linears = nn.ModuleList()
-        self.bns = nn.ModuleList()
-        self.dropouts = nn.ModuleList()
-        last = input_dim
-        for idx, size in enumerate(layer_sizes):
-            lin = nn.Linear(last, size)
-            init_weight_(lin.weight, init_method, init_value)
-            nn.init.zeros_(lin.bias)
-            self.linears.append(lin)
-            self.bns.append(
-                nn.BatchNorm1d(size, momentum=0.05, eps=1e-4)
-                if enable_BN
-                else nn.Identity()
-            )
-            self.dropouts.append(nn.Dropout(p=dropout[idx]))
-            last = size
-
-        self.out = nn.Linear(last, 1)
-        init_weight_(self.out.weight, init_method, init_value)
-        nn.init.zeros_(self.out.bias)
-
-    @staticmethod
-    def _apply_bn(bn: nn.Module, x: torch.Tensor) -> torch.Tensor:
-        if isinstance(bn, nn.Identity) or x.dim() == 2:
-            return bn(x)
-        b, t, f = x.shape
-        return bn(x.reshape(-1, f)).reshape(b, t, f)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        for idx, lin in enumerate(self.linears):
-            x = lin(x)
-            x = self._apply_bn(self.bns[idx], x)
-            if self.user_dropout:
-                x = self.dropouts[idx](x)
-            x = self.acts[idx](x)
-        return self.out(x)
 
 
 class Attention(nn.Module):

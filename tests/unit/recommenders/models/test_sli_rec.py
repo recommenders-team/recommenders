@@ -13,13 +13,13 @@ try:
     from recommenders.models.deeprec.io.sequential_dataset import (
         SequentialDataset,
     )
+    from recommenders.models.deeprec.models.pytorch.layers import FcnNet
     from recommenders.models.deeprec.models.sequential.pytorch.rnn_cell import (
         Time4LSTMCell,
         time4lstm_scan,
     )
     from recommenders.models.deeprec.models.sequential.pytorch.sequential_base import (
         Attention,
-        FcnNet,
     )
     from recommenders.models.deeprec.models.sequential.pytorch.sli_rec import (
         AttentionFcn,

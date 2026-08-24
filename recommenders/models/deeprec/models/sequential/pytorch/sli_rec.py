@@ -20,11 +20,10 @@ from recommenders.models.deeprec.models.sequential.pytorch.rnn_cell import (
     Time4LSTMCell,
     time4lstm_scan,
 )
+from recommenders.models.deeprec.models.pytorch.layers import FcnNet, init_weight_
 from recommenders.models.deeprec.models.sequential.pytorch.sequential_base import (
     Attention,
-    FcnNet,
     SequentialBaseModel,
-    init_weight_,
 )
 
 __all__ = ["SLiRecModel"]
