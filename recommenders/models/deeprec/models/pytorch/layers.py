@@ -59,6 +59,18 @@ def init_weight_(tensor: torch.Tensor, init_method: str, init_value: float) -> N
         nn.init.trunc_normal_(tensor, std=init_value)
 
 
+def apply_bn(bn: nn.Module, x: torch.Tensor) -> torch.Tensor:
+    """Apply a ``BatchNorm1d`` over the last dimension of a 2-D or 3-D input.
+
+    TF's ``batch_normalization`` normalizes over the last axis whatever the rank, so
+    3-D inputs are flattened to ``[B * T, F]`` and restored.
+    """
+    if isinstance(bn, nn.Identity) or x.dim() == 2:
+        return bn(x)
+    b, t, f = x.shape
+    return bn(x.reshape(-1, f)).reshape(b, t, f)
+
+
 class FcnNet(nn.Module):
     """MLP head matching TF ``_fcn_net``.
 
@@ -104,17 +116,10 @@ class FcnNet(nn.Module):
         init_weight_(self.out.weight, init_method, init_value)
         nn.init.zeros_(self.out.bias)
 
-    @staticmethod
-    def _apply_bn(bn: nn.Module, x: torch.Tensor) -> torch.Tensor:
-        if isinstance(bn, nn.Identity) or x.dim() == 2:
-            return bn(x)
-        b, t, f = x.shape
-        return bn(x.reshape(-1, f)).reshape(b, t, f)
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         for idx, lin in enumerate(self.linears):
             x = lin(x)
-            x = self._apply_bn(self.bns[idx], x)
+            x = apply_bn(self.bns[idx], x)
             if self.user_dropout:
                 x = self.dropouts[idx](x)
             x = self.acts[idx](x)
