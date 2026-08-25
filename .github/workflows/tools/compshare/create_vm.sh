@@ -48,6 +48,9 @@ script_utils="${script_dir}/utils.sh"
 echo 'Importing utility functions ...'
 source "${script_utils}"
 
+#--------------------------------------------------------------------
+# Use CompShare APIs to create a VM.
+#--------------------------------------------------------------------
 encoded_password_file="$(mktemp)"
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 \
     | tr -d '\n' > "${encoded_password_file}"
@@ -70,6 +73,9 @@ wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
 rm -rf "${encoded_password_file}"
 
+#--------------------------------------------------------------------
+# Basic setup on the VM.
+#--------------------------------------------------------------------
 echo 'Uploading tools to the VM ...'
 scp -qr -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
