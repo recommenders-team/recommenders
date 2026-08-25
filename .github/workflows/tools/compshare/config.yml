@@ -2,7 +2,6 @@ apt_mirror: mirrors.ucloud.cn
 rootless_docker: true
 scripts:
     configure: configure.sh
-    create_vm: create_vm.sh
     delete_vm: delete_vm.sh
     post_create:
         # script for basic system and network configuration
