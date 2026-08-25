@@ -11,6 +11,8 @@
 # * Test type
 #
 # The following environment variables must be set:
+# * CLOUD_SERVICE
+#   + It should be the name of parent directory.
 # * CLOUD_SERVICE_SECRET
 #   + It contains the private key for CompShare APIs and is used as
 #     COMPSHARE_PRIVATE_KEY in the script.

@@ -1,6 +1,18 @@
-apt_mirror: "mirrors.ucloud.cn"
+apt_mirror: mirrors.ucloud.cn
 rootless_docker: true
 scripts:
-    setup_vm: setup_vm.sh
-    delete_vm: delete_vm.sh
     configure: configure.sh
+    create_vm: create_vm.sh
+    delete_vm: delete_vm.sh
+    post_create:
+        # script for basic system and network configuration
+        - script: ../configure.sh
+          # Reboot or not after running the script
+          reboot: true
+        # script for Docker installation
+        - script: ../install_docker.sh
+          reboot: false
+        # script for installing NVIDIA container toolkit
+        - script: ../install_nvidia_tools.sh
+          reboot: true
+    setup_vm: setup_vm.sh

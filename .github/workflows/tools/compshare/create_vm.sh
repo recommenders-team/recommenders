@@ -20,6 +20,8 @@
 #     - It means the GPUType should be 2080 or P40.
 #
 # The following environment variables must be set:
+# * CLOUD_SERVICE
+#   + It should be the name of parent directory.
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
 #
@@ -37,20 +39,11 @@ vm_name="${1:-}"
 requirements="${2:-}"
 [[ -z ${vm_name} ]] && exit 1
 
+tools_dir="${script_dir}/../../tools"
+config_file="${script_dir}/config.yml"
+
 # Utility functions
 script_utils="${script_dir}/utils.sh"
-
-# Setup scripts for configuring network,
-# installing Docker and NVIDIA container toolkit
-scripts_setup=("${script_dir}/../configure.sh" \
-              "${script_dir}/../install_docker.sh" \
-              "${script_dir}/../install_nvidia_tools.sh")
-
-# Indicators for whether reboot is required after running each setup
-# script
-reboot_requered=('yes' 'no' 'yes')
-
-scripts_all=("${script_utils}" "${scripts_setup[@]}")
 
 echo 'Importing utility functions ...'
 source "${script_utils}"
@@ -77,16 +70,18 @@ wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
 rm -rf "${encoded_password_file}"
 
-echo 'Uploading scripts to the VM ...'
-for script in "${scripts_all[@]}"; do
-    echo "* ${script}"
-    scp -q -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${script}" "${ssh_dest}":
-done
+echo 'Uploading tools to the VM ...'
+scp -qr -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    "${tools_dir}" "${ssh_dest}":
 
-for index in "${!scripts_setup[@]}"; do
-    script="$(basename "${scripts_setup[${index}]}")"
+readarray -d '' post_create_scripts < \
+    <(yq -0 '.scripts.post_create[].script' "${config_file}")
+readarray -d '' reboot_required < \
+    <(yq -0 '.scripts.post_create[].reboot' "${config_file}")
+service_tools_dir="${tools_dir##*/}/${CLOUD_SERVICE@L}"
+for index in "${!post_create_scripts[@]}"; do
+    script="${service_tools_dir}/${post_create_scripts[${index}]}"
 
     wait_for_vm_to_be_available "${ssh_dest}"
     echo "Running ${script} on the VM ..."
@@ -99,7 +94,7 @@ for index in "${!scripts_setup[@]}"; do
             export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
             bash ./${script}"
 
-    if [[ "${reboot_requered[${index}]}" == 'yes' ]]; then
+    if [[ ${reboot_required[${index}]} == true ]]; then
         echo 'Rebooting for setup to take effect ...'
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
