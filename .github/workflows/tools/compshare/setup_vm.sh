@@ -34,7 +34,6 @@ vm_name="${1:-}"
 test_type="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
-config_yml="${script_dir}/config.yml"
 script_utils="${script_dir}/utils.sh"
 tools_dir="${script_dir}/../../tools"
 
@@ -96,37 +95,10 @@ rm -rf "${encoded_password_file}"
 
 
 #--------------------------------------------------------------------
-# Basic setup on the VM.
+# Post-create setup on the VM.
 #--------------------------------------------------------------------
-echo 'Uploading tools to the VM ...'
-scp -qr -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    "${tools_dir}" "${ssh_dest}":
-
-readarray -d '' post_create_scripts < \
-    <(yq -0 '.scripts.post_create[].script' "${config_yml}")
-readarray -d '' reboot_required < \
-    <(yq -0 '.scripts.post_create[].reboot' "${config_yml}")
-service_tools_dir="${tools_dir##*/}/${CLOUD_SERVICE@L}"
-for index in "${!post_create_scripts[@]}"; do
-    script="${service_tools_dir}/${post_create_scripts[${index}]}"
-
-    wait_for_vm_to_be_available "${ssh_dest}"
-    echo "Running ${script} on the VM ..."
-    ssh -t -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "\
-            export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
-            export VM_HTTP_PROXY='${VM_HTTP_PROXY:-}'; \
-            export VM_HTTPS_PROXY='${VM_HTTPS_PROXY:-}'; \
-            export VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE:-}'; \
-            bash ./${script}"
-
-    if [[ ${reboot_required[${index}]} == true ]]; then
-        echo 'Rebooting for setup to take effect ...'
-        ssh -t -o StrictHostKeyChecking=no \
-            -o UserKnownHostsFile=/dev/null \
-            "${ssh_dest}" "sudo reboot" || true
-        wait_for_vm_to_be_available "${ssh_dest}"
-    fi
-done
+post_create_setup \
+    "${ssh_dest}" \
+    "${tools_dir}" \
+    "${CLOUD_SERVICE}" \
+    "${CLOUD_SERVICE_EXTRA_DATA}"

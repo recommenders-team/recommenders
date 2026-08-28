@@ -34,15 +34,14 @@ vm_name="${1:-}"
 test_type="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
-config_yml="${script_dir}/config.yml"
 script_utils="${script_dir}/../utils.sh"
 tf_config_dir="${script_dir}/tf"
 tools_dir="${script_dir}/../../tools"
 
-
 echo 'Importing utility functions ...'
 source "${script_utils}"
 
+echo 'Exporting environment variables ...'
 export ALIBABA_CLOUD_ACCESS_KEY_SECRET="${CLOUD_SERVICE_SECRET}"
 eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
     <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
@@ -58,50 +57,31 @@ terraform -chdir="${tf_config_dir}" apply \
     -var "vm_name=${vm_name}" \
     -target 'alicloud_ecs_key_pair.cache' \
     -target 'alicloud_ecs_key_pair_attachment.cache'
+
+unset ALIBABA_CLOUD_ACCESS_KEY_SECRET
+
+echo 'Exporting VM info for subsequent steps ...'
 vm_ip="$(terraform -chdir="${tf_config_dir}" output \
     -json public_ips \
     | jq -r '.cache')"
 ssh_dest="root@${vm_ip}"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
-unset ALIBABA_CLOUD_ACCESS_KEY_SECRET
+echo 'Setting up SSH key for login ...'
+ssh_key="${tf_config_dir}/${vm_name}"
+ssh_key_type="$(ssh-keygen -l -f "${ssh_key}" \
+    | cut -d '(' -f 2 \
+    | cut -d ')' -f 1)"
+mv "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
 
 wait_for_vm_to_be_available "${ssh_dest}"
-ssh_key="${tf_config_dir}/${vm_name}"
 
 
 #--------------------------------------------------------------------
-# Basic setup on the VM.
+# Post-create setup on the VM.
 #--------------------------------------------------------------------
-echo 'Uploading tools to the VM ...'
-scp -qr -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    -i "${ssh_key}" \
-    "${tools_dir}" "${ssh_dest}":
-
-readarray -d '' post_create_scripts < \
-    <(yq -0 '.scripts.post_create[].script' "${config_yml}")
-readarray -d '' reboot_required < \
-    <(yq -0 '.scripts.post_create[].reboot' "${config_yml}")
-service_tools_dir="${tools_dir##*/}/${CLOUD_SERVICE@L}"
-for index in "${!post_create_scripts[@]}"; do
-    script="${service_tools_dir}/${post_create_scripts[${index}]}"
-
-    wait_for_vm_to_be_available "${ssh_dest}"
-    echo "Running ${script} on the VM ..."
-    ssh -t -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        -i "${ssh_key}" \
-        "${ssh_dest}" "\
-            export VM_DOCKER_MIRROR_URL='${VM_DOCKER_MIRROR_URL:-}'; \
-            bash ./${script}"
-
-    if [[ ${reboot_required[${index}]} == true ]]; then
-        echo 'Rebooting for setup to take effect ...'
-        ssh -t -o StrictHostKeyChecking=no \
-            -o UserKnownHostsFile=/dev/null \
-            -i "${ssh_key}" \
-            "${ssh_dest}" "sudo reboot" || true
-        wait_for_vm_to_be_available "${ssh_dest}"
-    fi
-done
+post_create_setup \
+    "${ssh_dest}" \
+    "${tools_dir}" \
+    "${CLOUD_SERVICE}" \
+    "${CLOUD_SERVICE_EXTRA_DATA}"
