@@ -21,65 +21,82 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-config_file=''
-if [[ -n ${CLOUD_SERVICE:-} ]]; then
-    config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
-fi
+config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
 
 echo '* Importing utility functions ...'
 source "${script_dir}/utils.sh"
 
-arch="$(dpkg --print-architecture)"
-codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
-
-if [[ -n ${config_file} ]]; then
-    apt_url="$(yq '.docker_download_mirror // ""' "${config_file}")"
+if [[ -f ${config_file} ]]; then
+    rootless="$(yq '.rootless_docker // ""' "${config_file}")"
 fi
-apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
-apt_list="/etc/apt/sources.list.d/docker.list"
-keyring_dir="/etc/apt/keyrings"
-gpg_path="${keyring_dir}/docker.asc"
-gpg_url="${apt_url}/gpg"
-apt_entry="deb [arch=${arch} signed-by=${gpg_path}] ${apt_url} ${codename} stable"
+rootless="${rootless:-true}"
 
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
 apt_install_retry ca-certificates curl jq gnupg
 
-echo '* Adding Docker official GPG key ...'
-sudo install -m 0755 -d "${keyring_dir}"
 
-run_cmd_retry 10 sudo curl -fsSL "${gpg_url}" -o "${gpg_path}"
-sudo chmod a+r "${gpg_path}"
+#--------------------------------------------------------------------
+# Install Docker if it is not installed.
+#--------------------------------------------------------------------
+if ! docker --version 2>/dev/null; then
+    arch="$(dpkg --print-architecture)"
+    codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
-echo '* Setting APT repo source for Docker ...'
-sudo mkdir -p "$(dirname "${apt_list}")"
-echo "${apt_entry}" | sudo tee "${apt_list}" > /dev/null
-sudo apt-get update
+    if [[ -f ${config_file} ]]; then
+        apt_url="$(yq '.docker_download_mirror // ""' "${config_file}")"
+    fi
+    apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
+    apt_list="/etc/apt/sources.list.d/docker.list"
+    keyring_dir="/etc/apt/keyrings"
+    gpg_path="${keyring_dir}/docker.asc"
+    gpg_url="${apt_url}/gpg"
+    apt_entry="deb [arch=${arch} signed-by=${gpg_path}] ${apt_url} ${codename} stable"
 
-echo '* Installing the latest Docker community edition ...'
-apt_install_retry docker-ce
+    echo '* Adding Docker official GPG key ...'
+    sudo install -m 0755 -d "${keyring_dir}"
 
-if [[ -n ${config_file} ]]; then
-    rootless="$(yq '.rootless_docker // ""' "${config_file}")"
+    run_cmd_retry 10 sudo curl -fsSL "${gpg_url}" -o "${gpg_path}"
+    sudo chmod a+r "${gpg_path}"
+
+    echo '* Setting APT repo source for Docker ...'
+    sudo mkdir -p "$(dirname "${apt_list}")"
+    echo "${apt_entry}" | sudo tee "${apt_list}" > /dev/null
+    sudo apt-get update
+
+    echo '* Installing the latest Docker community edition ...'
+    apt_install_retry docker-ce
+
+    if [[ ${rootless} == 'true' ]]; then
+        echo '* Configuring Docker daemon in rootless mode ...'
+        echo '  - Installing prerequisites ...'
+        apt_install_retry uidmap docker-ce-rootless-extras
+
+        echo '  - Disabling system-wide Docker daemon ...'
+        sudo systemctl disable --now docker.service docker.socket
+        sudo rm /var/run/docker.sock
+
+        echo '  - Installing rootless Docker daemon ...'
+        dockerd-rootless-setuptool.sh install
+    fi
 fi
-rootless="${rootless:-true}"
 
-if [[ ${rootless} == 'true' ]]; then
-    echo '* Configuring Docker daemon in rootless mode ...'
-    echo '  - Installing prerequisites ...'
-    apt_install_retry uidmap docker-ce-rootless-extras
 
-    echo '  - Disabling system-wide Docker daemon ...'
-    sudo systemctl disable --now docker.service docker.socket
-    sudo rm /var/run/docker.sock
-
-    echo '  - Installing rootless Docker daemon ...'
-    dockerd-rootless-setuptool.sh install
+#--------------------------------------------------------------------
+# Check whether Docker is in rootless mode instead of using the
+# setting in config.yml in case Docker is preinstalled.
+#--------------------------------------------------------------------
+if docker info 2>/dev/null | grep -i rootless > /dev/null; then
+    rootless=true
+else
+    rootless=false
 fi
 
 
+#--------------------------------------------------------------------
+# Configure Docker mirrors if VM_DOCKER_MIRROR_URL is provided.
+#--------------------------------------------------------------------
 if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     echo '* Setting Docker mirror URL ...'
     if [[ ${rootless} == 'true' ]]; then
@@ -102,6 +119,10 @@ if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     fi
 fi
 
+
+#--------------------------------------------------------------------
+# Start the Docker service.
+#--------------------------------------------------------------------
 if [[ ${rootless} == 'true' ]]; then
     echo '* Starting rootless Docker daemon ...'
     systemctl --user restart docker
