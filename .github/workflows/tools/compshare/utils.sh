@@ -544,9 +544,10 @@ allocate_vm() {
 
     local num_computes
     num_computes="$(jq 'length' <<< "${compute_spec}")"
-    for ((i=0; i<"${num_computes}"; i++)); do
+    local index
+    for ((index=0; index<"${num_computes}"; index++)); do
         local compute
-        compute="$(jq -c ".[${i}]" <<< "${compute_spec}")"
+        compute="$(jq -c ".[${index}]" <<< "${compute_spec}")"
         echo "* Trying spec: ${compute}" >&2
 
         # Check if the compute satisfy requirements
@@ -576,6 +577,7 @@ allocate_vm() {
         local required_charge_types
         mapfile -t required_charge_types < \
             <(jq -rc '.ChargeType.[]' <<< "${requirements}")
+        local charge_type
         for charge_type in "${required_charge_types[@]}"; do
             if jq -e "map(. == \"${charge_type}\") 
                 | any" <<< "${available_charge_type}" > /dev/null
