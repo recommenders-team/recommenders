@@ -66,7 +66,7 @@ if [[ -n ${config_file} ]]; then
 fi
 rootless="${rootless:-true}"
 
-if [[ ${rootless} = true ]]; then
+if [[ ${rootless} == 'true' ]]; then
     echo '* Configuring Docker daemon in rootless mode ...'
     echo '  - Installing prerequisites ...'
     apt_install_retry uidmap docker-ce-rootless-extras
@@ -82,7 +82,7 @@ fi
 
 if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     echo '* Setting Docker mirror URL ...'
-    if [[ ${rootless} = true ]]; then
+    if [[ ${rootless} == 'true' ]]; then
         daemon_json="${HOME}/.config/docker/daemon.json"
     else
         daemon_json="/etc/docker/daemon.json"
@@ -102,7 +102,7 @@ if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     fi
 fi
 
-if [[ ${rootless} = true ]]; then
+if [[ ${rootless} == 'true' ]]; then
     echo '* Starting rootless Docker daemon ...'
     systemctl --user restart docker
 

@@ -222,7 +222,7 @@ post_create_setup() {
                     <<< "${cloud_service_extra_data}") \
                 bash ./${script}"
 
-        if [[ ${reboot_required[${index}]} == true ]]; then
+        if [[ ${reboot_required[${index}]} == 'true' ]]; then
             echo 'Rebooting for setup to take effect ...' >&2
             ssh -t -o StrictHostKeyChecking=no \
                 -o UserKnownHostsFile=/dev/null \

@@ -23,7 +23,7 @@ test_type="${2:-}"
 compute="${3:-}"
 
 
-if [[ ${test_type} == nightly ]]; then
+if [[ ${test_type} == 'nightly' ]]; then
     test_groups_str=$(yq -o json -I 0 "
         [ .${test_type}
         | keys

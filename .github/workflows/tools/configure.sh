@@ -18,11 +18,9 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-config_file=''
-if [[ -n ${CLOUD_SERVICE:-} ]]; then
-    cloud_service_dir="${script_dir}/${CLOUD_SERVICE@L}"
-    config_file="${cloud_service_dir}/config.yml"
-fi
+cloud_service="${CLOUD_SERVICE:-}"
+cloud_service="${cloud_service@L}"
+config_file="${script_dir}/${cloud_service}/config.yml"
 
 echo '* Importing utility functions ...'
 source "${script_dir}/utils.sh"
@@ -49,7 +47,7 @@ fi
 if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
-    if [[ -n ${config_file} ]]; then
+    if [[ -f ${config_file} ]]; then
         apt_mirror="$(yq '.apt_mirror // ""' "${config_file}")"
     fi
     apt_mirror="${apt_mirror:+$apt_mirror,}"
@@ -75,7 +73,24 @@ EOF
     fi
 fi
 
-if [[ -n ${config_file} ]]; then
-    config_script="$(yq -e '.scripts.configure' "${config_file}")"
-    bash "${cloud_service_dir}/${config_script}"
+echo '* Installing prerequisites ...'
+wait_for_apt_lock
+sudo apt-get update
+apt_install_retry git-all
+
+if [[ ${cloud_service} == 'compshare' ]]; then
+    echo '* Adding extra DNS ...'
+    sudo awk -i inplace \
+        '/nameservers:/ {start=1}; \
+        start && /addresses:/ && !done { \
+            print; \
+            print "                - 100.90.90.90"; \
+            print "                - 100.90.90.100"; \
+            done=1; \
+            next \
+        } 1' \
+        /etc/netplan/50-cloud-init.yaml
+
+    echo '* Applying network configuration ...'
+    sudo netplan apply
 fi
