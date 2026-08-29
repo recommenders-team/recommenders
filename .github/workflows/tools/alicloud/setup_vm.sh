@@ -51,6 +51,7 @@ eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
 # Use Terraform to create a VM
 #--------------------------------------------------------------------
 echo 'Creating a VM ...'
+ssh_key="${tf_config_dir}/${vm_name}"
 terraform -chdir="${tf_config_dir}" init
 terraform -chdir="${tf_config_dir}" apply \
     -auto-approve \
@@ -67,14 +68,8 @@ vm_ip="$(terraform -chdir="${tf_config_dir}" output \
 ssh_dest="root@${vm_ip}"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
-echo 'Setting up SSH key for login ...'
-ssh_key="${tf_config_dir}/${vm_name}"
-ssh_key_type="$(ssh-keygen -l -f "${ssh_key}" \
-    | cut -d '(' -f 2 \
-    | cut -d ')' -f 1)"
-mv "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
-
 wait_for_vm_to_be_available "${ssh_dest}"
+setup_ssh_key "${ssh_dest}" "${ssh_key}"
 
 
 #--------------------------------------------------------------------

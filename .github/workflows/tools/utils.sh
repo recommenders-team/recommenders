@@ -56,37 +56,50 @@ setup_ssh_key() {
     #
     # Params:
     # * SSH destination, in the format like `user@ip_address`
-    # * file containing the base64-encoded login password
+    # * SSH private key or file containing the base64-encoded login
+    #   password 
     local ssh_dest="${1:-}"
-    local encoded_password_file="${2:-}"
+    local sshkey_or_passfile="${2:-}"
     [[ -z ${ssh_dest} \
-      || -z ${encoded_password_file} \
-      || ! -f ${encoded_password_file} ]] && return 1
-
-    local key_file="${HOME}/.ssh/id_ed25519"
-    local sshd_config="/etc/ssh/sshd_config"
+      || -z ${sshkey_or_passfile} \
+      || ! -f ${sshkey_or_passfile} ]] && return 1
 
     echo 'Setting up SSH key for login ...' >&2
-    echo '* Generating SSH key ...' >&2
-    if [[ ! -f ${key_file} || ! -f ${key_file}.pub ]]; then
-        ssh-keygen -q -t ed25519 -N '' -f "${key_file}"
+    local ssh_key_type
+    if ssh_key_type="$(ssh-keygen -l -f "${sshkey_or_passfile}" \
+        2>/dev/null)"; then
+        local ssh_key="${sshkey_or_passfile}"
+        ssh_key_type="$(echo "${ssh_key_type}" \
+            | cut -d '(' -f 2 \
+            | cut -d ')' -f 1)"
+        mv "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
+    else
+        local encoded_password_file="${sshkey_or_passfile}"
+        local key_file="${HOME}/.ssh/id_ed25519"
+        local sshd_config="/etc/ssh/sshd_config"
+
+        echo '* Generating SSH key ...' >&2
+        if [[ ! -f ${key_file} || ! -f ${key_file}.pub ]]; then
+            ssh-keygen -q -t ed25519 -N '' -f "${key_file}"
+        fi
+
+        echo '* Deplying SSH key ...' >&2
+        local -x SSHPASS
+        read -r SSHPASS < <(cat "${encoded_password_file}" \
+            | tr -d '\n' | base64 -d) || true
+        run_cmd_retry sshpass -e ssh-copy-id \
+            -i "${key_file}.pub" \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            "${ssh_dest}"
+
+        echo '* Disabling SSH password authentication ...' >&2
+        ssh -t -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            "${ssh_dest}" "\
+                sudo sed -i -E 's/^[[:space:]#]*PasswordAuthentication.*/PasswordAuthentication no/' ${sshd_config}; \
+                sudo systemctl reload ssh"
     fi
-
-    echo '* Deplying SSH key ...' >&2
-    local -x SSHPASS
-    read -r SSHPASS < <(cat "${encoded_password_file}" | tr -d '\n' | base64 -d) || true
-    run_cmd_retry sshpass -e ssh-copy-id \
-        -i "${key_file}.pub" \
-        -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}"
-
-    echo '* Disabling SSH password authentication ...' >&2
-    ssh -t -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "\
-            sudo sed -i -E 's/^[[:space:]#]*PasswordAuthentication.*/PasswordAuthentication no/' ${sshd_config}; \
-            sudo systemctl reload ssh"
 }
 
 update_json() {
@@ -189,13 +202,16 @@ post_create_setup() {
         -o UserKnownHostsFile=/dev/null \
         "${tools_dir}" "${ssh_dest}":
 
+    local -a post_create_scripts
+    local -a reboot_required
     readarray -d '' post_create_scripts < \
         <(yq -0 '.scripts.post_create[].script' "${config_yml}")
     readarray -d '' reboot_required < \
         <(yq -0 '.scripts.post_create[].reboot' "${config_yml}")
-    service_tools_dir="${tools_dir##*/}/${cloud_service}"
+    local service_tools_dir="${tools_dir##*/}/${cloud_service}"
+    local index
     for index in "${!post_create_scripts[@]}"; do
-        script="${service_tools_dir}/${post_create_scripts[${index}]}"
+        local script="${service_tools_dir}/${post_create_scripts[${index}]}"
 
         wait_for_vm_to_be_available "${ssh_dest}"
         echo "Running ${script} on the VM ..." >&2
