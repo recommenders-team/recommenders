@@ -32,18 +32,18 @@ on:
         default: cpu
         description: Test compute - cpu, gpu or spark.  It is only
           used for nightly not pr_gate
-      config-file:
-        required: false
-        type: string
-        default: tests/test_groups.yml
-        description: Path to test group configuration file relative
-          to the repo root
       dockerfile:
         required: false
         type: string
         default: tools/docker/Dockerfile
         description: Path to the Dockerfile used for building the
           test environment
+      test_groups_yml:
+        required: false
+        type: string
+        default: tests/test_groups.yml
+        description: Path to test group configuration file relative
+          to the repo root
       timeout-minutes:
         required: true
         type: number
@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: |
           bash '${{ inputs.tools_dir }}/get_test_groups.sh' \
-               '${{ inputs.config-file }}' \
+               '${{ inputs.test_groups_yml }}' \
                '${{ inputs.type }}' \
                '${{ inputs.compute }}'
 
@@ -160,7 +160,7 @@ jobs:
         run: |
           bash '${{ inputs.tools_dir }}/run_tests.sh' \
                "${IMAGE_TAG}" \
-               '${{ inputs.config-file }}' \
+               '${{ inputs.test_groups_yml }}' \
                '${{ inputs.type }}' \
                '${{ matrix.group }}'
 

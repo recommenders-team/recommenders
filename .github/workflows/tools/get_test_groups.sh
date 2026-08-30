@@ -22,6 +22,9 @@ config_file="${1:-}"
 test_type="${2:-}"
 compute="${3:-}"
 
+[[ -z ${config_file} \
+  || -z ${test_type} \
+  || -z ${compute} ]] && exit 1
 
 if [[ ${test_type} == 'nightly' ]]; then
     test_groups_str=$(yq -o json -I 0 "
