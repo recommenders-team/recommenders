@@ -14,13 +14,13 @@
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
-# * SSH_DEST
 # * CLOUD_SERVICE_EXTRA_DATA
 #   + It contains the following keys in JSON:
 #     - VM_HTTP_PROXY (optional)
 #     - VM_HTTPS_PROXY (optional)
 #     - VM_PIP_INDEX_URL (optional)
 #     - VM_PROXY_CERTIFICATE (optional)
+# * SSH_DEST
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit

@@ -13,30 +13,42 @@
 # * Test group
 #
 # The following environment variables may need to be set:
-# * VM_HTTP_PROXY
+# * CLOUD_SERVICE_EXTRA_DATA
+#   + It contains the following keys in JSON:
+#     - VM_HTTP_PROXY (optional)
+# * SSH_DEST
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
 
 reco_venv_dir='/root/.venvs/Recommenders'
 image_tag="${1:-}"
-config_file="${2:-}"
+test_groups_yml="${2:-}"
 test_type="${3:-}"
 test_group="${4:-}"
+
+[[ -z ${image_tag} \
+  || -z ${test_groups_yml} \
+  || -z ${test_type} \
+  || -z ${test_group} ]] && exit 1
 
 test_list="$(yq "
     .${test_type}.${test_group}
     | map(@sh)
     | join(\" \")" \
-    "${config_file}")"
+    "${test_groups_yml}")"
 test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && source ${reco_venv_dir}/bin/activate \
     && pytest --durations 0 ${test_list}"
 
-if [[ -z ${SSH_DEST} ]]; then
+if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Running tests on current GitHub-hosted runner ...'
     docker run --rm "${image_tag}" bash -lc "${test_cmd}"
 else
+    echo 'Exporting environment variables ...'
+    eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
+        <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+
     echo 'Running tests on the newly created VM ...'
     if [[ ${test_group} == *gpu* ]]; then
         check_gpu='nvidia-smi'
