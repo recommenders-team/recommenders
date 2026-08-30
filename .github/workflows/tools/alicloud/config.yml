@@ -2,8 +2,8 @@ apt_mirror: mirrors.cloud.aliyuncs.com
 docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
 rootless_docker: false
 scripts:
-    create_vm: create_vm.sh
-    delete_vm: delete_vm.sh
+    create: create.sh
+    delete: delete.sh
     post_create:
         - script: ../configure.sh
           reboot: true
