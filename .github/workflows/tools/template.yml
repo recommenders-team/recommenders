@@ -138,9 +138,9 @@ jobs:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         run: |
           cloud_service_dir="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}"
-          setup_vm_script="$(yq -e '.scripts.setup_vm' \
+          create_vm_script="$(yq -e '.scripts.create_vm' \
               "${cloud_service_dir}/config.yml")"
-          bash "${cloud_service_dir}/${setup_vm_script}" \
+          bash "${cloud_service_dir}/${create_vm_script}" \
                "${VM_NAME}" \
                '${{ inputs.type }}'
 
