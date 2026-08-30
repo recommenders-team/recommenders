@@ -21,7 +21,8 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
+cloud_service="${CLOUD_SERVICE:-}"
+config_file="${script_dir}/${cloud_service@L}/config.yml"
 
 echo '* Importing utility functions ...'
 source "${script_dir}/utils.sh"

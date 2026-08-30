@@ -57,7 +57,7 @@ docker_args="-t ${image_tag} \
     --build-arg GIT_REF= \
     --build-arg PYTHON_VERSION=${python_version}"
 
-if [[ -z ${SSH_DEST} ]]; then
+if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Building Docker image on current GitHub-hosted runner ...'
     docker build . ${docker_args}
 else
