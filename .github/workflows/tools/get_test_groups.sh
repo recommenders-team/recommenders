@@ -18,11 +18,11 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-config_file="${1:-}"
+test_groups_yml="${1:-}"
 test_type="${2:-}"
 compute="${3:-}"
 
-[[ -z ${config_file} \
+[[ -z ${test_groups_yml} \
   || -z ${test_type} \
   || -z ${compute} ]] && exit 1
 
@@ -33,10 +33,10 @@ if [[ ${test_type} == 'nightly' ]]; then
         | .[]
         | select(contains(\"${compute}\"))
         ]" \
-        "${config_file}")
+        "${test_groups_yml}")
 else
     test_groups_str=$(yq -o json -I 0 \
-        ".${test_type} | keys" "${config_file}")
+        ".${test_type} | keys" "${test_groups_yml}")
 fi
 echo "Test Groups: ${test_groups_str}"
 echo "groups=${test_groups_str}" >> ${GITHUB_OUTPUT}
