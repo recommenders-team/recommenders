@@ -61,6 +61,8 @@ on:
         required: true
         description: secret or private key for accessing the cloud
           service
+env:
+  PR_REF: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.number) || github.ref }}
 
 jobs:
   get-test-groups:
@@ -74,7 +76,7 @@ jobs:
       - name: Check out repository code from the PR
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.number) || github.ref }}
+          ref: ${{ env.PR_REF }}
           allow-unsafe-pr-checkout: true
 
       - name: Get test group names
@@ -105,11 +107,15 @@ jobs:
     env:
       CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
       CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
+      # * GPU tests should run on GPUs.
+      # * cpu-nightly needs to run on larger CPU runner.
+      # * Otherwise, standard runner is enough.
+      EXTRA_VM_REQUIRED: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
     steps:
       - name: Check out repository code from the PR
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'pull_request_target' && format('refs/pull/{0}/merge', github.event.number) || github.ref }}
+          ref: ${{ env.PR_REF }}
           allow-unsafe-pr-checkout: true
       
       - name: Generate unique VM name and Docker image tag
@@ -130,10 +136,7 @@ jobs:
           echo "VM_NAME=${vm_name}" >> "${GITHUB_ENV}"
 
       - name: Create VM
-        # * GPU tests should run on GPUs.
-        # * cpu-nightly needs to run on larger CPU runner.
-        # * Otherwise, standard runner is enough.
-        if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
+        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) }}
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         # The script for creating a VM must explictly set the
@@ -147,7 +150,7 @@ jobs:
                "${VM_NAME}"
 
       - name: Post create setup
-        if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
+        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) }}
         run: |
           bash '${{ inputs.tools_dir }}/post_create.sh'
 
@@ -168,7 +171,7 @@ jobs:
                '${{ matrix.group }}'
 
       - name: Clean up
-        if: always()
+        if: ${{ always() && fromJSON(env.EXTRA_VM_REQUIRED) }}
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         run: |
