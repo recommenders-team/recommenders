@@ -44,10 +44,6 @@ on:
         default: tools/docker/Dockerfile
         description: Path to the Dockerfile used for building the
           test environment
-      pr_code_dir:
-        required: false
-        type: string
-        default: ${{ github.event_name == 'pull_request_target' && format('pr_{0}', github.event.number) || '' }}
       timeout-minutes:
         required: true
         type: number
@@ -61,8 +57,10 @@ on:
         type: string
         description: Type of test - pr_gate or nightly
     secrets:
-      COMPSHARE_PRIVATE_KEY:
+      CLOUD_SERVICE_SECRET:
         required: true
+        description: secret or private key for accessing the cloud
+          service
 
 jobs:
   get-test-groups:
@@ -104,6 +102,9 @@ jobs:
           - '3.10'
           - '3.11'
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
+    env:
+      CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
+      CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
     steps:
       - name: Check out repository code from the PR
         uses: actions/checkout@v7
@@ -128,35 +129,26 @@ jobs:
           echo "IMAGE_TAG=${image_tag}" >> "${GITHUB_ENV}"
           echo "VM_NAME=${vm_name}" >> "${GITHUB_ENV}"
 
-      - name: Setup VM
+      - name: Create VM
         # * GPU tests should run on GPUs.
         # * cpu-nightly needs to run on larger CPU runner.
         # * Otherwise, standard runner is enough.
         if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         env:
-          CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
-          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
-          VM_DOCKER_MIRROR_URL: ${{ vars.VM_DOCKER_MIRROR_URL }}
-          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
-          VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
-          VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
         run: |
           cloud_service_dir="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}"
-          config_file="${cloud_service_dir}/config.yml"
-          setup_vm_script="$(yq -e '.scripts.setup_vm' "${config_file}")"
+          setup_vm_script="$(yq -e '.scripts.setup_vm' \
+              "${cloud_service_dir}/config.yml")"
           bash "${cloud_service_dir}/${setup_vm_script}" \
                "${VM_NAME}" \
                '${{ inputs.type }}'
 
+      - name: Post create setup
+        run: |
+          bash '${{ inputs.tools_dir }}/post_create_setup.sh'
+
       - name: Build image
-        env:
-          CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
-          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
-          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
-          VM_HTTPS_PROXY: ${{ vars.VM_HTTPS_PROXY }}
-          VM_PIP_INDEX_URL: ${{ vars.VM_PIP_INDEX_URL }}
-          VM_PROXY_CERTIFICATE: ${{ vars.VM_PROXY_CERTIFICATE }}
         run: |
           bash '${{ inputs.tools_dir }}/build_image.sh' \
                "${IMAGE_TAG}" \
@@ -165,9 +157,6 @@ jobs:
                '${{ matrix.python-version }}'
 
       - name: Execute tests in container
-        env:
-          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
-          VM_HTTP_PROXY: ${{ vars.VM_HTTP_PROXY }}
         run: |
           bash '${{ inputs.tools_dir }}/run_tests.sh' \
                "${IMAGE_TAG}" \
@@ -178,11 +167,9 @@ jobs:
       - name: Clean up
         if: always()
         env:
-          CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
-          CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         run: |
           cloud_service_dir="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}"
-          config_file="${cloud_service_dir}/config.yml"
-          delete_vm_script="$(yq -e '.scripts.delete_vm' "${config_file}")"
+          delete_vm_script="$(yq -e '.scripts.delete_vm' \
+              "${cloud_service_dir}/config.yml")"
           bash "${cloud_service_dir}/${delete_vm_script}" "${VM_NAME}"
