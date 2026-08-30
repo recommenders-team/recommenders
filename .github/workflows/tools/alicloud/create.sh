@@ -17,12 +17,6 @@
 # * CLOUD_SERVICE_EXTRA_DATA
 #   + It contains the following keys in JSON:
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required)
-#     - VM_DOCKER_MIRROR_URL (optional)
-#       * Semicolon separated URLs of docker mirrors
-#     - VM_HTTP_PROXY (optional)
-#     - VM_HTTPS_PROXY (optional)
-#     - VM_PIP_INDEX_URL (optional)
-#     - VM_PROXY_CERTIFICATE (optional)
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
