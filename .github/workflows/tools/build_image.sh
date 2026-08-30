@@ -15,10 +15,12 @@
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
 # * SSH_DEST
-# * VM_HTTP_PROXY
-# * VM_HTTPS_PROXY
-# * VM_PIP_INDEX_URL
-# * VM_PROXY_CERTIFICATE
+# * CLOUD_SERVICE_EXTRA_DATA
+#   + It contains the following keys in JSON:
+#     - VM_HTTP_PROXY (optional)
+#     - VM_HTTPS_PROXY (optional)
+#     - VM_PIP_INDEX_URL (optional)
+#     - VM_PROXY_CERTIFICATE (optional)
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -34,10 +36,9 @@ python_version="${4:-}"
   || -z ${test_group} \
   || -z ${python_version} ]] && exit 1
 
-config_file=''
-if [[ -n ${CLOUD_SERVICE:-} ]]; then
-    config_file="${script_dir}/${CLOUD_SERVICE@L}/config.yml"
-fi
+cloud_service="${CLOUD_SERVICE:-}"
+cloud_service="${cloud_service@L}"
+config_yml="${script_dir}/${cloud_service}/config.yml"
 
 # Utility functions
 script_utils="${script_dir}/utils.sh"
@@ -61,6 +62,10 @@ if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Building Docker image on current GitHub-hosted runner ...'
     docker build . ${docker_args}
 else
+    echo 'Exporting environment variables ...'
+    eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
+        <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+
     echo "Building Docker image on the newly created VM ..."
     echo '* Copying files to avoid download failure on the VM ...'
 
@@ -89,8 +94,8 @@ else
         "${dockerfile}"
 
     echo '  + Configuring APT in Dockerfile ...'
-    if [[ -n ${config_file} ]]; then
-        apt_mirror="$(yq '.apt_mirror // ""' "${config_file}")"
+    if [[ -f ${config_yml} ]]; then
+        apt_mirror="$(yq '.apt_mirror // ""' "${config_yml}")"
         if [[ -n ${apt_mirror} ]]; then
             sed -i "/SHELL /a \
                 RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
