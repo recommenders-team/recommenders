@@ -20,7 +20,7 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
-config_file="${script_dir}/${cloud_service}/config.yml"
+config_yml="${script_dir}/${cloud_service}/config.yml"
 
 echo '* Importing utility functions ...'
 source "${script_dir}/utils.sh"
@@ -47,8 +47,8 @@ fi
 if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
-    if [[ -f ${config_file} ]]; then
-        apt_mirror="$(yq '.apt_mirror // ""' "${config_file}")"
+    if [[ -f ${config_yml} ]]; then
+        apt_mirror="$(yq '.apt_mirror // ""' "${config_yml}")"
     fi
     apt_mirror="${apt_mirror:+$apt_mirror,}"
     sudo tee -a /etc/environment > /dev/null << EOF

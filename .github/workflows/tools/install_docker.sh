@@ -22,13 +22,13 @@ shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
 cloud_service="${CLOUD_SERVICE:-}"
-config_file="${script_dir}/${cloud_service@L}/config.yml"
+config_yml="${script_dir}/${cloud_service@L}/config.yml"
 
 echo '* Importing utility functions ...'
 source "${script_dir}/utils.sh"
 
-if [[ -f ${config_file} ]]; then
-    rootless="$(yq '.rootless_docker // ""' "${config_file}")"
+if [[ -f ${config_yml} ]]; then
+    rootless="$(yq '.rootless_docker // ""' "${config_yml}")"
 fi
 rootless="${rootless:-true}"
 
@@ -45,8 +45,8 @@ if ! docker --version 2>/dev/null; then
     arch="$(dpkg --print-architecture)"
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
-    if [[ -f ${config_file} ]]; then
-        apt_url="$(yq '.docker_download_mirror // ""' "${config_file}")"
+    if [[ -f ${config_yml} ]]; then
+        apt_url="$(yq '.docker_download_mirror // ""' "${config_yml}")"
     fi
     apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
     apt_list="/etc/apt/sources.list.d/docker.list"
