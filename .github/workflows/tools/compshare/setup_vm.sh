@@ -11,8 +11,6 @@
 # * Test type
 #
 # The following environment variables must be set:
-# * CLOUD_SERVICE
-#   + It should be the name of parent directory.
 # * CLOUD_SERVICE_SECRET
 #   + It contains the private key for CompShare APIs and is used as
 #     COMPSHARE_PRIVATE_KEY in the script.
@@ -34,11 +32,8 @@ vm_name="${1:-}"
 test_type="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
-script_utils="${script_dir}/utils.sh"
-tools_dir="${script_dir}/../../tools"
-
 echo 'Importing utility functions ...'
-source "${script_utils}"
+source "${script_dir}/utils.sh"
 
 echo 'Exporting environment variables ...'
 export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
@@ -92,13 +87,3 @@ unset COMPSHARE_PRIVATE_KEY
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
 rm -rf "${encoded_password_file}"
-
-
-#--------------------------------------------------------------------
-# Post-create setup on the VM.
-#--------------------------------------------------------------------
-post_create_setup \
-    "${ssh_dest}" \
-    "${tools_dir}" \
-    "${CLOUD_SERVICE}" \
-    "${CLOUD_SERVICE_EXTRA_DATA}"

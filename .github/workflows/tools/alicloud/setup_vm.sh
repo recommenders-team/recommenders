@@ -11,8 +11,6 @@
 # * Test type
 #
 # The following environment variables must be set:
-# * CLOUD_SERVICE
-#   + It should be the name of parent directory.
 # * CLOUD_SERVICE_SECRET
 #   + It contains the access key secret for AliCloud APIs and is used
 #     as ALIBABA_CLOUD_ACCESS_KEY_SECRET in the script.
@@ -34,12 +32,10 @@ vm_name="${1:-}"
 test_type="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
-script_utils="${script_dir}/../utils.sh"
 tf_config_dir="${script_dir}/tf"
-tools_dir="${script_dir}/../../tools"
 
 echo 'Importing utility functions ...'
-source "${script_utils}"
+source "${script_dir}/../utils.sh"
 
 echo 'Exporting environment variables ...'
 export ALIBABA_CLOUD_ACCESS_KEY_SECRET="${CLOUD_SERVICE_SECRET}"
@@ -70,13 +66,3 @@ echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${ssh_key}"
-
-
-#--------------------------------------------------------------------
-# Post-create setup on the VM.
-#--------------------------------------------------------------------
-post_create_setup \
-    "${ssh_dest}" \
-    "${tools_dir}" \
-    "${CLOUD_SERVICE}" \
-    "${CLOUD_SERVICE_EXTRA_DATA}"
