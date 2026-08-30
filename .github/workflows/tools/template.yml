@@ -145,8 +145,9 @@ jobs:
                '${{ inputs.type }}'
 
       - name: Post create setup
+        if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         run: |
-          bash '${{ inputs.tools_dir }}/post_create_setup.sh'
+          bash '${{ inputs.tools_dir }}/post_create.sh'
 
       - name: Build image
         run: |
