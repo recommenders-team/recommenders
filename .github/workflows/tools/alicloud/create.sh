@@ -10,8 +10,8 @@
 # $GITHUB_ENV for subsequent steps.
 #
 # Params:
-# * VM name
 # * Test type
+# * VM name
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE_SECRET
@@ -25,8 +25,8 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-vm_name="${1:-}"
-test_type="${2:-}"
+test_type="${1:-}"
+vm_name="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
 tf_config_dir="${script_dir}/tf"

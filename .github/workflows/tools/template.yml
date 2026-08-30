@@ -143,8 +143,8 @@ jobs:
           create_script="$(yq -e '.scripts.create' \
               "${cloud_service_dir}/config.yml")"
           bash "${cloud_service_dir}/${create_script}" \
-               "${VM_NAME}" \
-               '${{ inputs.type }}'
+               '${{ inputs.type }}' \
+               "${VM_NAME}"
 
       - name: Post create setup
         if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
