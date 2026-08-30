@@ -2,6 +2,8 @@ apt_mirror: mirrors.cloud.aliyuncs.com
 docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
 rootless_docker: false
 scripts:
+    # The script for VM creation must set the environment variable
+    # SSH_DEST into $GITHUB_ENV for subsequent steps.
     create: create.sh
     delete: delete.sh
     post_create:

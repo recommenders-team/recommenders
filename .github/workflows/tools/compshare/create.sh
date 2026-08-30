@@ -5,7 +5,10 @@
 
 ######################################################################
 # Create a CompShare VM and prepare the environment for testing
-# 
+#
+# The script must set the environment variable SSH_DEST into
+# $GITHUB_ENV for subsequent steps.
+#
 # Params:
 # * VM name
 # * Test type

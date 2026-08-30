@@ -136,6 +136,8 @@ jobs:
         if: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
+        # The script for creating a VM must explictly set the
+        # environment variable SSH_DEST into $GITHUB_ENV.
         run: |
           cloud_service_dir="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}"
           create_script="$(yq -e '.scripts.create' \
