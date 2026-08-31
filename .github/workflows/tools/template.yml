@@ -135,7 +135,7 @@ jobs:
           echo "IMAGE_TAG=${image_tag}" >> "${GITHUB_ENV}"
           echo "VM_NAME=${vm_name}" >> "${GITHUB_ENV}"
 
-      - name: Create VM
+      - name: Setup VM
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) }}
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
@@ -148,10 +148,6 @@ jobs:
           bash "${cloud_service_dir}/${create_script}" \
                '${{ inputs.type }}' \
                "${VM_NAME}"
-
-      - name: Post create setup
-        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) }}
-        run: |
           bash '${{ inputs.tools_dir }}/post_create.sh'
 
       - name: Build image
