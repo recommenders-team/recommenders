@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import os
+import time
 import zipfile
 import pytest
 import requests
@@ -147,6 +148,35 @@ def test_maybe_download_num_attempts(tmp):
         side_effect=requests.exceptions.ConnectionError("unreachable"),
     ) as mock_download:
         with pytest.raises(requests.exceptions.ConnectionError):
-            maybe_download(url, "file.txt", work_directory=tmp, num_attempts=2)
+            maybe_download(
+                url,
+                "file.txt",
+                work_directory=tmp,
+                num_attempts=2,
+                wait_random_min=1,
+                wait_random_max=2,
+            )
 
     assert mock_download.call_count == 2
+
+
+def test_maybe_download_wait_between_attempts(tmp):
+    url = "https://recommenders.invalid/does-not-exist.txt"
+    with patch(
+        "recommenders.datasets.download_utils._download",
+        side_effect=requests.exceptions.ConnectionError("unreachable"),
+    ):
+        start = time.time()
+        with pytest.raises(requests.exceptions.ConnectionError):
+            maybe_download(
+                url,
+                "file.txt",
+                work_directory=tmp,
+                num_attempts=3,
+                wait_random_min=200,
+                wait_random_max=300,
+            )
+        elapsed = time.time() - start
+
+    # Two waits of 200-300ms between the three attempts
+    assert 0.4 <= elapsed < 1.0
