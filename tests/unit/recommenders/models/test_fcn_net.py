@@ -12,31 +12,33 @@ except ImportError:
     pass  # skip if torch is not installed
 
 
-def _ones(weight):
-    nn.init.ones_(weight)
+@pytest.fixture
+def build_fcn_net():
+    """Build an FcnNet whose weights are all 1 and biases all 0."""
+
+    def build(**overrides):
+        kwargs = dict(
+            input_dim=3,
+            layer_sizes=[2],
+            activation=nn.ReLU(),
+            dropout=[0.0],
+            enable_BN=False,
+            init_weight=nn.init.ones_,
+        )
+        kwargs.update(overrides)
+        return FcnNet(**kwargs)
+
+    return build
 
 
-def _build(**overrides):
-    kwargs = dict(
-        input_dim=3,
-        layer_sizes=[2],
-        activation=nn.ReLU(),
-        dropout=[0.0],
-        enable_BN=False,
-        init_weight=_ones,
-    )
-    kwargs.update(overrides)
-    return FcnNet(**kwargs)
-
-
-def test_output_shape():
-    net = _build(input_dim=5, layer_sizes=[8, 4], dropout=[0.0, 0.0])
+def test_output_shape(build_fcn_net):
+    net = build_fcn_net(input_dim=5, layer_sizes=[8, 4], dropout=[0.0, 0.0])
 
     assert net(torch.randn(7, 5)).shape == (7, 1)
 
 
-def test_matches_the_closed_form_stack():
-    net = _build().eval()
+def test_matches_the_closed_form_stack(build_fcn_net):
+    net = build_fcn_net().eval()
 
     # every weight is 1 and every bias 0, so the hidden layer sums the input and
     # the output layer sums the hidden units
@@ -46,12 +48,12 @@ def test_matches_the_closed_form_stack():
     assert torch.allclose(logit, torch.tensor([[12.0]]))
 
 
-def test_applies_the_activation():
-    negative = _build(init_weight=lambda w: nn.init.constant_(w, -1.0))
+def test_applies_the_activation(build_fcn_net):
+    negative = build_fcn_net(init_weight=lambda w: nn.init.constant_(w, -1.0)).eval()
     x = torch.tensor([[1.0, 2.0, 3.0]])
 
     with torch.no_grad():
-        relu_logit = negative.eval()(x)
+        relu_logit = negative(x)
         negative.activation = nn.Identity()
         identity_logit = negative(x)
 
@@ -61,8 +63,8 @@ def test_applies_the_activation():
     assert torch.allclose(identity_logit, torch.tensor([[12.0]]))
 
 
-def test_initializes_every_linear_with_the_callable_and_zeroes_biases():
-    net = _build(
+def test_initializes_every_linear_with_the_callable_and_zeroes_biases(build_fcn_net):
+    net = build_fcn_net(
         layer_sizes=[4, 2],
         dropout=[0.0, 0.0],
         init_weight=lambda w: nn.init.constant_(w, 0.25),
@@ -76,14 +78,14 @@ def test_initializes_every_linear_with_the_callable_and_zeroes_biases():
 @pytest.mark.parametrize(
     "enable_BN, expected", [(True, "BatchNorm1d"), (False, "Identity")]
 )
-def test_inserts_batch_norm_only_when_enabled(enable_BN, expected):
-    net = _build(enable_BN=enable_BN)
+def test_inserts_batch_norm_only_when_enabled(build_fcn_net, enable_BN, expected):
+    net = build_fcn_net(enable_BN=enable_BN)
 
     assert type(net.bns[0]).__name__ == expected
 
 
-def test_dropout_applies_in_training_and_not_in_eval():
-    net = _build(dropout=[1.0])
+def test_dropout_applies_in_training_and_not_in_eval(build_fcn_net):
+    net = build_fcn_net(dropout=[1.0])
     x = torch.tensor([[1.0, 2.0, 3.0]])
 
     with torch.no_grad():
@@ -95,6 +97,6 @@ def test_dropout_applies_in_training_and_not_in_eval():
     assert torch.allclose(eval_logit, torch.tensor([[12.0]]))
 
 
-def test_rejects_a_dropout_length_mismatch():
+def test_rejects_a_dropout_length_mismatch(build_fcn_net):
     with pytest.raises(ValueError, match="one rate per hidden layer"):
-        _build(layer_sizes=[4, 2], dropout=[0.0])
+        build_fcn_net(layer_sizes=[4, 2], dropout=[0.0])

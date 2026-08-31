@@ -15,66 +15,59 @@ except ImportError:
 
 
 FEATURE_COUNT = 200
-FIELD_COUNT = 6
 DIM = 4
-N_TRAIN, N_VALID, N_TEST = 40, 20, 20
+# match the files written by the synthetic_ffm fixture in conftest.py
+FIELD_COUNT = 6
+N_TEST = 20
 
 
-def _line(label, rng):
-    """One FFM line: every field carries exactly one feature, with 1-based indices."""
-    parts = [str(label)]
-    for field in range(1, FIELD_COUNT + 1):
-        feature = field * 20 + rng.randint(1, 11)
-        parts.append("{0}:{1}:1".format(field, feature))
-    return " ".join(parts)
+@pytest.fixture
+def build_model():
+    """Build a small seeded XDeepFMModel, on CPU whatever the machine offers."""
+
+    def build(**overrides):
+        kwargs = dict(
+            feature_count=FEATURE_COUNT,
+            field_count=FIELD_COUNT,
+            dim=DIM,
+            use_cin_part=True,
+            cross_layer_sizes=[4],
+            layer_sizes=[8, 8],
+            dropout=[0.0, 0.0],
+            init_value=0.1,
+            seed=42,
+        )
+        kwargs.update(overrides)
+        return XDeepFMModel(**kwargs).to("cpu")
+
+    return build
 
 
-@pytest.fixture(scope="module")
-def synthetic_ffm(tmp_path_factory):
-    """Tiny synthetic FFM files, so the test needs no download."""
-    d = tmp_path_factory.mktemp("xdeepfm_pt")
-    rng = np.random.RandomState(0)
-    paths = {}
-    for name, n_lines in [("train", N_TRAIN), ("valid", N_VALID), ("test", N_TEST)]:
-        path = os.path.join(d, name)
-        with open(path, "w") as f:
-            for i in range(n_lines):
-                f.write(_line(i % 2, rng) + "\n")
-        paths[name] = path
-    return paths
+@pytest.fixture
+def first_batch():
+    """Read the first mini-batch of a file, as numpy arrays and as tensors."""
+
+    def read(model, path, batch_size):
+        np_batch = next(model.iterator.load_data_from_file(path, batch_size))[0]
+        return np_batch, model._to_tensors(np_batch)
+
+    return read
 
 
-def _build_model(**overrides):
-    kwargs = dict(
-        feature_count=FEATURE_COUNT,
-        field_count=FIELD_COUNT,
-        dim=DIM,
-        use_cin_part=True,
-        cross_layer_sizes=[4],
-        layer_sizes=[8, 8],
-        dropout=[0.0, 0.0],
-        init_value=0.1,
-        seed=42,
-    )
-    kwargs.update(overrides)
-    # Keep the assertions on CPU regardless of the machine the tests run on.
-    return XDeepFMModel(**kwargs).to("cpu")
-
-
-def _first_batch(model, path, batch_size):
-    np_batch = next(model.iterator.load_data_from_file(path, batch_size))[0]
-    return np_batch, model._to_tensors(np_batch)
-
-
-def _field_embeddings(model, np_batch):
+@pytest.fixture
+def field_embeddings():
     """Reference [B, FIELD_COUNT, DIM] field embeddings.
 
     The synthetic data carries exactly one feature per field, so every bag is a
     single entry and the sum pooling is a plain lookup.
     """
-    embedding = model.embedding.detach().numpy()
-    ids, values = np_batch["feat_ids"], np_batch["feat_values"]
-    return (values[:, None] * embedding[ids]).reshape(-1, FIELD_COUNT, DIM)
+
+    def embed(model, np_batch):
+        embedding = model.embedding.detach().numpy()
+        ids, values = np_batch["feat_ids"], np_batch["feat_values"]
+        return (values[:, None] * embedding[ids]).reshape(-1, FIELD_COUNT, DIM)
+
+    return embed
 
 
 # --------------------------- CIN ---------------------------
@@ -114,9 +107,9 @@ def test_cin_rejects_odd_size_on_a_split_layer():
 # --------------------------- components ---------------------------
 
 
-def test_linear_part_matches_closed_form(synthetic_ffm):
-    model = _build_model(use_cin_part=False, use_linear_part=True)
-    np_batch, batch = _first_batch(model, synthetic_ffm["test"], 8)
+def test_linear_part_matches_closed_form(build_model, first_batch, synthetic_ffm):
+    model = build_model(use_cin_part=False, use_linear_part=True)
+    np_batch, batch = first_batch(model, synthetic_ffm["test"], 8)
 
     with torch.no_grad():
         logit = model(batch).numpy().reshape(-1)
@@ -143,15 +136,17 @@ def test_linear_part_matches_closed_form(synthetic_ffm):
     assert np.allclose(logit, expected, atol=1e-5)
 
 
-def test_fm_part_matches_closed_form(synthetic_ffm):
-    model = _build_model(use_cin_part=False, use_fm_part=True)
-    np_batch, batch = _first_batch(model, synthetic_ffm["test"], 8)
+def test_fm_part_matches_closed_form(
+    build_model, first_batch, field_embeddings, synthetic_ffm
+):
+    model = build_model(use_cin_part=False, use_fm_part=True)
+    np_batch, batch = first_batch(model, synthetic_ffm["test"], 8)
 
     with torch.no_grad():
         logit = model(batch).numpy().reshape(-1)
 
     # Each instance's field bags concatenate into its full feature set.
-    field_embed = _field_embeddings(model, np_batch)
+    field_embed = field_embeddings(model, np_batch)
     embedding = model.embedding.detach().numpy()
     ids = np_batch["feat_ids"].reshape(-1, FIELD_COUNT)
     values = np_batch["feat_values"].reshape(-1, FIELD_COUNT)
@@ -162,21 +157,23 @@ def test_fm_part_matches_closed_form(synthetic_ffm):
     assert np.allclose(logit, expected, atol=1e-5)
 
 
-def test_dnn_part_reads_the_sum_pooled_field_embeddings(synthetic_ffm):
-    model = _build_model(use_cin_part=False, use_dnn_part=True)
-    np_batch, batch = _first_batch(model, synthetic_ffm["test"], 8)
+def test_dnn_part_reads_the_sum_pooled_field_embeddings(
+    build_model, first_batch, field_embeddings, synthetic_ffm
+):
+    model = build_model(use_cin_part=False, use_dnn_part=True)
+    np_batch, batch = first_batch(model, synthetic_ffm["test"], 8)
 
     with torch.no_grad():
         logit = model(batch)
         field_embed = torch.as_tensor(
-            _field_embeddings(model, np_batch), dtype=torch.float32
+            field_embeddings(model, np_batch), dtype=torch.float32
         )
         expected = model.dnn(field_embed.reshape(-1, FIELD_COUNT * DIM))
 
     assert torch.allclose(logit, expected, atol=1e-4)
 
 
-def test_enabled_components_sum_their_logits(synthetic_ffm):
+def test_enabled_components_sum_their_logits(build_model, first_batch, synthetic_ffm):
     """The full model's logit is the sum of each component's own logit."""
     parts = {
         "use_linear_part": True,
@@ -184,12 +181,12 @@ def test_enabled_components_sum_their_logits(synthetic_ffm):
         "use_cin_part": True,
         "use_dnn_part": True,
     }
-    full = _build_model(**parts)
-    np_batch, batch = _first_batch(full, synthetic_ffm["test"], 8)
+    full = build_model(**parts)
+    np_batch, batch = first_batch(full, synthetic_ffm["test"], 8)
 
     total = torch.zeros(8, 1)
     for part in parts:
-        single = _build_model(**{p: (p == part) for p in parts})
+        single = build_model(**{p: (p == part) for p in parts})
         single.load_state_dict(
             {k: v for k, v in full.state_dict().items() if k in single.state_dict()}
         )
@@ -200,18 +197,21 @@ def test_enabled_components_sum_their_logits(synthetic_ffm):
         assert torch.allclose(full(batch), total, atol=1e-4)
 
 
-def test_forward_shape_for_a_mixed_component_pair(synthetic_ffm):
-    parts = {"use_cin_part": True, "use_dnn_part": True}
-    model = _build_model(**parts)
-    _, batch = _first_batch(model, synthetic_ffm["test"], 8)
+def test_forward_shape_for_a_mixed_component_pair(
+    build_model, first_batch, synthetic_ffm
+):
+    model = build_model(use_cin_part=True, use_dnn_part=True)
+    _, batch = first_batch(model, synthetic_ffm["test"], 8)
 
     with torch.no_grad():
         assert model(batch).shape == (8, 1)
 
 
-def test_regression_method_returns_the_raw_logit(synthetic_ffm):
-    model = _build_model(method="regression")
-    _, batch = _first_batch(model, synthetic_ffm["test"], 8)
+def test_regression_method_returns_the_raw_logit(
+    build_model, first_batch, synthetic_ffm
+):
+    model = build_model(method="regression")
+    _, batch = first_batch(model, synthetic_ffm["test"], 8)
 
     with torch.no_grad():
         logit = model(batch)
@@ -221,21 +221,21 @@ def test_regression_method_returns_the_raw_logit(synthetic_ffm):
 # --------------------------- construction guards ---------------------------
 
 
-def test_rejects_unknown_method():
+def test_rejects_unknown_method(build_model):
     with pytest.raises(ValueError, match="regression or classification"):
-        _build_model(method="ranking")
+        build_model(method="ranking")
 
 
-def test_requires_at_least_one_component():
+def test_requires_at_least_one_component(build_model):
     with pytest.raises(ValueError, match="must be enabled"):
-        _build_model(use_cin_part=False)
+        build_model(use_cin_part=False)
 
 
 # --------------------------- training lifecycle ---------------------------
 
 
-def test_fit_and_eval_smoke(synthetic_ffm):
-    model = _build_model(use_linear_part=True, use_dnn_part=True)
+def test_fit_and_eval_smoke(build_model, synthetic_ffm):
+    model = build_model(use_linear_part=True, use_dnn_part=True)
 
     returned = model.fit(
         synthetic_ffm["train"],
@@ -258,8 +258,8 @@ def test_fit_and_eval_smoke(synthetic_ffm):
 
 
 @pytest.mark.parametrize("loss", ["cross_entropy_loss", "log_loss", "square_loss"])
-def test_fit_runs_with_every_loss(synthetic_ffm, loss):
-    model = _build_model()
+def test_fit_runs_with_every_loss(build_model, synthetic_ffm, loss):
+    model = build_model()
     model.fit(
         synthetic_ffm["train"],
         synthetic_ffm["valid"],
@@ -270,8 +270,8 @@ def test_fit_runs_with_every_loss(synthetic_ffm, loss):
     )
 
 
-def test_fit_rejects_an_unknown_loss(synthetic_ffm):
-    model = _build_model()
+def test_fit_rejects_an_unknown_loss(build_model, synthetic_ffm):
+    model = build_model()
     with pytest.raises(ValueError, match="this loss not defined"):
         model.fit(
             synthetic_ffm["train"],
@@ -283,8 +283,8 @@ def test_fit_rejects_an_unknown_loss(synthetic_ffm):
         )
 
 
-def test_predict_writes_one_score_per_instance(synthetic_ffm, tmp_path):
-    model = _build_model()
+def test_predict_writes_one_score_per_instance(build_model, synthetic_ffm, tmp_path):
+    model = build_model()
     output_file = os.path.join(tmp_path, "output.txt")
 
     assert model.predict(synthetic_ffm["test"], output_file, batch_size=8) is model
@@ -295,16 +295,18 @@ def test_predict_writes_one_score_per_instance(synthetic_ffm, tmp_path):
     assert all(0.0 <= float(score) <= 1.0 for score in scores)
 
 
-def test_save_and_load_model_round_trip(synthetic_ffm, tmp_path):
-    model = _build_model(use_linear_part=True, use_dnn_part=True)
-    _, batch = _first_batch(model, synthetic_ffm["test"], 8)
+def test_save_and_load_model_round_trip(
+    build_model, first_batch, synthetic_ffm, tmp_path
+):
+    model = build_model(use_linear_part=True, use_dnn_part=True)
+    _, batch = first_batch(model, synthetic_ffm["test"], 8)
     with torch.no_grad():
         expected = model(batch)
 
     checkpoint = os.path.join(tmp_path, "epoch_1")
     torch.save(model.state_dict(), checkpoint)
 
-    restored = _build_model(use_linear_part=True, use_dnn_part=True, seed=7)
+    restored = build_model(use_linear_part=True, use_dnn_part=True, seed=7)
     assert restored.load_model(checkpoint) is restored
     with torch.no_grad():
         assert torch.allclose(restored(batch), expected, atol=1e-6)

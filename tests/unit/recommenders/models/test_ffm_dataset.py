@@ -8,27 +8,8 @@ import pytest
 
 from recommenders.models.deeprec.io.ffm_dataset import FFMDataset
 
+# matches the files written by the synthetic_ffm fixture in conftest.py
 FIELD_COUNT = 6
-
-
-def _line(label, rng):
-    """One FFM line: every field carries exactly one feature, with 1-based indices."""
-    parts = [str(label)]
-    for field in range(1, FIELD_COUNT + 1):
-        feature = field * 20 + rng.randint(1, 11)
-        parts.append("{0}:{1}:1".format(field, feature))
-    return " ".join(parts)
-
-
-@pytest.fixture(scope="module")
-def ffm_file(tmp_path_factory):
-    """A tiny synthetic FFM file, so the test needs no download."""
-    path = os.path.join(tmp_path_factory.mktemp("ffm_dataset"), "train")
-    rng = np.random.RandomState(0)
-    with open(path, "w") as f:
-        for i in range(40):
-            f.write(_line(i % 2, rng) + "\n")
-    return path
 
 
 def test_parses_one_line():
@@ -51,9 +32,9 @@ def test_parses_line_without_impression_id():
 @pytest.mark.parametrize(
     "batch_size, expected_sizes", [(20, [20, 20]), (30, [30, 10]), (40, [40])]
 )
-def test_batches_the_file(ffm_file, batch_size, expected_sizes):
+def test_batches_the_file(synthetic_ffm, batch_size, expected_sizes):
     dataset = FFMDataset(FIELD_COUNT)
-    batches = list(dataset.load_data_from_file(ffm_file, batch_size))
+    batches = list(dataset.load_data_from_file(synthetic_ffm["train"], batch_size))
 
     assert [len(ids) for _, ids in batches] == expected_sizes
     for (np_batch, _), size in zip(batches, expected_sizes):
@@ -62,9 +43,11 @@ def test_batches_the_file(ffm_file, batch_size, expected_sizes):
         assert np_batch["feat_ids"].shape == np_batch["feat_values"].shape
 
 
-def test_groups_features_into_one_bag_per_field(ffm_file):
+def test_groups_features_into_one_bag_per_field(synthetic_ffm):
     dataset = FFMDataset(FIELD_COUNT)
-    np_batch, _ = next(dataset.load_data_from_file(ffm_file, batch_size=4))
+    np_batch, _ = next(
+        dataset.load_data_from_file(synthetic_ffm["train"], batch_size=4)
+    )
 
     # Every field of the synthetic data holds exactly one feature, so the bags are
     # consecutive single entries.
@@ -89,9 +72,11 @@ def test_sorts_features_by_field(tmp_path):
     assert np.array_equal(np_batch["dnn_offsets"], np.array([0, 1, 3, 4]))
 
 
-def test_emits_the_dtypes_the_model_consumes(ffm_file):
+def test_emits_the_dtypes_the_model_consumes(synthetic_ffm):
     dataset = FFMDataset(FIELD_COUNT)
-    np_batch, _ = next(dataset.load_data_from_file(ffm_file, batch_size=4))
+    np_batch, _ = next(
+        dataset.load_data_from_file(synthetic_ffm["train"], batch_size=4)
+    )
 
     assert np_batch["labels"].dtype == np.float32
     assert np_batch["feat_ids"].dtype == np.int64
