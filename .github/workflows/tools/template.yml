@@ -147,7 +147,8 @@ jobs:
               "${cloud_service_dir}/config.yml")"
           bash "${cloud_service_dir}/${create_script}" \
                '${{ inputs.type }}' \
-               "${VM_NAME}"
+               "${VM_NAME}" \
+               '${{ matrix.group }}'
           bash '${{ inputs.tools_dir }}/post_create.sh'
 
       - name: Build image

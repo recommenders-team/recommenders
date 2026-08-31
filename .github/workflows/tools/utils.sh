@@ -87,6 +87,7 @@ setup_ssh_key() {
         local -x SSHPASS
         read -r SSHPASS < <(cat "${encoded_password_file}" \
             | tr -d '\n' | base64 -d) || true
+        rm -rf "${encoded_password_file}"
         run_cmd_retry sshpass -e ssh-copy-id \
             -i "${key_file}.pub" \
             -o StrictHostKeyChecking=no \

@@ -10,8 +10,8 @@
 # $GITHUB_ENV for subsequent steps.
 #
 # Params:
-# * Test type
 # * VM name
+# * Test type
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE_SECRET
@@ -25,8 +25,8 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-test_type="${1:-}"
-vm_name="${2:-}"
+vm_name="${1:-}"
+test_type="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
 echo 'Importing utility functions ...'
@@ -46,7 +46,7 @@ eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
 # * Nightly tests take more than an hour and more GPU memory.
 # * VMs with Spot ChargeType are cheaper but there is a risk of being
 #   deleted after 1 hour.
-if [[ "${test_type}" == *nightly* ]]; then
+if [[ ${test_type} == *nightly* ]]; then
     gpu_type='"GPUType": "!2080,P40"'
     gpu_mem='"Memory": {"GPU": 12, "CPU": 32}'
     charge_type='"ChargeType": ["Postpay"]'
@@ -83,4 +83,3 @@ unset COMPSHARE_PRIVATE_KEY
 
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
-rm -rf "${encoded_password_file}"

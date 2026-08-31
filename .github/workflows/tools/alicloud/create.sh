@@ -10,8 +10,9 @@
 # $GITHUB_ENV for subsequent steps.
 #
 # Params:
-# * Test type
 # * VM name
+# * Test type
+# * Test group
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE_SECRET
@@ -25,9 +26,10 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-test_type="${1:-}"
-vm_name="${2:-}"
-[[ -z ${vm_name} || -z ${test_type} ]] && exit 1
+vm_name="${1:-}"
+test_type="${2:-}"
+test_group="${3:-}"
+[[ -z ${vm_name} || -z ${test_type} || -z ${test_group} ]] && exit 1
 
 tf_config_dir="${script_dir}/tf"
 
@@ -44,22 +46,25 @@ eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
 # Use Terraform to create a VM
 #--------------------------------------------------------------------
 echo 'Creating a VM ...'
-ssh_key="${tf_config_dir}/${vm_name}"
 terraform -chdir="${tf_config_dir}" init
-terraform -chdir="${tf_config_dir}" apply \
-    -auto-approve \
-    -var "vm_name=${vm_name}" \
-    -target 'alicloud_ecs_key_pair.cache' \
-    -target 'alicloud_ecs_key_pair_attachment.cache'
+if [[ ${test_group} == *cpu* ]]; then
+    terraform -chdir="${tf_config_dir}" apply \
+        -auto-approve \
+        -var "vm_name=${vm_name}" \
+        -var "instance_type_family=ecs.e"
+else
+    terraform -chdir="${tf_config_dir}" apply \
+        -auto-approve \
+        -var "vm_name=${vm_name}" \
+        -var "instance_type_family=ecs.gn8is"
+fi
 
 unset ALIBABA_CLOUD_ACCESS_KEY_SECRET
 
 echo 'Exporting VM info for subsequent steps ...'
-vm_ip="$(terraform -chdir="${tf_config_dir}" output \
-    -json public_ips \
-    | jq -r '.cache')"
-ssh_dest="root@${vm_ip}"
+ip="$(terraform -chdir="${tf_config_dir}" output -json ip | jq -r)"
+ssh_dest="root@${ip}"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 wait_for_vm_to_be_available "${ssh_dest}"
-setup_ssh_key "${ssh_dest}" "${ssh_key}"
+setup_ssh_key "${ssh_dest}" "${tf_config_dir}/${vm_name}"
