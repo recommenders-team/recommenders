@@ -335,16 +335,6 @@ class XDeepFMModel(nn.Module):
                 for param in module.parameters()
             ]
 
-        # Training defaults; fit() and run_eval() override these.
-        self.batch_size = 128
-        self.embed_l2 = 0.0
-        self.embed_l1 = 0.0
-        self.layer_l2 = 0.0
-        self.layer_l1 = 0.0
-        self.cross_l2 = 0.0
-        self.cross_l1 = 0.0
-        self.metrics = ["auc", "logloss"]
-
         self.to(self.device)
 
     def forward(self, batch: dict) -> torch.Tensor:
@@ -446,23 +436,31 @@ class XDeepFMModel(nn.Module):
             )
         raise ValueError("this loss not defined {0}".format(loss))
 
-    def _regular_loss(self) -> torch.Tensor:
+    def _regular_loss(
+        self,
+        embed_l2: float,
+        embed_l1: float,
+        layer_l2: float,
+        layer_l1: float,
+        cross_l2: float,
+        cross_l1: float,
+    ) -> torch.Tensor:
         reg = torch.zeros((), device=self.device)
-        if self.embed_l2 > 0:
-            reg = reg + self.embed_l2 * 0.5 * self.embedding.pow(2).sum()
-        if self.embed_l1 > 0:
-            reg = reg + self.embed_l1 * self.embedding.abs().sum()
+        if embed_l2 > 0:
+            reg = reg + embed_l2 * 0.5 * self.embedding.pow(2).sum()
+        if embed_l1 > 0:
+            reg = reg + embed_l1 * self.embedding.abs().sum()
         for param in self.layer_params:
-            if self.layer_l2 > 0:
-                reg = reg + self.layer_l2 * 0.5 * param.pow(2).sum()
-            if self.layer_l1 > 0:
-                reg = reg + self.layer_l1 * param.abs().sum()
+            if layer_l2 > 0:
+                reg = reg + layer_l2 * 0.5 * param.pow(2).sum()
+            if layer_l1 > 0:
+                reg = reg + layer_l1 * param.abs().sum()
         for param in self.cross_params:
-            if self.cross_l1 > 0:
-                reg = reg + self.cross_l1 * param.abs().sum()
-            if self.cross_l2 > 0:
+            if cross_l1 > 0:
+                reg = reg + cross_l1 * param.abs().sum()
+            if cross_l2 > 0:
                 # tf.norm(..., ord=2) is the Frobenius norm, not the squared one.
-                reg = reg + self.cross_l2 * param.pow(2).sum().sqrt()
+                reg = reg + cross_l2 * param.pow(2).sum().sqrt()
         return reg
 
     def fit(
@@ -513,13 +511,6 @@ class XDeepFMModel(nn.Module):
         Returns:
             object: An instance of self.
         """
-        self.batch_size = batch_size
-        self.embed_l2, self.embed_l1 = embed_l2, embed_l1
-        self.layer_l2, self.layer_l1 = layer_l2, layer_l1
-        self.cross_l2, self.cross_l1 = cross_l2, cross_l1
-        if metrics is not None:
-            self.metrics = metrics
-
         optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
 
         for epoch in range(1, epochs + 1):
@@ -533,7 +524,9 @@ class XDeepFMModel(nn.Module):
                 optimizer.zero_grad(set_to_none=True)
                 logit = self.forward(batch)
                 data_loss = self._data_loss(logit, batch["labels"], loss)
-                step_loss = data_loss + self._regular_loss()
+                step_loss = data_loss + self._regular_loss(
+                    embed_l2, embed_l1, layer_l2, layer_l1, cross_l2, cross_l1
+                )
                 step_loss.backward()
                 if is_clip_norm:
                     for param in self.parameters():
@@ -557,13 +550,15 @@ class XDeepFMModel(nn.Module):
                 )
 
             train_info = "logloss loss:{0}".format(epoch_loss / step)
-            eval_info = self._format_metrics(self.run_eval(valid_file, batch_size))
+            eval_info = self._format_metrics(
+                self.run_eval(valid_file, batch_size, metrics)
+            )
             message = "at epoch {0:d}\ntrain info: {1}\neval info: {2}".format(
                 epoch, train_info, eval_info
             )
             if test_file is not None:
                 message += "\ntest info: " + self._format_metrics(
-                    self.run_eval(test_file, batch_size)
+                    self.run_eval(test_file, batch_size, metrics)
                 )
             print(message)
 
@@ -579,21 +574,21 @@ class XDeepFMModel(nn.Module):
     def run_eval(
         self,
         filename: str,
-        batch_size: int | None = None,
+        batch_size: int = 128,
         metrics: list[str] | None = None,
     ) -> dict:
         """Evaluate ``filename`` and return the metric dictionary.
 
         Args:
             filename (str): A file name that will be evaluated.
-            batch_size (int): Batch size; defaults to the value used in ``fit``.
-            metrics (list[str]): Override the reported metrics.
+            batch_size (int): Instances per mini-batch.
+            metrics (list[str]): Metrics to report. Defaults to
+                ``["auc", "logloss"]``.
 
         Returns:
             dict: A dictionary that contains evaluation metrics.
         """
-        batch_size = batch_size if batch_size is not None else self.batch_size
-        metrics = metrics if metrics is not None else self.metrics
+        metrics = metrics if metrics is not None else ["auc", "logloss"]
         self.eval()
         preds, labels = [], []
         for np_batch, _, _ in self.iterator.load_data_from_file(filename, batch_size):
@@ -604,20 +599,17 @@ class XDeepFMModel(nn.Module):
         return cal_metric(labels, preds, metrics)
 
     @torch.no_grad()
-    def predict(
-        self, infile_name: str, outfile_name: str, batch_size: int | None = None
-    ):
+    def predict(self, infile_name: str, outfile_name: str, batch_size: int = 128):
         """Write the prediction score of every instance, one per line.
 
         Args:
             infile_name (str): Input file name, format is same as train/val/test file.
             outfile_name (str): Output file name, each line is the predict score.
-            batch_size (int): Batch size; defaults to the value used in ``fit``.
+            batch_size (int): Instances per mini-batch.
 
         Returns:
             object: An instance of self.
         """
-        batch_size = batch_size if batch_size is not None else self.batch_size
         self.eval()
         with open(outfile_name, "w") as wt:
             for np_batch, _, _ in self.iterator.load_data_from_file(
