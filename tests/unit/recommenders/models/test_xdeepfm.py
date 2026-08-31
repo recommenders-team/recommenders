@@ -53,7 +53,6 @@ def _build_model(**overrides):
         use_cin_part=True,
         cross_layer_sizes=[4],
         layer_sizes=[8, 8],
-        activation=["relu", "relu"],
         dropout=[0.0, 0.0],
         init_value=0.1,
         seed=42,
@@ -162,14 +161,14 @@ def test_ffm_dataset_rejects_field_index_beyond_field_count(tmp_path):
 
 
 def test_cin_output_shape():
-    cin = CIN(FIELD_COUNT, DIM, [8, 4], "identity", False, "tnormal", 0.1)
+    cin = CIN(FIELD_COUNT, DIM, [8, 4], False, 0.1)
     out = cin(torch.randn(5, FIELD_COUNT, DIM))
 
     assert out.shape == (5, 1)
 
 
 def test_cin_first_layer_drops_self_interactions():
-    cin = CIN(FIELD_COUNT, DIM, [1], "identity", False, "tnormal", 0.1)
+    cin = CIN(FIELD_COUNT, DIM, [1], False, 0.1)
     with torch.no_grad():
         cin.filters[0].fill_(1.0)
         cin.w_out.fill_(1.0)
@@ -189,7 +188,7 @@ def test_cin_first_layer_drops_self_interactions():
 
 def test_cin_rejects_odd_size_on_a_split_layer():
     with pytest.raises(ValueError, match="must be even"):
-        CIN(FIELD_COUNT, DIM, [5, 4], "identity", False, "tnormal", 0.1)
+        CIN(FIELD_COUNT, DIM, [5, 4], False, 0.1)
 
 
 # --------------------------- components ---------------------------

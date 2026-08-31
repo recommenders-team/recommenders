@@ -22,6 +22,11 @@ Two dead code paths from the TF model are not ported: ``_build_fast_CIN`` (a
 TF-op-level parameter-decomposition speed hack, disabled by ``fast_CIN_d: 0``
 everywhere) and the ``res`` / ``direct`` / ``bias`` / ``is_masked`` switches of
 ``_build_CIN``, which ``_build_graph`` hardcoded to a single combination.
+
+The yaml-driven string switches of ``base_model.py`` are not ported either: the DNN
+uses ReLU (``activation: [relu, relu]`` in every shipped config), the CIN applies no
+activation (``cross_activation: identity`` everywhere), and weights use a truncated
+normal (``init_method: tnormal`` everywhere).
 """
 
 from __future__ import annotations
@@ -36,14 +41,76 @@ import torch.nn.functional as F
 
 from recommenders.models.deeprec.deeprec_utils import cal_metric
 from recommenders.models.deeprec.io.ffm_dataset import FFMDataset
-from recommenders.models.deeprec.models.pytorch.layers import (
-    ACTIVATIONS,
-    FcnNet,
-    apply_bn,
-    init_weight_,
-)
 
-__all__ = ["CIN", "XDeepFMModel"]
+__all__ = ["FcnNet", "CIN", "XDeepFMModel"]
+
+
+class FcnNet(nn.Module):
+    """DNN head, matching TF ``_fcn_net``.
+
+    Per hidden layer: ``Linear -> [BatchNorm] -> [Dropout] -> ReLU``; a final
+    ``Linear(-, 1)`` with no BN, dropout or activation.
+    """
+
+    def __init__(
+        self,
+        input_dim: int,
+        layer_sizes: list[int],
+        dropout: list[float],
+        user_dropout: bool,
+        enable_BN: bool,
+        init_value: float,
+    ) -> None:
+        """Initialize parameters.
+
+        Args:
+            input_dim (int): Size of the flattened field embeddings.
+            layer_sizes (list[int]): Hidden layer sizes.
+            dropout (list[float]): Dropout rate per hidden layer.
+            user_dropout (bool): Whether to apply dropout at all.
+            enable_BN (bool): Whether to insert batch normalization.
+            init_value (float): Std of the truncated-normal weight init.
+        """
+        super().__init__()
+        self.user_dropout = user_dropout
+
+        self.linears = nn.ModuleList()
+        self.bns = nn.ModuleList()
+        self.dropouts = nn.ModuleList()
+        last = input_dim
+        for idx, size in enumerate(layer_sizes):
+            lin = nn.Linear(last, size)
+            nn.init.trunc_normal_(lin.weight, std=init_value)
+            nn.init.zeros_(lin.bias)
+            self.linears.append(lin)
+            self.bns.append(
+                nn.BatchNorm1d(size, momentum=0.05, eps=1e-4)
+                if enable_BN
+                else nn.Identity()
+            )
+            self.dropouts.append(nn.Dropout(p=dropout[idx]))
+            last = size
+
+        self.out = nn.Linear(last, 1)
+        nn.init.trunc_normal_(self.out.weight, std=init_value)
+        nn.init.zeros_(self.out.bias)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Model forward pass.
+
+        Args:
+            x (torch.Tensor): Input tensor of shape ``[B, input_dim]``.
+
+        Returns:
+            torch.Tensor: Logit of shape ``[B, 1]``.
+        """
+        for idx, lin in enumerate(self.linears):
+            x = lin(x)
+            x = self.bns[idx](x)
+            if self.user_dropout:
+                x = self.dropouts[idx](x)
+            x = F.relu(x)
+        return self.out(x)
 
 
 class CIN(nn.Module):
@@ -60,11 +127,19 @@ class CIN(nn.Module):
         field_count: int,
         dim: int,
         layer_sizes: list[int],
-        activation: str,
         enable_BN: bool,
-        init_method: str,
         init_value: float,
     ) -> None:
+        """Initialize parameters.
+
+        Args:
+            field_count (int): Number of fields per instance.
+            dim (int): Feature embedding dimension.
+            layer_sizes (list[int]): Cross layer sizes. Every size but the last is
+                split in half, so it must be even.
+            enable_BN (bool): Whether to insert batch normalization.
+            init_value (float): Std of the truncated-normal weight init.
+        """
         super().__init__()
         for layer_size in layer_sizes[:-1]:
             if layer_size % 2 != 0:
@@ -74,7 +149,6 @@ class CIN(nn.Module):
                 )
 
         self.dim = dim
-        self.act = ACTIVATIONS[activation]
 
         self.filters = nn.ParameterList()
         self.bns = nn.ModuleList()
@@ -84,7 +158,7 @@ class CIN(nn.Module):
             filters = nn.Parameter(
                 torch.empty(field_nums[0] * field_nums[-1], layer_size)
             )
-            init_weight_(filters, init_method, init_value)
+            nn.init.trunc_normal_(filters, std=init_value)
             self.filters.append(filters)
             self.bns.append(
                 nn.BatchNorm1d(layer_size, momentum=0.05, eps=1e-4)
@@ -98,7 +172,7 @@ class CIN(nn.Module):
                 final_len += layer_size
 
         self.w_out = nn.Parameter(torch.empty(final_len, 1))
-        init_weight_(self.w_out, init_method, init_value)
+        nn.init.trunc_normal_(self.w_out, std=init_value)
         self.b_out = nn.Parameter(torch.zeros(1))
 
         # Strictly upper triangular: drops self-interactions in the first layer, and
@@ -119,8 +193,11 @@ class CIN(nn.Module):
                 interactions = interactions * self.mask
 
             out = interactions @ filters
-            out = apply_bn(self.bns[idx], out)
-            out = self.act(out).transpose(1, 2)
+            # TF normalizes over the last axis whatever the rank; BatchNorm1d needs
+            # a 2-D input, so [B, D, L] is flattened and restored.
+            b, d, layer_size = out.shape
+            out = self.bns[idx](out.reshape(-1, layer_size)).reshape(b, d, layer_size)
+            out = out.transpose(1, 2)
 
             if idx != len(self.filters) - 1:
                 x_k, direct_connect = torch.split(out, out.shape[1] // 2, dim=1)
@@ -154,13 +231,10 @@ class XDeepFMModel(nn.Module):
         use_cin_part: bool = False,
         use_dnn_part: bool = False,
         cross_layer_sizes: list[int] | None = None,
-        cross_activation: str = "identity",
         layer_sizes: list[int] | None = None,
-        activation: list[str] | None = None,
         dropout: list[float] | None = None,
         user_dropout: bool = False,
         enable_BN: bool = False,
-        init_method: str = "tnormal",
         init_value: float = 0.01,
         seed: int | None = None,
     ) -> None:
@@ -181,15 +255,11 @@ class XDeepFMModel(nn.Module):
             use_dnn_part (bool): Add the DNN logit.
             cross_layer_sizes (list[int]): CIN layer sizes. Every size but the last
                 must be even. Defaults to ``[100, 100]``.
-            cross_activation (str): Activation inside the CIN.
             layer_sizes (list[int]): DNN layer sizes. Defaults to ``[100, 100]``.
-            activation (list[str]): Per-layer DNN activations. Defaults to
-                ``["relu", "relu"]``.
             dropout (list[float]): Per-layer DNN dropout rates, one per layer.
             user_dropout (bool): Whether to apply dropout in the DNN.
             enable_BN (bool): Whether to use batch normalization in the CIN and DNN.
-            init_method (str): Weight init scheme (``tnormal`` by default).
-            init_value (float): Std/scale for weight initialization.
+            init_value (float): Std of the truncated-normal weight init.
             seed (int): Random seed.
         """
         super().__init__()
@@ -225,13 +295,13 @@ class XDeepFMModel(nn.Module):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.embedding = nn.Parameter(torch.empty(feature_count, dim))
-        init_weight_(self.embedding, init_method, init_value)
+        nn.init.trunc_normal_(self.embedding, std=init_value)
         self.layer_params = []
         self.cross_params = []
 
         if use_linear_part:
             self.linear_w = nn.Parameter(torch.empty(feature_count, 1))
-            init_weight_(self.linear_w, init_method, init_value)
+            nn.init.trunc_normal_(self.linear_w, std=init_value)
             self.linear_b = nn.Parameter(torch.zeros(1))
             self.layer_params += [self.linear_w, self.linear_b]
 
@@ -240,9 +310,7 @@ class XDeepFMModel(nn.Module):
                 field_count,
                 dim,
                 cross_layer_sizes if cross_layer_sizes is not None else [100, 100],
-                cross_activation,
                 enable_BN,
-                init_method,
                 init_value,
             )
             self.cross_params += list(self.cin.filters)
@@ -253,11 +321,9 @@ class XDeepFMModel(nn.Module):
             self.dnn = FcnNet(
                 field_count * dim,
                 layer_sizes,
-                activation if activation is not None else ["relu"] * len(layer_sizes),
                 dropout if dropout is not None else [0.0] * len(layer_sizes),
                 user_dropout,
                 enable_BN,
-                init_method,
                 init_value,
             )
             # TF only put the Linear weights in layer_params: the batch-norm gammas
