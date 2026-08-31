@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 DEFAULT_DOWNLOAD_TIMEOUT = (10, 60)
 
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=3)
 def maybe_download(
     url,
     filename=None,
