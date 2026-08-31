@@ -123,7 +123,7 @@ class CIN(nn.Module):
 
 
 class XDeepFMModel(nn.Module):
-    """xDeepFM model (PyTorch).
+    """xDeepFM model.
 
     :Citation:
 
@@ -150,7 +150,7 @@ class XDeepFMModel(nn.Module):
         init_value: float = 0.01,
         seed: int | None = None,
     ) -> None:
-        """Build the PyTorch xDeepFM model.
+        """Build the xDeepFM model.
 
         Architecture arguments live on the constructor; training-time knobs (epochs,
         learning rate, batch size, loss, regularization, ...) belong on :meth:`fit`.

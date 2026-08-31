@@ -413,6 +413,8 @@ pr_gate:
     - tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition                                                      #    7.85s
     - tests/unit/recommenders/models/test_sli_rec.py
     - tests/unit/recommenders/models/test_xdeepfm.py
+    - tests/unit/recommenders/models/test_fcn_net.py
+    - tests/unit/recommenders/models/test_ffm_dataset.py
     # - tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
     - tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition                                                       #    3.06s
     - tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams                                                                     #    0.49s

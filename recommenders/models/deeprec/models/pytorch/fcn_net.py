@@ -1,7 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-"""Fully-connected scoring head shared by the deeprec PyTorch models.
+"""Fully-connected scoring head shared by the deeprec models.
 
 xDeepFM and DKN both reduce a flat feature vector to a single logit with the same
 network: a stack of hidden layers, each ``Linear -> [BatchNorm] -> [Dropout] ->
