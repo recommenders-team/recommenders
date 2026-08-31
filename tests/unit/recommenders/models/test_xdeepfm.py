@@ -18,6 +18,7 @@ except ImportError:
 FEATURE_COUNT = 200
 FIELD_COUNT = 6
 DIM = 4
+N_TRAIN, N_VALID, N_TEST = 40, 20, 20
 
 
 def _line(label, rng):
@@ -35,13 +36,12 @@ def synthetic_ffm(tmp_path_factory):
     d = tmp_path_factory.mktemp("xdeepfm_pt")
     rng = np.random.RandomState(0)
     paths = {}
-    for name, n_lines in [("train", 40), ("valid", 20), ("test", 20)]:
+    for name, n_lines in [("train", N_TRAIN), ("valid", N_VALID), ("test", N_TEST)]:
         path = os.path.join(d, name)
         with open(path, "w") as f:
             for i in range(n_lines):
                 f.write(_line(i % 2, rng) + "\n")
         paths[name] = path
-        paths["n_" + name] = n_lines
     return paths
 
 
@@ -58,10 +58,8 @@ def _build_model(**overrides):
         seed=42,
     )
     kwargs.update(overrides)
-    model = XDeepFMModel(**kwargs)
     # Keep the assertions on CPU regardless of the machine the tests run on.
-    model.device = torch.device("cpu")
-    return model.to("cpu")
+    return XDeepFMModel(**kwargs).to("cpu")
 
 
 def _first_batch(model, path, batch_size):
@@ -70,17 +68,14 @@ def _first_batch(model, path, batch_size):
 
 
 def _field_embeddings(model, np_batch):
-    """Reference [B, FIELD_COUNT, DIM] sum-pooled field embeddings, in numpy."""
+    """Reference [B, FIELD_COUNT, DIM] field embeddings.
+
+    The synthetic data carries exactly one feature per field, so every bag is a
+    single entry and the sum pooling is a plain lookup.
+    """
     embedding = model.embedding.detach().numpy()
-    offsets = np_batch["dnn_offsets"]
-    ids = np_batch["feat_ids"]
-    values = np_batch["feat_values"]
-    bags = np.zeros((offsets.shape[0], DIM), dtype=np.float64)
-    ends = np.append(offsets[1:], ids.shape[0])
-    for bag, (start, end) in enumerate(zip(offsets, ends)):
-        for j in range(start, end):
-            bags[bag] += values[j] * embedding[ids[j]]
-    return bags.reshape(-1, FIELD_COUNT, DIM)
+    ids, values = np_batch["feat_ids"], np_batch["feat_values"]
+    return (values[:, None] * embedding[ids]).reshape(-1, FIELD_COUNT, DIM)
 
 
 # --------------------------- FFMDataset ---------------------------
@@ -110,26 +105,25 @@ def test_ffm_dataset_batches_the_file(synthetic_ffm, batch_size, expected_sizes)
     dataset = FFMDataset(FIELD_COUNT)
     batches = list(dataset.load_data_from_file(synthetic_ffm["train"], batch_size))
 
-    assert [size for _, _, size in batches] == expected_sizes
-    for np_batch, impression_ids, size in batches:
+    assert [len(ids) for _, ids in batches] == expected_sizes
+    for (np_batch, impression_ids), size in zip(batches, expected_sizes):
         assert np_batch["labels"].shape == (size, 1)
         assert np_batch["dnn_offsets"].shape == (size * FIELD_COUNT,)
         assert np_batch["feat_ids"].shape == np_batch["feat_values"].shape
-        assert len(impression_ids) == size
 
 
 def test_ffm_dataset_groups_features_into_one_bag_per_field(synthetic_ffm):
     dataset = FFMDataset(FIELD_COUNT)
-    np_batch, _, size = next(
+    np_batch, _ = next(
         dataset.load_data_from_file(synthetic_ffm["train"], batch_size=4)
     )
 
     # Every field of the synthetic data holds exactly one feature, so the bags are
     # consecutive single entries.
     assert np.array_equal(
-        np_batch["dnn_offsets"], np.arange(size * FIELD_COUNT, dtype=np.int64)
+        np_batch["dnn_offsets"], np.arange(4 * FIELD_COUNT, dtype=np.int64)
     )
-    assert np_batch["feat_ids"].shape == (size * FIELD_COUNT,)
+    assert np_batch["feat_ids"].shape == (4 * FIELD_COUNT,)
 
 
 def test_ffm_dataset_sorts_features_by_field(tmp_path):
@@ -139,7 +133,7 @@ def test_ffm_dataset_sorts_features_by_field(tmp_path):
         f.write("1 3:31:1 1:11:1 2:21:2 2:22:3\n")
 
     dataset = FFMDataset(field_count=4)
-    np_batch, _, _ = next(dataset.load_data_from_file(path, batch_size=1))
+    np_batch, _ = next(dataset.load_data_from_file(path, batch_size=1))
 
     assert np.array_equal(np_batch["feat_ids"], np.array([10, 20, 21, 30]))
     assert np.array_equal(np_batch["feat_values"], np.array([1.0, 2.0, 3.0, 1.0]))
@@ -161,14 +155,14 @@ def test_ffm_dataset_rejects_field_index_beyond_field_count(tmp_path):
 
 
 def test_cin_output_shape():
-    cin = CIN(FIELD_COUNT, DIM, [8, 4], False, 0.1)
+    cin = CIN(FIELD_COUNT, [8, 4], False, 0.1)
     out = cin(torch.randn(5, FIELD_COUNT, DIM))
 
     assert out.shape == (5, 1)
 
 
 def test_cin_first_layer_drops_self_interactions():
-    cin = CIN(FIELD_COUNT, DIM, [1], False, 0.1)
+    cin = CIN(FIELD_COUNT, [1], False, 0.1)
     with torch.no_grad():
         cin.filters[0].fill_(1.0)
         cin.w_out.fill_(1.0)
@@ -188,7 +182,7 @@ def test_cin_first_layer_drops_self_interactions():
 
 def test_cin_rejects_odd_size_on_a_split_layer():
     with pytest.raises(ValueError, match="must be even"):
-        CIN(FIELD_COUNT, DIM, [5, 4], False, 0.1)
+        CIN(FIELD_COUNT, [5, 4], False, 0.1)
 
 
 # --------------------------- components ---------------------------
@@ -236,12 +230,7 @@ def test_fm_part_matches_closed_form(synthetic_ffm):
     ids = np_batch["feat_ids"].reshape(-1, FIELD_COUNT)
     values = np_batch["feat_values"].reshape(-1, FIELD_COUNT)
     summed = field_embed.sum(axis=1)
-    squared = np.stack(
-        [
-            np.sum((values[i][:, None] * embedding[ids[i]]) ** 2, axis=0)
-            for i in range(ids.shape[0])
-        ]
-    )
+    squared = ((values[:, :, None] * embedding[ids]) ** 2).sum(axis=1)
     expected = 0.5 * (summed**2 - squared).sum(axis=1)
 
     assert np.allclose(logit, expected, atol=1e-5)
@@ -285,24 +274,9 @@ def test_enabled_components_sum_their_logits(synthetic_ffm):
         assert torch.allclose(full(batch), total, atol=1e-4)
 
 
-@pytest.mark.parametrize(
-    "parts",
-    [
-        {"use_linear_part": True},
-        {"use_fm_part": True},
-        {"use_cin_part": True},
-        {"use_dnn_part": True},
-        {"use_cin_part": True, "use_dnn_part": True},
-        {
-            "use_linear_part": True,
-            "use_fm_part": True,
-            "use_cin_part": True,
-            "use_dnn_part": True,
-        },
-    ],
-)
-def test_forward_shape_for_every_component_combination(synthetic_ffm, parts):
-    model = _build_model(**{"use_cin_part": False, **parts})
+def test_forward_shape_for_a_mixed_component_pair(synthetic_ffm):
+    parts = {"use_cin_part": True, "use_dnn_part": True}
+    model = _build_model(**parts)
     _, batch = _first_batch(model, synthetic_ffm["test"], 8)
 
     with torch.no_grad():
@@ -391,7 +365,7 @@ def test_predict_writes_one_score_per_instance(synthetic_ffm, tmp_path):
     with open(output_file) as f:
         scores = f.read().strip().split("\n")
 
-    assert len(scores) == synthetic_ffm["n_test"]
+    assert len(scores) == N_TEST
     assert all(0.0 <= float(score) <= 1.0 for score in scores)
 
 

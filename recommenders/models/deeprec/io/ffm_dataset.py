@@ -3,10 +3,7 @@
 
 """Streaming loader for FFM-format data, the input format of xDeepFM.
 
-Port of the TF-1.x ``FFMTextIterator``: the text parsing is unchanged, but batches
-come out as numpy arrays laid out for ``torch.nn.functional.embedding_bag`` instead
-of as a graph ``feed_dict``. Like the TF version it reads one mini-batch at a time,
-so files larger than memory can be used as input.
+One mini-batch is read at a time, so files larger than memory can be used as input.
 
 Each line is ``<label> <field>:<feature>:<value> ...`` with an optional
 ``%<impression_id>`` suffix. Field and feature indices are 1-based in the file and
@@ -17,9 +14,9 @@ A batch flattens the feature triples of all its instances and sorts them by
 
 * ``feat_ids`` / ``feat_values`` -- the ``(feature, value)`` pairs, ``[nnz]``.
 * ``dnn_offsets`` -- start of each of the ``batch_size * field_count`` per-field
-  bags, ``[batch_size * field_count]``. Sum-pooling over those bags reproduces TF's
-  ``embedding_lookup_sparse(combiner="sum")``; every ``field_count``-th offset gives
-  the per-instance bags that the linear and FM parts sum over.
+  bags, ``[batch_size * field_count]``. Sum-pooling over those bags gives the
+  per-field embeddings; every ``field_count``-th offset gives the per-instance bags
+  that the linear and FM parts sum over.
 """
 
 from __future__ import annotations
@@ -30,20 +27,14 @@ import numpy as np
 class FFMDataset:
     """Mini-batch loader for FFM-format text files."""
 
-    def __init__(
-        self, field_count: int, col_spliter: str = " ", ID_spliter: str = "%"
-    ) -> None:
+    def __init__(self, field_count: int) -> None:
         """Initialize the loader.
 
         Args:
             field_count (int): Number of fields per instance. Every instance is
                 bagged into exactly this many per-field groups.
-            col_spliter (str): Column splitter in one line.
-            ID_spliter (str): Impression-ID splitter in one line.
         """
         self.field_count = field_count
-        self.col_spliter = col_spliter
-        self.ID_spliter = ID_spliter
 
     def parser_one_line(self, line: str) -> tuple[float, list, str]:
         """Parse one string line into feature values.
@@ -58,11 +49,11 @@ class FFMDataset:
             - The impression ID, or `0` when the line carries none.
         """
         impression_id = 0
-        words = line.strip().split(self.ID_spliter)
+        words = line.strip().split("%")
         if len(words) == 2:
             impression_id = words[1].strip()
 
-        cols = words[0].strip().split(self.col_spliter)
+        cols = words[0].strip().split(" ")
 
         label = float(cols[0])
 
@@ -80,14 +71,13 @@ class FFMDataset:
 
         Args:
             infile (str): Text input file. Each line in this file is an instance.
-            batch_size (int): Number of instances per mini-batch.
+            batch_size (int): Number of instances per mini-batch. The last batch of
+                the file may hold fewer.
 
         Yields:
-            dict, list, int:
+            dict, list:
             - The batch arrays, see the module docstring.
             - The impression IDs of the batch.
-            - The number of instances in the batch, which is smaller than
-              `batch_size` for the last batch of the file.
         """
         label_list = []
         features_list = []
@@ -102,20 +92,14 @@ class FFMDataset:
                 impression_id_list.append(impression_id)
 
                 if len(label_list) == batch_size:
-                    yield (
-                        self._convert_data(label_list, features_list),
-                        impression_id_list,
-                        batch_size,
-                    )
+                    yield self._convert_data(
+                        label_list, features_list
+                    ), impression_id_list
                     label_list = []
                     features_list = []
                     impression_id_list = []
             if label_list:
-                yield (
-                    self._convert_data(label_list, features_list),
-                    impression_id_list,
-                    len(label_list),
-                )
+                yield self._convert_data(label_list, features_list), impression_id_list
 
     def _convert_data(self, labels: list, features: list) -> dict:
         """Flatten a batch of parsed lines into the arrays the model consumes.
@@ -128,8 +112,7 @@ class FFMDataset:
         Returns:
             dict: `labels`, `feat_ids`, `feat_values` and `dnn_offsets`.
         """
-        instance_count = len(labels)
-        bag_count = instance_count * self.field_count
+        bag_count = len(labels) * self.field_count
 
         rows = []
         feat_ids = []
@@ -153,5 +136,5 @@ class FFMDataset:
             "labels": np.asarray(labels, dtype=np.float32).reshape(-1, 1),
             "feat_ids": np.asarray(feat_ids, dtype=np.int64)[order],
             "feat_values": np.asarray(feat_values, dtype=np.float32)[order],
-            "dnn_offsets": np.cumsum(counts) - counts,
+            "dnn_offsets": np.cumsum(counts, dtype=np.int64) - counts,
         }
