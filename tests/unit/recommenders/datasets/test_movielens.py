@@ -21,7 +21,7 @@ def test_download_movielens_uses_original_url(size, tmp):
         download_movielens(size, dest_path=f"{tmp}/ml.zip")
 
     mock_download.assert_called_once_with(
-        MOVIELENS_URL.format(size=size), "ml.zip", work_directory=tmp
+        MOVIELENS_URL.format(size=size), "ml.zip", work_directory=tmp, num_attempts=3
     )
 
 
@@ -42,6 +42,9 @@ def test_download_movielens_falls_back_to_backup(size, tmp, caplog):
         size=size
     )
     assert MOVIELENS_BACKUP_URL.format(size=size) in caplog.text
+    # The original URL fails fast, the backup uses the default number of attempts
+    assert mock_download.call_args_list[0].kwargs["num_attempts"] == 3
+    assert "num_attempts" not in mock_download.call_args_list[1].kwargs
 
 
 def test_download_movielens_raises_when_backup_also_fails(tmp):

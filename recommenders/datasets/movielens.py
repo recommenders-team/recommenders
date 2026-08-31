@@ -568,7 +568,9 @@ def download_movielens(size, dest_path):
     """Downloads MovieLens datafile.
 
     The file is downloaded from the original MovieLens URL. If that download fails,
-    it is retried from the Recommenders backup hosted on Hugging Face.
+    it is retried from the Recommenders backup hosted on Hugging Face. The original
+    URL is tried fewer times than the default so that an outage falls back to the
+    backup quickly, while the backup uses the default number of attempts.
 
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
@@ -585,7 +587,7 @@ def download_movielens(size, dest_path):
     backup_url = MOVIELENS_BACKUP_URL.format(size=size)
     dirs, file = os.path.split(dest_path)
     try:
-        maybe_download(url, file, work_directory=dirs)
+        maybe_download(url, file, work_directory=dirs, num_attempts=3)
     except requests.exceptions.RequestException:
         log.warning(f"Failed to download {url}, using backup {backup_url}")
         maybe_download(backup_url, file, work_directory=dirs)
