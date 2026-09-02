@@ -16,15 +16,19 @@ log = logging.getLogger(__name__)
 DEFAULT_DOWNLOAD_TIMEOUT = (10, 60)
 
 
-@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def maybe_download(
     url,
     filename=None,
     work_directory=".",
     expected_bytes=None,
     timeout=DEFAULT_DOWNLOAD_TIMEOUT,
+    num_attempts=5,
+    wait_random_min=1000,
+    wait_random_max=5000,
 ):
     """Download a file if it is not already downloaded.
+
+    Failed downloads are retried, waiting a random time between attempts.
 
     Args:
         filename (str): File name.
@@ -32,10 +36,23 @@ def maybe_download(
         url (str): URL of the file to download.
         expected_bytes (int): Expected file size in bytes.
         timeout (float|tuple): Requests timeout for the download.
+        num_attempts (int): Number of attempts before giving up on the download.
+        wait_random_min (int): Minimum wait between attempts, in milliseconds.
+        wait_random_max (int): Maximum wait between attempts, in milliseconds.
 
     Returns:
         str: File path of the file downloaded.
     """
+    downloader = retry(
+        wait_random_min=wait_random_min,
+        wait_random_max=wait_random_max,
+        stop_max_attempt_number=num_attempts,
+    )(_download)
+    return downloader(url, filename, work_directory, expected_bytes, timeout)
+
+
+def _download(url, filename, work_directory, expected_bytes, timeout):
+    """Download a file. See :func:`maybe_download` for the argument description."""
     if filename is None:
         filename = url.split("/")[-1]
     os.makedirs(work_directory, exist_ok=True)

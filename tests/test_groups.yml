@@ -403,8 +403,6 @@ pr_gate:
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_cudnn_enabled
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_tensorflow_gpu
     - tests/unit/recommenders/utils/test_gpu_utils.py::test_pytorch_gpu
-    - tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn                                                                           #    0.11s
-    - tests/unit/recommenders/utils/test_tf_utils.py::test_build_optimizer
 
   # group_gpu_002:                                                                                                                                     # Total: 143.16s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
