@@ -1,0 +1,351 @@
+Directory structure:
+└── recommenders-team-recommenders/
+    └── scenarios/
+        ├── README.md
+        ├── ads/
+        │   └── README.md
+        ├── food_and_restaurants/
+        │   └── README.md
+        ├── gaming/
+        │   └── README.md
+        ├── media_and_entertainment/
+        │   └── README.md
+        ├── news/
+        │   └── README.md
+        ├── retail/
+        │   └── README.md
+        └── travel/
+            └── README.md
+
+================================================
+FILE: scenarios/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation System Scenarios
+
+On this section there is listed a number of business scenarios that are common in Recommendation Systems.
+
+The list of scenarios are:
+
+* [Ads](ads)
+* [Food and restaurants](food_and_restaurants)
+* [Gaming](gaming)
+* [Media and entertainment](media_and_entertainment)
+* [News and documents](news)
+* [Retail](retail)
+* [Travel](travel)
+
+
+
+
+
+
+
+================================================
+FILE: scenarios/ads/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation systems for Advertisement
+
+Recommender systems have become essential in modern digital advertising, helping to match the right ads with the right users at the right time. Studies show that personalized advertising can increase click-through rates by [up to 5.3 times](https://webtribunal.net/blog/targeted-advertising-statistics#gref) compared to non-personalized ads.
+
+## Scenarios
+
+Here are the most common advertising scenarios and key considerations when applying recommendations in advertising.
+
+### Real-time bidding optimization
+
+One of the primary tasks in advertising is determining the optimal bid price for an ad impression in real-time. This involves predicting the likelihood of user engagement (clicks, conversions) and the potential value of that engagement. Models like [LightGBM](../../examples/00_quick_start/lightgbm_tinycriteo.ipynb) and [Wide & Deep](../../examples/00_quick_start/wide_deep_movielens.ipynb) are commonly used for this purpose.
+
+### Ad targeting and personalization
+
+This scenario focuses on selecting the most relevant ads for a specific user based on their browsing history, demographics, and behavior patterns. Collaborative filtering approaches like [ALS](../../examples/00_quick_start/als_movielens.ipynb) and deep learning models like [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) can be adapted for this purpose.
+
+### Look-alike audience targeting
+
+This involves finding users similar to those who have already engaged with or converted on ads. The goal is to expand the reach of successful campaigns to similar audiences. Similarity-based approaches and clustering techniques are commonly used here.
+
+### Ad sequence optimization
+
+This scenario involves determining the optimal sequence of ads to show to a user over time to maximize long-term engagement while avoiding ad fatigue. Reinforcement learning approaches like [Vowpal Wabbit](../../examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) can be particularly effective.
+
+## Data and evaluation
+
+Datasets used in advertising recommendations typically include user demographics, browsing behavior, ad impression data, click data, and conversion data. Due to privacy concerns, much of this data is anonymized.
+
+Common evaluation metrics include [CTR](../../GLOSSARY.md), [CVR](../../GLOSSARY.md) (Conversion Rate), [ROI](../../GLOSSARY.md), and [CPA](../../GLOSSARY.md) (Cost Per Acquisition). Online evaluation through [A/B testing](../../GLOSSARY.md) is crucial in the advertising domain.
+
+## Other considerations
+
+Ad recommendations must balance multiple objectives including advertiser ROI, user experience, and platform revenue. Additionally, considerations around ad frequency capping, budget pacing, and compliance with privacy regulations like GDPR must be taken into account.
+
+
+
+================================================
+FILE: scenarios/food_and_restaurants/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation systems for Food and Restaurants
+
+Recommendation systems play a crucial role in the food service industry, from restaurant discovery platforms to food delivery apps. Studies show that personalized recommendations can increase order values by [up to 20%](https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/the-future-of-personalization-and-how-to-get-ready-for-it) in food delivery services.
+
+## Scenarios
+
+Here are the key scenarios and considerations for food and restaurant recommendations.
+
+### Restaurant discovery
+
+This scenario helps users discover new restaurants based on their dining history, preferences, and context (location, time, occasion). Collaborative filtering approaches like [ALS](../../examples/00_quick_start/als_movielens.ipynb) and [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) can be adapted for this purpose.
+
+### Menu item recommendations
+
+When a user is browsing a restaurant's menu, the system recommends dishes based on their past orders, dietary preferences, and popular combinations. This can include personalized recommendations and "frequently ordered together" suggestions.
+
+### Meal planning and recipe recommendations
+
+For meal planning apps, the system suggests recipes based on dietary restrictions, nutritional goals, and ingredient availability. Content-based filtering approaches are particularly useful here.
+
+### Time-sensitive recommendations
+
+This involves recommending different options based on time of day, day of week, or special occasions. For example, suggesting breakfast places in the morning or romantic restaurants for anniversary dinners.
+
+## Data and evaluation
+
+Key data sources include user profiles (dietary preferences, allergies), order history, restaurant attributes (cuisine type, price range, location), menu items, and contextual data (time, weather, special occasions).
+
+Common evaluation metrics include order conversion rate, average order value, and customer satisfaction ratings. [A/B testing](../../GLOSSARY.md) is crucial for measuring the impact of recommendations on business metrics.
+
+## Other considerations
+
+Food and restaurant recommendations must account for various constraints including dietary restrictions, food allergies, delivery radius, restaurant capacity, and real-time availability. Seasonal menus and time-sensitive offerings also need to be considered in the recommendation strategy.
+
+
+
+================================================
+FILE: scenarios/gaming/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation Systems for Gaming
+
+Gaming is one of the first industries that adopted AI, popularized by the development and adoption of arcade games during the 80s. The AI component was usually generated via the non-player characters (NPCs), that had to act intelligently and react to the player's actions. However, it is not until recently that recommendation systems have been applied to computer games.
+
+## Scenarios
+
+In this section we will describe the most common scenarios in recommendation systems for gaming.
+
+### Personalized game recommendation
+
+A common scenario is to recommend games to a user based on their past interactions with other games. In this scenario, the user is represented by a user profile, and the game is represented by a game profile.  The user profile contains information about the user's past interactions with the game, and the game profile contains information about the game's popularity and other attributes. This scenario is typically shown on the game store homepage (for example, the store of XBox), or it can be sent to a user via a personalized newsletter. A large number of algorithms in this repository such as [SAR](../../examples/00_quick_start/sar_movielens.ipynb), [BPR](../../examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb), and [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) can be used for personalized game recommendation.
+
+
+### Personalized item recommendation
+
+The addition of micro-transactions inside games has produced a complete shift in the business model of games. Traditionally, most games were based on a one-off purchase, and users got all the content. Nowadays, many games allow players to buy items while they are playing via micro-transactions. Personalized item recommendations can be used to increase the player engagement, tailor the content to the player's interests, and thereby increasing player retention. In addition, these recommendations provide benefits for studios, which will increase their conversion rate and revenue. These systems also take into account the player's past behavior and their interactions with items. The same set of algorithms used in personalized game recommendation can be used for personalized item recommendation by simply adapting the dataset.
+
+
+### Similar items
+
+A related scenario to personalized item recommendation is similar item recommendations. In this case the recommendations are based on item feature similarity. Some features that can be taken into account are price, item category, item usage, etc. The business usecase for similar items can to increase the likelihood of buying or avoiding losing a sale by showing an alternative item with a lower price (down-selling). The set of algorithms that can be used in this scenario are those based on content-based filtering, such as [LightGBM](../../examples/00_quick_start/lightgbm_tinycriteo.ipynb), [VW](../../examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) or even [xDeepFM](../../examples/00_quick_start/xdeepfm_criteo.ipynb).
+
+
+### Next best action prediction
+
+An interesting scenario is next best action prediction. In this scenario, what is recommended is the most beneficial next action for the player. From the technical point of view, this can be implemented using collaborative filtering algorithms, such as [SAR](../../examples/00_quick_start/sar_movielens.ipynb), [BPR](../../examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb), and [NCF](../../examples/00_quick_start/ncf_movielens.ipynb).
+
+## Data and evaluation
+
+Datasets used in gaming recommendations usually include [user information](../../GLOSSARY.md), [item information](../../GLOSSARY.md), [interaction data](../../GLOSSARY.md), and session-based data, among others. 
+
+For evaluation of the algorithms, it is common to use [ranking metrics](../../GLOSSARY.md). For measuring the business impact, Average Revenue Per Paying User (ARPPU) is one of the main metrics used. Other business metrics are conversion rate, average revenue per user (ARPU), daily active users and monthly active users.
+
+
+
+================================================
+FILE: scenarios/media_and_entertainment/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation systems for Media and Entertainment
+
+Recommendation systems are fundamental to modern media and entertainment platforms. For example, Netflix credits recommendation systems for [75% of the content viewed](https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers) on the platform. It is the same with YouTube, with [60% of views](https://emerj.com/use-cases-recommendation-systems/) coming from recommendation systems. In TikTok, [90% of views](https://dl.acm.org/doi/pdf/10.1145/3613904.3642433) come from reco, and for Spotify, the personalization service is estimated to make [10% of their revenue](https://routenote.com/blog/spotifys-algorithms-drives-3-4-of-industry-revenue/). A modern platform without recommendation systems would likely struggle to engage users and drive revenue.
+
+## Scenarios
+
+Here are the primary scenarios and considerations for media and entertainment recommendations.
+
+### Content discovery
+
+The main task is helping users discover relevant content from vast libraries of movies, shows, music, or games. This is typically shown on home pages and personalized feeds. Models like [ALS](../../examples/00_quick_start/als_movielens.ipynb), [NCF](../../examples/00_quick_start/ncf_movielens.ipynb), and [SAR](../../examples/00_quick_start/sar_movielens.ipynb) are commonly used.
+
+### Next-item recommendation
+
+This scenario predicts what content a user might want to consume next, such as the next episode, similar songs, or related games. This is particularly important for maintaining user engagement and reducing churn.
+
+### Personalized playlists
+
+For music and video platforms, this involves creating custom playlists based on user preferences and listening/viewing history. Both collaborative filtering and content-based approaches can be used here.
+
+### Live content recommendations
+
+This scenario involves recommending live content (streams, events, broadcasts) based on user interests and current popularity. Real-time processing and trending detection are crucial here.
+
+## Data and evaluation
+
+Key data includes user profiles, content metadata (genre, actors, duration), viewing/listening history, and engagement metrics (watch time, ratings, shares).
+
+Common evaluation metrics include engagement time, retention rate, and user satisfaction. For music and video platforms, metrics like [CTR](../../GLOSSARY.md) and [MAU](../../GLOSSARY.md) are particularly important. [A/B testing](../../GLOSSARY.md) is standard practice for evaluating recommendations.
+
+## Other considerations
+
+Media recommendations need to balance between promoting new content and leveraging known user preferences. Content licensing windows, regional availability, and device compatibility must also be considered. Additionally, recommendations should account for household sharing of accounts and varying preferences based on viewing context.
+
+
+
+
+================================================
+FILE: scenarios/news/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation Systems for News
+
+While online news services have become a major source of information for millions of people, the massive amount of continuously generated content brings heavy information overload to users. Personalized news recommendation, which predicts which news articles a user is likely to read, can help reduce information overload and improve user experience.
+
+There are several aspects to consider when developing news recommendation systems. Especially:
+
+1. Cold-start is a major challenge for news recommendation. New articles are continuously emerging, and existing news articles will expire quickly. Effective representation and recommendation of new articles is essential to good performance in news recommendation.  
+
+2. In news recommendation it is not optimal to represent items (i.e., news articles) using handcrafted features like IDs. In addition, news articles have rich texts. NLP methods are important to learn news content representations from news texts.
+
+For more details, please refer to [this ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf) and references therein.
+
+## Data and evaluation
+
+Datasets used in news recommendation usually include articles read by a user, which can be used as a proxy of user interest.  In addition to such [implicit interation data](../../GLOSSARY.md), news datasets could also include [news information](../../GLOSSARY.md).  
+
+To measure the performance of the recommender, it is common to use [ranking metrics](../../GLOSSARY.md) such as MRR and nDCG. In production, business metrics used may include [CTR](../../GLOSSARY.md) and engagement time. To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
+
+## Microsoft News Dataset (MIND) and MIND News Recommendation Competition
+
+To support the advancement of open research in news recommendation, Microsoft has made [MIND](https://msnews.github.io/) (Microsoft News Dataset) available to the research community.  MIND is a large-scale dataset on English news, containing 161,000 news articles, over 3 million entities and 1 million users.  More details of the dataset can be find in [here](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf).
+
+In conjunction with MIND, Microsoft also launched [MIND News Competition](https://msnews.github.io/competition.html).  The development phase of the competition starts on July 20, 2020.  The final test phase starts on August 21, 2020, and the competition ends on September 4, 2020.  More details can be found on the MIND News Competition page above.
+
+To help competition participants get started, we have made available in this repo several baselines models for MIND and MIND News Competition.  These include complete notebooks for [DKN](../../examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](../../examples/00_quick_start/lstur_MIND.ipynb), [NAML](../../examples/00_quick_start/naml_MIND.ipynb), [NPA](../../examples/00_quick_start/npa_MIND.ipynb) and [NRMS](../../examples/00_quick_start/nrms_MIND.ipynb) developed and tested on MIND sample datasets.
+
+
+
+================================================
+FILE: scenarios/retail/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation systems for Retail
+
+Recommender systems have become a key growth and revenue driver for modern retail. For example, recommendation was estimated to [account for 35% of customer purchases on Amazon](https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers#), Alibaba reported a revenue increase of [19% YoY](https://emerj.com/artificial-intelligence-at-alibaba/) due to their recommendation solutions in their domestic retail platform Tmall. Other examples in ecommerce are BestBuy with [24% revenue increase](https://www.cnbc.com/2016/08/23/best-buys-surge-in-online-sales-shows-it-wont-be-toppled-by-amazon.html), eBay with [15.9% click-through rate increase](https://innovation.ebayinc.com/tech/engineering/beyond-words-how-multimodal-embeddings-elevate-ebays-product-recommendations/), Sephora with [15% increase in average order value](https://medium.com/%40visenze/maximizing-revenue-for-luxury-online-retailers-the-power-of-impactful-product-recommendations-and-841f147e22f6). 
+
+
+## Scenarios
+
+Next we will describe several most common retail scenarios and main considerations when applying recommendations in retail.
+
+### Personalized recommendation
+
+A major task in applying recommendations in retail is to predict which products or set of products a user is most likely to engage with or purchase, based on the shopping or viewing history of that user. This scenario is commonly shown on the personalized home page, feed or newsletter. Most models in this repo such as [ALS](../../examples/00_quick_start/als_movielens.ipynb), [BPR](../../examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb), [LightGBM](../../examples/00_quick_start/lightgbm_tinycriteo.ipynb) and [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) can be used for personalization. [Vowpal Wabbit](../../examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb), which uses reinforcement learning in real-time, is a good solution to rerank the outputs from the personalization model.
+
+### You might also like
+
+In this scenario, the user is already viewing a product page, and the task is to make recommendations that are relevant to it.  Personalized recommendation techniques are still applicable here, but relevance to the product being viewed is of special importance.  As such, item similarity can be useful here, especially for cold items and cold users that do not have much interaction data.
+
+### Frequently bought together
+
+In this task, the retailer tries to predict product(s) complementary to or bought together with a  product that a user already put in to shopping cart. This feature is great for cross-selling and is normally displayed just before checkout.  In many cases, a machine learning solution is not required for this task.
+
+### Similar alternatives
+
+This scenario covers down-selling or out of stock alternatives to avoid losing a sale. Similar alternatives predict other products with similar features, like price, type, brand or visual appearance.
+
+## Data and evaluation
+
+Datasets used in retail recommendations usually include [user information](../../GLOSSARY.md), [item information](../../GLOSSARY.md) and [interaction data](../../GLOSSARY.md), among others.
+
+To measure the performance of the recommender, it is common to use [ranking metrics](../../GLOSSARY.md). In production, the business metrics used are [CTR](../../GLOSSARY.md), [AOV](../../GLOSSARY.md) and [revenue per order](../../GLOSSARY.md). To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
+
+## Other considerations
+
+Retailers use recommendation to achieve a broad range of business objectives, such as attracting new customers through promotions, or clearing products that are at the end of their season. These objectives are often achieved by re-ranking the outputs from recommenders in scenarios above. 
+
+
+
+
+
+
+
+================================================
+FILE: scenarios/travel/README.md
+================================================
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
+# Recommendation systems for Travel
+
+Recommendation systems are vital in the modern travel industry, helping users navigate through countless options for destinations, accommodations, and activities. Studies show that personalized recommendations can increase customer engagement by [up to 30%](https://mize.tech/blog/ai-in-tourism-marketing-hyper-personalization-and-more-bookings/) in travel platforms.
+
+## Scenarios
+
+Here are the key scenarios and considerations for travel recommendations.
+
+### Destination discovery
+
+This scenario helps users discover travel destinations based on their preferences, past trips, budget constraints, and seasonal factors. Both collaborative filtering approaches like [ALS](../../examples/00_quick_start/als_movielens.ipynb) and content-based methods can be used to match travelers with destinations.
+
+### Accommodation recommendations
+
+When a user has selected a destination, the system recommends hotels, vacation rentals, or other accommodations based on their preferences (price range, amenities, location) and similar users' choices. Models like [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) and [SAR](../../examples/00_quick_start/sar_movielens.ipynb) can be adapted for this purpose.
+
+### Activity and experience suggestions
+
+This involves recommending tours, attractions, and activities at a chosen destination based on user interests, time of year, and duration of stay. Content-based filtering and hybrid approaches are particularly effective here.
+
+### Trip planning assistance
+
+This scenario helps users build complete itineraries by suggesting complementary items (flights, accommodations, activities) that work well together. Sequential recommendation approaches can be particularly useful for building coherent travel plans.
+
+## Data and evaluation
+
+Key data sources include user profiles (preferences, past bookings), item attributes (destinations, hotels, activities), contextual data (seasonality, weather, events), and user-generated content (reviews, ratings).
+
+Common evaluation metrics include booking conversion rate, average booking value, and customer satisfaction scores. [A/B testing](../../GLOSSARY.md) is essential for measuring the impact of recommendations on business metrics.
+
+## Other considerations
+
+Travel recommendations must account for numerous constraints including seasonality, availability, pricing dynamics, and booking windows. Additionally, recommendations should consider factors like group travel needs, special occasions, and the high-stakes nature of travel decisions. Local regulations, visa requirements, and travel restrictions also need to be factored into the recommendation strategy.
+
+

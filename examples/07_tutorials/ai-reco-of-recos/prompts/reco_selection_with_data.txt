@@ -1,0 +1,62 @@
+You are an AI-recommender architect.
+
+## Input Scenario
+#### START OF INPUT SCENARIO
+{scenario}
+#### END OF INPUT SCENARIO
+
+## Data Sample and Information
+#### START OF DATA SAMPLE AND INFORMATION
+{scenario}
+#### END OF DATA SAMPLE AND INFORMATION
+
+Step 1 — From the above, you will have a description for all or most of the below fields:
+  • `scenario` – high-level business scenario (free text).
+  • `data_profile` – a summary of *actual* data you can rely on.
+    Expected keys inside `data_profile` (provide “unknown” if not applicable):
+
+{{
+  "num_users":        int,              // distinct user IDs
+  "num_items":        int,              // distinct item IDs
+  "num_interactions": int,              // event count
+  "interaction_type": "explicit_ratings" | "implicit_events" | "sequential_events",
+  "time_span_days":   int,              // coverage of the log window
+  "avg_events_per_u": float,            // sparsity indicator
+  "cold_item_ratio":  float,            // fraction of items with <5 events
+  "feature_richness": "ids_only" | "rich_context" | "text_KG" | "geo",
+  "storage_format":   "parquet" | "csv" | "json" | "delta" | ...,
+  "file_size_gb":     float
+}}
+
+Step 2 — Using both **business context** and **data characteristics**, select the 1-3 best-fit algorithms from the canonical list you know (ALS, BPR, SASRec, LightGBM … etc.).
+Apply the same decision-tree logic as before *but now weight decisions by*:
+
+* dataset scale & sparsity (`num_*`, `avg_events_per_u`),
+* cold-start severity (`cold_item_ratio`),
+* feature richness (`feature_richness`),
+* interaction type,
+* compute constraints inferred from `file_size_gb` and `storage_format`.
+
+**Table A – Canonical Algorithms**
+• Explicit-rating CF  ……  ALS, Surprise-SVD, LightFM, Wide&Deep, xDeepFM  
+• Implicit-feedback CF ……  BPR, SAR, LightGCN, NCF, RBM, ALS-implicit, xDeepFM, LightFM  
+• Sequential / session  ……  SASRec, Caser, GRU, NextItNet, A2SVD, SLi-Rec, SUM, SSEPT  
+• Content / hybrid      ……  LightGBM-GBT, TF-IDF, DKN, NAML, NPA, NRMS, LSTUR, VW, Wide&Deep, xDeepFM, LightFM  
+• Generative / VAE      ……  BiVAE, Multinomial-VAE, Standard-VAE  
+• Geo / Riemannian      ……  GeoIMC, RLRMC  
+
+
+Step 3 — Output a **RankedAlgosResponse** JSON that conforms to the Pydantic schema:
+
+{{
+  "ranked_algos": [
+    {{"name": "Reco Algorithm #1", "why": "Data-driven rationale"}},
+    {{"name": "Reco Algorithm #2", "why": "Data-driven rationale"}},
+    {{"name": "Reco Algorithm #3", "why": "Data-driven rationale"}}
+  ]
+}}
+
+
+• Keep `ranked_algos` in descending order of suitability.
+• In each `why`, reference at least one concrete field from `data_profile` (e.g., “suits 100 M implicit events with 0.2% cold items”).
+• If the input data is insufficient for confident ranking, include a *single* extra entry named `"Next_Steps"` with suggestions for the missing diagnostics.
