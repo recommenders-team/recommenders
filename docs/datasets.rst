@@ -94,6 +94,10 @@ It comes with several sizes:
 * MovieLens 10M: 10 million ratings from 72000 users on 10000 movies.
 * MovieLens 20M: 20 million ratings from 138000 users on 27000 movies
 
+The data is downloaded from the original GroupLens URL. If that download fails, it is
+retried from the `Recommenders backup <https://huggingface.co/datasets/Recommenders/MovieLens>`_
+hosted on Hugging Face, which mirrors the original files.
+
 :Citation:
 
     F. M. Harper and J. A. Konstan. "The MovieLens Datasets: History and Context". 
