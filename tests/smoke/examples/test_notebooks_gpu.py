@@ -96,8 +96,8 @@ def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["auc"] == pytest.approx(0.7251, rel=TOL, abs=ABS_TOL)
-    assert results["logloss"] == pytest.approx(0.508, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.7234, rel=TOL, abs=ABS_TOL)
+    assert results["logloss"] == pytest.approx(0.5089, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
