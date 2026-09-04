@@ -161,6 +161,7 @@ class VW:
             "b",
             "bit_precision",
             "holdout_off",
+            "passes",
             "c",
             "cache",
             "k",

@@ -158,3 +158,15 @@ def test_logistic_predictions(df):
     result = model.predict(df)
 
     assert result["prediction"].between(0, 1).all()
+
+
+@pytest.mark.experimental
+@requires_vw
+def test_multiple_passes(df):
+    # passes needs a cache during training and must not be used at prediction time
+    model = VW(col_user="user", col_item="item", passes=3, c=True)
+    model.fit(df)
+    result = model.predict(df)
+
+    assert "--passes" not in model.test_params
+    assert len(result) == len(df)
