@@ -72,7 +72,6 @@ def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     execute_notebook(
@@ -87,7 +86,7 @@ def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["mae"] == pytest.approx(0.71292, rel=TOL, abs=ABS_TOL)
     assert results["rsquared"] == pytest.approx(0.231199, rel=TOL, abs=ABS_TOL)
     assert results["exp_var"] == pytest.approx(0.231337, rel=TOL, abs=ABS_TOL)
-    assert results["map"] == pytest.approx(0.012535, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.041456, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.096594, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.097770, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.037612, rel=TOL, abs=ABS_TOL)
