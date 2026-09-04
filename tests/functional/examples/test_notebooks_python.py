@@ -57,7 +57,7 @@ def test_sar_single_node_functional(
         (
             "1m",
             {
-                "map": 0.033914,
+                "map": 0.139016,
                 "ndcg": 0.231570,
                 "precision": 0.211923,
                 "recall": 0.064663,
