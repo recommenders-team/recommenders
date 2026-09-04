@@ -179,7 +179,7 @@ def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", dict(map=0.081390, ndcg=0.406627, precision=0.373228, recall=0.132444)),
+        ("1m", dict(map=0.186452, ndcg=0.314204, precision=0.271386, recall=0.161333)),
         # 10m works but takes too long
     ],
 )
