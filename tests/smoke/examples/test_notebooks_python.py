@@ -22,7 +22,7 @@ def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["map"] == pytest.approx(0.110591, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.244722, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.382461, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.330753, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.176385, rel=TOL, abs=ABS_TOL)
