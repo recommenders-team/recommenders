@@ -5,9 +5,19 @@
 import os
 import pytest
 from unittest import mock
+import numpy as np
 import pandas as pd
 
 from recommenders.models.vowpal_wabbit.vw import VW
+
+try:
+    import vowpalwabbit
+except ImportError:
+    vowpalwabbit = None
+
+requires_vw = pytest.mark.skipif(
+    vowpalwabbit is None, reason="vowpalwabbit not installed"
+)
 
 
 @pytest.fixture(scope="module")
@@ -36,19 +46,7 @@ def test_vw_init_del():
 
 @pytest.mark.experimental
 def test_to_vw_cmd():
-    expected = [
-        "vw",
-        "-l",
-        "0.1",
-        "--l1",
-        "0.2",
-        "--loss_function",
-        "logistic",
-        "--holdout_off",
-        "--rank",
-        "3",
-        "-t",
-    ]
+    expected = "-l 0.1 --l1 0.2 --loss_function logistic --holdout_off --rank 3 -t"
     params = dict(
         l=0.1,
         l1=0.2,
@@ -58,41 +56,24 @@ def test_to_vw_cmd():
         rank=3,
         t=True,
     )
-    assert VW.to_vw_cmd(params=params) == expected
+    assert VW.to_vw_params(params=params) == expected
 
 
 @pytest.mark.experimental
 def test_parse_train_cmd(model):
-    expected = [
-        "vw",
-        "--loss_function",
-        "logistic",
-        "--oaa",
-        "5",
-        "-f",
-        model.model_file,
-        "-d",
-        model.train_file,
-    ]
+    expected = (
+        f"--loss_function logistic --oaa 5 -f {model.model_file} -d {model.train_file}"
+    )
     params = dict(loss_function="logistic", oaa=5, f="test", d="data", quiet=False)
     assert model.parse_train_params(params=params) == expected
 
 
 @pytest.mark.experimental
 def test_parse_test_cmd(model):
-    expected = [
-        "vw",
-        "--loss_function",
-        "logistic",
-        "-d",
-        model.test_file,
-        "--quiet",
-        "-i",
-        model.model_file,
-        "-p",
-        model.prediction_file,
-        "-t",
-    ]
+    expected = (
+        f"--loss_function logistic -d {model.test_file} --quiet "
+        f"-i {model.model_file} -p {model.prediction_file} -t"
+    )
     params = dict(
         loss_function="logistic", i="test", oaa=5, d="data", test_only=True, quiet=True
     )
@@ -100,12 +81,27 @@ def test_parse_test_cmd(model):
 
 
 @pytest.mark.experimental
-def test_to_vw_file(model, df):
-    expected = ["1 0|user 1 |item 8", "5 1|user 3 |item 7", "3 2|user 2 |item 7"]
+@pytest.mark.parametrize(
+    "train, expected",
+    [
+        (True, ["1 0|user 1 |item 8", "5 1|user 3 |item 7", "3 2|user 2 |item 7"]),
+        (False, [" 0|user 1 |item 8", " 1|user 3 |item 7", " 2|user 2 |item 7"]),
+    ],
+)
+def test_to_vw_file(model, df, train, expected):
+    model.to_vw_file(df, train=train)
+    path = model.train_file if train else model.test_file
+    with open(path, "r") as f:
+        assert f.read().splitlines() == expected
+
+
+@pytest.mark.experimental
+def test_to_vw_file_logistic(df):
+    model = VW(col_user="user", col_item="item", loss_function="logistic")
     model.to_vw_file(df, train=True)
     with open(model.train_file, "r") as f:
-        assert f.read().splitlines() == expected
-    del model
+        labels = [line.split(" ")[0] for line in f.read().splitlines()]
+    assert labels == ["-1", "1", "1"]
 
 
 @pytest.mark.experimental
@@ -114,10 +110,8 @@ def test_fit_and_predict(model, df):
     with open(model.prediction_file, "w") as f:
         f.writelines(["1 0\n", "3 1\n", "5 2\n"])
 
-    # patch subprocess call to vw
-    with mock.patch(
-        "recommenders.models.vowpal_wabbit.vw.run"
-    ) as mock_run:  # noqa: F841
+    # patch the vw bindings so no model is actually trained
+    with mock.patch("recommenders.models.vowpal_wabbit.vw.vowpalwabbit"):
         model.fit(df)
         result = model.predict(df)
 
@@ -130,3 +124,37 @@ def test_fit_and_predict(model, df):
     )
 
     assert result.to_dict() == expected
+
+
+@pytest.mark.experimental
+@requires_vw
+def test_fit_and_predict_with_vw(model, df):
+    model.fit(df)
+    result = model.predict(df)
+
+    assert list(result.columns) == ["user", "item", "rating", "timestamp", "prediction"]
+    assert len(result) == len(df)
+    assert np.isfinite(result["prediction"]).all()
+
+
+@pytest.mark.experimental
+@requires_vw
+def test_recommend_k_items(model, df):
+    model.fit(df)
+    top_k = model.recommend_k_items(df, top_k=1, remove_seen=True)
+
+    # items seen in training are 7 and 8; each user has rated exactly one of them
+    assert list(top_k.columns) == ["user", "item", "prediction"]
+    assert set(zip(top_k["user"], top_k["item"])) == {(1, 7), (3, 8), (2, 8)}
+
+
+@pytest.mark.experimental
+@requires_vw
+def test_logistic_predictions(df):
+    model = VW(
+        col_user="user", col_item="item", loss_function="logistic", link="logistic"
+    )
+    model.fit(df)
+    result = model.predict(df)
+
+    assert result["prediction"].between(0, 1).all()

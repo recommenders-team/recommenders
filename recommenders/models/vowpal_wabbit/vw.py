@@ -2,16 +2,17 @@
 # Licensed under the MIT License.
 
 """
-This file provides a wrapper to run Vowpal Wabbit from the command line through python.
-It is not recommended to use this approach in production, there are python bindings that can be installed from the
-repository or pip or the command line can be used. This is merely to demonstrate vw usage in the example notebooks.
+Wrapper around the Vowpal Wabbit python bindings with the fit, predict and recommend_k_items
+interface used by the other models in this repository. The model parameters are the vw command
+line options, passed as keyword arguments, so `VW(q="ui", b=26)` is the same as `vw -q ui -b 26`.
 """
 
 import os
-from subprocess import run
 from tempfile import TemporaryDirectory
+
 import pandas as pd
 
+from recommenders.evaluation.python_evaluation import get_top_k_items
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -19,6 +20,11 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_PREDICTION_COL,
 )
+
+try:
+    import vowpalwabbit
+except ImportError:
+    vowpalwabbit = None
 
 
 class VW:
@@ -41,6 +47,7 @@ class VW:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
+            kwargs: vw command line options, use True for options that are flags
         """
 
         # create temporary files
@@ -58,42 +65,46 @@ class VW:
         self.col_prediction = col_prediction
 
         self.logistic = "logistic" in kwargs.values()
-        self.train_cmd = self.parse_train_params(params=kwargs)
-        self.test_cmd = self.parse_test_params(params=kwargs)
+        self.train_params = self.parse_train_params(params=kwargs)
+        self.test_params = self.parse_test_params(params=kwargs)
+
+        # user item pairs and items seen during training, used by recommend_k_items
+        self.seen = None
+        self.items = None
 
     @staticmethod
-    def to_vw_cmd(params):
-        """Convert dictionary of parameters to vw command line.
+    def to_vw_params(params):
+        """Convert dictionary of parameters to a vw command line string.
 
         Args:
             params (dict): key = parameter, value = value (use True if parameter is just a flag)
 
         Returns:
-            list[str]: vw command line parameters as list of strings
+            str: vw command line parameters
         """
 
-        cmd = ["vw"]
+        parts = []
         for k, v in params.items():
             if v is False:
                 # don't add parameters with a value == False
                 continue
 
             # add the correct hyphen to the parameter
-            cmd.append(f"-{k}" if len(k) == 1 else f"--{k}")
+            parts.append(f"-{k}" if len(k) == 1 else f"--{k}")
             if v is not True:
                 # don't add an argument for parameters with value == True
-                cmd.append("{}".format(v))
+                parts.append("{}".format(v))
 
-        return cmd
+        return " ".join(parts)
 
     def parse_train_params(self, params):
-        """Parse input hyper-parameters to build vw train commands
+        """Parse input hyper-parameters to build vw train parameters
 
         Args:
             params (dict): key = parameter, value = value (use True if parameter is just a flag)
 
         Returns:
-            list[str]: vw command line parameters as list of strings
+            str: vw command line parameters
         """
 
         # make a copy of the original hyper parameters
@@ -123,22 +134,22 @@ class VW:
                 "quiet": params.get("quiet", True),
             }
         )
-        return self.to_vw_cmd(params=train_params)
+        return self.to_vw_params(params=train_params)
 
     def parse_test_params(self, params):
-        """Parse input hyper-parameters to build vw test commands
+        """Parse input hyper-parameters to build vw test parameters
 
         Args:
             params (dict): key = parameter, value = value (use True if parameter is just a flag)
 
         Returns:
-            list[str]: vw command line parameters as list of strings
+            str: vw command line parameters
         """
 
         # make a copy of the original hyper parameters
         test_params = params.copy()
 
-        # remove options that are handled internally, ot supported or train only parameters
+        # remove options that are handled internally, not supported or train only parameters
         invalid = [
             "data",
             "f",
@@ -184,7 +195,7 @@ class VW:
                 "t": True,
             }
         )
-        return self.to_vw_cmd(params=test_params)
+        return self.to_vw_params(params=test_params)
 
     def to_vw_file(self, df, train=True):
         """Convert Pandas DataFrame to vw input format file
@@ -195,36 +206,52 @@ class VW:
         """
 
         output = self.train_file if train else self.test_file
+
+        if train:
+            # we need to reset the rating type to an integer to simplify the vw formatting
+            rating = df[self.col_rating].astype("int64")
+
+            # convert rating to binary value
+            if self.logistic:
+                rating = 2 * (rating / rating.max()).round().astype("int64") - 1
+
+            label = rating.astype(str)
+        else:
+            label = pd.Series("", index=df.index)
+
+        # convert each row to VW input format (https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Input-format)
+        # [label] [tag]|[user namespace] [user id feature] |[item namespace] [movie id feature]
+        # label is the true rating, tag is the row index just used to link predictions to truth
+        # user and item namespaces separate features to support interaction features through command line options
+        lines = (
+            label
+            + " "
+            + pd.Series(df.index.astype(str), index=df.index)
+            + "|user "
+            + df[self.col_user].astype(str)
+            + " |item "
+            + df[self.col_item].astype(str)
+        )
         with open(output, "w") as f:
-            # extract columns and create a new dataframe
-            tmp = df[[self.col_rating, self.col_user, self.col_item]].reset_index()
+            f.write("\n".join(lines))
+            f.write("\n")
 
-            if train:
-                # we need to reset the rating type to an integer to simplify the vw formatting
-                tmp[self.col_rating] = tmp[self.col_rating].astype("int64")
+    @staticmethod
+    def run(params):
+        """Run vw with the given command line parameters
 
-                # convert rating to binary value
-                if self.logistic:
-                    max_value = tmp[self.col_rating].max()
-                    tmp[self.col_rating] = tmp[self.col_rating].apply(
-                        lambda x: 2 * round(x / max_value) - 1
-                    )
-            else:
-                tmp[self.col_rating] = ""
+        Args:
+            params (str): vw command line parameters
+        """
 
-            # convert each row to VW input format (https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Input-format)
-            # [label] [tag]|[user namespace] [user id feature] |[item namespace] [movie id feature]
-            # label is the true rating, tag is a unique id for the example just used to link predictions to truth
-            # user and item namespaces separate features to support interaction features through command line options
-            for _, row in tmp.iterrows():
-                f.write(
-                    "{rating} {index}|user {userID} |item {itemID}\n".format(
-                        rating=row[self.col_rating],
-                        index=row["index"],
-                        userID=row[self.col_user],
-                        itemID=row[self.col_item],
-                    )
-                )
+        if vowpalwabbit is None:
+            raise ImportError(
+                "vowpalwabbit is required, install it with pip install recommenders[experimental]"
+            )
+
+        # creating the workspace runs vw over the data file given with -d,
+        # finish() then writes the model and prediction files
+        vowpalwabbit.Workspace(params).finish()
 
     def fit(self, df):
         """Train model
@@ -237,30 +264,72 @@ class VW:
         self.to_vw_file(df=df)
 
         # train model
-        run(self.train_cmd, check=True)
+        self.run(self.train_params)
+
+        # keep what was seen during training to build recommendations
+        self.seen = df[[self.col_user, self.col_item]].drop_duplicates()
+        self.items = self.seen[[self.col_item]].drop_duplicates()
 
     def predict(self, df):
         """Predict results
 
         Args:
             df (pandas.DataFrame): input test data
+
+        Returns:
+            pandas.DataFrame: input data with the prediction column added
         """
 
         # write dataframe to disk in vw format
         self.to_vw_file(df=df, train=False)
 
         # generate predictions
-        run(self.test_cmd, check=True)
+        self.run(self.test_params)
 
         # read predictions
         return df.join(
             pd.read_csv(
                 self.prediction_file,
-                delim_whitespace=True,
+                sep=r"\s+",
                 names=[self.col_prediction],
                 index_col=1,
             )
         )
+
+    def recommend_k_items(self, test, top_k=10, remove_seen=False):
+        """Recommend top K items for all users which are in the test set
+
+        Every user in the test set is scored against every item seen during training.
+
+        Args:
+            test (pandas.DataFrame): users to test
+            top_k (int): number of top items to recommend
+            remove_seen (bool): flag to remove items seen in training from recommendation
+
+        Returns:
+            pandas.DataFrame: top k recommendation items for each user
+        """
+
+        users = test[[self.col_user]].drop_duplicates()
+        candidates = pd.merge(users, self.items, how="cross")
+
+        if remove_seen:
+            candidates = pd.merge(
+                candidates,
+                self.seen,
+                on=[self.col_user, self.col_item],
+                how="left",
+                indicator=True,
+            )
+            candidates = candidates[candidates["_merge"] == "left_only"].drop(
+                columns="_merge"
+            )
+
+        scored = self.predict(candidates.reset_index(drop=True))
+        top_items = get_top_k_items(
+            scored, col_user=self.col_user, col_rating=self.col_prediction, k=top_k
+        )
+        return top_items[[self.col_user, self.col_item, self.col_prediction]]
 
     def __del__(self):
         self.tempdir.cleanup()
