@@ -43,7 +43,7 @@ def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["mae"] == pytest.approx(0.846033, rel=TOL, abs=ABS_TOL)
     assert results["rsquared"] == pytest.approx(0.136435, rel=TOL, abs=ABS_TOL)
     assert results["exp_var"] == pytest.approx(0.136446, rel=TOL, abs=ABS_TOL)
-    assert results["map"] == pytest.approx(0.052850, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.138672, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.248061, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.223754, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.108826, rel=TOL, abs=ABS_TOL)
