@@ -5,6 +5,7 @@
 Wrapper around the Vowpal Wabbit python bindings with the fit, predict and recommend_k_items
 interface used by the other models in this repository. The model parameters are the vw command
 line options, passed as keyword arguments, so `VW(q="ui", b=26)` is the same as `vw -q ui -b 26`.
+The training parameters (epochs, learning rate and L2 regularization) are arguments of fit().
 """
 
 import os
@@ -121,7 +122,9 @@ class VW:
             col_prediction (str): prediction column name
             n_jobs (int): number of processes used to predict, the rows are split in chunks
                 that are scored in parallel
-            kwargs: vw command line options, use True for options that are flags
+            kwargs: vw command line options, use True for options that are flags. The
+                training parameters (epochs, learning rate and L2 regularization) are
+                arguments of fit() instead
         """
 
         # create temporary files
@@ -185,7 +188,8 @@ class VW:
         # make a copy of the original hyper parameters
         train_params = params.copy()
 
-        # remove options that are handled internally, not supported, or test only parameters
+        # remove options that are handled internally, not supported, test only parameters,
+        # and the training parameters that are arguments of fit()
         invalid = [
             "data",
             "final_regressor",
@@ -196,6 +200,12 @@ class VW:
             "i",
             "initial_regressor",
             "link",
+            "passes",
+            "c",
+            "cache",
+            "l",
+            "learning_rate",
+            "l2",
         ]
 
         for option in invalid:
@@ -301,18 +311,24 @@ class VW:
                 pd.Series("", index=df.index),
             )
 
-    def fit(self, df):
+    def fit(self, df, epochs=1, learning_rate=0.5, l2=0.0):
         """Train model
 
         Args:
             df (pandas.DataFrame): input training data
+            epochs (int): number of passes over the training data
+            learning_rate (float): learning rate
+            l2 (float): L2 regularization
         """
 
         # write dataframe to disk in vw format
         self.to_vw_file(df=df)
 
-        # train model
-        run_vw(self.train_params)
+        # train model, multiple passes over the data need a cache file
+        params = f"{self.train_params} --passes {epochs} -l {learning_rate} --l2 {l2}"
+        if epochs > 1:
+            params += " -c"
+        run_vw(params)
 
         # keep what was seen during training to build recommendations
         self.seen = df[[self.col_user, self.col_item]].drop_duplicates()

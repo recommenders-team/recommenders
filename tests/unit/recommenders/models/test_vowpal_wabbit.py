@@ -161,11 +161,17 @@ def test_logistic_predictions(df):
 
 
 @pytest.mark.experimental
+def test_training_parameters_are_fit_arguments():
+    model = VW(passes=3, c=True, l=0.1, l2=0.01, q="ui")
+    assert not {"--passes", "-c", "-l", "--l2"} & set(model.train_params.split())
+
+
+@pytest.mark.experimental
 @requires_vw
-def test_multiple_passes(df):
-    # passes needs a cache during training and must not be used at prediction time
-    model = VW(col_user="user", col_item="item", passes=3, c=True)
-    model.fit(df)
+def test_multiple_epochs(df):
+    # multiple passes need a cache during training and must not reach prediction
+    model = VW(col_user="user", col_item="item")
+    model.fit(df, epochs=3, learning_rate=0.1, l2=0.01)
     result = model.predict(df)
 
     assert "--passes" not in model.test_params
