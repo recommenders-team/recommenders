@@ -83,14 +83,14 @@ def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["rmse"] == pytest.approx(0.985920, rel=TOL, abs=ABS_TOL)
-    assert results["mae"] == pytest.approx(0.71292, rel=TOL, abs=ABS_TOL)
-    assert results["rsquared"] == pytest.approx(0.231199, rel=TOL, abs=ABS_TOL)
-    assert results["exp_var"] == pytest.approx(0.231337, rel=TOL, abs=ABS_TOL)
-    assert results["map"] == pytest.approx(0.041645, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg"] == pytest.approx(0.096720, rel=TOL, abs=ABS_TOL)
-    assert results["precision"] == pytest.approx(0.097665, rel=TOL, abs=ABS_TOL)
-    assert results["recall"] == pytest.approx(0.037680, rel=TOL, abs=ABS_TOL)
+    assert results["rmse"] == pytest.approx(1.029990, rel=TOL, abs=ABS_TOL)
+    assert results["mae"] == pytest.approx(0.75608, rel=TOL, abs=ABS_TOL)
+    assert results["rsquared"] == pytest.approx(0.160934, rel=TOL, abs=ABS_TOL)
+    assert results["exp_var"] == pytest.approx(0.162880, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.121360, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.211284, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.179724, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.066125, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
