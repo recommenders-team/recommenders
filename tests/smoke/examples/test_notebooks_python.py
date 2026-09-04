@@ -72,6 +72,7 @@ def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
+@pytest.mark.skip(reason="vowpalwabbit is in the experimental extra, which is not installed in CI")
 def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     execute_notebook(
