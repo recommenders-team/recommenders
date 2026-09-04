@@ -358,7 +358,9 @@ class VW:
 
         # every process writes and scores its own chunk with its own copy of the files
         jobs = []
-        for i, chunk in enumerate(np.array_split(df, self.n_jobs)):
+        bounds = np.linspace(0, len(df), self.n_jobs + 1, dtype=int)
+        for i, (start, end) in enumerate(zip(bounds[:-1], bounds[1:])):
+            chunk = df.iloc[start:end]
             data_file = os.path.join(self.tempdir.name, f"test_{i}.dat")
             prediction_file = os.path.join(self.tempdir.name, f"prediction_{i}.dat")
             params = self.test_params.replace(self.test_file, data_file).replace(
