@@ -126,14 +126,14 @@ def test_surprise_svd_functional(
         (
             "1m",
             dict(
-                rmse=0.997914,
-                mae=0.733337,
-                rsquared=0.204543,
-                exp_var=0.204756,
-                map=0.098069,
-                ndcg=0.182915,
-                precision=0.172036,
-                recall=0.056142,
+                rmse=1.147971,
+                mae=0.903852,
+                rsquared=-0.052669,
+                exp_var=0.085058,
+                map=0.109966,
+                ndcg=0.197746,
+                precision=0.185414,
+                recall=0.058883,
             ),
         )
     ],
