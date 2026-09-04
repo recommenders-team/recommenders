@@ -69,7 +69,7 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
-    # The vw command line tool is invoked with "python -m vowpalwabbit"
+    # Used through the python bindings, no separate vw binary needed
     "vowpalwabbit>=9.9.0,<10",
     # nni needs to be upgraded
     "nni==1.5",
