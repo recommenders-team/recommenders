@@ -130,7 +130,7 @@ def test_surprise_svd_functional(
                 mae=0.690133,
                 rsquared=0.264014,
                 exp_var=0.264417,
-                map=0.004857,
+                map=0.020206,
                 ndcg=0.055128,
                 precision=0.061142,
                 recall=0.017789,
@@ -138,7 +138,6 @@ def test_surprise_svd_functional(
         )
     ],
 )
-@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
