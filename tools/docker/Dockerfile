@@ -42,7 +42,7 @@ ARG COMPUTE
 # Extra dependencies: dev, gpu, spark
 ARG EXTRAS=""
 
-# Valid versions: 3.9, 3.10, 3.11
+# Valid versions: 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
 ARG RECO_VENV_DIR=/root/.venvs/Recommenders

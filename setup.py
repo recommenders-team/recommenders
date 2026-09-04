@@ -37,21 +37,18 @@ install_requires = [
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numpy<2.0.0",  # See https://github.com/recommenders-team/recommenders/issues/2224
     "pandas>2.0.0,<3.0.0",  # requires numpy
-    "protobuf>=3.20,<5",  # Capped at <5 for tensorflow<2.16 (gpu extra) compatibility; will change when #2073 is closed
     "pyarrow>=10.0.1",
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
-    "statsmodels>=0.14.4",
-    "transformers>=4.27.0,<5",  # requires packaging, pyyaml, requests, tqdm
+    "transformers>=4.27.0,<6",  # requires packaging, pyyaml, requests, tqdm
 ]
 
 # shared dependencies
 extras_require = {
     "gpu": [
-        "nvidia-ml-py>=11.525.84",
+        "protobuf>=3.20,<5",  # Capped at <5 for tensorflow<2.16 (gpu extra) compatibility; will change when #2073 is closed
         "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",  # Fixed TF due to constant security problems and breaking changes #2073
-        "tf-slim>=1.1.0",  # No python_requires in its setup.py
         "torch>=2.0.1,<3",
     ],
     "spark": [
@@ -107,7 +104,6 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Operating System :: POSIX :: Linux",
