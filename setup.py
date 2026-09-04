@@ -69,8 +69,8 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
-    # VW C++ binary needs to be installed manually for some code to work
-    "vowpalwabbit>=8.9.0,<9",
+    # The vw command line tool is invoked with "python -m vowpalwabbit"
+    "vowpalwabbit>=9.9.0,<10",
     # nni needs to be upgraded
     "nni==1.5",
     "numba>=0.57.0,<1",  # only used by geoimc and rlrmc, which require pymanopt
