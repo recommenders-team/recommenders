@@ -96,6 +96,15 @@ def test_to_vw_file(model, df, train, expected):
 
 
 @pytest.mark.experimental
+def test_to_vw_file_multiclass_keeps_labels(df):
+    model = VW(col_user="user", col_item="item", loss_function="logistic", oaa=5)
+    model.to_vw_file(df, train=True)
+    with open(model.train_file, "r") as f:
+        labels = [line.split(" ")[0] for line in f.read().splitlines()]
+    assert labels == ["1", "5", "3"]
+
+
+@pytest.mark.experimental
 def test_to_vw_file_logistic(df):
     model = VW(col_user="user", col_item="item", loss_function="logistic")
     model.to_vw_file(df, train=True)

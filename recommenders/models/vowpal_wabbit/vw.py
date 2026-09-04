@@ -142,7 +142,10 @@ class VW:
         self.col_prediction = col_prediction
 
         self.n_jobs = n_jobs
-        self.logistic = "logistic" in kwargs.values()
+        # binary labels for logistic regression, multiclass (oaa) keeps the rating labels
+        self.logistic = (
+            kwargs.get("loss_function") == "logistic" and "oaa" not in kwargs
+        )
         self.train_params = self.parse_train_params(params=kwargs)
         self.test_params = self.parse_test_params(params=kwargs)
 
