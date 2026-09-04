@@ -170,3 +170,33 @@ def test_multiple_passes(df):
 
     assert "--passes" not in model.test_params
     assert len(result) == len(df)
+
+
+@pytest.mark.experimental
+def test_n_jobs_is_not_a_vw_option():
+    model = VW(n_jobs=4, q="ui")
+    assert "n_jobs" not in model.train_params
+    assert "n_jobs" not in model.test_params
+
+
+@pytest.mark.experimental
+@requires_vw
+@pytest.mark.parametrize("n_jobs", [2, 3])
+def test_predict_in_parallel(n_jobs):
+    rng = np.random.default_rng(42)
+    data = pd.DataFrame(
+        dict(
+            user=rng.integers(1, 20, 200),
+            item=rng.integers(1, 30, 200),
+            rating=rng.integers(1, 6, 200),
+        )
+    )
+    single = VW(col_user="user", col_item="item", q="ui")
+    parallel = VW(col_user="user", col_item="item", q="ui", n_jobs=n_jobs)
+    single.fit(data)
+    parallel.fit(data)
+
+    expected = single.recommend_k_items(data, top_k=5, remove_seen=True)
+    result = parallel.recommend_k_items(data, top_k=5, remove_seen=True)
+
+    pd.testing.assert_frame_equal(result, expected)

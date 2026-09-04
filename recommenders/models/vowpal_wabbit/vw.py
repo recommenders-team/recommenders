@@ -8,8 +8,10 @@ line options, passed as keyword arguments, so `VW(q="ui", b=26)` is the same as 
 """
 
 import os
+from concurrent.futures import ProcessPoolExecutor
 from tempfile import TemporaryDirectory
 
+import numpy as np
 import pandas as pd
 
 from recommenders.evaluation.python_evaluation import get_top_k_items
@@ -27,6 +29,75 @@ except ImportError:
     vowpalwabbit = None
 
 
+def run_vw(params):
+    """Run vw with the given command line parameters
+
+    Args:
+        params (str): vw command line parameters
+    """
+
+    if vowpalwabbit is None:
+        raise ImportError(
+            "vowpalwabbit is required, install it with pip install recommenders[experimental]"
+        )
+
+    # creating the workspace runs vw over the data file given with -d,
+    # finish() then writes the model and prediction files
+    vowpalwabbit.Workspace(params).finish()
+
+
+def to_vw_file(df, output, col_user, col_item, label):
+    """Write a DataFrame to a file in vw input format
+
+    Args:
+        df (pandas.DataFrame): input DataFrame
+        output (str): path of the output file
+        col_user (str): user column name
+        col_item (str): item column name
+        label (pandas.Series): label of every row, use empty strings for prediction
+    """
+
+    # convert each row to VW input format (https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Input-format)
+    # [label] [tag]|[user namespace] [user id feature] |[item namespace] [movie id feature]
+    # label is the true rating, tag is the row index just used to link predictions to truth
+    # user and item namespaces separate features to support interaction features through command line options
+    lines = (
+        label
+        + " "
+        + pd.Series(df.index.astype(str), index=df.index)
+        + "|user "
+        + df[col_user].astype(str)
+        + " |item "
+        + df[col_item].astype(str)
+    )
+    with open(output, "w") as f:
+        f.write("\n".join(lines))
+        f.write("\n")
+
+
+def score(df, col_user, col_item, col_prediction, params, data_file, prediction_file):
+    """Score a DataFrame with a trained model, used by every process when predicting in parallel
+
+    Args:
+        df (pandas.DataFrame): rows to score
+        col_user (str): user column name
+        col_item (str): item column name
+        col_prediction (str): prediction column name
+        params (str): vw prediction parameters pointing at data_file and prediction_file
+        data_file (str): path of the vw input file to write
+        prediction_file (str): path of the prediction file vw writes
+
+    Returns:
+        pandas.Series: predictions indexed like df
+    """
+
+    to_vw_file(df, data_file, col_user, col_item, pd.Series("", index=df.index))
+    run_vw(params)
+    return pd.read_csv(
+        prediction_file, sep=r"\s+", names=[col_prediction], index_col=1
+    )[col_prediction]
+
+
 class VW:
     """Vowpal Wabbit Class"""
 
@@ -37,6 +108,7 @@ class VW:
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
         col_prediction=DEFAULT_PREDICTION_COL,
+        n_jobs=1,
         **kwargs,
     ):
         """Initialize model parameters
@@ -47,6 +119,8 @@ class VW:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
+            n_jobs (int): number of processes used to predict, the rows are split in chunks
+                that are scored in parallel
             kwargs: vw command line options, use True for options that are flags
         """
 
@@ -64,6 +138,7 @@ class VW:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
 
+        self.n_jobs = n_jobs
         self.logistic = "logistic" in kwargs.values()
         self.train_params = self.parse_train_params(params=kwargs)
         self.test_params = self.parse_test_params(params=kwargs)
@@ -206,8 +281,6 @@ class VW:
             train (bool): flag for train mode (or test mode if False)
         """
 
-        output = self.train_file if train else self.test_file
-
         if train:
             # we need to reset the rating type to an integer to simplify the vw formatting
             rating = df[self.col_rating].astype("int64")
@@ -216,43 +289,17 @@ class VW:
             if self.logistic:
                 rating = 2 * (rating / rating.max()).round().astype("int64") - 1
 
-            label = rating.astype(str)
-        else:
-            label = pd.Series("", index=df.index)
-
-        # convert each row to VW input format (https://github.com/VowpalWabbit/vowpal_wabbit/wiki/Input-format)
-        # [label] [tag]|[user namespace] [user id feature] |[item namespace] [movie id feature]
-        # label is the true rating, tag is the row index just used to link predictions to truth
-        # user and item namespaces separate features to support interaction features through command line options
-        lines = (
-            label
-            + " "
-            + pd.Series(df.index.astype(str), index=df.index)
-            + "|user "
-            + df[self.col_user].astype(str)
-            + " |item "
-            + df[self.col_item].astype(str)
-        )
-        with open(output, "w") as f:
-            f.write("\n".join(lines))
-            f.write("\n")
-
-    @staticmethod
-    def run(params):
-        """Run vw with the given command line parameters
-
-        Args:
-            params (str): vw command line parameters
-        """
-
-        if vowpalwabbit is None:
-            raise ImportError(
-                "vowpalwabbit is required, install it with pip install recommenders[experimental]"
+            to_vw_file(
+                df, self.train_file, self.col_user, self.col_item, rating.astype(str)
             )
-
-        # creating the workspace runs vw over the data file given with -d,
-        # finish() then writes the model and prediction files
-        vowpalwabbit.Workspace(params).finish()
+        else:
+            to_vw_file(
+                df,
+                self.test_file,
+                self.col_user,
+                self.col_item,
+                pd.Series("", index=df.index),
+            )
 
     def fit(self, df):
         """Train model
@@ -265,7 +312,7 @@ class VW:
         self.to_vw_file(df=df)
 
         # train model
-        self.run(self.train_params)
+        run_vw(self.train_params)
 
         # keep what was seen during training to build recommendations
         self.seen = df[[self.col_user, self.col_item]].drop_duplicates()
@@ -281,21 +328,42 @@ class VW:
             pandas.DataFrame: input data with the prediction column added
         """
 
-        # write dataframe to disk in vw format
-        self.to_vw_file(df=df, train=False)
-
-        # generate predictions
-        self.run(self.test_params)
-
-        # read predictions
-        return df.join(
-            pd.read_csv(
+        if self.n_jobs == 1:
+            predictions = score(
+                df,
+                self.col_user,
+                self.col_item,
+                self.col_prediction,
+                self.test_params,
+                self.test_file,
                 self.prediction_file,
-                sep=r"\s+",
-                names=[self.col_prediction],
-                index_col=1,
             )
-        )
+            return df.join(predictions)
+
+        # every process writes and scores its own chunk with its own copy of the files
+        jobs = []
+        for i, chunk in enumerate(np.array_split(df, self.n_jobs)):
+            data_file = os.path.join(self.tempdir.name, f"test_{i}.dat")
+            prediction_file = os.path.join(self.tempdir.name, f"prediction_{i}.dat")
+            params = self.test_params.replace(self.test_file, data_file).replace(
+                self.prediction_file, prediction_file
+            )
+            jobs.append(
+                (
+                    chunk,
+                    self.col_user,
+                    self.col_item,
+                    self.col_prediction,
+                    params,
+                    data_file,
+                    prediction_file,
+                )
+            )
+
+        with ProcessPoolExecutor(max_workers=self.n_jobs) as pool:
+            predictions = list(pool.map(score, *zip(*jobs)))
+
+        return df.join(pd.concat(predictions))
 
     def recommend_k_items(self, test, top_k=10, remove_seen=False):
         """Recommend top K items for all users which are in the test set
