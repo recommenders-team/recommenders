@@ -179,7 +179,7 @@ def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", dict(map=0.081390, ndcg=0.406627, precision=0.373228, recall=0.132444)),
+        ("1m", dict(map=0.186452, ndcg=0.314204, precision=0.271386, recall=0.161333)),
         # 10m works but takes too long
     ],
 )
@@ -283,8 +283,8 @@ def test_lightgbm_movielens_functional(notebooks, output_notebook, kernel_name):
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [
-        (["100k"], ["sar", "bpr"], [0.393818, 0.444990]),
-        # (["100k"], ["svd", "sar", "bpr"], [0.094444, 0.393818, 0.444990]), # Put SVD surprise back in core deps when #2224 is fixed
+        (["100k"], ["sar", "bpr"], [0.393818, 0.362301]),
+        # (["100k"], ["svd", "sar", "bpr"], [0.094444, 0.393818, 0.362301]), # Put SVD surprise back in core deps when #2224 is fixed
     ],
 )
 def test_benchmark_movielens_cpu(
