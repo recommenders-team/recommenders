@@ -107,8 +107,6 @@ def test_rlrmc_quickstart_runs(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.experimental
-@pytest.mark.skip(reason="VW notebook tests are not enabled in CI")
 def test_vw_deep_dive_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)

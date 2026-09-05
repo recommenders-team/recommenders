@@ -138,7 +138,6 @@ def test_surprise_svd_functional(
         )
     ],
 )
-@pytest.mark.skip(reason="VW notebook tests are not enabled in CI")
 def test_vw_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
