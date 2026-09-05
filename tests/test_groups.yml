@@ -248,6 +248,8 @@ pr_gate:
     - tests/unit/recommenders/models/test_vowpal_wabbit.py::test_multiple_epochs
     - tests/unit/recommenders/models/test_vowpal_wabbit.py::test_n_jobs_is_not_a_vw_option
     - tests/unit/recommenders/models/test_vowpal_wabbit.py::test_predict_in_parallel
+    - tests/unit/recommenders/models/test_vowpal_wabbit.py::test_save_and_load
+    - tests/unit/recommenders/models/test_vowpal_wabbit.py::test_save_outlives_the_model
     - tests/unit/recommenders/tuning/test_ncf_utils.py::test_compute_test_results__return_success                                                    #    0.10s
     - tests/unit/recommenders/tuning/test_nni_utils.py::test_get_experiment_status
     - tests/unit/recommenders/tuning/test_nni_utils.py::test_check_experiment_status_done

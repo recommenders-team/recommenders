@@ -127,6 +127,33 @@ def test_fit_and_predict_with_vw(model, df):
     assert np.isfinite(result["prediction"]).all()
 
 
+def test_save_and_load(model, df, tmp):
+    model.fit(df)
+    expected = model.predict(df)
+    path = os.path.join(tmp, "vw.model")
+    model.save(path)
+
+    # a model built without the interaction features still predicts with them,
+    # because vw keeps the training options in the model file
+    loaded = VW(col_user="user", col_item="item", col_prediction="prediction")
+    loaded.load(path)
+
+    assert loaded.predict(df)["prediction"].tolist() == expected["prediction"].tolist()
+
+
+def test_save_outlives_the_model(df, tmp):
+    model = VW(col_user="user", col_item="item", col_prediction="prediction")
+    model.fit(df)
+    path = os.path.join(tmp, "vw.model")
+    model.save(path)
+    tempdir = model.tempdir.name
+
+    del model
+
+    assert not os.path.exists(tempdir)
+    assert os.path.exists(path)
+
+
 def test_recommend_k_items(model, df):
     model.fit(df)
     top_k = model.recommend_k_items(df, top_k=1, remove_seen=True)
