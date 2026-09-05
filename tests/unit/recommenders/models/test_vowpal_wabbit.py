@@ -25,7 +25,6 @@ def model():
     del model
 
 
-@pytest.mark.experimental
 def test_vw_init_del():
     model = VW()
     tempdir = model.tempdir.name
@@ -35,7 +34,6 @@ def test_vw_init_del():
     assert not os.path.exists(tempdir)
 
 
-@pytest.mark.experimental
 def test_to_vw_cmd():
     expected = "-l 0.1 --l1 0.2 --loss_function logistic --holdout_off --rank 3 -t"
     params = dict(
@@ -50,7 +48,6 @@ def test_to_vw_cmd():
     assert VW.to_vw_params(params=params) == expected
 
 
-@pytest.mark.experimental
 def test_parse_train_cmd(model):
     expected = (
         f"--loss_function logistic --oaa 5 -f {model.model_file} -d {model.train_file}"
@@ -59,7 +56,6 @@ def test_parse_train_cmd(model):
     assert model.parse_train_params(params=params) == expected
 
 
-@pytest.mark.experimental
 def test_parse_test_cmd(model):
     expected = (
         f"--loss_function logistic -d {model.test_file} --quiet "
@@ -71,7 +67,6 @@ def test_parse_test_cmd(model):
     assert model.parse_test_params(params=params) == expected
 
 
-@pytest.mark.experimental
 @pytest.mark.parametrize(
     "train, expected",
     [
@@ -86,7 +81,6 @@ def test_to_vw_file(model, df, train, expected):
         assert f.read().splitlines() == expected
 
 
-@pytest.mark.experimental
 def test_to_vw_file_multiclass_keeps_labels(df):
     model = VW(col_user="user", col_item="item", loss_function="logistic", oaa=5)
     model.to_vw_file(df, train=True)
@@ -95,7 +89,6 @@ def test_to_vw_file_multiclass_keeps_labels(df):
     assert labels == ["1", "5", "3"]
 
 
-@pytest.mark.experimental
 def test_to_vw_file_logistic(df):
     model = VW(col_user="user", col_item="item", loss_function="logistic")
     model.to_vw_file(df, train=True)
@@ -104,7 +97,6 @@ def test_to_vw_file_logistic(df):
     assert labels == ["-1", "1", "1"]
 
 
-@pytest.mark.experimental
 def test_fit_and_predict(model, df):
     # generate fake predictions
     with open(model.prediction_file, "w") as f:
@@ -126,7 +118,6 @@ def test_fit_and_predict(model, df):
     assert result.to_dict() == expected
 
 
-@pytest.mark.experimental
 def test_fit_and_predict_with_vw(model, df):
     model.fit(df)
     result = model.predict(df)
@@ -136,7 +127,6 @@ def test_fit_and_predict_with_vw(model, df):
     assert np.isfinite(result["prediction"]).all()
 
 
-@pytest.mark.experimental
 def test_recommend_k_items(model, df):
     model.fit(df)
     top_k = model.recommend_k_items(df, top_k=1, remove_seen=True)
@@ -146,7 +136,6 @@ def test_recommend_k_items(model, df):
     assert set(zip(top_k["user"], top_k["item"])) == {(1, 7), (3, 8), (2, 8)}
 
 
-@pytest.mark.experimental
 def test_logistic_predictions(df):
     model = VW(
         col_user="user", col_item="item", loss_function="logistic", link="logistic"
@@ -157,13 +146,11 @@ def test_logistic_predictions(df):
     assert result["prediction"].between(0, 1).all()
 
 
-@pytest.mark.experimental
 def test_training_parameters_are_fit_arguments():
     model = VW(passes=3, c=True, l=0.1, l2=0.01, q="ui")
     assert not {"--passes", "-c", "-l", "--l2"} & set(model.train_params.split())
 
 
-@pytest.mark.experimental
 def test_multiple_epochs(df):
     # multiple passes need a cache during training and must not reach prediction
     model = VW(col_user="user", col_item="item")
@@ -174,14 +161,12 @@ def test_multiple_epochs(df):
     assert len(result) == len(df)
 
 
-@pytest.mark.experimental
 def test_n_jobs_is_not_a_vw_option():
     model = VW(n_jobs=4, q="ui")
     assert "n_jobs" not in model.train_params
     assert "n_jobs" not in model.test_params
 
 
-@pytest.mark.experimental
 @pytest.mark.parametrize("n_jobs", [2, 3])
 def test_predict_in_parallel(n_jobs):
     rng = np.random.default_rng(42)
