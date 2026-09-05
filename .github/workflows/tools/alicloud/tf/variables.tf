@@ -1,24 +1,26 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
-
+#####################################################################
+# Input parameters
+#####################################################################
 variable "vm_name" {
   default = "reco-vm"
 }
 
-variable "resource_group_name" {
-  default = "reco"
-}
-
 variable "region" {
   # See https://help.aliyun.com/en/document_detail/40654.html
-  # For Shanghai, use:
-  #   default = "cn-shanghai"
-  # For Shenzhen, use:
-  #   default = "cn-shenzhen"
-  # For Hangzhou, use:
-  #   default = "cn-hangzhou"
-  # For Ulanqab (cheapest), use:
-  default = "cn-wulanchabu"
+  # Sort by price increasingly:
+  # * Outside China (No mirrors or proxies for GitHub and Docker are required.)
+  #   + Jakarta,   "ap-southeast-5"
+  #   + Tokyo,     "ap-northeast-1"
+  #   + Frankfurt, "eu-central-1"
+  #   + Singapore, "ap-southeast-1"
+  # * China (Mirrors or proxies for GitHub and Docker are required.)
+  #   + Ulanqab,   "cn-wulanchabu"
+  #   + Hangzhou,  "cn-hangzhou"
+  #   + Shanghai,  "cn-shanghai"
+  #   + Shenzhen,  "cn-shenzhen"
+  default = "ap-southeast-1"
 }
 
 variable "instance_type_family" {
@@ -35,9 +37,12 @@ variable "instance_type_family" {
   #     - 'gn' - NVIDIA GPUs
   #     - '6' - Volta/Turing
   #     - 'i' - T4 (inference)
+  #     - price: ~ 11CNY / 8CNY
   #   + 'ecs.gn7i' - NVIDIA A10
   #     - '7' - Ampere
+  #     - price: ~ 18CNY / 7CNY
   #   + 'ecs.gn8is' - NVIDIA L20
   #     - '8' - Ada Lovelace
+  #     - price: ~ 19CNY / 3CNY
   default = "ecs.gn8is"
 }

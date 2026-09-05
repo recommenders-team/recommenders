@@ -1,27 +1,29 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
-
+#####################################################################
+# Data queries for existing resources
+#####################################################################
 data "alicloud_resource_manager_resource_groups" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/resource_manager_resource_groups
-  name_regex = var.resource_group_name
+  name_regex = local.resource_group_name
 }
 
 data "alicloud_vpcs" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vpcs
-  resource_group_id = data.alicloud_resource_manager_resource_groups.reco.ids[0]
-  vpc_name = var.region
+  resource_group_id = local.resource_group_id
+  vpc_name = local.vpc_name
 }
 
 data "alicloud_vswitches" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vswitches
-  resource_group_id = data.alicloud_resource_manager_resource_groups.reco.ids[0]
-  vswitch_name = var.region
+  resource_group_id = local.resource_group_id
+  zone_id = local.instance_zone_id
 }
 
 data "alicloud_security_groups" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/security_groups
-  resource_group_id = data.alicloud_resource_manager_resource_groups.reco.ids[0]
-  name_regex = var.region
+  resource_group_id = local.resource_group_id
+  vpc_id = local.vpc_id
 }
 
 data "alicloud_images" "ubuntu2404" {
@@ -43,5 +45,5 @@ data "alicloud_instance_types" "reco" {
   sorted_by = "Price"
   instance_charge_type = "PostPaid"
   spot_strategy = "SpotAsPriceGo"
-  image_id = data.alicloud_images.ubuntu2404.ids[0]
+  image_id = local.image_id
 }

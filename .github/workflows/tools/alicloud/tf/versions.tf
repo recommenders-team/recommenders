@@ -1,12 +1,14 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
-
+#####################################################################
+# Terraform providers
+#####################################################################
 terraform {
   required_providers {
     alicloud = {
       # https://registry.terraform.io/providers/aliyun/alicloud/latest
       source = "aliyun/alicloud"
-      version = ">= 1.286.0"
+      version = ">= 1.291.0"
     }
   }
 }
