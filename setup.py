@@ -42,6 +42,7 @@ install_requires = [
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "transformers>=4.27.0,<6",  # requires packaging, pyyaml, requests, tqdm
+    "vowpalwabbit>=9.9.0,<10",
 ]
 
 # shared dependencies
@@ -69,7 +70,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
-    "vowpalwabbit>=9.9.0,<10",
     # nni needs to be upgraded
     "nni==1.5",
     "numba>=0.57.0,<1",  # only used by geoimc and rlrmc, which require pymanopt

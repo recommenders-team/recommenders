@@ -75,7 +75,6 @@ When installing with GPU support you will need to point to the PyTorch index to 
 
 We are currently evaluating inclusion of the following dependencies:
 
- - vowpalwabbit: the example notebook uses the python bindings from the [PyPI package](https://pypi.org/project/vowpalwabbit/), which include the vw binary so no command line installation is needed
  - xlearn: on some platforms, xLearn requires pre-installation of cmake.
 
 ## Other dependencies
