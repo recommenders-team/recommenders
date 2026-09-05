@@ -14,6 +14,7 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 import pandas as pd
+import vowpalwabbit
 
 from recommenders.evaluation.python_evaluation import get_top_k_items
 from recommenders.utils.constants import (
@@ -23,28 +24,6 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_PREDICTION_COL,
 )
-
-try:
-    import vowpalwabbit
-except ImportError:
-    vowpalwabbit = None
-
-
-def run_vw(params):
-    """Run vw with the given command line parameters
-
-    Args:
-        params (str): vw command line parameters
-    """
-
-    if vowpalwabbit is None:
-        raise ImportError(
-            "vowpalwabbit is required, install it with pip install recommenders[experimental]"
-        )
-
-    # creating the workspace runs vw over the data file given with -d,
-    # finish() then writes the model and prediction files
-    vowpalwabbit.Workspace(params).finish()
 
 
 def to_vw_file(df, output, col_user, col_item, label):
@@ -93,7 +72,7 @@ def score(df, col_user, col_item, col_prediction, params, data_file, prediction_
     """
 
     to_vw_file(df, data_file, col_user, col_item, pd.Series("", index=df.index))
-    run_vw(params)
+    vowpalwabbit.Workspace(params).finish()
     return pd.read_csv(
         prediction_file, sep=r"\s+", names=[col_prediction], index_col=1
     )[col_prediction]
@@ -331,7 +310,8 @@ class VW:
         params = f"{self.train_params} --passes {epochs} -l {learning_rate} --l2 {l2}"
         if epochs > 1:
             params += " -c"
-        run_vw(params)
+        # creating the workspace runs vw over the data file, finish() writes the model
+        vowpalwabbit.Workspace(params).finish()
 
         # keep what was seen during training to build recommendations
         self.seen = df[[self.col_user, self.col_item]].drop_duplicates()
