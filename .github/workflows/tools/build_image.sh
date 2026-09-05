@@ -63,8 +63,7 @@ if [[ -z ${SSH_DEST:-} ]]; then
     docker build . ${docker_args}
 else
     echo 'Exporting environment variables ...'
-    eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
-        <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+    eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
 
     echo "Building Docker image on the newly created VM ..."
     echo '* Copying files to avoid download failure on the VM ...'

@@ -23,6 +23,33 @@ apt_install_retry() {
         apt-get install -y "$@"
 }
 
+generate_var_exports() {
+    # Generate shell environment variable export statements for
+    # key-value pairs in $1
+    #
+    # For example, if $1 is
+    #
+    #     {
+    #        "VM_DOCKER_MIRROR_URL": "https://docker.sparkcr.cn",
+    #        "VM_HTTP_PROXY": "http://172.168.2.6:3141"
+    #     }
+    #
+    # Then it returns
+    #     export VM_DOCKER_MIRROR_URL=https://docker.sparkcr.cn;
+    #     export VM_HTTP_PROXY=http://172.168.2.6:3141";
+    #
+    # Params:
+    # * JSON string
+    local json_data="${1:-}"
+
+    local env_exports
+    env_exports="$(jq -r '
+        [to_entries | .[] | "export \(.key)=\(.value | @sh);"]
+        | join(" ")' \
+        <<< "${json_data}")"
+    echo "${env_exports}"
+}
+
 run_cmd_retry() {
     # Run the command in "$@" and retry "$1" times
     # (5 by default) on failure.

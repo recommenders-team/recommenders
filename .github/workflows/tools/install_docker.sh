@@ -35,7 +35,7 @@ rootless="${rootless:-true}"
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl jq gnupg
+apt_install_retry ca-certificates gnupg
 
 
 #--------------------------------------------------------------------

@@ -46,8 +46,7 @@ if [[ -z ${SSH_DEST:-} ]]; then
     docker run --rm "${image_tag}" bash -lc "${test_cmd}"
 else
     echo 'Exporting environment variables ...'
-    eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
-        <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+    eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
 
     echo 'Running tests on the newly created VM ...'
     if [[ ${test_group} == *gpu* ]]; then

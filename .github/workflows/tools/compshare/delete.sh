@@ -24,8 +24,7 @@ source "$(dirname "$0")/utils.sh"
 
 echo 'Exporting environment variables ...'
 export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
-eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
-    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
 
 delay=5
 num_attempts=6

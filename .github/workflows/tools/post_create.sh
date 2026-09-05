@@ -59,8 +59,7 @@ if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
             -o UserKnownHostsFile=/dev/null \
             "${SSH_DEST}" "\
                 export CLOUD_SERVICE='${CLOUD_SERVICE}'; \
-                $(jq -r '[to_entries | .[] | "export \(.key)=\(.value | @sh);"] | join(" ")' \
-                    <<< "${CLOUD_SERVICE_EXTRA_DATA:-}") \
+                $(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}") \
                 bash ./${script}"
 
         if [[ ${reboot_required[${index}]} == 'true' ]]; then

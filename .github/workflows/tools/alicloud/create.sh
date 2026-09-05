@@ -38,8 +38,7 @@ source "${script_dir}/../utils.sh"
 
 echo 'Exporting environment variables ...'
 export ALIBABA_CLOUD_ACCESS_KEY_SECRET="${CLOUD_SERVICE_SECRET}"
-eval "$(jq -r 'to_entries | .[] | "export \(.key)=\(.value | @sh)"' \
-    <<< "${CLOUD_SERVICE_EXTRA_DATA}")"
+eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
 
 
 #--------------------------------------------------------------------
