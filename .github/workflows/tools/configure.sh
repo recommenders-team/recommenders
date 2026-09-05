@@ -48,7 +48,7 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
     if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq '.apt_mirror // ""' "${config_yml}")"
+        apt_mirror="$(yq '.apt_mirror // empty' "${config_yml}")"
     fi
     apt_mirror="${apt_mirror:+$apt_mirror,}"
     sudo tee -a /etc/environment > /dev/null << EOF
@@ -76,7 +76,7 @@ fi
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry git-all
+apt_install_retry curl git-all jq yq
 
 if [[ ${cloud_service} == 'compshare' ]]; then
     echo '* Adding extra DNS ...'

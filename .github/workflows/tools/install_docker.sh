@@ -28,7 +28,7 @@ echo '* Importing utility functions ...'
 source "${script_dir}/utils.sh"
 
 if [[ -f ${config_yml} ]]; then
-    rootless="$(yq '.rootless_docker // ""' "${config_yml}")"
+    rootless="$(yq '.rootless_docker // empty' "${config_yml}")"
 fi
 rootless="${rootless:-true}"
 
@@ -46,7 +46,7 @@ if ! docker --version 2>/dev/null; then
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
     if [[ -f ${config_yml} ]]; then
-        apt_url="$(yq '.docker_download_mirror // ""' "${config_yml}")"
+        apt_url="$(yq '.docker_download_mirror // empty' "${config_yml}")"
     fi
     apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
     apt_list="/etc/apt/sources.list.d/docker.list"

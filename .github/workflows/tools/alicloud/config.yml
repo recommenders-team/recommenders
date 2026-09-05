@@ -1,5 +1,5 @@
 apt_mirror: mirrors.cloud.aliyuncs.com
-docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
+# docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
 rootless_docker: false
 scripts:
     # The script for VM creation must set the environment variable
