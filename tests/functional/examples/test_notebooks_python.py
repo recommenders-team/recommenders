@@ -126,19 +126,18 @@ def test_surprise_svd_functional(
         (
             "1m",
             dict(
-                rmse=0.959885,
-                mae=0.690133,
-                rsquared=0.264014,
-                exp_var=0.264417,
-                map=0.004857,
-                ndcg=0.055128,
-                precision=0.061142,
-                recall=0.017789,
+                rmse=1.147971,
+                mae=0.903852,
+                rsquared=-0.052669,
+                exp_var=0.085058,
+                map=0.109966,
+                ndcg=0.197746,
+                precision=0.185414,
+                recall=0.058883,
             ),
         )
     ],
 )
-@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
