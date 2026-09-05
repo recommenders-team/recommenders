@@ -21,11 +21,13 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-reco_venv_dir='/root/.venvs/Recommenders'
+script_dir="$(dirname "$0")"
 image_tag="${1:-}"
 test_groups_yml="${2:-}"
 test_type="${3:-}"
 test_group="${4:-}"
+reco_venv_dir='/root/.venvs/Recommenders'
+script_utils="${script_dir}/utils.sh"
 
 [[ -z ${image_tag} \
   || -z ${test_groups_yml} \
@@ -45,6 +47,9 @@ if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Running tests on current GitHub-hosted runner ...'
     docker run --rm "${image_tag}" bash -lc "${test_cmd}"
 else
+    echo 'Importing utility functions ...'
+    source "${script_utils}"
+
     echo 'Exporting environment variables ...'
     eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
 

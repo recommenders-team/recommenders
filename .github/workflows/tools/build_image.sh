@@ -62,6 +62,9 @@ if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Building Docker image on current GitHub-hosted runner ...'
     docker build . ${docker_args}
 else
+    echo 'Importing utility functions ...'
+    source "${script_utils}"
+
     echo 'Exporting environment variables ...'
     eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
 
@@ -153,7 +156,6 @@ else
     fi
 
     echo '* Building the final image ...'
-    source "${script_utils}"
     run_cmd_retry ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \
