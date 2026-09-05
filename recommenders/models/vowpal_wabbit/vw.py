@@ -29,6 +29,10 @@ from recommenders.utils.constants import (
 def to_vw_file(df, output, col_user, col_item, label):
     """Write a DataFrame to a file in vw input format
 
+    The bindings can also learn and predict from example strings held in memory, but
+    going through a file is about twice as fast, because vw parses the whole file in
+    native code instead of crossing the python boundary once per example.
+
     Args:
         df (pandas.DataFrame): input DataFrame
         output (str): path of the output file
