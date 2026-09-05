@@ -9,6 +9,7 @@ The training parameters (epochs, learning rate and L2 regularization) are argume
 """
 
 import os
+import shutil
 from concurrent.futures import ProcessPoolExecutor
 from tempfile import TemporaryDirectory
 
@@ -320,6 +321,32 @@ class VW:
         # keep what was seen during training to build recommendations
         self.seen = df[[self.col_user, self.col_item]].drop_duplicates()
         self.items = self.seen[[self.col_item]].drop_duplicates()
+
+    def save(self, path):
+        """Save the trained model so it outlives this object
+
+        The model is written to a temporary directory that is removed with the object,
+        so serving a model trained here needs it copied out first.
+
+        Args:
+            path (str): path of the model file to write
+        """
+
+        shutil.copyfile(self.model_file, path)
+
+    def load(self, path):
+        """Load a model written by save()
+
+        vw stores the options it was trained with in the model file, so the loaded model
+        predicts with its own interactions, rank or oaa settings whatever this object was
+        built with. Only predict() is available, recommend_k_items() needs fit() because
+        it scores the items seen during training.
+
+        Args:
+            path (str): path of the model file to read
+        """
+
+        shutil.copyfile(path, self.model_file)
 
     def predict(self, df):
         """Predict results
