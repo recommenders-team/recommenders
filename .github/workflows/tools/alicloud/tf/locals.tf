@@ -1,5 +1,6 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
+
 #####################################################################
 # Local variables used in the configuration
 #####################################################################

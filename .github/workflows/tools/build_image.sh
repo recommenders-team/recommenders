@@ -39,10 +39,12 @@ python_version="${4:-}"
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
+utils_sh="${script_dir}/utils.sh"
 
-# Utility functions
-script_utils="${script_dir}/utils.sh"
 
+#--------------------------------------------------------------------
+# Determine build args
+#--------------------------------------------------------------------
 if [[ ${test_group} == *gpu* ]]; then
     compute='gpu'
     extras='[dev,gpu,spark]'
@@ -58,12 +60,16 @@ docker_args="-t ${image_tag} \
     --build-arg GIT_REF= \
     --build-arg PYTHON_VERSION=${python_version}"
 
+
+#--------------------------------------------------------------------
+# Determine the VM for Docker build
+#--------------------------------------------------------------------
 if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Building Docker image on current GitHub-hosted runner ...'
     docker build . ${docker_args}
 else
     echo 'Importing utility functions ...'
-    source "${script_utils}"
+    source "${utils_sh}"
 
     echo 'Exporting environment variables ...'
     eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"

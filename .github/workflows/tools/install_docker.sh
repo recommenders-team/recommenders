@@ -21,21 +21,27 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
+
 cloud_service="${CLOUD_SERVICE:-}"
 config_yml="${script_dir}/${cloud_service@L}/config.yml"
+utils_sh="${script_dir}/utils.sh"
 
+
+#--------------------------------------------------------------------
+# Install prerequisites
+#--------------------------------------------------------------------
 echo '* Importing utility functions ...'
-source "${script_dir}/utils.sh"
+source "${utils_sh}"
+
+echo '* Installing prerequisites ...'
+wait_for_apt_lock
+sudo apt-get update
+apt_install_retry ca-certificates curl gnupg jq yq
 
 if [[ -f ${config_yml} ]]; then
     rootless="$(yq '.rootless_docker // empty' "${config_yml}")"
 fi
 rootless="${rootless:-true}"
-
-echo '* Installing prerequisites ...'
-wait_for_apt_lock
-sudo apt-get update
-apt_install_retry ca-certificates gnupg
 
 
 #--------------------------------------------------------------------

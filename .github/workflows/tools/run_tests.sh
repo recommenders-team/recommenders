@@ -26,14 +26,19 @@ image_tag="${1:-}"
 test_groups_yml="${2:-}"
 test_type="${3:-}"
 test_group="${4:-}"
-reco_venv_dir='/root/.venvs/Recommenders'
-script_utils="${script_dir}/utils.sh"
 
 [[ -z ${image_tag} \
   || -z ${test_groups_yml} \
   || -z ${test_type} \
   || -z ${test_group} ]] && exit 1
 
+reco_venv_dir='/root/.venvs/Recommenders'
+utils_sh="${script_dir}/utils.sh"
+
+
+#--------------------------------------------------------------------
+# Get test list
+#--------------------------------------------------------------------
 test_list="$(yq "
     .${test_type}.${test_group}
     | map(@sh)
@@ -43,12 +48,17 @@ test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && source ${reco_venv_dir}/bin/activate \
     && pytest --durations 0 ${test_list}"
 
+
+
+#--------------------------------------------------------------------
+# Run tests
+#--------------------------------------------------------------------
 if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Running tests on current GitHub-hosted runner ...'
     docker run --rm "${image_tag}" bash -lc "${test_cmd}"
 else
     echo 'Importing utility functions ...'
-    source "${script_utils}"
+    source "${utils_sh}"
 
     echo 'Exporting environment variables ...'
     eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"

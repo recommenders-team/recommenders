@@ -33,15 +33,18 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
+
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
-script_utils="${script_dir}/utils.sh"
+utils_sh="${script_dir}/utils.sh"
 
+
+#--------------------------------------------------------------------
 if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
     && jq -e '.scripts.post_create' "${config_yml}" 2>/dev/null; then
     echo 'Importing utility functions ...'
-    source "${script_utils}"
+    source "${utils_sh}"
 
     echo 'Uploading tools to the VM ...' >&2
     scp -qr -o StrictHostKeyChecking=no \

@@ -13,8 +13,20 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+utils_sh="$(dirname "$0")/utils.sh"
+
+
+#--------------------------------------------------------------------
+# Install prerequisites
+#--------------------------------------------------------------------
 echo '* Importing utility functions ...'
-source "$(dirname "$0")/utils.sh"
+source "${utils_sh}"
+
+echo '* Installing prerequisites ...'
+wait_for_apt_lock
+sudo apt-get update
+apt_install_retry ca-certificates curl gnupg
+
 
 #--------------------------------------------------------------------
 # Install CUDA driver if it is not installed.

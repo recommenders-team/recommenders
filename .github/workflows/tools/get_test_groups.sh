@@ -26,6 +26,10 @@ compute="${3:-}"
   || -z ${test_type} \
   || -z ${compute} ]] && exit 1
 
+
+#--------------------------------------------------------------------
+# Get the test groups according to test type and compute
+#--------------------------------------------------------------------
 if [[ ${test_type} == 'nightly' ]]; then
     test_groups_str=$(yq -o json -I 0 "
         [ .${test_type}

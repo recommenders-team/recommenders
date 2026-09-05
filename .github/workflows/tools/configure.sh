@@ -18,12 +18,18 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
+
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
+utils_sh="${script_dir}/utils.sh"
 
+
+#--------------------------------------------------------------------
+# Basic configs
+#--------------------------------------------------------------------
 echo '* Importing utility functions ...'
-source "${script_dir}/utils.sh"
+source "${utils_sh}"
 
 echo '* Configuring APT lock ...'
 sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer
@@ -73,11 +79,19 @@ EOF
     fi
 fi
 
+
+#--------------------------------------------------------------------
+# Install prerequisites
+#--------------------------------------------------------------------
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
 apt_install_retry curl git-all jq yq
 
+
+#--------------------------------------------------------------------
+# Network configs for CompShare VMs
+#--------------------------------------------------------------------
 if [[ ${cloud_service} == 'compshare' ]]; then
     echo '* Adding extra DNS ...'
     sudo awk -i inplace \

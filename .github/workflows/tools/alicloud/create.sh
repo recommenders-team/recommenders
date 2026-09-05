@@ -33,6 +33,8 @@ test_group="${3:-}"
 
 tf_config_dir="${script_dir}/tf"
 
+
+#--------------------------------------------------------------------
 echo 'Importing utility functions ...'
 source "${script_dir}/../utils.sh"
 
