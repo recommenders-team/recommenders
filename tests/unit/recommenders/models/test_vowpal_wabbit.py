@@ -10,15 +10,6 @@ import pandas as pd
 
 from recommenders.models.vowpal_wabbit.vw import VW
 
-try:
-    import vowpalwabbit
-except ImportError:
-    vowpalwabbit = None
-
-requires_vw = pytest.mark.skipif(
-    vowpalwabbit is None, reason="vowpalwabbit not installed"
-)
-
 
 @pytest.fixture(scope="module")
 def df():
@@ -136,7 +127,6 @@ def test_fit_and_predict(model, df):
 
 
 @pytest.mark.experimental
-@requires_vw
 def test_fit_and_predict_with_vw(model, df):
     model.fit(df)
     result = model.predict(df)
@@ -147,7 +137,6 @@ def test_fit_and_predict_with_vw(model, df):
 
 
 @pytest.mark.experimental
-@requires_vw
 def test_recommend_k_items(model, df):
     model.fit(df)
     top_k = model.recommend_k_items(df, top_k=1, remove_seen=True)
@@ -158,7 +147,6 @@ def test_recommend_k_items(model, df):
 
 
 @pytest.mark.experimental
-@requires_vw
 def test_logistic_predictions(df):
     model = VW(
         col_user="user", col_item="item", loss_function="logistic", link="logistic"
@@ -176,7 +164,6 @@ def test_training_parameters_are_fit_arguments():
 
 
 @pytest.mark.experimental
-@requires_vw
 def test_multiple_epochs(df):
     # multiple passes need a cache during training and must not reach prediction
     model = VW(col_user="user", col_item="item")
@@ -195,7 +182,6 @@ def test_n_jobs_is_not_a_vw_option():
 
 
 @pytest.mark.experimental
-@requires_vw
 @pytest.mark.parametrize("n_jobs", [2, 3])
 def test_predict_in_parallel(n_jobs):
     rng = np.random.default_rng(42)
