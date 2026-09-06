@@ -19,7 +19,7 @@
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
 #   + It should be the name of parent directory.
-# * CLOUD_SERVICE_EXTRA_DATA
+# * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - VM_DOCKER_MIRROR_URL (optional)
 #       * Semicolon separated URLs of docker mirrors
@@ -65,7 +65,7 @@ if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
             -o UserKnownHostsFile=/dev/null \
             "${SSH_DEST}" "\
                 export CLOUD_SERVICE='${CLOUD_SERVICE}'; \
-                $(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}") \
+                $(generate_var_exports "${CLOUD_SERVICE_ENVS:-}") \
                 bash ./${script}"
 
         if [[ ${reboot_required[${index}]} == 'true' ]]; then

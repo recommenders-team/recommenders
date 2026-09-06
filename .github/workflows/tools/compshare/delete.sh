@@ -11,7 +11,7 @@
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE_SECRET
-# * CLOUD_SERVICE_EXTRA_DATA
+# * CLOUD_SERVICE_ENVS
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -26,7 +26,7 @@ source "$(dirname "$0")/utils.sh"
 
 echo 'Exporting environment variables ...'
 export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
-eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
+eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
 
 delay=5
 num_attempts=6

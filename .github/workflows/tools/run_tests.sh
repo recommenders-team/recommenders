@@ -13,7 +13,7 @@
 # * Test group
 #
 # The following environment variables may need to be set:
-# * CLOUD_SERVICE_EXTRA_DATA
+# * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - VM_HTTP_PROXY (optional)
 # * SSH_DEST
@@ -61,7 +61,7 @@ else
     source "${utils_sh}"
 
     echo 'Exporting environment variables ...'
-    eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
+    eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
 
     echo 'Running tests on the newly created VM ...'
     if [[ ${test_group} == *gpu* ]]; then

@@ -17,7 +17,7 @@
 # * CLOUD_SERVICE_SECRET
 #   + It contains the private key for CompShare APIs and is used as
 #     COMPSHARE_PRIVATE_KEY in the script.
-# * CLOUD_SERVICE_EXTRA_DATA
+# * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - COMPSHARE_PUBLIC_KEY (required)
 ######################################################################
@@ -36,7 +36,7 @@ source "${script_dir}/utils.sh"
 
 echo 'Exporting environment variables ...'
 export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
-eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
+eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
 
 
 #--------------------------------------------------------------------

@@ -14,7 +14,7 @@
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
-# * CLOUD_SERVICE_EXTRA_DATA
+# * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - VM_HTTP_PROXY (optional)
 #     - VM_HTTPS_PROXY (optional)
@@ -72,7 +72,7 @@ else
     source "${utils_sh}"
 
     echo 'Exporting environment variables ...'
-    eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
+    eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
 
     echo "Building Docker image on the newly created VM ..."
     echo '* Copying files to avoid download failure on the VM ...'

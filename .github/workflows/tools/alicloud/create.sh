@@ -18,7 +18,7 @@
 # * CLOUD_SERVICE_SECRET
 #   + It contains the access key secret for AliCloud APIs and is used
 #     as ALIBABA_CLOUD_ACCESS_KEY_SECRET in the script.
-# * CLOUD_SERVICE_EXTRA_DATA
+# * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required)
 ######################################################################
@@ -40,7 +40,7 @@ source "${script_dir}/../utils.sh"
 
 echo 'Exporting environment variables ...'
 export ALIBABA_CLOUD_ACCESS_KEY_SECRET="${CLOUD_SERVICE_SECRET}"
-eval "$(generate_var_exports "${CLOUD_SERVICE_EXTRA_DATA:-}")"
+eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
 
 
 #--------------------------------------------------------------------

@@ -106,7 +106,7 @@ jobs:
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     env:
       CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
-      CLOUD_SERVICE_EXTRA_DATA: ${{ vars.CLOUD_SERVICE_EXTRA_DATA }}
+      CLOUD_SERVICE_ENVS: ${{ vars.CLOUD_SERVICE_ENVS }}
       # * GPU tests should run on GPUs.
       # * cpu-nightly needs to run on larger CPU runner.
       # * Otherwise, standard runner is enough.
