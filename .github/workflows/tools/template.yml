@@ -146,8 +146,8 @@ jobs:
           create_script="$(yq -e '.scripts.create' \
               "${cloud_service_dir}/config.yml")"
           bash "${cloud_service_dir}/${create_script}" \
-               '${{ inputs.type }}' \
                "${VM_NAME}" \
+               '${{ inputs.type }}' \
                '${{ matrix.group }}'
           bash '${{ inputs.tools_dir }}/post_create.sh'
 
