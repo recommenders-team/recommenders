@@ -72,7 +72,7 @@ else
     source "${utils_sh}"
 
     echo 'Exporting environment variables ...'
-    eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
+    eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
     echo "Building Docker image on the newly created VM ..."
     echo '* Copying files to avoid download failure on the VM ...'

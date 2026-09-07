@@ -65,7 +65,7 @@ if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
             -o UserKnownHostsFile=/dev/null \
             "${SSH_DEST}" "\
                 export CLOUD_SERVICE='${CLOUD_SERVICE}'; \
-                $(generate_var_exports "${CLOUD_SERVICE_ENVS:-}") \
+                $(get_env_exports "${CLOUD_SERVICE_ENVS:-}") \
                 bash ./${script}"
 
         if [[ ${reboot_required[${index}]} == 'true' ]]; then

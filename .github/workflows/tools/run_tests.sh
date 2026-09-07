@@ -61,7 +61,7 @@ else
     source "${utils_sh}"
 
     echo 'Exporting environment variables ...'
-    eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
+    eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
     echo 'Running tests on the newly created VM ...'
     if [[ ${test_group} == *gpu* ]]; then

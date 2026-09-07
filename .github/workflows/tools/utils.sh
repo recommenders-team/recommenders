@@ -69,7 +69,7 @@ apply_tf_config() {
     echo 'All required resources are sold out!' >&2 && return 1
 }
 
-generate_var_exports() {
+get_env_exports() {
     # Generate shell environment variable export statements for
     # key-value pairs in $1
     #
