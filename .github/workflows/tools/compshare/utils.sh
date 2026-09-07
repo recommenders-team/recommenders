@@ -518,7 +518,7 @@ update_stop_scheduler() {
 # CompShare API utils
 #---------------------------------------------------------------------
 allocate_vm() {
-    # Create a VM with random names and password from available types
+    # Create a VM satisfying the requirements from available specs.
     #
     # Params:
     # * VM name

@@ -23,6 +23,52 @@ apt_install_retry() {
         apt-get install -y "$@"
 }
 
+apply_tf_config() {
+    # Apply the Terraform configuration to create a VM with possible
+    # input variable values in the specified directory.
+    #
+    # Params:
+    # * VM name
+    # * the directory containing the Terraform configuration
+    # * a JSON object of input variables each with possible values
+    #   + For example,
+    #
+    #     {
+    #         "instance_type_family": [
+    #             "ecs.gn8is",
+    #             "ecs.gn7i",
+    #             "ecs.gn6i"
+    #         ],
+    #         "region": [
+    #             "ap-southeast-5",
+    #             "ap-northeast-1",
+    #             "eu-central-1",
+    #             "ap-southeast-1"
+    #         ]
+    #     }
+    local vm_name="${1:-}"
+    local tf_config_dir="${1:./}"
+    local input_vars="${2:-}"
+
+    [[ -z ${vm_name} ]] && return 1
+
+    echo "Allocating a new VM named ${vm_name} ..." >&2
+
+    local input_vars_array
+    readarray -t input_vars_array < \
+        <(get_input_var_combinations "${input_vars}" "-var 'vm_name=${vm_name}'")
+
+    locla index
+    for index in "${!input_vars_array[@]}"; do
+        local inputs="${input_vars_array[${index}]}"
+
+        echo "* Trying with ${inputs} ..." >&2
+        terraform -chdir="${tf_config_dir}" apply -auto-approve \
+            ${inputs} && return
+    done
+    echo 'All required resources are sold out!' >&2 && return 1
+}
+
 generate_var_exports() {
     # Generate shell environment variable export statements for
     # key-value pairs in $1
@@ -48,6 +94,71 @@ generate_var_exports() {
         | join(" ")' \
         <<< "${json_data}")"
     echo "${env_exports}"
+}
+
+get_input_var_combinations() {
+    # Return all combinations of input variables from its 1st
+    # parameter and concatenates each of the combinations with the
+    # 2nd parameter.
+    #
+    # Params:
+    # * a JSON object of input variables each with possible values
+    #   + For example,
+    #
+    #     {
+    #         "instance_type_family": [
+    #             "ecs.gn8is",
+    #             "ecs.gn7i",
+    #             "ecs.gn6i"
+    #         ],
+    #         "region": [
+    #             "ap-southeast-5",
+    #             "ap-northeast-1",
+    #             "eu-central-1",
+    #             "ap-southeast-1"
+    #         ]
+    #     }
+    #
+    # * part of one combination
+    #   + For example, one possible combination from the example
+    #     above is
+    #
+    #         -var "instance_type_family='ecs.gn8is'" -var "region='ap-southeast-5'"
+    #
+    #     so this 2nd parameter could be "" at the beginning or
+    #
+    #         -var "instance_type_family='ecs.gn8is'"
+    #
+    #     when called at the 2nd time.
+    local unprocessed_vars="${1:-}"
+    local generated_inputs="${2:-}"
+
+    if [[ -z ${unprocessed_vars} \
+        || $(jq 'keys | length' <<< "${unprocessed_vars}") == 0 ]]; then
+        echo "${generated_inputs}"
+        return 0
+    fi
+
+    generated_inputs="${generated_inputs:+${generated_inputs} }"
+    local cur_var
+    cur_var="$(jq 'to_entries | .[0]' <<< "${unprocessed_vars}")"
+
+    local cur_var_key
+    cur_var_key="$(jq -r '.key' <<< "${cur_var}")"
+    unprocessed_vars="$(jq "del(.${cur_var_key})" <<< "${unprocessed_vars}")"
+
+    local cur_var_vals
+    readarray -d '' cur_var_vals < \
+        <(jq --raw-output0 '.value.[]' <<< "${cur_var}")
+
+    local index
+    local cur_input
+    for index in "${!cur_var_vals[@]}"; do
+        cur_input="\"${cur_var_key}='${cur_var_vals[${index}]}'\""
+        get_input_var_combinations \
+            "${unprocessed_vars}" \
+            "${generated_inputs}-var ${cur_input}"
+    done
 }
 
 run_cmd_retry() {

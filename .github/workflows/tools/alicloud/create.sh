@@ -21,6 +21,34 @@
 # * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required)
+# * CLOUD_SERVICE_INPUT_VARS
+#   + It contains the possible values of the input variables for
+#     creating the VM, in the JSON format like the following:
+#
+#     {
+#         "cpu": {
+#             "instance_type_family": [ "ecs.e" ],
+#             "region": [
+#                 "ap-southeast-5",
+#                 "ap-northeast-1",
+#                 "eu-central-1",
+#                 "ap-southeast-1"
+#             ]
+#         },
+#         "gpu": {
+#             "instance_type_family": [
+#                 "ecs.gn8is",
+#                 "ecs.gn7i",
+#                 "ecs.gn6i"
+#             ],
+#             "region": [
+#                 "ap-southeast-5",
+#                 "ap-northeast-1",
+#                 "eu-central-1",
+#                 "ap-southeast-1"
+#             ]
+#         }
+#     }
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -48,17 +76,14 @@ eval "$(generate_var_exports "${CLOUD_SERVICE_ENVS:-}")"
 #--------------------------------------------------------------------
 echo 'Creating a VM ...'
 terraform -chdir="${tf_config_dir}" init
+
 if [[ ${test_group} == *cpu* ]]; then
-    terraform -chdir="${tf_config_dir}" apply \
-        -auto-approve \
-        -var "vm_name=${vm_name}" \
-        -var "instance_type_family=ecs.e"
+    input_vars="$(jq '.cpu' <<< "${CLOUD_SERVICE_INPUT_VARS}")"
 else
-    terraform -chdir="${tf_config_dir}" apply \
-        -auto-approve \
-        -var "vm_name=${vm_name}" \
-        -var "instance_type_family=ecs.gn8is"
+    input_vars="$(jq '.gpu' <<< "${CLOUD_SERVICE_INPUT_VARS}")"
 fi
+
+apply_tf_config "${vm_name}" "${tf_config_dir}" "${input_vars}"
 
 unset ALIBABA_CLOUD_ACCESS_KEY_SECRET
 
