@@ -49,6 +49,23 @@
 #             ]
 #         }
 #     }
+#
+#     where "cpu" and "gpu" is used for different compute types if
+#     needed, or it can simply reduce to
+#
+#     {
+#         "instance_type_family": [
+#             "ecs.gn8is",
+#             "ecs.gn7i",
+#             "ecs.gn6i"
+#         ],
+#         "region": [
+#             "ap-southeast-5",
+#             "ap-northeast-1",
+#             "eu-central-1",
+#             "ap-southeast-1"
+#         ]
+#     }
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -77,10 +94,15 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 echo 'Creating a VM ...'
 terraform -chdir="${tf_config_dir}" init
 
+cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
 if [[ ${test_group} == *cpu* ]]; then
-    input_vars="$(jq '.cpu' <<< "${CLOUD_SERVICE_INPUT_VARS}")"
+    input_vars="$(jq '.cpu // empty' <<< "${cloud_service_input_vars}")"
 else
-    input_vars="$(jq '.gpu' <<< "${CLOUD_SERVICE_INPUT_VARS}")"
+    input_vars="$(jq '.gpu // empty' <<< "${cloud_service_input_vars}")"
+fi
+
+if [[ -z ${input_vars} ]]; then
+    input_vars="${cloud_service_input_vars}"
 fi
 
 apply_tf_config "${vm_name}" "${tf_config_dir}" "${input_vars}"

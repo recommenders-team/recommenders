@@ -27,6 +27,10 @@ apply_tf_config() {
     # Apply the Terraform configuration to create a VM with possible
     # input variable values in the specified directory.
     #
+    # NOTE: 
+    # This function assumes there is a input variable named 'vm_name'
+    # representing the name of the VM created.
+    #
     # Params:
     # * VM name
     # * the directory containing the Terraform configuration
@@ -54,7 +58,8 @@ apply_tf_config() {
 
     local input_vars_array
     readarray -t input_vars_array < \
-        <(get_input_var_combinations "${input_vars}" "-var 'vm_name=${vm_name}'")
+        <(get_input_var_combinations "${input_vars}" \
+            "-var \"vm_name='${vm_name}'\"")
 
     locla index
     for index in "${!input_vars_array[@]}"; do
