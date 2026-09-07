@@ -52,8 +52,6 @@ apply_tf_config() {
 
     [[ -z ${vm_name} ]] && return 1
 
-    echo "Allocating a new VM named ${vm_name} ..." >&2
-
     local input_vars_array
     readarray -t input_vars_array < \
         <(get_input_var_combinations "${input_vars}" "-var 'vm_name=${vm_name}'")
