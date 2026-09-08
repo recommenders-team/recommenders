@@ -42,10 +42,11 @@ wait_for_apt_lock
 sudo apt-get update
 apt_install_retry ca-certificates curl gnupg jq yq
 
-if [[ -f ${config_yml} ]]; then
-    rootless="$(yq '.rootless_docker // empty' "${config_yml}")"
+if [[ $(whoami) == 'root' ]]; then
+    rootless='false'
+else
+    rootless='true'
 fi
-rootless="${rootless:-true}"
 
 
 #--------------------------------------------------------------------

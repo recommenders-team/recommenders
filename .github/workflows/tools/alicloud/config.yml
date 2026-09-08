@@ -1,11 +1,25 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+######################################################################
+# Configuration for scripts to setup VMs on AliCloud
+######################################################################
 apt_mirror: mirrors.cloud.aliyuncs.com
 # docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
-rootless_docker: false
+
+# Specify which script is used on each step.
 scripts:
+    # Specify the script for creating the VM.
+    #
     # The script for VM creation must set the environment variable
     # SSH_DEST into $GITHUB_ENV for subsequent steps.
     create: create.sh
+
+    # Specify the script for deleting the VM.
     delete: delete.sh
+
+    # Specify the list of scripts to run after creating the VM and
+    # whether reboot is required.
     post_create:
         # script for basic system and network configuration
         - script: ../configure.sh
@@ -17,3 +31,6 @@ scripts:
         # script for installing NVIDIA container toolkit
         - script: ../install_nvidia_tools.sh
           reboot: true
+
+# The name of the secret for accessing AliCloud APIs
+secret_key_name: ALIBABA_CLOUD_ACCESS_KEY_SECRET
