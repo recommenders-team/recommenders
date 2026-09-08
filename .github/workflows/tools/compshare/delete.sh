@@ -11,7 +11,11 @@
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE_SECRET
+#   + It contains the private key for CompShare APIs and is used as
+#     COMPSHARE_PRIVATE_KEY in the script.
 # * CLOUD_SERVICE_ENVS
+#   + It contains the following keys in JSON:
+#     - COMPSHARE_PUBLIC_KEY (required)
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit

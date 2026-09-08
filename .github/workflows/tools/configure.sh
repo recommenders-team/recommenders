@@ -8,6 +8,9 @@
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
+#   + It should be the name of the directory containing the
+#     configuration files for the cloud service, such as alicloud and
+#     compshare.
 # * VM_HTTP_PROXY
 # * VM_HTTPS_PROXY
 # * VM_PROXY_CERTIFICATE

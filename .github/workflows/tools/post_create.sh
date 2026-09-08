@@ -18,7 +18,9 @@
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
-#   + It should be the name of parent directory.
+#   + It should be the name of the directory containing the
+#     configuration files for the cloud service, such as alicloud and
+#     compshare.
 # * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - VM_DOCKER_MIRROR_URL (optional)
@@ -28,6 +30,7 @@
 #     - VM_PIP_INDEX_URL (optional)
 #     - VM_PROXY_CERTIFICATE (optional)
 # * SSH_DEST
+#   + in the format like username@ip_address
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit

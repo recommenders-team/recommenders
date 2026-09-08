@@ -17,6 +17,7 @@
 #   + It contains the following keys in JSON:
 #     - VM_HTTP_PROXY (optional)
 # * SSH_DEST
+#   + in the format like username@ip_address
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
