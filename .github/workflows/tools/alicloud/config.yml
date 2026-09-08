@@ -5,14 +5,14 @@
 # Configuration for scripts to setup VMs on AliCloud
 ######################################################################
 apt_mirror: mirrors.cloud.aliyuncs.com
+
 # docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
 
 # Specify which script is used on each step.
 scripts:
     # Specify the script for creating the VM.
-    #
-    # The script for VM creation must set the environment variable
-    # SSH_DEST into $GITHUB_ENV for subsequent steps.
+    # * The script for VM creation must set the environment variable
+    #   SSH_DEST into $GITHUB_ENV for subsequent steps.
     create: ../create.sh
 
     # Specify the script for deleting the VM.
@@ -20,3 +20,6 @@ scripts:
 
 # The name of the secret for accessing AliCloud APIs
 secret_key_name: ALIBABA_CLOUD_ACCESS_KEY_SECRET
+
+# The directory containing Terraform configurations
+tf_config_dir: ./tf
