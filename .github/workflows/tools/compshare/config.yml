@@ -10,14 +10,3 @@ scripts:
     # SSH_DEST into $GITHUB_ENV for subsequent steps.
     create: create.sh
     delete: delete.sh
-    post_create:
-        # script for basic system and network configuration
-        - script: ../configure.sh
-          # Reboot or not after running the script
-          reboot: true
-        # script for Docker installation
-        - script: ../install_docker.sh
-          reboot: false
-        # script for installing NVIDIA container toolkit
-        - script: ../install_nvidia_tools.sh
-          reboot: true

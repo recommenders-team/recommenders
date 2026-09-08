@@ -29,7 +29,7 @@ utils_sh="${script_dir}/utils.sh"
 
 
 #--------------------------------------------------------------------
-# Basic configs
+# Disable auto updates
 #--------------------------------------------------------------------
 echo '* Importing utility functions ...'
 source "${utils_sh}"
@@ -40,14 +40,21 @@ sudo systemctl mask apt-daily.timer apt-daily-upgrade.timer
 sudo systemctl stop apt-daily.service apt-daily-upgrade.service
 sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 
+
+#--------------------------------------------------------------------
+# Install prerequisites
+#--------------------------------------------------------------------
+echo '* Installing prerequisites ...'
+wait_for_apt_lock
+sudo apt-get update
+apt_install_retry ca-certificates curl git-all jq yq
+
+
+#--------------------------------------------------------------------
+# Configure HTTP/HTTPS proxies if any
+#--------------------------------------------------------------------
 if [[ -n ${VM_PROXY_CERTIFICATE:-} ]]; then
     echo '* Adding CA certificate for HTTPS proxy ...'
-    echo '  + Installing prerequisites ...'
-    wait_for_apt_lock
-    sudo apt-get update
-    apt_install_retry ca-certificates
-
-    echo '  + Updating CA certificate ...'
     echo "${VM_PROXY_CERTIFICATE}" \
         | sudo tee /usr/local/share/ca-certificates/vm_proxy_cert.crt > /dev/null
     sudo update-ca-certificates
@@ -84,15 +91,6 @@ fi
 
 
 #--------------------------------------------------------------------
-# Install prerequisites
-#--------------------------------------------------------------------
-echo '* Installing prerequisites ...'
-wait_for_apt_lock
-sudo apt-get update
-apt_install_retry curl git-all jq yq
-
-
-#--------------------------------------------------------------------
 # Network configs for CompShare VMs
 #--------------------------------------------------------------------
 if [[ ${cloud_service} == 'compshare' ]]; then
@@ -110,4 +108,5 @@ if [[ ${cloud_service} == 'compshare' ]]; then
 
     echo '* Applying network configuration ...'
     sudo netplan apply
+    sudo resolvectl flush-caches
 fi

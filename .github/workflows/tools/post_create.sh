@@ -39,13 +39,19 @@ script_dir="$(dirname "$0")"
 
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
-config_yml="${script_dir}/${cloud_service}/config.yml"
 utils_sh="${script_dir}/utils.sh"
+
+# Setup scripts for configuring network,
+# installing Docker and NVIDIA container toolkit
+script_dir_name="$(realpath "${script_dir}")"
+script_dir_name="${script_dir_name##*/}"
+setup_scripts=("${script_dir_name}/configure.sh" \
+              "${script_dir_name}/install_docker.sh" \
+              "${script_dir_name}/install_nvidia_tools.sh")
 
 
 #--------------------------------------------------------------------
-if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
-    && jq -e '.scripts.post_create' "${config_yml}" 2>/dev/null; then
+if [[ -n ${SSH_DEST} ]]; then
     echo 'Importing utility functions ...'
     source "${utils_sh}"
 
@@ -54,13 +60,8 @@ if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
         -o UserKnownHostsFile=/dev/null \
         "${script_dir}" "${SSH_DEST}":
 
-    readarray -d '' post_create_scripts < \
-        <(yq -0 '.scripts.post_create[].script' "${config_yml}")
-    readarray -d '' reboot_required < \
-        <(yq -0 '.scripts.post_create[].reboot' "${config_yml}")
-    service_tools_dir="${script_dir##*/}/${cloud_service}"
-    for index in "${!post_create_scripts[@]}"; do
-        script="${service_tools_dir}/${post_create_scripts[${index}]}"
+    for index in "${!setup_scripts[@]}"; do
+        script="${setup_scripts[${index}]}"
 
         wait_for_vm_to_be_available "${SSH_DEST}"
         echo "Running ${script} on the VM ..." >&2
@@ -70,13 +71,11 @@ if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
                 export CLOUD_SERVICE='${cloud_service}'; \
                 $(get_env_exports "${CLOUD_SERVICE_ENVS:-}") \
                 bash ./${script}"
-
-        if [[ ${reboot_required[${index}]} == 'true' ]]; then
-            echo 'Rebooting for setup to take effect ...' >&2
-            ssh -t -o StrictHostKeyChecking=no \
-                -o UserKnownHostsFile=/dev/null \
-                "${SSH_DEST}" "sudo reboot" || true
-            wait_for_vm_to_be_available "${SSH_DEST}"
-        fi
     done
+
+    echo 'Rebooting for setup to take effect ...' >&2
+    ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${SSH_DEST}" "sudo reboot" || true
+    wait_for_vm_to_be_available "${SSH_DEST}"
 fi

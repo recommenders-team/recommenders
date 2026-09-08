@@ -18,6 +18,16 @@ utils_sh="${script_dir}/utils.sh"
 
 
 #--------------------------------------------------------------------
+# Check if the machine is CUDA capable.
+#--------------------------------------------------------------------
+echo '* Checking if there are any NVIDIA GPUs ...'
+sudo update-pciids
+if ! lspci | grep -i nvidia > /dev/null; then
+    exit 0
+fi
+
+
+#--------------------------------------------------------------------
 # Install prerequisites
 #--------------------------------------------------------------------
 echo '* Importing utility functions ...'
@@ -53,8 +63,6 @@ if ! nvidia-smi 2>/dev/null; then
     sudo apt-get update
 
     echo '* Installing CUDA driver ...'
-    sudo update-pciids
-
     if lspci | grep -i nvidia | grep -Ei 'p40|v100s'; then
         # P40 can only install drivers of version up to 580
         echo '  + Locking to version 580 ...'

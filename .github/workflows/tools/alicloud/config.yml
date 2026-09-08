@@ -18,19 +18,5 @@ scripts:
     # Specify the script for deleting the VM.
     delete: ../delete.sh
 
-    # Specify the list of scripts to run after creating the VM and
-    # whether reboot is required.
-    post_create:
-        # script for basic system and network configuration
-        - script: ../configure.sh
-          # Reboot or not after running the script
-          reboot: true
-        # script for Docker installation
-        - script: ../install_docker.sh
-          reboot: false
-        # script for installing NVIDIA container toolkit
-        - script: ../install_nvidia_tools.sh
-          reboot: true
-
 # The name of the secret for accessing AliCloud APIs
 secret_key_name: ALIBABA_CLOUD_ACCESS_KEY_SECRET
