@@ -4,6 +4,6 @@
 #####################################################################
 # Outputs the VM IP
 #####################################################################
-output "ip" {
-  value = alicloud_instance.reco.public_ip
+output "ssh_dest" {
+  value = "root@${alicloud_instance.reco.public_ip}"
 }

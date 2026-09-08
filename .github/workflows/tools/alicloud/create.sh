@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Create an AliCloud VM and prepare the environment for testing.
+# Create an VM using Terraform and prepare the environment for testing.
 #
 # The script must set the environment variable SSH_DEST into
 # $GITHUB_ENV for subsequent steps.
@@ -126,9 +126,9 @@ apply_tf_config "${vm_name}" "${tf_config_dir}" "${input_vars}"
 unset "${secret_key_name}"
 
 echo 'Exporting VM info for subsequent steps ...'
-ip="$(terraform -chdir="${tf_config_dir}" output -json ip | jq -r)"
-ssh_dest="root@${ip}"
+ssh_dest="$(terraform -chdir="${tf_config_dir}" output -json ssh_dest | jq -r)"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 wait_for_vm_to_be_available "${ssh_dest}"
-setup_ssh_key "${ssh_dest}" "${tf_config_dir}/${vm_name}"
+ssh_key="${tf_config_dir}/${vm_name}"
+setup_ssh_key "${ssh_dest}" "${ssh_key}"
