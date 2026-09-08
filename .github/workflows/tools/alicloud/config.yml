@@ -13,7 +13,7 @@ scripts:
     #
     # The script for VM creation must set the environment variable
     # SSH_DEST into $GITHUB_ENV for subsequent steps.
-    create: create.sh
+    create: ../create.sh
 
     # Specify the script for deleting the VM.
     delete: delete.sh
