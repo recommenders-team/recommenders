@@ -20,13 +20,16 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 [[ -z ${vm_name} ]] && { echo 'No VM specified.'; exit 0; }
+
+utils_sh="${script_dir}/utils.sh"
 
 
 #--------------------------------------------------------------------
 echo 'Importing utility functions ...'
-source "$(dirname "$0")/utils.sh"
+source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
 export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"

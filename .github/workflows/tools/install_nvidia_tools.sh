@@ -13,7 +13,8 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-utils_sh="$(dirname "$0")/utils.sh"
+script_dir="$(dirname "$0")"
+utils_sh="${script_dir}/utils.sh"
 
 
 #--------------------------------------------------------------------

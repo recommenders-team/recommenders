@@ -67,7 +67,7 @@ if [[ -n ${SSH_DEST} && -f ${config_yml} ]] \
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             "${SSH_DEST}" "\
-                export CLOUD_SERVICE='${CLOUD_SERVICE}'; \
+                export CLOUD_SERVICE='${cloud_service}'; \
                 $(get_env_exports "${CLOUD_SERVICE_ENVS:-}") \
                 bash ./${script}"
 

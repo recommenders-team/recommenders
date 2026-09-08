@@ -26,7 +26,8 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 
 cloud_service="${CLOUD_SERVICE:-}"
-config_yml="${script_dir}/${cloud_service@L}/config.yml"
+cloud_service="${cloud_service@L}"
+config_yml="${script_dir}/${cloud_service}/config.yml"
 utils_sh="${script_dir}/utils.sh"
 
 

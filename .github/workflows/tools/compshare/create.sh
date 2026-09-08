@@ -29,10 +29,12 @@ vm_name="${1:-}"
 test_type="${2:-}"
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
+utils_sh="${script_dir}/utils.sh"
+
 
 #--------------------------------------------------------------------
 echo 'Importing utility functions ...'
-source "${script_dir}/utils.sh"
+source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
 export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
