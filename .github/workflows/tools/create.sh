@@ -24,11 +24,11 @@
 #     selected cloud service APIs.  For example,
 #     - It will be used as ALIBABA_CLOUD_ACCESS_KEY_SECRET for
 #       AliCloud.
-#
-# The following environment variables may need to be set:
 # * CLOUD_SERVICE_ENVS
 #   + It may contain the following keys in JSON:
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required when using AliCloud)
+#
+# The following environment variables may need to be set:
 # * CLOUD_SERVICE_INPUT_VARS
 #   + It contains the possible values of the input variables for
 #     creating the VM, in the JSON format like the following:

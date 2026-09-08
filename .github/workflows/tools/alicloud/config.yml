@@ -16,7 +16,7 @@ scripts:
     create: ../create.sh
 
     # Specify the script for deleting the VM.
-    delete: delete.sh
+    delete: ../delete.sh
 
     # Specify the list of scripts to run after creating the VM and
     # whether reboot is required.
