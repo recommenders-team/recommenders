@@ -60,7 +60,7 @@ apply_tf_config() {
     readarray -t var_combinations < \
         <(get_input_var_combinations "${input_vars}")
 
-    locla index
+    local index
     for index in "${!var_combinations[@]}"; do
         local combination="${var_combinations[${index}]}"
         local inputs
