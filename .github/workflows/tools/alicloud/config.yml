@@ -20,6 +20,3 @@ scripts:
 
 # The name of the secret for accessing AliCloud APIs
 secret_key_name: ALIBABA_CLOUD_ACCESS_KEY_SECRET
-
-# The directory containing Terraform configurations
-tf_config_dir: ./tf

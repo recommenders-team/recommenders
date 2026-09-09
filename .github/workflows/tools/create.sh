@@ -89,7 +89,9 @@ test_group="${3:-}"
 
 cloud_service="${CLOUD_SERVICE}"
 cloud_service="${cloud_service@L}"
-config_yml="${script_dir}/${cloud_service}/config.yml"
+config_dir="${script_dir}/${cloud_service}"
+config_yml="${config_dir}/config.yml"
+tf_config_dir="${config_dir}/tf"
 utils_sh="${script_dir}/utils.sh"
 
 
@@ -107,9 +109,6 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 # Use Terraform to create a VM
 #--------------------------------------------------------------------
 echo 'Creating a VM ...'
-tf_config_dir="$(yq '.tf_config_dir' "${config_yml}")"
-tf_config_dir="${script_dir}/${cloud_service}/${tf_config_dir}"
-
 terraform -chdir="${tf_config_dir}" init
 
 cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
