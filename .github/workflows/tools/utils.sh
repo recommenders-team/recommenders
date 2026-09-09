@@ -56,18 +56,22 @@ apply_tf_config() {
 
     [[ -z ${vm_name} ]] && return 1
 
-    local input_vars_array
-    readarray -t input_vars_array < \
-        <(get_input_var_combinations "${input_vars}" \
-            "-var \"vm_name='${vm_name}'\"")
+    local var_combinations
+    readarray -t var_combinations < \
+        <(get_input_var_combinations "${input_vars}")
 
     locla index
-    for index in "${!input_vars_array[@]}"; do
-        local inputs="${input_vars_array[${index}]}"
+    for index in "${!var_combinations[@]}"; do
+        local combination="${var_combinations[${index}]}"
+        local inputs
+        inputs=$(jq -r "
+            to_entries
+            | [ .[] | \"-var \\\"\(.key)='\(.value)'\\\"\" ]
+            | join(\" \")" <<< "${combination}")
 
         echo "* Trying with ${inputs} ..." >&2
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
-            ${inputs} && return
+            -var "vm_name='${vm_name}'" ${inputs} && return
     done
     echo 'All required resources are sold out!' >&2 && return 1
 }
@@ -100,9 +104,7 @@ get_env_exports() {
 }
 
 get_input_var_combinations() {
-    # Return all combinations of input variables from its 1st
-    # parameter and concatenates each of the combinations with the
-    # 2nd parameter.
+    # Return all combinations of input variables from $1.
     #
     # Params:
     # * a JSON object of input variables each with possible values
@@ -122,46 +124,33 @@ get_input_var_combinations() {
     #         ]
     #     }
     #
-    # * part of one combination
-    #   + For example, one possible combination from the example
-    #     above is
-    #
-    #         -var "instance_type_family='ecs.gn8is'" -var "region='ap-southeast-5'"
-    #
-    #     so this 2nd parameter could be "" at the beginning or
-    #
-    #         -var "instance_type_family='ecs.gn8is'"
-    #
-    #     when called at the 2nd time.
-    local unprocessed_vars="${1:-}"
-    local generated_inputs="${2:-}"
-
-    if [[ -z ${unprocessed_vars} \
-        || $(jq 'keys | length' <<< "${unprocessed_vars}") == 0 ]]; then
-        echo "${generated_inputs}"
-        return 0
-    fi
-
-    generated_inputs="${generated_inputs:+${generated_inputs} }"
-    local cur_var
-    cur_var="$(jq 'to_entries | .[0]' <<< "${unprocessed_vars}")"
-
-    local cur_var_key
-    cur_var_key="$(jq -r '.key' <<< "${cur_var}")"
-    unprocessed_vars="$(jq "del(.${cur_var_key})" <<< "${unprocessed_vars}")"
-
-    local cur_var_vals
-    readarray -d '' cur_var_vals < \
-        <(jq --raw-output0 '.value.[]' <<< "${cur_var}")
-
-    local index
-    local cur_input
-    for index in "${!cur_var_vals[@]}"; do
-        cur_input="\"${cur_var_key}='${cur_var_vals[${index}]}'\""
-        get_input_var_combinations \
-            "${unprocessed_vars}" \
-            "${generated_inputs}-var ${cur_input}"
-    done
+    #     and it returns:
+    #   
+    #     {"instance_type_family":"ecs.gn8is","region":"ap-southeast-5"}
+    #     {"instance_type_family":"ecs.gn8is","region":"ap-northeast-1"}
+    #     {"instance_type_family":"ecs.gn8is","region":"eu-central-1"}
+    #     {"instance_type_family":"ecs.gn8is","region":"ap-southeast-1"}
+    #     {"instance_type_family":"ecs.gn7i","region":"ap-southeast-5"}
+    #     {"instance_type_family":"ecs.gn7i","region":"ap-northeast-1"}
+    #     {"instance_type_family":"ecs.gn7i","region":"eu-central-1"}
+    #     {"instance_type_family":"ecs.gn7i","region":"ap-southeast-1"}
+    #     {"instance_type_family":"ecs.gn6i","region":"ap-southeast-5"}
+    #     {"instance_type_family":"ecs.gn6i","region":"ap-northeast-1"}
+    #     {"instance_type_family":"ecs.gn6i","region":"eu-central-1"}
+    #     {"instance_type_family":"ecs.gn6i","region":"ap-southeast-1"}
+    local input_vars="${1:-}"
+    local combinations
+    combinations="$(jq -c '
+        to_entries
+        | reduce .[] as $cur_var (
+            [{}];
+            [
+                .[] as $combination
+                | $cur_var.value[] as $cur_var_val
+                | $combination + {($cur_var.key): $cur_var_val}
+            ])
+        | .[]' <<< "${input_vars}")"
+    echo "${combinations}"
 }
 
 run_cmd_retry() {
