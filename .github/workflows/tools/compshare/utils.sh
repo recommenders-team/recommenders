@@ -81,7 +81,7 @@ get_compute_spec() {
                     "GPU": 24
                 },
                 "CPU": 16,
-                "Price": 1.88,
+                "Price": 2.05,
                 "ChargeType": [
                     "Postpay",
                     "Spot"
@@ -94,7 +94,7 @@ get_compute_spec() {
                     "GPU": 32
                 },
                 "CPU": 16,
-                "Price": 3.0,
+                "Price": 3.15,
                 "ChargeType": [
                     "Postpay",
                     "Spot"
@@ -119,9 +119,10 @@ get_compute_spec() {
                     "GPU": 80
                 },
                 "CPU": 16,
-                "Price": 5.92,
+                "Price": 6.99,
                 "ChargeType": [
-                    "Postpay"
+                    "Postpay",
+                    "Spot"
                 ]
             },
             {
@@ -389,7 +390,7 @@ check_vm_requirement() {
 #---------------------------------------------------------------------
 create_instance() {
     # Create a VM instance
-    # See https://www.compshare.cn/docs/operation/api/createcompshareinstance
+    # See https://www.compshare.cn/docs/gpus/instance/createcompshareinstance
     #
     # Reponse:
     #   {
@@ -438,7 +439,7 @@ create_instance() {
 
 describe_instance() {
     # Get the list of VMs
-    # See https://www.compshare.cn/docs/operation/api/describecompshareinstance
+    # See https://www.compshare.cn/docs/gpus/instance/describecompshareinstance
 
     local response
     response="$(invoke_action 'DescribeCompShareInstance')"
@@ -457,7 +458,7 @@ get_project_list() {
 
 stop_instance() {
     # Shutdown the specified VM
-    # See https://www.compshare.cn/docs/operation/api/stopcompshareinstance
+    # See https://www.compshare.cn/docs/gpus/instance/stopcompshareinstance
     #
     # Params:
     # * VM ID
@@ -474,7 +475,7 @@ stop_instance() {
 
 terminate_instance() {
     # Delete the specified VM
-    # See https://www.compshare.cn/docs/operation/api/terminatecompshareinstance
+    # See https://www.compshare.cn/docs/gpus/instance/terminatecompshareinstance
     #
     # NOTE: The VM must be shut down before deletion
     #
@@ -584,7 +585,7 @@ allocate_vm() {
             then
                 echo "  + Trying charge type: ${charge_type} ..." >&2
                 # Try to create the VM 2 times
-                api_call_retry 2 create_instance \
+                api_call_retry 1 create_instance \
                     "${vm_name}" \
                     "${encoded_password_file}" \
                     "${gpu_type}" \
