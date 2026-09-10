@@ -6,7 +6,7 @@
 ######################################################################
 # Configure APT and network for speedup.
 #
-# It assumed that there is a configuration file called
+# It assumes that there is a configuration file called
 #
 #     config.yml
 #

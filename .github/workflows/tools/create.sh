@@ -10,13 +10,23 @@
 # * The script must set the environment variable SSH_DEST into
 #   $GITHUB_ENV for subsequent steps.
 # * It is assumed that the directory ${CLOUD_SERVICE@L}/tf contains
-#   the Terraform configuration files for creating the VM.
-# * It is also assumed the Terraform configuration outputs 2 values:
+#   the Terraform configuration files for creating the VM, and the
+#   Terraform configuration outputs 2 values:
 #   + ssh_dest
 #     - The SSH destionation of the VM in the form of
 #       username@ip_address
 #   + ssh_key
 #     - The name of the SSH key file
+# * It is also assumed that there is a configuration file called
+#
+#     config.yml
+#
+#   in a directory named '${CLOUD_SERVICE@L}' under the
+#   script directory.  In config.yml, the following key may need to be
+#   set:
+#   + secret_key_name
+#     - the name of the secret of private key for the cloud service
+#       indicated by the environment variable CLOUD_SERVICE.
 #
 # Params:
 # * VM name

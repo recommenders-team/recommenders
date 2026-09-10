@@ -4,7 +4,21 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Delete the VM created using Terraform.
+# Delete the VM using Terraform.
+#
+# NOTE:
+# * It is assumed that the directory ${CLOUD_SERVICE@L}/tf contains
+#   the Terraform configuration files for creating the VM.
+# * It is also assumed that there is a configuration file called
+#
+#     config.yml
+#
+#   in a directory named '${CLOUD_SERVICE@L}' under the
+#   script directory.  In config.yml, the following key may need to be
+#   set:
+#   + secret_key_name
+#     - the name of the secret of private key for the cloud service
+#       indicated by the environment variable CLOUD_SERVICE.
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE
