@@ -539,7 +539,7 @@ allocate_vm() {
       || ! -f ${encoded_password_file} \
       || -z ${requirements} ]] && return 1
 
-    echo "Allocating a new VM named ${vm_name} ..." >&2
+    echo "Allocating a new VM named ${vm_name} ..."
     local compute_spec
     compute_spec="$(get_compute_spec)"
 
@@ -549,7 +549,7 @@ allocate_vm() {
     for ((index=0; index<"${num_computes}"; index++)); do
         local compute
         compute="$(jq -c ".[${index}]" <<< "${compute_spec}")"
-        echo "* Trying spec: ${compute}" >&2
+        echo "* Trying spec: ${compute}"
 
         # Check if the compute satisfy requirements
         local reqt
@@ -558,7 +558,7 @@ allocate_vm() {
             local match
             match="$(check_vm_requirement "${compute}" "${reqt}")"
             if [[ "${match}" != 'true' ]]; then
-                echo '  + Requirements mismatch.' >&2
+                echo '  + Requirements mismatch.'
                 continue
             fi
         fi
@@ -583,7 +583,7 @@ allocate_vm() {
             if jq -e "map(. == \"${charge_type}\") 
                 | any" <<< "${available_charge_type}" > /dev/null
             then
-                echo "  + Trying charge type: ${charge_type} ..." >&2
+                echo "  + Trying charge type: ${charge_type} ..."
                 # Try to create the VM 2 times
                 api_call_retry 1 create_instance \
                     "${vm_name}" \

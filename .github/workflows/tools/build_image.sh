@@ -12,7 +12,7 @@
 # * Test group
 # * Python version
 #
-# It assumed that there is a configuration file called
+# It assumes that there is a configuration file called
 #
 #     config.yml
 #

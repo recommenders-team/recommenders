@@ -22,6 +22,7 @@ shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
 vm_name="${1:-}"
+
 [[ -z ${vm_name} ]] && { echo 'No VM specified.'; exit 0; }
 
 utils_sh="${script_dir}/utils.sh"
@@ -54,7 +55,7 @@ while true; do
         echo "The VM ${vm_name} may not be created."
         exit 0
     fi
-    echo "Attempt ${attempt} failed! The VM info may not be available. Retrying in ${delay} seconds ..." >&2
+    echo "* Attempt ${attempt} failed! The VM info may not be available. Retrying in ${delay} seconds ..." >&2
     sleep "${delay}"
     ((attempt++))
 done
