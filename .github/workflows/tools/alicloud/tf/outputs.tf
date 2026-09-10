@@ -7,3 +7,7 @@
 output "ssh_dest" {
   value = "root@${alicloud_instance.reco.public_ip}"
 }
+
+output "ssh_key" {
+  value = local.key_file_name
+}

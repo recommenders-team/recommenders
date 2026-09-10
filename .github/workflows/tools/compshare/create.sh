@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Create a CompShare VM and prepare the environment for testing
+# Create a CompShare VM.
 #
 # The script must set the environment variable SSH_DEST into
 # $GITHUB_ENV for subsequent steps.
@@ -27,6 +27,7 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 test_type="${2:-}"
+
 [[ -z ${vm_name} || -z ${test_type} ]] && exit 1
 
 utils_sh="${script_dir}/utils.sh"

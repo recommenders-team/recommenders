@@ -4,10 +4,19 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Create an VM using Terraform and prepare the environment for testing.
+# Create an VM using Terraform.
 #
-# The script must set the environment variable SSH_DEST into
-# $GITHUB_ENV for subsequent steps.
+# NOTE:
+# * The script must set the environment variable SSH_DEST into
+#   $GITHUB_ENV for subsequent steps.
+# * It is assumed that the directory ${CLOUD_SERVICE@L}/tf contains
+#   the Terraform configuration files for creating the VM.
+# * It is also assumed the Terraform configuration outputs 2 values:
+#   + ssh_dest
+#     - The SSH destionation of the VM in the form of
+#       username@ip_address
+#   + ssh_key
+#     - The name of the SSH key file
 #
 # Params:
 # * VM name
@@ -23,7 +32,8 @@
 #   + It contains the access key secret or private key for the
 #     selected cloud service APIs.  For example,
 #     - It will be used as ALIBABA_CLOUD_ACCESS_KEY_SECRET for
-#       AliCloud.
+#       AliCloud, and ALIBABA_CLOUD_ACCESS_KEY_SECRET should be
+#       specified by secret_key_name in config.yml
 # * CLOUD_SERVICE_ENVS
 #   + It may contain the following keys in JSON:
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required when using AliCloud)
@@ -82,6 +92,7 @@ script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 test_type="${2:-}"
 test_group="${3:-}"
+
 [[ -z ${vm_name} \
   || -z ${test_type} \
   || -z ${test_group} \
@@ -130,6 +141,7 @@ echo 'Exporting VM info for subsequent steps ...'
 ssh_dest="$(terraform -chdir="${tf_config_dir}" output -json ssh_dest | jq -r)"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
+ssh_key="$(terraform -chdir="${tf_config_dir}" output -json ssh_key | jq -r)"
+ssh_key="${tf_config_dir}/${ssh_key}"
 wait_for_vm_to_be_available "${ssh_dest}"
-ssh_key="${tf_config_dir}/${vm_name}"
 setup_ssh_key "${ssh_dest}" "${ssh_key}"
