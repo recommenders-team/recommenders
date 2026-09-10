@@ -4,7 +4,18 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Install Docker in rootless mode
+# Install Docker or not if already installed.
+#
+# It assumed that there is a configuration file called
+#
+#     config.yml
+#
+# in a directory named '${CLOUD_SERVICE@L}' under the
+# script directory.  In config.yml, the following key may need to be
+# set:
+# * docker_download_mirror
+#   + the mirror to be used for downloading Docker installation
+#     packages.
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE

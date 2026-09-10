@@ -6,15 +6,16 @@
 ######################################################################
 # Do post-create setup on the VM.
 #
-# It assumed that there is a configuration file called
-# config.yml in a directory named '${CLOUD_SERVICE@L}' under the
-# script directory.  In config.yml,
-# * there is a key 'scripts.post_create' with the list of scripts
-#   for post-create setup as its value.
-# * Each item of the script list is an object with a key 'script'
-#   referring to the path to the script and a key 'reboot'
-#   indicating whether reboot is required after running the
-#   script.
+# It is assumed there are 3 files in the script directory:
+# * configure.sh
+#   + Basic configurations, such as
+#     - APT mirror and auto update
+#     - betwork: HTTP/HTTPS proxies, DNS
+# * install_docker.sh
+#   + For Docker installation
+# * install_nvidia_tools.sh
+#   + For installing NVIDIA tools such as CUDA driver and container
+#     toolkit
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
@@ -31,6 +32,7 @@
 #     - VM_PROXY_CERTIFICATE (optional)
 # * SSH_DEST
 #   + in the format like username@ip_address
+#   + If not set, then no post create actions are performed.
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -55,7 +57,7 @@ if [[ -n ${SSH_DEST} ]]; then
     echo 'Importing utility functions ...'
     source "${utils_sh}"
 
-    echo 'Uploading tools to the VM ...' >&2
+    echo 'Uploading tools to the VM ...'
     scp -qr -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${script_dir}" "${SSH_DEST}":
@@ -64,7 +66,7 @@ if [[ -n ${SSH_DEST} ]]; then
         script="${setup_scripts[${index}]}"
 
         wait_for_vm_to_be_available "${SSH_DEST}"
-        echo "Running ${script} on the VM ..." >&2
+        echo "Running ${script} on the VM ..."
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             "${SSH_DEST}" "\
@@ -73,7 +75,7 @@ if [[ -n ${SSH_DEST} ]]; then
                 bash ./${script}"
     done
 
-    echo 'Rebooting for setup to take effect ...' >&2
+    echo 'Rebooting for setup to take effect ...'
     ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         "${SSH_DEST}" "sudo reboot" || true

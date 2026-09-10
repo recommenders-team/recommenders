@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Install NVIDIA CUDA driver and container toolkit (**reboot required**)
+# Install NVIDIA CUDA driver and container toolkit or not if already
+# installed. (**reboot required**)
 #
 # See
 # * https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
@@ -14,6 +15,7 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
+
 utils_sh="${script_dir}/utils.sh"
 
 
