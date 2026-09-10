@@ -5,12 +5,22 @@
 
 ######################################################################
 # Build the Docker image
-# 
+#
 # Params:
 # * Docker image tag
 # * Path to Dockerfile in the repo
 # * Test group
 # * Python version
+#
+# It assumed that there is a configuration file called
+#
+#     config.yml
+#
+# in a directory named '${CLOUD_SERVICE@L}' under the
+# script directory.  In config.yml, the following key may need to be
+# set:
+# * apt_mirror
+#   + the APT mirror to be used for downloading system packages.
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE
