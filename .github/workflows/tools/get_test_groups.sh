@@ -5,15 +5,20 @@
 
 ######################################################################
 # Get the test groups from test group configuration file.
-# 
+#
+# NOTE:
+# * This script is used in GitHub Actions workflows and uses
+#   GITHUB_OUTPUT to output variables for subsequent jobs.
+# * yq is required to run this script, and it is preinstalled on the
+#   GitHub Actions runner image ubuntu-24.04.  See
+#   https://github.com/actions/runner-images/blob/9b8c9709431a8d2b295fd46cf96f283d671f20d9/images/ubuntu/Ubuntu2404-Readme.md?plain=1#L100
+#   
+#
 # Params:
 #   * Path to test group configuration file relative to the repo root
 #   * Type of test - pr_gate or nightly
 #   * Test compute - cpu, gpu or spark.  It is only used for nightly
 #     not pr_gate
-#
-# This script is used in GitHub Actions workflows and uses
-# GITHUB_OUTPUT to output variables for subsequent jobs.
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit

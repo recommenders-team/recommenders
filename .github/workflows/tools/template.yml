@@ -6,7 +6,8 @@
 # This is a reusable workflow called by other workflows to run
 # different groups of tests categorized by their types.
 #
-# Tests collected in tests/test_groups.yml, are grouped based on
+# Tests collected in ../../../tests/test_groups.yml, are grouped
+# based on
 # their
 # * type
 #   + pr_gate
@@ -66,9 +67,6 @@ env:
 
 jobs:
   get-test-groups:
-    # yq is required to run .github/actions/get-test-groups, and it
-    # is preinstalled on ubuntu-24.04
-    # (https://github.com/actions/runner-images/blob/9b8c9709431a8d2b295fd46cf96f283d671f20d9/images/ubuntu/Ubuntu2404-Readme.md?plain=1#L100)
     runs-on: ubuntu-24.04
     outputs:
       groups: ${{ steps.get-test-groups.outputs.groups }}
@@ -108,7 +106,7 @@ jobs:
       CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
       CLOUD_SERVICE_ENVS: ${{ vars.CLOUD_SERVICE_ENVS }}
       # * GPU tests should run on GPUs.
-      # * cpu-nightly needs to run on larger CPU runner.
+      # * cpu-nightly needs to run on larger CPU runner with 32GB memory.
       # * Otherwise, standard runner is enough.
       EXTRA_VM_REQUIRED: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
     steps:
@@ -142,10 +140,12 @@ jobs:
         # The script for creating a VM must explictly set the
         # environment variable SSH_DEST into $GITHUB_ENV.
         run: |
-          cloud_service_dir="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}"
-          create_script="$(yq -e '.scripts.create' \
-              "${cloud_service_dir}/config.yml")"
-          bash "${cloud_service_dir}/${create_script}" \
+          create_script_name='create.sh'
+          create_script="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}/${create_script_name}"
+          if [[ ! -f ${create_script} ]]; then
+              create_script="${{ inputs.tools_dir }}/${create_script_name}"
+          fi
+          bash "${create_script}" \
                "${VM_NAME}" \
                '${{ inputs.type }}' \
                '${{ matrix.group }}'
@@ -172,7 +172,9 @@ jobs:
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         run: |
-          cloud_service_dir="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}"
-          delete_script="$(yq -e '.scripts.delete' \
-              "${cloud_service_dir}/config.yml")"
-          bash "${cloud_service_dir}/${delete_script}" "${VM_NAME}"
+          delete_script_name='delete.sh'
+          delete_script="${{ inputs.tools_dir }}/${CLOUD_SERVICE@L}/${delete_script_name}"
+          if [[ ! -f ${delete_script} ]]; then
+              delete_script="${{ inputs.tools_dir }}/${delete_script_name}"
+          fi
+          bash "${delete_script}" "${VM_NAME}"
