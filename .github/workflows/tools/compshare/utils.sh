@@ -19,6 +19,199 @@ source "$(dirname "$0")/../utils.sh"
 #---------------------------------------------------------------------
 # Utils used by other CompShare API wrappers and utils
 #---------------------------------------------------------------------
+check_vm_requirement() {
+    # Check if the VM specification match the requirements.
+    #
+    # Params:
+    # * VM specification in JSON
+    # * requirements in JSON, for example
+    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #     - It means the GPUType should not be 2080 and P40,
+    #       GPU memory should be greater than or equal to 10GB
+    #       and CPU 9GB.
+    #   + {"GPUType":"2080,P40"}
+    #     - It means the GPUType should be 2080 or P40.
+    local spec="${1:-}"
+    local requirements="${2:-}"
+
+    local match
+    match=$(jq -s '
+        def equalstr($a; $b):
+            if ($a | startswith(" ")) then
+                equalstr(($a | ltrimstr(" ")); $b)
+            elif ($a | endswith(" ")) then
+                equalstr(($a | rtrimstr(" ")); $b)
+            else
+                $a == $b
+            end;
+        def compareitem($req; $spec; $i):
+            ($req | getpath($i)) as $a
+            | ($spec | getpath($i)) as $b
+            | ($a | type) as $ta
+            | if $ta == "string" then
+                $a | if startswith("!") then
+                    $a | ltrimstr("!") | split(",")
+                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
+                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+                else
+                    $a | split(",")
+                    | reduce .[] as $i (false; . or equalstr($i; $b))
+                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                end
+            elif $ta == "number" then
+                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+            else
+                true
+            end;
+        .[0] as $req
+        | .[1] as $spec
+        | .[0] | [path(..)]
+        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
+        <(echo "${requirements}") <(echo "${spec}"))
+
+    echo "${match}"
+}
+
+gen_action_digest() {
+    # Generate the digest for the action requrest parameters
+    # See https://docs.ucloud.cn/api/summary/signature
+    # 
+    # Params:
+    # * API action specification in JSON
+    # * (Optional) file containing the base64-encoded login password
+    local action_spec="${1:-}"
+    local encoded_password_file="${2:-}"
+    [[ -z ${action_spec} ]] && return 1
+
+    # Store the spec into a file to hide the password from being
+    # visible
+    local action_spec_file
+    action_spec_file="$(mktemp)"
+    echo "${action_spec}" > "${action_spec_file}"
+    if [[ -n ${encoded_password_file} ]]; then
+        echo "${action_spec}" \
+            | jq --rawfile encoded_password "${encoded_password_file}" \
+                '.Password = $encoded_password' \
+                > "${action_spec_file}"
+    fi
+
+    local reset_x=false
+    [[ "$-" == *x* ]] && reset_x=true
+    set +x
+
+    # COMPSHARE_PRIVATE_KEY are set as an environment variable,
+    # not directly in the script
+    local digest
+    digest="$(\
+        jq -r 'to_entries | sort | map("\(.key)\(.value)") | join("")' \
+            "${action_spec_file}" \
+        | tr -d '\n' \
+        | cat - <(echo "${COMPSHARE_PRIVATE_KEY}") \
+        | tr -d '\n' \
+        | sha1sum \
+        | head -c 40)"
+    rm -rf "${action_spec_file}"
+
+    [[ "${reset_x}" == true ]] && set -x
+
+    echo "${digest}"
+}
+
+gen_request_url() {
+    # Generate the API request URL using the action specification and
+    # the parameter digest
+    #
+    # Params:
+    # * API action name
+    # * (Optional) updates for the parameters in JSON
+    # * (Optional) file containing the base64-encoded login password
+    local action="${1:-}"
+    local updates="${2:-}"
+    local encoded_password_file="${3:-}"
+    [[ -z ${action} ]] && return 1
+
+    local action_spec
+    action_spec="$(get_action_template "${action}")"
+
+    if [[ -n ${updates} ]]; then
+        action_spec="$(update_json "${action_spec}" "${updates}")"
+    fi
+
+    local digest
+    digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
+    local params
+    params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
+        <<< "${action_spec}")"
+    echo "https://api.compshare.cn/?${params}&Signature=${digest}"
+}
+
+get_action_template() {
+    # Get the specification template for a specific action
+    #
+    # Params:
+    # * API action name
+    local action="${1:-}"
+    [[ -z ${action} ]] && return 1
+
+    local action_template
+    action_template="$(cat << 'EOF'
+        [
+            {
+                "Action": "CreateCompShareInstance",
+                "ChargeType": "Postpay",
+                "CompShareImageId": "compshareImage-12rjyhwynazd",
+                "Disks.0.IsBoot": true,
+                "Disks.0.Size": 100,
+                "Disks.0.Type": "CLOUD_SSD",
+                "GPU": 1,
+                "GPUType": "",
+                "MachineType": "G",
+                "Memory": 65536,
+                "Name": "",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "CPU": 8
+            },
+            {
+                "Action": "DescribeCompShareInstance"
+            },
+            {
+                "Action": "GetProjectList"
+            },
+            {
+                "Action": "StopCompShareInstance",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "UHostId": ""
+            },
+            {
+                "Action": "TerminateCompShareInstance",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "UHostId": "",
+                "ReleaseUDisk": true
+            },
+            {
+                "Action": "UpdateCompShareStopScheduler",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "ProjectId": "org-hmgw4i",
+                "UHostId": "",
+                "SchedulerStopTime": 1779164372
+            }
+        ]
+EOF
+    )"
+    action_template="$(jq ".[] | select(.Action == \"${action}\")" \
+        <<< "${action_template}")"
+
+    # COMPSHARE_PUBLIC_KEY is not set directly in the script
+    action_template="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
+        <<< "${action_template}")"
+
+    echo "${action_template}"
+}
+
 get_compute_spec() {
     # Return the specification for all available CompShare computes.
     local compute_spec
@@ -157,146 +350,6 @@ EOF
     echo "${compute_spec}"
 }
 
-get_action_template() {
-    # Get the specification template for a specific action
-    #
-    # Params:
-    # * API action name
-    local action="${1:-}"
-    [[ -z ${action} ]] && return 1
-
-    local action_template
-    action_template="$(cat << 'EOF'
-        [
-            {
-                "Action": "CreateCompShareInstance",
-                "ChargeType": "Postpay",
-                "CompShareImageId": "compshareImage-12rjyhwynazd",
-                "Disks.0.IsBoot": true,
-                "Disks.0.Size": 100,
-                "Disks.0.Type": "CLOUD_SSD",
-                "GPU": 1,
-                "GPUType": "",
-                "MachineType": "G",
-                "Memory": 65536,
-                "Name": "",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "CPU": 8
-            },
-            {
-                "Action": "DescribeCompShareInstance"
-            },
-            {
-                "Action": "GetProjectList"
-            },
-            {
-                "Action": "StopCompShareInstance",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "UHostId": ""
-            },
-            {
-                "Action": "TerminateCompShareInstance",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "UHostId": "",
-                "ReleaseUDisk": true
-            },
-            {
-                "Action": "UpdateCompShareStopScheduler",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "ProjectId": "org-hmgw4i",
-                "UHostId": "",
-                "SchedulerStopTime": 1779164372
-            }
-        ]
-EOF
-    )"
-    action_template="$(jq ".[] | select(.Action == \"${action}\")" \
-        <<< "${action_template}")"
-
-    # COMPSHARE_PUBLIC_KEY is not set directly in the script
-    action_template="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
-        <<< "${action_template}")"
-
-    echo "${action_template}"
-}
-
-gen_action_digest() {
-    # Generate the digest for the action requrest parameters
-    # See https://docs.ucloud.cn/api/summary/signature
-    # 
-    # Params:
-    # * API action specification in JSON
-    # * (Optional) file containing the base64-encoded login password
-    local action_spec="${1:-}"
-    local encoded_password_file="${2:-}"
-    [[ -z ${action_spec} ]] && return 1
-
-    # Store the spec into a file to hide the password from being
-    # visible
-    local action_spec_file
-    action_spec_file="$(mktemp)"
-    echo "${action_spec}" > "${action_spec_file}"
-    if [[ -n ${encoded_password_file} ]]; then
-        echo "${action_spec}" \
-            | jq --rawfile encoded_password "${encoded_password_file}" \
-                '.Password = $encoded_password' \
-                > "${action_spec_file}"
-    fi
-
-    local reset_x=false
-    [[ "$-" == *x* ]] && reset_x=true
-    set +x
-
-    # COMPSHARE_PRIVATE_KEY are set as an environment variable,
-    # not directly in the script
-    local digest
-    digest="$(\
-        jq -r 'to_entries | sort | map("\(.key)\(.value)") | join("")' \
-            "${action_spec_file}" \
-        | tr -d '\n' \
-        | cat - <(echo "${COMPSHARE_PRIVATE_KEY}") \
-        | tr -d '\n' \
-        | sha1sum \
-        | head -c 40)"
-    rm -rf "${action_spec_file}"
-
-    [[ "${reset_x}" == true ]] && set -x
-
-    echo "${digest}"
-}
-
-gen_request_url() {
-    # Generate the API request URL using the action specification and
-    # the parameter digest
-    #
-    # Params:
-    # * API action name
-    # * (Optional) updates for the parameters in JSON
-    # * (Optional) file containing the base64-encoded login password
-    local action="${1:-}"
-    local updates="${2:-}"
-    local encoded_password_file="${3:-}"
-    [[ -z ${action} ]] && return 1
-
-    local action_spec
-    action_spec="$(get_action_template "${action}")"
-
-    if [[ -n ${updates} ]]; then
-        action_spec="$(update_json "${action_spec}" "${updates}")"
-    fi
-
-    local digest
-    digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
-    local params
-    params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
-        <<< "${action_spec}")"
-    echo "https://api.compshare.cn/?${params}&Signature=${digest}"
-}
-
 invoke_action() {
     # Call the API for the specified action
     #
@@ -328,60 +381,6 @@ invoke_action() {
     fi
 
     echo "${response}"
-}
-
-
-check_vm_requirement() {
-    # Check if the VM specification match the requirements.
-    #
-    # Params:
-    # * VM specification in JSON
-    # * requirements in JSON, for example
-    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
-    #     - It means the GPUType should not be 2080 and P40,
-    #       GPU memory should be greater than or equal to 10GB
-    #       and CPU 9GB.
-    #   + {"GPUType":"2080,P40"}
-    #     - It means the GPUType should be 2080 or P40.
-    local spec="${1:-}"
-    local requirements="${2:-}"
-
-    local match
-    match=$(jq -s '
-        def equalstr($a; $b):
-            if ($a | startswith(" ")) then
-                equalstr(($a | ltrimstr(" ")); $b)
-            elif ($a | endswith(" ")) then
-                equalstr(($a | rtrimstr(" ")); $b)
-            else
-                $a == $b
-            end;
-        def compareitem($req; $spec; $i):
-            ($req | getpath($i)) as $a
-            | ($spec | getpath($i)) as $b
-            | ($a | type) as $ta
-            | if $ta == "string" then
-                $a | if startswith("!") then
-                    $a | ltrimstr("!") | split(",")
-                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
-                else
-                    $a | split(",")
-                    | reduce .[] as $i (false; . or equalstr($i; $b))
-                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
-                end
-            elif $ta == "number" then
-                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
-            else
-                true
-            end;
-        .[0] as $req
-        | .[1] as $spec
-        | .[0] | [path(..)]
-        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-        <(echo "${requirements}") <(echo "${spec}"))
-
-    echo "${match}"
 }
 
 
@@ -598,38 +597,6 @@ allocate_vm() {
     return 1
 }
 
-get_vm_info() {
-    # Get VM info
-    #
-    # Returns:
-    # * VM ID
-    # * SSH destination, in the format like `user@ip_address`
-    #
-    # Params:
-    # * VM name
-    local vm_name="${1:-}"
-    [[ -z ${vm_name} ]] && return 1
-
-    echo "Getting info of the VM ..." >&2
-    local response
-    response="$(api_call_retry describe_instance)"
-
-    local vm_info
-    vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
-        <<< "${response}")"
-    [[ -z ${vm_info} ]] && return 1
-    
-    local vm_id
-    vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
-
-    local ssh_dest
-    ssh_dest="$(jq -r '.SshLoginCommand' <<< "${vm_info}" \
-        | cut -d ' ' -f 2)"
-
-    echo "${vm_id}"
-    echo "${ssh_dest}"
-}
-
 api_call_retry() {
     # Run the API call in "$@" and retry "$1" times
     # (5 by default) on failure.
@@ -664,4 +631,36 @@ api_call_retry() {
     done
 
     echo "${response}"
+}
+
+get_vm_info() {
+    # Get VM info
+    #
+    # Returns:
+    # * VM ID
+    # * SSH destination, in the format like `user@ip_address`
+    #
+    # Params:
+    # * VM name
+    local vm_name="${1:-}"
+    [[ -z ${vm_name} ]] && return 1
+
+    echo "Getting info of the VM ..." >&2
+    local response
+    response="$(api_call_retry describe_instance)"
+
+    local vm_info
+    vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
+        <<< "${response}")"
+    [[ -z ${vm_info} ]] && return 1
+    
+    local vm_id
+    vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
+
+    local ssh_dest
+    ssh_dest="$(jq -r '.SshLoginCommand' <<< "${vm_info}" \
+        | cut -d ' ' -f 2)"
+
+    echo "${vm_id}"
+    echo "${ssh_dest}"
 }
