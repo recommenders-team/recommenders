@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Build the Docker image
+# Run the tests in a Docker container.
 # 
 # Params:
 # * Docker image tag
