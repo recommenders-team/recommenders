@@ -69,11 +69,11 @@ apply_tf_config() {
             | [ .[] | \"-var \\\"\(.key)='\(.value)'\\\"\" ]
             | join(\" \")" <<< "${combination}")
 
-        echo "* Trying with ${inputs} ..." >&2
+        echo "* Trying with ${inputs} ..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
             -var "vm_name='${vm_name}'" ${inputs} && return
     done
-    echo 'All required resources are sold out!' >&2 && return 1
+    echo 'All required resources are sold out!' && return 1
 }
 
 get_env_exports() {
@@ -194,7 +194,7 @@ setup_ssh_key() {
       || -z ${sshkey_or_passfile} \
       || ! -f ${sshkey_or_passfile} ]] && return 1
 
-    echo 'Setting up SSH key for login ...' >&2
+    echo 'Setting up SSH key for login ...'
     local ssh_key_type
     if ssh_key_type="$(ssh-keygen -l -f "${sshkey_or_passfile}" \
         2>/dev/null)"; then
@@ -208,12 +208,12 @@ setup_ssh_key() {
         local key_file="${HOME}/.ssh/id_ed25519"
         local sshd_config="/etc/ssh/sshd_config"
 
-        echo '* Generating SSH key ...' >&2
+        echo '* Generating SSH key ...'
         if [[ ! -f ${key_file} || ! -f ${key_file}.pub ]]; then
             ssh-keygen -q -t ed25519 -N '' -f "${key_file}"
         fi
 
-        echo '* Deplying SSH key ...' >&2
+        echo '* Deplying SSH key ...'
         local -x SSHPASS
         read -r SSHPASS < <(cat "${encoded_password_file}" \
             | tr -d '\n' | base64 -d) || true
@@ -224,7 +224,7 @@ setup_ssh_key() {
             -o UserKnownHostsFile=/dev/null \
             "${ssh_dest}"
 
-        echo '* Disabling SSH password authentication ...' >&2
+        echo '* Disabling SSH password authentication ...'
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
             "${ssh_dest}" "\
@@ -263,7 +263,7 @@ update_json() {
 wait_for_apt_lock() {
     # Wait for processes releasing /var/lib/apt/lists/lock
     while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
-        echo 'Waiting for processes releasing /var/lib/apt/lists/lock ...' >&2
+        echo 'Waiting for processes releasing /var/lib/apt/lists/lock ...'
         sleep 5
     done
 }
@@ -277,7 +277,7 @@ wait_for_vm_to_be_available() {
     local ssh_dest="${1:-}"
     [[ -z ${ssh_dest} ]] && return 1
 
-    echo 'Waiting for the VM to be available ...' >&2
+    echo 'Waiting for the VM to be available ...'
     # Wait some time for the operation to be completed.
     sleep 5
     local count=0
@@ -293,7 +293,7 @@ wait_for_vm_to_be_available() {
         # Set timeout to (5 + 5) * 30 = 300 seconds
         [[ "${count}" -gt 30 ]] && return 1
         count=$((count + 1))
-        echo '* Still waiting ...' >&2
+        echo '* Still waiting ...'
         sleep 5
     done
 }
