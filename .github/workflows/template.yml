@@ -6,7 +6,7 @@
 # This is a reusable workflow called by other workflows to run
 # different groups of tests categorized by their types.
 #
-# Tests collected in ../../../tests/test_groups.yml, are grouped
+# Tests collected in ../../tests/test_groups.yml, are grouped
 # based on
 # their
 # * type
@@ -151,7 +151,7 @@ jobs:
                '${{ matrix.group }}'
           bash '${{ inputs.tools_dir }}/post_create.sh'
 
-      - name: Build image
+      - name: Build Docker image
         run: |
           bash '${{ inputs.tools_dir }}/build_image.sh' \
                "${IMAGE_TAG}" \
@@ -159,7 +159,7 @@ jobs:
                '${{ matrix.group }}' \
                '${{ matrix.python-version }}'
 
-      - name: Execute tests in container
+      - name: Execute tests in Docker container
         run: |
           bash '${{ inputs.tools_dir }}/run_tests.sh' \
                "${IMAGE_TAG}" \
