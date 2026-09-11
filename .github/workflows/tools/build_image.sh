@@ -62,18 +62,25 @@ utils_sh="${script_dir}/utils.sh"
 #--------------------------------------------------------------------
 if [[ ${test_group} == *gpu* ]]; then
     compute='gpu'
-    extras='[dev,gpu,spark]'
+    extras_gpu=',gpu'
 else
     compute='cpu'
-    extras='[dev]'
+    extras_gpu=''
 fi
 
-docker_args="-t ${image_tag} \
-    -f ${dockerfile} \
-    --build-arg COMPUTE=${compute} \
-    --build-arg EXTRAS=${extras} \
-    --build-arg GIT_REF= \
-    --build-arg PYTHON_VERSION=${python_version}"
+if [[ ${test_group} == *spark* ]]; then
+    extras_spark=',spark'
+else
+    extras_spark=''
+fi
+
+docker_args=(\
+    -t "${image_tag}" \
+    -f "${dockerfile}" \
+    --build-arg "COMPUTE=${compute}" \
+    --build-arg "EXTRAS=[dev${extras_gpu}${extras_spark}]" \
+    --build-arg 'GIT_REF=' \
+    --build-arg "PYTHON_VERSION=${python_version}")
 
 
 #--------------------------------------------------------------------
@@ -81,7 +88,7 @@ docker_args="-t ${image_tag} \
 #--------------------------------------------------------------------
 if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Building Docker image on current GitHub-hosted runner ...'
-    docker build . ${docker_args}
+    docker build . "${docker_args[@]}"
 else
     echo 'Importing utility functions ...'
     source "${utils_sh}"
@@ -93,39 +100,36 @@ else
         "${recommenders_dir_name}"
 
     echo '* Building the Docker image on the VM ...'
-    docker_args="${docker_args} \
-        --build-arg UV_INSECURE_HOST='github.com'"
+    docker_args+=(--build-arg 'UV_INSECURE_HOST=github.com')
 
     if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
         pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" \
             | sed -e 's|^.*://||' -e 's|:.*$||')"
         pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
         docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
-        docker_args="${docker_args} \
-            --build-arg NO_PROXY='${docker_no_proxy}' \
-            --build-arg no_proxy='${docker_no_proxy}'"
+        docker_args+=(\
+            --build-arg "NO_PROXY=${docker_no_proxy}" \
+            --build-arg "no_proxy=${docker_no_proxy}")
 
         if [[ -n ${VM_HTTP_PROXY:-} ]]; then
-            docker_args="${docker_args} \
-                --build-arg HTTP_PROXY='${VM_HTTP_PROXY}' \
-                --build-arg http_proxy='${VM_HTTP_PROXY}'"
+            docker_args+=(\
+                --build-arg "HTTP_PROXY=${VM_HTTP_PROXY}" \
+                --build-arg "http_proxy=${VM_HTTP_PROXY}")
         fi
 
         if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
-            docker_args="${docker_args} \
-                --build-arg HTTPS_PROXY='${VM_HTTPS_PROXY}' \
-                --build-arg https_proxy='${VM_HTTPS_PROXY}'"
+            docker_args+=(\
+                --build-arg "HTTPS_PROXY=${VM_HTTPS_PROXY}" \
+                --build-arg "https_proxy=${VM_HTTPS_PROXY}")
         fi
     fi
 
     if [[ -n ${VM_PIP_INDEX_URL:-} ]]; then
-        docker_args="${docker_args} \
-            --build-arg VM_PIP_INDEX_URL='${VM_PIP_INDEX_URL}'"
+        docker_args+=(--build-arg "VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL}")
     fi
 
     if [[ -n ${VM_PROXY_CERTIFICATE:-} ]]; then
-        docker_args="${docker_args} \
-            --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}'"
+        docker_args+=(--build-arg "VM_PROXY_CERTIFICATE=${VM_PROXY_CERTIFICATE}")
     fi
 
     run_cmd_retry ssh -t -o StrictHostKeyChecking=no \
@@ -134,5 +138,5 @@ else
         -o ServerAliveCountMax=10 \
         "${SSH_DEST}" "\
             cd ${recommenders_dir_name} \
-            && docker build . ${docker_args}"
+            && docker build ." "${docker_args[@]}"
 fi
