@@ -153,6 +153,83 @@ get_input_var_combinations() {
     echo "${combinations}"
 }
 
+pre_image_build() {
+    # Prepare for the Docker image build.
+    #
+    # DNS resolution of URLs pointing to and downloading from GitHub
+    # may fail on the VM side, so this function copies those files
+    # from GitHub on the Actions runner side, including:
+    # * SDKMan installation zip files
+    # * Recommenders repo
+    #
+    # Params:
+    # * SSH destination of the VM in the form of username@ip_address
+    # * path to the Dockerfile
+    # * path to config.yml
+    # * name of the directory containing the recommenders repo files
+    local ssh_dest="${1:-}"
+    local dockerfile="${2:-}"
+    local config_yml="${3:-}"
+    local recommenders_dir_name="{4:-recommenders}"
+
+    echo 'Preparing for the Docker image build ...'
+    echo '* Dowloading SDKMan files ...'
+    local sdkman_sh='sdkman.sh'
+    local sdkman_zip='sdkman.zip'
+    local sdkman_native_zip='sdkman-native.zip'
+    curl -LsSf -o "${sdkman_sh}" https://get.sdkman.io/?ci=true
+    local sdkman_service
+    sdkman_service="$(grep 'SDKMAN_SERVICE=' "${sdkman_sh}" \
+        | cut -d '"' -f 2)"
+    local sdkman_version
+    sdkman_version="$(grep 'SDKMAN_VERSION=' "${sdkman_sh}" \
+        | cut -d '"' -f 2)"
+    local sdkman_native_version
+    sdkman_native_version="$(grep 'SDKMAN_NATIVE_VERSION=' \
+        "${sdkman_sh}" | cut -d '"' -f 2)"
+    curl -LsSf -o "${sdkman_zip}" "${sdkman_service}/broker/download/sdkman/install/${sdkman_version}/linuxx64"
+    curl -LsSf -o "${sdkman_native_zip}" "${sdkman_service}/broker/download/native/install/${sdkman_native_version}/linuxx64"
+
+    echo '* Configuring SDKMan in Dockerfile ...'
+    sed -i \
+        -e "/USER/a \
+            WORKDIR /root \
+            COPY ./${sdkman_zip} /root/${sdkman_zip} \
+            COPY ./${sdkman_native_zip} /root/${sdkman_native_zip}" \
+        -e  "/get.sdkman.io/a \
+            && sed -i -e \"/* Downloading/a if [[ ! -f /root/${sdkman_zip} && ! -f /root/${sdkman_native_zip} ]]; then\" \\\\\\
+                    -e \"/download\\\/sdkman/a else cp /root/${sdkman_zip} \\\\\"\\\\$\{sdkman_zip_file\}\\\\\"; fi\" \\\\\\
+                    -e \"/download\\\/native/a else cp /root/${sdkman_native_zip} \\\\\"\\\\$\{sdkman_zip_file\}\\\\\"; fi\" \\\\\\
+                    ${sdkman_sh} \\\\" \
+        "${dockerfile}"
+
+    echo '* Configuring APT in Dockerfile ...'
+    if [[ -f ${config_yml} ]]; then
+        apt_mirror="$(yq '.apt_mirror // empty' "${config_yml}")"
+        if [[ -n ${apt_mirror} ]]; then
+            sed -i "/SHELL /a \
+                RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
+                        -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
+                        /etc/apt/sources.list.d/ubuntu.sources" \
+                "${dockerfile}"
+        fi
+    fi
+
+    echo '* Uploading recommenders ...'
+    local recomenders_tar="${recommenders_dir_name}.tar"
+    tar cf "../${recomenders_tar}" ./*
+    scp -q -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "../${recomenders_tar}" "${ssh_dest}":
+    rm -rf "../${recomenders_tar}"
+    ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "\
+            mkdir ${recommenders_dir_name} \
+            && tar xf ${recomenders_tar} -C ${recommenders_dir_name} \
+            && rm -rf ${recomenders_tar}"
+}
+
 run_cmd_retry() {
     # Run the command in "$@" and retry "$1" times
     # (5 by default) on failure.

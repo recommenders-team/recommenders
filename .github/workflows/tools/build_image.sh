@@ -53,6 +53,7 @@ python_version="${4:-}"
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
+recommenders_dir_name='recommenders'
 utils_sh="${script_dir}/utils.sh"
 
 
@@ -88,58 +89,10 @@ else
     echo 'Exporting environment variables ...'
     eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
-    echo "Building Docker image on the newly created VM ..."
-    echo '* Copying files to avoid download failure on the VM ...'
+    pre_image_build "${SSH_DEST}" "${dockerfile}" "${config_yml}" \
+        "${recommenders_dir_name}"
 
-    echo '  + Dowloading SDKMan files ...'
-    sdkman_sh='sdkman.sh'
-    sdkman_zip='sdkman.zip'
-    sdkman_native_zip='sdkman-native.zip'
-    curl -LsSf -o "${sdkman_sh}" https://get.sdkman.io/?ci=true
-    sdkman_service="$(grep 'SDKMAN_SERVICE=' "${sdkman_sh}" | cut -d '"' -f 2)/broker/download"
-    sdkman_version="install/$(grep 'SDKMAN_VERSION=' "${sdkman_sh}" | cut -d '"' -f 2)/linuxx64"
-    sdkman_native_version="install/$(grep 'SDKMAN_NATIVE_VERSION=' "${sdkman_sh}" | cut -d '"' -f 2)/linuxx64"
-    curl -LsSf -o "${sdkman_zip}" "${sdkman_service}/sdkman/${sdkman_version}"
-    curl -LsSf -o "${sdkman_native_zip}" "${sdkman_service}/native/${sdkman_native_version}"
-
-    echo '  + Configuring SDKMan in Dockerfile ...'
-    sed -i \
-        -e "/USER/a \
-            WORKDIR /root \
-            COPY ./${sdkman_zip} /root/${sdkman_zip} \
-            COPY ./${sdkman_native_zip} /root/${sdkman_native_zip}" \
-        -e  "/get.sdkman.io/a \
-            && sed -i -e \"/* Downloading/a if [[ ! -f /root/${sdkman_zip} && ! -f /root/${sdkman_native_zip} ]]; then\" \\\\\\
-                    -e \"/download\\\/sdkman/a else cp /root/${sdkman_zip} \\\\\"\\\\$\{sdkman_zip_file\}\\\\\"; fi\" \\\\\\
-                    -e \"/download\\\/native/a else cp /root/${sdkman_native_zip} \\\\\"\\\\$\{sdkman_zip_file\}\\\\\"; fi\" \\\\\\
-                    ${sdkman_sh} \\\\" \
-        "${dockerfile}"
-
-    echo '  + Configuring APT in Dockerfile ...'
-    if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq '.apt_mirror // empty' "${config_yml}")"
-        if [[ -n ${apt_mirror} ]]; then
-            sed -i "/SHELL /a \
-                RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
-                        -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
-                        /etc/apt/sources.list.d/ubuntu.sources" \
-                "${dockerfile}"
-        fi
-    fi
-
-    echo '  + Uploading recommenders ...'
-    tar cf ../recommenders.tar ./*
-    scp -q -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        ../recommenders.tar "${SSH_DEST}":
-    rm -rf ../recommenders.tar
-    ssh -t -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${SSH_DEST}" "\
-            mkdir recommenders \
-            && tar xf recommenders.tar -C recommenders \
-            && rm -rf recommenders.tar"
-
+    echo '* Building the Docker image on the VM ...'
     docker_args="${docker_args} \
         --build-arg UV_INSECURE_HOST='github.com'"
 
@@ -175,12 +128,11 @@ else
             --build-arg VM_PROXY_CERTIFICATE='${VM_PROXY_CERTIFICATE}'"
     fi
 
-    echo '* Building the final image ...'
     run_cmd_retry ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \
         -o ServerAliveCountMax=10 \
         "${SSH_DEST}" "\
-            cd recommenders; \
-            docker build . ${docker_args}"
+            cd ${recommenders_dir_name} \
+            && docker build . ${docker_args}"
 fi
