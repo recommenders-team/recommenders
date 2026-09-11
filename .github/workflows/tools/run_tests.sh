@@ -65,18 +65,18 @@ else
     eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
     echo 'Running tests on the newly created VM ...'
+    docker_args=()
     if [[ ${test_group} == *gpu* ]]; then
         check_gpu='nvidia-smi'
-        docker_args='--gpus all'
+        docker_args+=(--gpus all)
     else
         check_gpu='true'
-        docker_args=''
     fi
 
     if [[ -n ${VM_HTTP_PROXY:-} ]]; then
-        docker_args="${docker_args} \
-            --env HTTP_PROXY='${VM_HTTP_PROXY}' \
-            --env http_proxy='${VM_HTTP_PROXY}'"
+        docker_args+=(\
+            --env "HTTP_PROXY=${VM_HTTP_PROXY}" \
+            --env "http_proxy=${VM_HTTP_PROXY}")
     fi
 
     ssh -t -o StrictHostKeyChecking=no \
@@ -85,6 +85,6 @@ else
         -o ServerAliveCountMax=10 \
         "${SSH_DEST}" "\
             ${check_gpu} \
-            && docker run --rm ${docker_args} ${image_tag} \
+            && docker run --rm" "${docker_args[@]}" "${image_tag} \
                 bash -lc '${test_cmd}'"
 fi

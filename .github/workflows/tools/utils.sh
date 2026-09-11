@@ -64,14 +64,12 @@ apply_tf_config() {
     for index in "${!var_combinations[@]}"; do
         local combination="${var_combinations[${index}]}"
         local inputs
-        inputs=$(jq -r "
-            to_entries
-            | [ .[] | \"-var \\\"\(.key)='\(.value)'\\\"\" ]
-            | join(\" \")" <<< "${combination}")
+        readarray -t inputs < <(jq -r 'to_entries | .[]
+            | "-var", "\(.key)=\(.value)"' <<< "${combination}")
 
-        echo "* Trying with ${inputs} ..."
+        echo "* Trying with" "${inputs[@]}" "..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
-            -var "vm_name='${vm_name}'" ${inputs} && return
+            -var "vm_name=${vm_name}" "${inputs[@]}" && return
     done
     echo 'All required resources are sold out!' && return 1
 }
