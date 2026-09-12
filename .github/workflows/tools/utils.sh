@@ -54,7 +54,9 @@ apply_tf_config() {
     local tf_config_dir="${1:./}"
     local input_vars="${2:-}"
 
-    [[ -z ${vm_name} ]] && return 1
+    [[ -z ${vm_name} ]] \
+        && echo 'No VM name specified!' >&2 \
+        && return 1
 
     local var_combinations
     readarray -t var_combinations < \
@@ -267,7 +269,8 @@ setup_ssh_key() {
     local sshkey_or_passfile="${2:-}"
     [[ -z ${ssh_dest} \
       || -z ${sshkey_or_passfile} \
-      || ! -f ${sshkey_or_passfile} ]] && return 1
+      || ! -f ${sshkey_or_passfile} ]] \
+      && echo 'Parameter error!' >&2 return 1
 
     echo 'Setting up SSH key for login ...'
     local ssh_key_type
@@ -316,7 +319,8 @@ update_json() {
     # * the JSON with all updates
     local original="${1:-}"
     local updates="${2:-}"
-    [[ -z ${updates} || -z ${original} ]] && return 1
+    [[ -z ${updates} || -z ${original} ]] \
+      && echo 'Parameter error!' >&2 && return 1
 
     local res
     res=$(jq -s '
@@ -350,7 +354,7 @@ wait_for_vm_to_be_available() {
     # Params:
     # * SSH destination, in the format like `user@ip_address`
     local ssh_dest="${1:-}"
-    [[ -z ${ssh_dest} ]] && return 1
+    [[ -z ${ssh_dest} ]] && echo 'Parameter error!' >&2 && return 1
 
     echo 'Waiting for the VM to be available ...'
     # Wait some time for the operation to be completed.
@@ -365,8 +369,8 @@ wait_for_vm_to_be_available() {
             "${ssh_dest}" true 2>&1) \
         || grep -iq 'permission' <<< "${ssh_response}"
     do
-        # Set timeout to (5 + 5) * 30 = 300 seconds
-        [[ "${count}" -gt 30 ]] && return 1
+        # Set timeout to (5 + 5) * 60 = 600 seconds
+        [[ "${count}" -gt 60 ]] && echo 'Time out!' >&2 && return 1
         count=$((count + 1))
         echo '* Still waiting ...'
         sleep 5

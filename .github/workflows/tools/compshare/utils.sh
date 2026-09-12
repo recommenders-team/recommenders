@@ -81,7 +81,7 @@ gen_action_digest() {
     # * (Optional) file containing the base64-encoded login password
     local action_spec="${1:-}"
     local encoded_password_file="${2:-}"
-    [[ -z ${action_spec} ]] && return 1
+    [[ -z ${action_spec} ]] && echo 'Parameter error!' >&2 && return 1
 
     # Store the spec into a file to hide the password from being
     # visible
@@ -128,7 +128,7 @@ gen_request_url() {
     local action="${1:-}"
     local updates="${2:-}"
     local encoded_password_file="${3:-}"
-    [[ -z ${action} ]] && return 1
+    [[ -z ${action} ]] && echo 'Parameter error!' >&2 && return 1
 
     local action_spec
     action_spec="$(get_action_template "${action}")"
@@ -151,7 +151,7 @@ get_action_template() {
     # Params:
     # * API action name
     local action="${1:-}"
-    [[ -z ${action} ]] && return 1
+    [[ -z ${action} ]] && echo 'Parameter error!' >&2 && return 1
 
     local action_template
     action_template="$(cat << 'EOF'
@@ -360,7 +360,7 @@ invoke_action() {
     local action="${1:-}"
     local updates="${2:-}"
     local encoded_password_file="${3:-}"
-    [[ -z ${action} ]] && return 1
+    [[ -z ${action} ]] && echo 'Parameter error!' >&2 && return 1
 
     local request_url
     request_url="$(gen_request_url \
@@ -417,7 +417,8 @@ create_instance() {
       || -z ${gpu_type} \
       || -z ${cpu_cores} \
       || -z ${memory} \
-      || -z ${charge_type} ]] && return 1
+      || -z ${charge_type} ]] \
+      && echo 'Parameter error!' >&2 && return 1
 
     local updates
     updates="{\
@@ -461,7 +462,7 @@ stop_instance() {
     # Params:
     # * VM ID
     local vm_id="${1:-}"
-    [[ -z ${vm_id} ]] && return 1
+    [[ -z ${vm_id} ]] && echo 'Parameter error!' >&2 && return 1
 
     local updates
     updates="{\"UHostId\": \"${vm_id}\"}"
@@ -480,7 +481,7 @@ terminate_instance() {
     # Params:
     # * VM ID
     local vm_id="${1:-}"
-    [[ -z ${vm_id} ]] && return 1
+    [[ -z ${vm_id} ]] && echo 'Parameter error!' >&2 && return 1
 
     local updates
     updates="{\"UHostId\": \"${vm_id}\"}"
@@ -499,7 +500,7 @@ update_stop_scheduler() {
     # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC), in 3 hours by default
     local vm_id="${1:-}"
     local stop_time="${2:-}"
-    [[ -z ${vm_id} ]] && return 1
+    [[ -z ${vm_id} ]] && echo 'Parameter error!' >&2 && return 1
     [[ -z ${stop_time} ]] && stop_time="$(date --date='3 hours' '+%s')"
 
     local updates
@@ -535,7 +536,8 @@ allocate_vm() {
     [[ -z ${vm_name} \
       || -z ${encoded_password_file} \
       || ! -f ${encoded_password_file} \
-      || -z ${requirements} ]] && return 1
+      || -z ${requirements} ]] \
+      && echo 'Parameter error!' >&2 && return 1
 
     echo "Allocating a new VM named ${vm_name} ..."
     local compute_spec
@@ -593,7 +595,7 @@ allocate_vm() {
             fi
         done
     done
-    return 1
+    echo 'No available resources!' >&2 && return 1
 }
 
 api_call_retry() {
@@ -642,7 +644,7 @@ get_vm_info() {
     # Params:
     # * VM name
     local vm_name="${1:-}"
-    [[ -z ${vm_name} ]] && return 1
+    [[ -z ${vm_name} ]] && echo 'Parameter error!' >&2 && return 1
 
     echo "Getting info of the VM ..." >&2
     local response
@@ -651,7 +653,7 @@ get_vm_info() {
     local vm_info
     vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
         <<< "${response}")"
-    [[ -z ${vm_info} ]] && return 1
+    [[ -z ${vm_info} ]] && echo 'Parameter error!' >&2 && return 1
     
     local vm_id
     vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"

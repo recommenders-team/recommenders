@@ -31,7 +31,7 @@ test_group="${4:-}"
 [[ -z ${image_tag} \
   || -z ${test_groups_yml} \
   || -z ${test_type} \
-  || -z ${test_group} ]] && exit 1
+  || -z ${test_group} ]] && echo 'Parameter error!' >&2 && exit 1
 
 utils_sh="${script_dir}/utils.sh"
 reco_venv_dir='/root/.venvs/Recommenders'

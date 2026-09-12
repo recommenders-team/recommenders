@@ -48,7 +48,7 @@ python_version="${4:-}"
 [[ -z ${image_tag} \
   || -z ${dockerfile} \
   || -z ${test_group} \
-  || -z ${python_version} ]] && exit 1
+  || -z ${python_version} ]] && echo 'Parameter error!' >&2 && exit 1
 
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"

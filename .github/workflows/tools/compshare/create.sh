@@ -28,7 +28,8 @@ script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 test_type="${2:-}"
 
-[[ -z ${vm_name} || -z ${test_type} ]] && exit 1
+[[ -z ${vm_name} || -z ${test_type} ]] \
+    && echo 'Parameter error!' >&2 && exit 1
 
 utils_sh="${script_dir}/utils.sh"
 

@@ -39,7 +39,8 @@ shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
 
-[[ -z ${CLOUD_SERVICE:-} ]] && exit 1
+[[ -z ${CLOUD_SERVICE:-} ]] \
+    && echo 'CLOUD_SERVICE not set!' >&2 && exit 1
 
 cloud_service="${CLOUD_SERVICE}"
 cloud_service="${cloud_service@L}"
