@@ -50,35 +50,41 @@ test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && pytest --durations 0 ${test_list}"
 
 
+#--------------------------------------------------------------------
+# Generate Docker run args
+#--------------------------------------------------------------------
+echo 'Importing utility functions ...'
+source "${utils_sh}"
+
+echo 'Exporting environment variables ...'
+eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
+
+
+echo 'Generating Docker run args ...'
+docker_args=()
+if [[ ${test_group} == *gpu* ]]; then
+    check_gpu='nvidia-smi'
+    docker_args+=(--gpus all)
+else
+    check_gpu='true'
+fi
+
+if [[ -n ${VM_HTTP_PROXY:-} ]]; then
+    docker_args+=(\
+        --env "HTTP_PROXY=${VM_HTTP_PROXY}" \
+        --env "http_proxy=${VM_HTTP_PROXY}")
+fi
 
 #--------------------------------------------------------------------
 # Run tests
 #--------------------------------------------------------------------
 if [[ -z ${SSH_DEST:-} ]]; then
     echo 'Running tests on current GitHub-hosted runner ...'
-    docker run --rm "${image_tag}" bash -lc "${test_cmd}"
+    "${check_gpu}" \
+    && docker run --rm "${docker_args[@]}" "${image_tag}" \
+        bash -lc "${test_cmd}"
 else
-    echo 'Importing utility functions ...'
-    source "${utils_sh}"
-
-    echo 'Exporting environment variables ...'
-    eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
-
-    echo 'Running tests on the newly created VM ...'
-    docker_args=()
-    if [[ ${test_group} == *gpu* ]]; then
-        check_gpu='nvidia-smi'
-        docker_args+=(--gpus all)
-    else
-        check_gpu='true'
-    fi
-
-    if [[ -n ${VM_HTTP_PROXY:-} ]]; then
-        docker_args+=(\
-            --env "HTTP_PROXY=${VM_HTTP_PROXY}" \
-            --env "http_proxy=${VM_HTTP_PROXY}")
-    fi
-
+    echo 'Running tests on the VM ...'
     ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \

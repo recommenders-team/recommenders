@@ -58,9 +58,9 @@ utils_sh="${script_dir}/utils.sh"
 
 
 #--------------------------------------------------------------------
-# Generate basic build args
+# Generate basic Docker build args
 #--------------------------------------------------------------------
-echo 'Generating basic build args ...'
+echo 'Generating basic Docker build args ...'
 if [[ ${test_group} == *gpu* ]]; then
     compute='gpu'
     extras_gpu='gpu'
@@ -82,7 +82,7 @@ docker_args=(\
 
 
 #--------------------------------------------------------------------
-# Generate extra build args
+# Generate extra Docker build args
 #--------------------------------------------------------------------
 echo 'Importing utility functions ...'
 source "${utils_sh}"
@@ -90,7 +90,7 @@ source "${utils_sh}"
 echo 'Exporting environment variables ...'
 eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
-echo 'Generating extra build args ...'
+echo 'Generating extra Docker build args ...'
 if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" \
         | sed -e 's|^.*://||' -e 's|:.*$||')"
