@@ -123,22 +123,20 @@ jobs:
           ref: ${{ env.PR_REF }}
           allow-unsafe-pr-checkout: true
       
-      - name: Generate unique VM name and Docker image tag
+      - name: Generate unique name for VM and Docker image
         run: |
           if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
           then
               commit="$(echo ${{ github.event.pull_request.head.sha }} | head -c 5)"
-              vm_name_template="vm_${{ github.event.number }}_${commit}_XXXXXX"
+              name_template="reco_${{ github.event.number }}_${commit}_XXXXXX"
           else
               commit="$(echo ${{ github.sha }} | head -c 5)"
-              vm_name_template="vm_${commit}_XXXXXX"
+              name_template="reco_${commit}_XXXXXX"
           fi
-          image_tag="reco-${commit}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}"
-          vm_name="$(mktemp -u ${vm_name_template})"
+          unique_name="$(mktemp -u ${name_template})"
 
-          # Export VM_NAME and IMAGE_TAG for subsequent steps
-          echo "IMAGE_TAG=${image_tag}" >> "${GITHUB_ENV}"
-          echo "VM_NAME=${vm_name}" >> "${GITHUB_ENV}"
+          # Export UNIQUE_NAME for subsequent steps
+          echo "UNIQUE_NAME=${unique_name}" >> "${GITHUB_ENV}"
 
       - name: Setup VM
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) }}
@@ -153,7 +151,7 @@ jobs:
               create_script="${{ inputs.tools_dir }}/${create_script_name}"
           fi
           bash "${create_script}" \
-               "${VM_NAME}" \
+               "${UNIQUE_NAME}" \
                '${{ inputs.type }}' \
                '${{ matrix.group }}'
           bash '${{ inputs.tools_dir }}/post_create.sh'
@@ -161,7 +159,7 @@ jobs:
       - name: Build Docker image
         run: |
           bash '${{ inputs.tools_dir }}/build_image.sh' \
-               "${IMAGE_TAG}" \
+               "${UNIQUE_NAME}" \
                '${{ inputs.dockerfile }}' \
                '${{ matrix.group }}' \
                '${{ matrix.python-version }}' \
@@ -170,7 +168,7 @@ jobs:
       - name: Execute tests in Docker container
         run: |
           bash '${{ inputs.tools_dir }}/run_tests.sh' \
-               "${IMAGE_TAG}" \
+               "${UNIQUE_NAME}" \
                '${{ inputs.test_groups_yml }}' \
                '${{ inputs.type }}' \
                '${{ matrix.group }}' \
@@ -186,4 +184,4 @@ jobs:
           if [[ ! -f ${delete_script} ]]; then
               delete_script="${{ inputs.tools_dir }}/${delete_script_name}"
           fi
-          bash "${delete_script}" "${VM_NAME}" "${IMAGE_TAG}"
+          bash "${delete_script}" "${UNIQUE_NAME}"
