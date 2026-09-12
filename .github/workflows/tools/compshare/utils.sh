@@ -368,17 +368,16 @@ invoke_action() {
         "${updates}" \
         "${encoded_password_file}")"
 
-    local response
+    local password
     if [[ -n ${encoded_password_file} ]]; then
-        response="$(curl -LsSf \
-            --retry 5 --retry-delay 5 --retry-all-errors \
-            --url-query "Password@${encoded_password_file}" \
-            "${request_url}")"
-    else
-        response="$(curl -LsSf \
-            --retry 5 --retry-delay 5 --retry-all-errors \
-            "${request_url}")"
+        password=(--url-query "Password@${encoded_password_file}")
     fi
+
+    local response
+    response="$(curl -LsSf \
+        --retry 5 --retry-delay 5 --retry-all-errors \
+        "${password[@]}" \
+        "${request_url}")"
 
     echo "${response}"
 }
