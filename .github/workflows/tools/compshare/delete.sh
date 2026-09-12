@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Delete a CompShare VM
+# Delete the CompShare VM
 # 
 # Params:
 # * VM name
@@ -23,7 +23,7 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 
-[[ -z ${vm_name} ]] && { echo 'No VM specified.'; exit 0; }
+[[ -z ${vm_name} ]] && exit 0
 
 utils_sh="${script_dir}/utils.sh"
 
