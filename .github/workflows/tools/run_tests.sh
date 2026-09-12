@@ -11,6 +11,7 @@
 # * Path to test group configuration file relative to the repo root
 # * Type of test - pr_gate or nightly
 # * Test group
+# * Path to the virtual environment created inside the image
 #
 # The following environment variables may need to be set:
 # * CLOUD_SERVICE_ENVS
@@ -27,14 +28,15 @@ image_tag="${1:-}"
 test_groups_yml="${2:-}"
 test_type="${3:-}"
 test_group="${4:-}"
+venv_dir="${5:-}"
 
 [[ -z ${image_tag} \
   || -z ${test_groups_yml} \
   || -z ${test_type} \
-  || -z ${test_group} ]] && echo 'Parameter error!' >&2 && exit 1
+  || -z ${test_group} \
+  || -z ${venv_dir} ]] && echo 'Parameter error!' >&2 && exit 1
 
 utils_sh="${script_dir}/utils.sh"
-reco_venv_dir='/root/.venvs/Recommenders'
 
 
 #--------------------------------------------------------------------
@@ -46,7 +48,7 @@ test_list="$(yq "
     | join(\" \")" \
     "${test_groups_yml}")"
 test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
-    && source ${reco_venv_dir}/bin/activate \
+    && source ${venv_dir}/bin/activate \
     && pytest --durations 0 ${test_list}"
 
 

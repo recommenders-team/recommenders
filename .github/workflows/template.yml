@@ -57,6 +57,13 @@ on:
         required: true
         type: string
         description: Type of test - pr_gate or nightly
+      venv_dir:
+        required: false
+        type: string
+        # See also ../../tools/docker/Dockerfile
+        default: /root/.venvs/Recommenders
+        description: Path to the virtual environment in the Docker
+          image
     secrets:
       CLOUD_SERVICE_SECRET:
         required: true
@@ -157,7 +164,8 @@ jobs:
                "${IMAGE_TAG}" \
                '${{ inputs.dockerfile }}' \
                '${{ matrix.group }}' \
-               '${{ matrix.python-version }}'
+               '${{ matrix.python-version }}' \
+               '${{ inputs.venv_dir }}'
 
       - name: Execute tests in Docker container
         run: |
@@ -165,7 +173,8 @@ jobs:
                "${IMAGE_TAG}" \
                '${{ inputs.test_groups_yml }}' \
                '${{ inputs.type }}' \
-               '${{ matrix.group }}'
+               '${{ matrix.group }}' \
+               '${{ inputs.venv_dir }}'
 
       - name: Clean up
         if: ${{ always() && fromJSON(env.EXTRA_VM_REQUIRED) }}
@@ -177,4 +186,4 @@ jobs:
           if [[ ! -f ${delete_script} ]]; then
               delete_script="${{ inputs.tools_dir }}/${delete_script_name}"
           fi
-          bash "${delete_script}" "${VM_NAME}"
+          bash "${delete_script}" "${VM_NAME}" "${IMAGE_TAG}"

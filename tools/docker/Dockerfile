@@ -45,7 +45,7 @@ ARG EXTRAS=""
 # Valid versions: 3.10, 3.11
 ARG PYTHON_VERSION="3.11"
 
-ARG RECO_VENV_DIR=/root/.venvs/Recommenders
+ARG VENV_DIR=/root/.venvs/Recommenders
 
 # HTTPS proxy certificate if needed
 ARG VM_PROXY_CERTIFICATE=''
@@ -112,7 +112,7 @@ ENV UV_HTTP_TIMEOUT=300
 ARG UV_INSECURE_HOST
 # Use system python
 RUN --mount=type=cache,target=/opt/uv-cache/uv/python \
-    uv venv --no-managed-python --python ${PYTHON_VERSION} ${RECO_VENV_DIR}
+    uv venv --no-managed-python --python ${PYTHON_VERSION} ${VENV_DIR}
 
 
 #####################################################################
@@ -138,7 +138,7 @@ COPY ./ ${RECO_DIR}
 
 # Install Recommenders
 RUN --mount=type=cache,target=/opt/uv-cache/ \
-    source ${RECO_VENV_DIR}/bin/activate && \
+    source ${VENV_DIR}/bin/activate && \
     { count=0; \
       while true; do \
           if [[ -z ${GIT_REF} ]]; then \
@@ -152,10 +152,10 @@ RUN --mount=type=cache,target=/opt/uv-cache/ \
     }
 
 # Setup Jupyter notebook
-RUN source ${RECO_VENV_DIR}/bin/activate && \
+RUN source ${VENV_DIR}/bin/activate && \
     jupyter notebook --generate-config && \
     echo "c.MultiKernelManager.default_kernel_name = 'Recommenders'" >> /root/.jupyter/jupyter_notebook_config.py && \
     python -m ipykernel install --user --name Recommenders --display-name "Python (Recommenders)"
 
 EXPOSE 8888
-CMD source /root/.sdkman/bin/sdkman-init.sh && source ${RECO_VENV_DIR}/bin/activate && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.allow_origin='*' --IdentityProvider.token=''
+CMD source /root/.sdkman/bin/sdkman-init.sh && source ${VENV_DIR}/bin/activate && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.allow_origin='*' --IdentityProvider.token=''

@@ -11,6 +11,7 @@
 # * Path to Dockerfile in the repo
 # * Test group
 # * Python version
+# * Path to the virtual environment created inside the image
 #
 # It assumes that there is a configuration file called
 #
@@ -44,11 +45,13 @@ image_tag="${1:-}"
 dockerfile="${2:-}"
 test_group="${3:-}"
 python_version="${4:-}"
+venv_dir="${5:-}"
 
 [[ -z ${image_tag} \
   || -z ${dockerfile} \
   || -z ${test_group} \
-  || -z ${python_version} ]] && echo 'Parameter error!' >&2 && exit 1
+  || -z ${python_version} \
+  || -z ${venv_dir} ]] && echo 'Parameter error!' >&2 && exit 1
 
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
@@ -78,7 +81,8 @@ docker_args=(\
     --build-arg "COMPUTE=${compute}" \
     --build-arg "EXTRAS=[dev${extras_gpu:+,$extras_gpu}${extras_spark:+,$extras_spark}]" \
     --build-arg 'GIT_REF=' \
-    --build-arg "PYTHON_VERSION=${python_version}")
+    --build-arg "PYTHON_VERSION=${python_version}" \
+    --build-arg "VENV_DIR=${venv_dir}")
 
 
 #--------------------------------------------------------------------
