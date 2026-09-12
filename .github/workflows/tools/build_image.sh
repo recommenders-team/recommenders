@@ -58,8 +58,9 @@ utils_sh="${script_dir}/utils.sh"
 
 
 #--------------------------------------------------------------------
-# Determine build args
+# Generate basic build args
 #--------------------------------------------------------------------
+echo 'Generating basic build args ...'
 if [[ ${test_group} == *gpu* ]]; then
     compute='gpu'
     extras_gpu='gpu'
@@ -81,54 +82,60 @@ docker_args=(\
 
 
 #--------------------------------------------------------------------
-# Determine the VM for Docker build
+# Generate extra build args
+#--------------------------------------------------------------------
+echo 'Importing utility functions ...'
+source "${utils_sh}"
+
+echo 'Exporting environment variables ...'
+eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
+
+echo 'Generating extra build args ...'
+if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
+    pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" \
+        | sed -e 's|^.*://||' -e 's|:.*$||')"
+    pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
+    docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
+    docker_args+=(\
+        --build-arg "NO_PROXY=${docker_no_proxy}" \
+        --build-arg "no_proxy=${docker_no_proxy}")
+
+    if [[ -n ${VM_HTTP_PROXY:-} ]]; then
+        docker_args+=(\
+            --build-arg "HTTP_PROXY=${VM_HTTP_PROXY}" \
+            --build-arg "http_proxy=${VM_HTTP_PROXY}")
+    fi
+
+    if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
+        if [[ -z ${VM_PROXY_CERTIFICATE:-} ]]; then
+            echo 'VM_HTTPS_PROXY set but VM_PROXY_CERTIFICATE not!' >&2
+            exit 1
+        fi
+        docker_args+=()
+        docker_args+=(\
+            --build-arg "HTTPS_PROXY=${VM_HTTPS_PROXY}" \
+            --build-arg "https_proxy=${VM_HTTPS_PROXY}" \
+            --build-arg "VM_PROXY_CERTIFICATE=${VM_PROXY_CERTIFICATE}" \
+            --build-arg 'UV_INSECURE_HOST=github.com')
+    fi
+fi
+
+if [[ -n ${VM_PIP_INDEX_URL:-} ]]; then
+    docker_args+=(--build-arg "VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL}")
+fi
+
+
+#--------------------------------------------------------------------
+# Build Docker image
 #--------------------------------------------------------------------
 if [[ -z ${SSH_DEST:-} ]]; then
-    echo 'Building Docker image on current GitHub-hosted runner ...'
+    echo 'Building the Docker image on current runner ...'
     docker build . "${docker_args[@]}"
 else
-    echo 'Importing utility functions ...'
-    source "${utils_sh}"
-
-    echo 'Exporting environment variables ...'
-    eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
-
     pre_image_build "${SSH_DEST}" "${dockerfile}" "${config_yml}" \
         "${recommenders_dir_name}"
 
-    echo '* Building the Docker image on the VM ...'
-    docker_args+=(--build-arg 'UV_INSECURE_HOST=github.com')
-
-    if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
-        pip_index_ip="$(echo "${VM_PIP_INDEX_URL:-}" \
-            | sed -e 's|^.*://||' -e 's|:.*$||')"
-        pip_index_ip="${pip_index_ip:+,$pip_index_ip}"
-        docker_no_proxy="developer.download.nvidia.com${pip_index_ip}"
-        docker_args+=(\
-            --build-arg "NO_PROXY=${docker_no_proxy}" \
-            --build-arg "no_proxy=${docker_no_proxy}")
-
-        if [[ -n ${VM_HTTP_PROXY:-} ]]; then
-            docker_args+=(\
-                --build-arg "HTTP_PROXY=${VM_HTTP_PROXY}" \
-                --build-arg "http_proxy=${VM_HTTP_PROXY}")
-        fi
-
-        if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
-            docker_args+=(\
-                --build-arg "HTTPS_PROXY=${VM_HTTPS_PROXY}" \
-                --build-arg "https_proxy=${VM_HTTPS_PROXY}")
-        fi
-    fi
-
-    if [[ -n ${VM_PIP_INDEX_URL:-} ]]; then
-        docker_args+=(--build-arg "VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL}")
-    fi
-
-    if [[ -n ${VM_PROXY_CERTIFICATE:-} ]]; then
-        docker_args+=(--build-arg "VM_PROXY_CERTIFICATE=${VM_PROXY_CERTIFICATE}")
-    fi
-
+    echo 'Building the Docker image on the VM ...'
     run_cmd_retry ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \
