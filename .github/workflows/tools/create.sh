@@ -133,10 +133,10 @@ echo 'Creating a VM ...'
 terraform -chdir="${tf_config_dir}" init
 
 cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
-if [[ ${test_group} == *cpu* ]]; then
-    input_vars="$(jq '.cpu // empty' <<< "${cloud_service_input_vars}")"
-else
+if [[ ${test_group} == *gpu* ]]; then
     input_vars="$(jq '.gpu // empty' <<< "${cloud_service_input_vars}")"
+else
+    input_vars="$(jq '.cpu // empty' <<< "${cloud_service_input_vars}")"
 fi
 
 if [[ -z ${input_vars} ]]; then
