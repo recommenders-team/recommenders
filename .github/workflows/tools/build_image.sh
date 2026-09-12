@@ -56,7 +56,7 @@ venv_dir="${5:-}"
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
-recommenders_dir_name='recommenders'
+recommenders_dir_name="${image_tag}"
 utils_sh="${script_dir}/utils.sh"
 
 

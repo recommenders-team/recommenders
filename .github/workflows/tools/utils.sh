@@ -170,7 +170,12 @@ pre_image_build() {
     local ssh_dest="${1:-}"
     local dockerfile="${2:-}"
     local config_yml="${3:-}"
-    local recommenders_dir_name="{4:-recommenders}"
+    local recommenders_dir_name="{4:-}"
+
+    [[ -z ${ssh_dest} \
+      || -z ${dockerfile} \
+      || -z ${recommenders_dir_name} ]] \
+      && echo 'Parameter error!' >&2 return 1
 
     echo 'Preparing for the Docker image build ...'
     echo '* Dowloading SDKMan files ...'

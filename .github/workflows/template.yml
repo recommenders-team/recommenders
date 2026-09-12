@@ -133,7 +133,7 @@ jobs:
               commit="$(echo ${{ github.sha }} | head -c 5)"
               vm_name_template="vm_${commit}_XXXXXX"
           fi
-          image_tag="reco-${commit}-${{ github.run_attempt }}"
+          image_tag="reco-${commit}-${{ github.run_attempt }}-${{ matrix.group }}-${{ matrix.python-version }}"
           vm_name="$(mktemp -u ${vm_name_template})"
 
           # Export VM_NAME and IMAGE_TAG for subsequent steps
