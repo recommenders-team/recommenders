@@ -135,11 +135,15 @@ jobs:
           fi
           unique_name="$(mktemp -u ${name_template})"
 
-          # Export UNIQUE_NAME for subsequent steps
+          # Export UNIQUE_NAME for subsequent steps.
+          # The name serves as
+          # * the VM name
+          # * the Docker image tag
+          # * the directory containing the repo on the VM
           echo "UNIQUE_NAME=${unique_name}" >> "${GITHUB_ENV}"
 
       - name: Setup VM
-        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) }}
+        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
         # The script for creating a VM must explictly set the
