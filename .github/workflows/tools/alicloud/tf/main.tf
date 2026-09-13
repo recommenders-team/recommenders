@@ -20,7 +20,7 @@ resource "alicloud_ecs_key_pair_attachment" "reco" {
 
 resource "alicloud_instance" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/instance
-  instance_name = var.vm_name
+  instance_name = var.name
   resource_group_id = local.resource_group_id
   instance_type = local.instance_type
   image_id = local.image_id

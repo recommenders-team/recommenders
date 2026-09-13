@@ -14,8 +14,8 @@
 locals {
   image_id = data.alicloud_images.ubuntu2404.ids[0]
 
-  key_file_name = var.vm_name
-  key_pair_name = var.vm_name
+  key_file_name = var.name
+  key_pair_name = var.name
 
   resource_group_id = data.alicloud_resource_manager_resource_groups.reco.ids[0]
   resource_group_name = "reco"

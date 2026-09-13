@@ -28,7 +28,7 @@ apply_tf_config() {
     # input variable values in the specified directory.
     #
     # NOTE: 
-    # This function assumes there is a input variable named 'vm_name'
+    # This function assumes there is a input variable named 'name'
     # representing the name of the VM created.
     #
     # Params:
@@ -50,12 +50,12 @@ apply_tf_config() {
     #             "ap-southeast-1"
     #         ]
     #     }
-    local vm_name="${1:-}"
+    local name="${1:-}"
     local tf_config_dir="${1:./}"
     local input_vars="${2:-}"
 
-    [[ -z ${vm_name} ]] \
-        && echo 'No VM name specified!' >&2 \
+    [[ -z ${name} ]] \
+        && echo 'No name specified!' >&2 \
         && return 1
 
     local var_combinations
@@ -71,7 +71,7 @@ apply_tf_config() {
 
         echo "* Trying with" "${inputs[@]}" "..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
-            -var "vm_name=${vm_name}" "${inputs[@]}" && return
+            -var "name=${name}" "${inputs[@]}" && return
     done
     echo 'All required resources are sold out!' && return 1
 }
