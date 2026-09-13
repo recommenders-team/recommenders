@@ -97,7 +97,13 @@ jobs:
     name: ${{ join(matrix.*, ', ') }}
     needs: get-test-groups
     # Docker and sshpass are required on the runner.
-    runs-on: ubuntu-24.04
+    runs-on: |-
+      ${{ case(
+          vars.CLOUD_SERVICE == 'self-hosted' && fromJSON(vars.CLOUD_SERVICE_ENVS).SSH_DEST == null, case(
+              contains(matrix.group, 'gpu'), 'GPU',
+              contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu'), 'CPU',
+              'ubuntu-24.04'),
+          'ubuntu-24.04') }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     defaults:
       run:
