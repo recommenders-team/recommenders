@@ -5,7 +5,7 @@
 # Input parameters
 #####################################################################
 variable "name" {
-  default = "reco-vm"
+  default = ""
 }
 
 variable "region" {
@@ -21,7 +21,10 @@ variable "region" {
   #   + Hangzhou,  "cn-hangzhou"
   #   + Shanghai,  "cn-shanghai"
   #   + Shenzhen,  "cn-shenzhen"
-  default = "ap-southeast-1"
+  #
+  # If var.vpc_id is specified, it should be the same region as the
+  # VPC.
+  default = "ap-southeast-5"
 }
 
 variable "instance_type_family" {
@@ -46,4 +49,17 @@ variable "instance_type_family" {
   #     - '8' - Ada Lovelace
   #     - price: ~ 19CNY / 3CNY
   default = "ecs.gn8is"
+}
+
+variable "vpc_id" {
+  # Use the specified VPC if provided.
+  #
+  # It would be provided if special services such as Docker mirrors
+  # are only accessible via the VPC.
+  # In addition, it assume the special services in the first subnet
+  # with 4 IP addresses.  For example, if CIDR of the VPC is
+  # "172.16.0.0/4", then CIDR of the VSwitch where the special
+  # services are should be "172.16.0.0/30".
+  # 
+  default = ""
 }
