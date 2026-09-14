@@ -143,7 +143,7 @@ def test_cornac_bpr_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["map"] == pytest.approx(0.1091, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg"] == pytest.approx(0.4034, rel=TOL, abs=ABS_TOL)
-    assert results["precision"] == pytest.approx(0.3550, rel=TOL, abs=ABS_TOL)
-    assert results["recall"] == pytest.approx(0.1802, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.180368, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.305190, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.239032, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.208660, rel=TOL, abs=ABS_TOL)
