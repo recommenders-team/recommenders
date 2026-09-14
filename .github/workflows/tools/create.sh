@@ -29,7 +29,7 @@
 #       indicated by the environment variable CLOUD_SERVICE.
 #
 # Params:
-# * VM name
+# * Name for the VM and other resources
 # * Test type
 # * Test group
 #
@@ -99,11 +99,11 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-vm_name="${1:-}"
+unique_name="${1:-}"
 test_type="${2:-}"
 test_group="${3:-}"
 
-[[ -z ${vm_name} \
+[[ -z ${unique_name} \
   || -z ${test_type} \
   || -z ${test_group} \
   || -z ${CLOUD_SERVICE:-} ]] && echo 'Parameter error!' >&2 && exit 1
@@ -143,7 +143,7 @@ if [[ -z ${input_vars} ]]; then
     input_vars="${cloud_service_input_vars}"
 fi
 
-apply_tf_config "${vm_name}" "${tf_config_dir}" "${input_vars}"
+apply_tf_config "${unique_name}" "${tf_config_dir}" "${input_vars}"
 
 unset "${secret_key_name}"
 

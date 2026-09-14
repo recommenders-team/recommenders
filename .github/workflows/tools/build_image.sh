@@ -7,7 +7,7 @@
 # Build the Docker image
 #
 # Params:
-# * Docker image tag
+# * Name for the Docker image tag and the code directory
 # * Path to Dockerfile in the repo
 # * Test group
 # * Python version
@@ -41,13 +41,13 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-image_tag="${1:-}"
+unique_name="${1:-}"
 dockerfile="${2:-}"
 test_group="${3:-}"
 python_version="${4:-}"
 venv_dir="${5:-}"
 
-[[ -z ${image_tag} \
+[[ -z ${unique_name} \
   || -z ${dockerfile} \
   || -z ${test_group} \
   || -z ${python_version} \
@@ -56,7 +56,8 @@ venv_dir="${5:-}"
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
-recommenders_dir_name="${image_tag}"
+image_tag="${unique_name}"
+recommenders_dir_name="${unique_name}"
 utils_sh="${script_dir}/utils.sh"
 
 

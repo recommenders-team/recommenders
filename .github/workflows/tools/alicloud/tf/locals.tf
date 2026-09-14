@@ -13,26 +13,26 @@ locals {
   instance_charge_type = "PostPaid"
   spot_strategy = "SpotAsPriceGo"
 
-  key_file_name = var.name
-  key_pair_name = var.name
+  key_file_name = var.unique_name
+  key_pair_name = var.unique_name
 
-  resource_group_name = var.name
+  resource_group_name = var.unique_name
   resource_group_id = data.alicloud_resource_manager_resource_groups.reco.ids[0]
 
-  security_group_name = var.name
+  security_group_name = var.unique_name
   security_group_id = data.alicloud_security_groups.reco.ids[0]
 
 
-  vm_name = var.name
+  vm_name = var.unique_name
 
   vpc = data.alicloud_vpcs.reco.vpcs[0]
-  vpc_name = var.vpc_id == "" ? var.name : local.vpc.vpc_name
+  vpc_name = var.vpc_id == "" ? var.unique_name : local.vpc.vpc_name
   vpc_id = local.vpc.id
   vpc_cidr_block = var.vpc_id == "" ? "172.16.0.0/4" : local.vpc.cidr_block
   vpc_mask_length = split(local.vpc_cidr_block, "/")[1]
   vpc_subnet_bits = 30 - convert(local.vpc_mask_length, number)
 
-  vswitch_name = var.name
+  vswitch_name = var.unique_name
   vswitch_cidr_block = (
     var.vswitch_id == "" ?
     "172.16.0.0/30" : cidrsubnet(

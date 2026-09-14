@@ -8,8 +8,7 @@
 # free the space.
 # 
 # Params:
-# * VM name
-# * image tag
+# * Name for the image tag and the code directory
 #
 # The following environment variables may need to be set:
 # * SSH_DEST
@@ -18,11 +17,12 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-image_tag="${1:-}"
+unique_name="${1:-}"
 
-[[ -z ${image_tag} ]] && exit 0
+[[ -z ${unique_name} ]] && exit 0
 
-recommenders_dir_name="${image_tag}"
+image_tag="${unique_name}"
+recommenders_dir_name="${unique_name}"
 
 
 #--------------------------------------------------------------------
