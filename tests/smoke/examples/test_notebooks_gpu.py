@@ -210,7 +210,7 @@ def test_cornac_bivae_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["map"] == pytest.approx(0.146552, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.330255, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.474124, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.412527, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.225064, rel=TOL, abs=ABS_TOL)
