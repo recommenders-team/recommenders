@@ -5,6 +5,11 @@
 
 ######################################################################
 # Do post-create setup on the VM.
+# 
+# Params:
+# * SSH destination
+#   + in the format like username@ip_address
+#   + If not set, then no post create actions are performed.
 #
 # It is assumed there are 3 files in the script directory:
 # * configure.sh
@@ -30,14 +35,13 @@
 #     - VM_HTTPS_PROXY (optional)
 #     - VM_PIP_INDEX_URL (optional)
 #     - VM_PROXY_CERTIFICATE (optional)
-# * SSH_DEST
-#   + in the format like username@ip_address
-#   + If not set, then no post create actions are performed.
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
+
+ssh_dest="${1:-}"
 
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
@@ -53,23 +57,23 @@ setup_scripts=("${script_dir_name}/configure.sh" \
 
 
 #--------------------------------------------------------------------
-if [[ -n ${SSH_DEST} ]]; then
+if [[ -n ${ssh_dest} ]]; then
     echo 'Importing utility functions ...'
     source "${utils_sh}"
 
     echo 'Uploading tools to the VM ...'
     scp -qr -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "${script_dir}" "${SSH_DEST}":
+        "${script_dir}" "${ssh_dest}":
 
     for index in "${!setup_scripts[@]}"; do
         script="${setup_scripts[${index}]}"
 
-        wait_for_vm_to_be_available "${SSH_DEST}"
+        wait_for_vm_to_be_available "${ssh_dest}"
         echo "Running ${script} on the VM ..."
         ssh -t -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
-            "${SSH_DEST}" "\
+            "${ssh_dest}" "\
                 export CLOUD_SERVICE='${cloud_service}'; \
                 $(get_env_exports "${CLOUD_SERVICE_ENVS:-}") \
                 bash ./${script}"
@@ -78,6 +82,6 @@ if [[ -n ${SSH_DEST} ]]; then
     echo 'Rebooting for setup to take effect ...'
     ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "${SSH_DEST}" "sudo reboot" || true
-    wait_for_vm_to_be_available "${SSH_DEST}"
+        "${ssh_dest}" "sudo reboot" || true
+    wait_for_vm_to_be_available "${ssh_dest}"
 fi

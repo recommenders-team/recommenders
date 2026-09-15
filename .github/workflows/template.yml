@@ -149,7 +149,7 @@ jobs:
           # * the directory containing the repo on the VM
           echo "UNIQUE_NAME=${unique_name}" >> "${GITHUB_ENV}"
 
-      - name: Setup VM
+      - name: Create a VM
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
         env:
           CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}
@@ -165,11 +165,17 @@ jobs:
                "${UNIQUE_NAME}" \
                '${{ inputs.type }}' \
                '${{ matrix.group }}'
-          bash '${{ inputs.tools_dir }}/post_create.sh'
+
+      - name: Post create setup
+        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
+        # The environment variable SSH_DEST is exported in the
+        # previous step.
+        run: bash '${{ inputs.tools_dir }}/post_create.sh' "${SSH_DEST}"
 
       - name: Build Docker image
         run: |
           bash '${{ inputs.tools_dir }}/build_image.sh' \
+               "${SSH_DEST}" \
                "${UNIQUE_NAME}" \
                '${{ inputs.dockerfile }}' \
                '${{ matrix.group }}' \
@@ -179,6 +185,7 @@ jobs:
       - name: Execute tests in Docker container
         run: |
           bash '${{ inputs.tools_dir }}/run_tests.sh' \
+               "${SSH_DEST}" \
                "${UNIQUE_NAME}" \
                '${{ inputs.test_groups_yml }}' \
                '${{ inputs.type }}' \

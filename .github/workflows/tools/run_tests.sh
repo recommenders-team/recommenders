@@ -7,6 +7,9 @@
 # Run the tests in a Docker container.
 # 
 # Params:
+# * SSH destination
+#   + in the format like username@ip_address
+#   + If not set, then the tests are run on the current machine.
 # * Docker image tag
 # * Path to test group configuration file relative to the repo root
 # * Type of test - pr_gate or nightly
@@ -17,18 +20,17 @@
 # * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - VM_HTTP_PROXY (optional)
-# * SSH_DEST
-#   + in the format like username@ip_address
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-image_tag="${1:-}"
-test_groups_yml="${2:-}"
-test_type="${3:-}"
-test_group="${4:-}"
-venv_dir="${5:-}"
+ssh_dest="${1:-}"
+image_tag="${2:-}"
+test_groups_yml="${3:-}"
+test_type="${4:-}"
+test_group="${5:-}"
+venv_dir="${6:-}"
 
 [[ -z ${image_tag} \
   || -z ${test_groups_yml} \
@@ -80,7 +82,7 @@ fi
 #--------------------------------------------------------------------
 # Run tests
 #--------------------------------------------------------------------
-if [[ -z ${SSH_DEST:-} ]]; then
+if [[ -z ${ssh_dest} ]]; then
     echo 'Running tests on current GitHub-hosted runner ...'
     "${check_gpu}" \
     && docker run --rm "${docker_args[@]}" "${image_tag}" \
@@ -91,7 +93,7 @@ else
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \
         -o ServerAliveCountMax=10 \
-        "${SSH_DEST}" "\
+        "${ssh_dest}" "\
             ${check_gpu} \
             && docker run --rm" "${docker_args[@]}" "${image_tag} \
                 bash -lc '${test_cmd}'"

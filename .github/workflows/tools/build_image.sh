@@ -7,6 +7,10 @@
 # Build the Docker image
 #
 # Params:
+# * SSH destination
+#   + in the format like username@ip_address
+#   + If not set, then the Docker image will be built on the current
+#     machine.
 # * Name for the Docker image tag and the code directory
 # * Path to Dockerfile in the repo
 # * Test group
@@ -34,18 +38,17 @@
 #     - VM_HTTPS_PROXY (optional)
 #     - VM_PIP_INDEX_URL (optional)
 #     - VM_PROXY_CERTIFICATE (optional)
-# * SSH_DEST
-#   + in the format like username@ip_address
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
-unique_name="${1:-}"
-dockerfile="${2:-}"
-test_group="${3:-}"
-python_version="${4:-}"
-venv_dir="${5:-}"
+ssh_dest="${1:-}"
+unique_name="${2:-}"
+dockerfile="${3:-}"
+test_group="${4:-}"
+python_version="${5:-}"
+venv_dir="${6:-}"
 
 [[ -z ${unique_name} \
   || -z ${dockerfile} \
@@ -133,11 +136,11 @@ fi
 #--------------------------------------------------------------------
 # Build Docker image
 #--------------------------------------------------------------------
-if [[ -z ${SSH_DEST:-} ]]; then
+if [[ -z ${ssh_dest} ]]; then
     echo 'Building the Docker image on current runner ...'
     docker build . "${docker_args[@]}"
 else
-    pre_image_build "${SSH_DEST}" "${dockerfile}" "${config_yml}" \
+    pre_image_build "${ssh_dest}" "${dockerfile}" "${config_yml}" \
         "${recommenders_dir_name}"
 
     echo 'Building the Docker image on the VM ...'
@@ -145,7 +148,7 @@ else
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \
         -o ServerAliveCountMax=10 \
-        "${SSH_DEST}" "\
+        "${ssh_dest}" "\
             cd ${recommenders_dir_name} \
             && docker build ." "${docker_args[@]}"
 fi
