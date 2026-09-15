@@ -57,7 +57,8 @@ sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl git-all jq yq
+apt_install_retry ca-certificates curl git-all jq
+snap_install_retry yq
 
 
 #--------------------------------------------------------------------

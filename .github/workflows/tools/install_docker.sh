@@ -51,7 +51,8 @@ source "${utils_sh}"
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl gnupg jq yq
+apt_install_retry ca-certificates curl gnupg jq
+snap_install_retry yq
 
 if [[ $(whoami) == 'root' ]]; then
     rootless='false'

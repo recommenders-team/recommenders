@@ -317,6 +317,21 @@ setup_ssh_key() {
     fi
 }
 
+snap_install_retry() {
+    # Run snap install "$@" and retry "$1" times
+    # (5 by default) on failure.
+    #
+    # Params:
+    # * (optional) number of attempts
+    local num_attempts=5
+    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+        num_attempts="$1"
+        shift
+    fi
+
+    run_cmd_retry "${num_attempts}" sudo snap install "$@"
+}
+
 update_json() {
     # Update a JSON with another JSON
     #
