@@ -138,10 +138,7 @@ if [[ ${test_group} == *gpu* ]]; then
 else
     input_vars="$(jq '.cpu // empty' <<< "${cloud_service_input_vars}")"
 fi
-
-if [[ -z ${input_vars} ]]; then
-    input_vars="${cloud_service_input_vars}"
-fi
+input_vars="${input_vars:-$cloud_service_input_vars}"
 
 apply_tf_config "${unique_name}" "${tf_config_dir}" "${input_vars}"
 

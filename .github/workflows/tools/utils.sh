@@ -210,7 +210,8 @@ pre_image_build() {
 
     echo '* Configuring APT in Dockerfile ...'
     if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq '.apt_mirror // ""' "${config_yml}")"
+        apt_mirror="$(yq -o json "${config_yml}" \
+            | jq -r '.apt_mirror // empty')"
         if [[ -n ${apt_mirror} ]]; then
             sed -i "/SHELL /a \
                 RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\

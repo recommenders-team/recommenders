@@ -68,7 +68,8 @@ if ! docker --version 2>/dev/null; then
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
     if [[ -f ${config_yml} ]]; then
-        apt_url="$(yq '.docker_download_mirror // ""' "${config_yml}")"
+        apt_url="$(yq -o json "${config_yml}" \
+            | jq -r '.docker_download_mirror // empty')"
     fi
     apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
     apt_list="/etc/apt/sources.list.d/docker.list"
