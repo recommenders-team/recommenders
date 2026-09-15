@@ -74,7 +74,7 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
     if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq '.apt_mirror // empty' "${config_yml}")"
+        apt_mirror="$(yq '.apt_mirror // ""' "${config_yml}")"
     fi
     apt_mirror="${apt_mirror:+$apt_mirror,}"
     sudo tee -a /etc/environment > /dev/null << EOF
