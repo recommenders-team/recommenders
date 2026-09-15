@@ -576,8 +576,12 @@ allocate_vm() {
         available_charge_type="$(jq '.ChargeType' <<< "${compute}")"
 
         local required_charge_types
-        mapfile -t required_charge_types < \
-            <(jq -rc '.ChargeType.[]' <<< "${requirements}")
+        if jq -e 'has("ChargeType")' <<< "${requirements}" > /dev/null; then
+            mapfile -t required_charge_types < \
+                <(jq -rc '.ChargeType.[]' <<< "${requirements}")
+        else
+            required_charge_types=('Spot' 'Postpay')
+        fi
         local charge_type
         for charge_type in "${required_charge_types[@]}"; do
             if jq -e "map(. == \"${charge_type}\") 
