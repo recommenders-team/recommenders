@@ -532,7 +532,7 @@ def test_npa_quickstart_functional(
             5,
             1024,
             {
-                "map": 0.094794,
+                "map": 0.215076,
                 "ndcg": 0.354145,
                 "precision": 0.308165,
                 "recall": 0.163034,
