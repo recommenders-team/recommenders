@@ -27,6 +27,8 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 vm_name="${1:-}"
 test_type="${2:-}"
+test_group="{3:-}"
+requirements="${4:-}"
 
 [[ -z ${vm_name} || -z ${test_type} ]] \
     && echo 'Parameter error!' >&2 && exit 1
@@ -46,23 +48,25 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 #--------------------------------------------------------------------
 # Use CompShare APIs to create a VM.
 #--------------------------------------------------------------------
-# * All VMs from CompShare have GPUs.
-# * Unit tests require less than half hour
-# * Nightly tests take more than an hour and more GPU memory.
-# * VMs with Spot ChargeType are cheaper but there is a risk of being
-#   deleted after 1 hour.
-if [[ ${test_type} == *nightly* ]]; then
-    gpu_type='"GPUType": "!2080,P40"'
-    gpu_mem='"Memory": {"GPU": 12, "CPU": 32}'
-    charge_type='"ChargeType": ["Postpay"]'
-    stop_time="\"SchedulerStopTime\": $(date --date='3 hours' '+%s')"
-else
-    gpu_type='"GPUType": "!P40"'
-    gpu_mem='"Memory": {"GPU": 8, "CPU": 32}'
-    charge_type='"ChargeType": ["Spot","Postpay"]'
-    stop_time="\"SchedulerStopTime\": $(date --date='1 hours' '+%s')"
+if [[ -z ${requirements} ]]; then
+    # * All VMs from CompShare have GPUs.
+    # * Unit tests require less than half hour
+    # * Nightly tests take more than an hour and more GPU memory.
+    # * VMs with Spot ChargeType are cheaper but there is a risk of being
+    #   deleted after 1 hour.
+    if [[ ${test_type} == *nightly* ]]; then
+        gpu_type='"GPUType": "!2080,P40"'
+        gpu_mem='"Memory": {"GPU": 12, "CPU": 32}'
+        charge_type='"ChargeType": ["Postpay"]'
+        stop_time="\"SchedulerStopTime\": $(date --date='3 hours' '+%s')"
+    else
+        gpu_type='"GPUType": "!P40"'
+        gpu_mem='"Memory": {"GPU": 8, "CPU": 32}'
+        charge_type='"ChargeType": ["Spot","Postpay"]'
+        stop_time="\"SchedulerStopTime\": $(date --date='1 hours' '+%s')"
+    fi
+    requirements="{${gpu_type}, ${gpu_mem}, ${charge_type}, ${stop_time}}"
 fi
-requirements="{${gpu_type}, ${gpu_mem}, ${charge_type}, ${stop_time}}"
 
 echo 'Generating login password ...'
 encoded_password_file="$(mktemp)"
