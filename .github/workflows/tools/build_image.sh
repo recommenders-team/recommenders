@@ -119,7 +119,6 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
             echo 'VM_HTTPS_PROXY set but VM_PROXY_CERTIFICATE not!' >&2
             exit 1
         fi
-        docker_args+=()
         docker_args+=(\
             --build-arg "HTTPS_PROXY=${VM_HTTPS_PROXY}" \
             --build-arg "https_proxy=${VM_HTTPS_PROXY}" \
@@ -144,6 +143,7 @@ else
         "${recommenders_dir_name}"
 
     echo 'Building the Docker image on the VM ...'
+    mapfile -t docker_args < <(printf '%q\n' "${docker_args[@]}")
     run_cmd_retry ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o ServerAliveInterval=60 \
