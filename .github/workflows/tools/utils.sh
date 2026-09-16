@@ -66,7 +66,7 @@ apply_tf_config() {
     for index in "${!var_combinations[@]}"; do
         local combination="${var_combinations[${index}]}"
         local inputs
-        readarray -t inputs < <(jq -r 'to_entries | .[]
+        readarray -d '' inputs < <(jq --raw-output0 'to_entries | .[]
             | "-var", "\(.key)=\(.value)"' <<< "${combination}")
 
         echo "* Trying with" "${inputs[@]}" "..."
@@ -170,7 +170,7 @@ pre_image_build() {
     local ssh_dest="${1:-}"
     local dockerfile="${2:-}"
     local config_yml="${3:-}"
-    local recommenders_dir_name="{4:-}"
+    local recommenders_dir_name="${4:-}"
 
     [[ -z ${ssh_dest} \
       || -z ${dockerfile} \
