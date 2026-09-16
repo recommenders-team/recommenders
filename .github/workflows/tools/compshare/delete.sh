@@ -40,7 +40,7 @@ delay=5
 num_attempts=6
 attempt=1
 while true; do
-    mapfile -t vm_info < <(get_vm_info "${vm_name}")
+    readarray -t vm_info < <(get_vm_info "${vm_name}")
     if [[ -n ${vm_info:-} ]]; then
         vm_id="${vm_info[0]}"
         echo "Stopping the VM ${vm_name} ..."

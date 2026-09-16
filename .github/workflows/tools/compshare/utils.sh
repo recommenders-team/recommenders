@@ -577,7 +577,7 @@ allocate_vm() {
 
         local required_charge_types
         if jq -e 'has("ChargeType")' <<< "${requirements}" > /dev/null; then
-            mapfile -t required_charge_types < \
+            readarray -t required_charge_types < \
                 <(jq -rc '.ChargeType.[]' <<< "${requirements}")
         else
             required_charge_types=('Spot' 'Postpay')

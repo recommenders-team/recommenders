@@ -79,7 +79,7 @@ allocate_vm \
     "$(jq 'del(.SchedulerStopTime)' <<< "${requirements}")"
 
 echo 'Exporting VM info for subsequent steps ...'
-mapfile -t vm_info < <(get_vm_info "${vm_name}")
+readarray -t vm_info < <(get_vm_info "${vm_name}")
 vm_id="${vm_info[0]}"
 ssh_dest="${vm_info[1]}"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
