@@ -83,7 +83,7 @@ fi
 #--------------------------------------------------------------------
 # Install NVIDIA container toolkit if it is not installed.
 #--------------------------------------------------------------------
-if nvidia-ctk --version 2>/dev/null; then
+if ! nvidia-ctk --version 2>/dev/null; then
     echo '* Installing NVIDIA container toolkit ...'
     apt_install_retry \
         nvidia-container-toolkit \
