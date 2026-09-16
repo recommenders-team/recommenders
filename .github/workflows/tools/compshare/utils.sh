@@ -584,7 +584,7 @@ allocate_vm() {
         fi
         local charge_type
         for charge_type in "${required_charge_types[@]}"; do
-            if jq -e "map(. == \"${charge_type}\") 
+            if jq -e "map((. | ascii_downcase) == \"${charge_type@L}\") 
                 | any" <<< "${available_charge_type}" > /dev/null
             then
                 echo "  + Trying charge type: ${charge_type} ..."
