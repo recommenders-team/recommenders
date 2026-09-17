@@ -48,8 +48,12 @@ install_requires = [
 extras_require = {
     "gpu": [
         "protobuf>=3.20,<5",  # Capped at <5 for tensorflow<2.16 (gpu extra) compatibility; will change when #2073 is closed
-        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",  # Fixed TF due to constant security problems and breaking changes #2073
-        "torch>=2.0.1,<3",
+        # Fixed TF due to constant security problems and breaking changes #2073
+        # TF requires [and-cuda] from version 3.14.0 on (See #2378)
+        "tensorflow[and-cuda]>=2.11.0,<2.16",
+        # Newer PyTorch requires nvidia-nccl-cu13 conflicting with
+        # nvidia-nccl-cu12 by TF < 2.16 (See #2378)
+        "torch>=2.0.1,<2.11.0",
     ],
     "spark": [
         "pyarrow>=10.0.1",
