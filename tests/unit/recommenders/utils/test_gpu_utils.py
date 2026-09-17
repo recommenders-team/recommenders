@@ -51,6 +51,28 @@ def test_get_gpu_info_uses_torch_cuda(monkeypatch):
     ]
 
 
+def test_get_cuda_and_cudnn_version_without_cuda(monkeypatch):
+    fake_torch = SimpleNamespace(
+        version=SimpleNamespace(cuda=None),
+        backends=SimpleNamespace(cudnn=SimpleNamespace(version=lambda: None)),
+    )
+    monkeypatch.setattr(gpu_utils, "torch", fake_torch)
+
+    assert gpu_utils.get_cuda_version() is None
+    assert gpu_utils.get_cudnn_version() is None
+
+
+def test_get_cuda_and_cudnn_version_with_cuda(monkeypatch):
+    fake_torch = SimpleNamespace(
+        version=SimpleNamespace(cuda="12.4"),
+        backends=SimpleNamespace(cudnn=SimpleNamespace(version=lambda: 90100)),
+    )
+    monkeypatch.setattr(gpu_utils, "torch", fake_torch)
+
+    assert gpu_utils.get_cuda_version() == "12.4"
+    assert gpu_utils.get_cudnn_version() == "90100"
+
+
 @pytest.mark.gpu
 def test_get_gpu_info():
     assert len(get_gpu_info()) >= 1

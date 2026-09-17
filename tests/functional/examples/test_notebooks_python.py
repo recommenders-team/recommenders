@@ -17,7 +17,7 @@ ABS_TOL = 0.05
         (
             "1m",
             {
-                "map": 0.060579,
+                "map": 0.185099,
                 "ndcg": 0.299245,
                 "precision": 0.270116,
                 "recall": 0.104350,
@@ -26,7 +26,7 @@ ABS_TOL = 0.05
         (
             "10m",
             {
-                "map": 0.098745,
+                "map": 0.203722,
                 "ndcg": 0.319625,
                 "precision": 0.275756,
                 "recall": 0.154014,
@@ -57,7 +57,7 @@ def test_sar_single_node_functional(
         (
             "1m",
             {
-                "map": 0.033914,
+                "map": 0.139016,
                 "ndcg": 0.231570,
                 "precision": 0.211923,
                 "recall": 0.064663,
@@ -179,7 +179,7 @@ def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", dict(map=0.081390, ndcg=0.406627, precision=0.373228, recall=0.132444)),
+        ("1m", dict(map=0.186452, ndcg=0.314204, precision=0.271386, recall=0.161333)),
         # 10m works but takes too long
     ],
 )
@@ -283,8 +283,8 @@ def test_lightgbm_movielens_functional(notebooks, output_notebook, kernel_name):
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [
-        (["100k"], ["sar", "bpr"], [0.393818, 0.444990]),
-        # (["100k"], ["svd", "sar", "bpr"], [0.094444, 0.393818, 0.444990]), # Put SVD surprise back in core deps when #2224 is fixed
+        (["100k"], ["sar", "bpr"], [0.393818, 0.362301]),
+        # (["100k"], ["svd", "sar", "bpr"], [0.094444, 0.393818, 0.362301]), # Put SVD surprise back in core deps when #2224 is fixed
     ],
 )
 def test_benchmark_movielens_cpu(

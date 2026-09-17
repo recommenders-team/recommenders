@@ -42,13 +42,6 @@ Spark utilities
     :members:
 
 
-Tensorflow utilities
-===============================
-.. automodule:: recommenders.utils.tf_utils
-    :members:
-    :special-members: __init__
-
-
 Timer
 ===============================
 .. automodule:: recommenders.utils.timer
