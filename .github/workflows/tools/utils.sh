@@ -149,7 +149,8 @@ get_input_var_combinations() {
                 | $cur_var.value[] as $cur_var_val
                 | $combination + {($cur_var.key): $cur_var_val}
             ])
-        | .[]' <<< "${input_vars}")"
+        | .[]' <<< "${input_vars}")" \
+        || { echo 'Incorrect input variables!' >&2; exit 1; }
     echo "${combinations}"
 }
 
