@@ -51,7 +51,7 @@ apply_tf_config() {
     #         ]
     #     }
     local unique_name="${1:-}"
-    local tf_config_dir="${1:./}"
+    local tf_config_dir="${1:-./}"
     local input_vars="${2:-}"
 
     [[ -z ${unique_name} ]] \
