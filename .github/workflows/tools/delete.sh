@@ -64,4 +64,5 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 # Use Terraform to delete the VM
 #--------------------------------------------------------------------
 echo 'Deleting the VM ...'
-terraform -chdir="${tf_config_dir}" destroy -auto-approve
+TF_SKIP_RESOURCE_SCHEMA_VALIDATION=true \
+    terraform -chdir="${tf_config_dir}" destroy -auto-approve
