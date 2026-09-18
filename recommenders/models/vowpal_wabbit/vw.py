@@ -93,6 +93,7 @@ class VW:
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
         col_prediction=DEFAULT_PREDICTION_COL,
+        binary_threshold=None,
         n_jobs=1,
         **kwargs,
     ):
@@ -104,6 +105,8 @@ class VW:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
+            binary_threshold (int): rating from which a training example is positive, only
+                used with loss_function="logistic" without oaa
             n_jobs (int): number of processes used to predict, the rows are split in chunks
                 that are scored in parallel
             kwargs: vw command line options, use True for options that are flags. The
@@ -125,11 +128,17 @@ class VW:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
 
+        self.binary_threshold = binary_threshold
         self.n_jobs = n_jobs
         # binary labels for logistic regression, multiclass (oaa) keeps the rating labels
         self.logistic = (
             kwargs.get("loss_function") == "logistic" and "oaa" not in kwargs
         )
+        if self.logistic and binary_threshold is None:
+            raise ValueError(
+                "loss_function='logistic' needs binary_threshold, the rating from "
+                "which a training example is positive"
+            )
         self.train_params = self.parse_train_params(params=kwargs)
         self.test_params = self.parse_test_params(params=kwargs)
 
@@ -279,12 +288,15 @@ class VW:
         """
 
         if train:
-            # we need to reset the rating type to an integer to simplify the vw formatting
-            rating = df[self.col_rating].astype("int64")
-
-            # convert rating to binary value
             if self.logistic:
-                rating = 2 * (rating / rating.max()).round().astype("int64") - 1
+                # vw's logistic loss needs labels in {-1, 1}, a 0 label has no gradient
+                rating = pd.Series(
+                    np.where(df[self.col_rating] >= self.binary_threshold, 1, -1),
+                    index=df.index,
+                )
+            else:
+                # we need to reset the rating type to an integer to simplify the vw formatting
+                rating = df[self.col_rating].astype("int64")
 
             to_vw_file(
                 df, self.train_file, self.col_user, self.col_item, rating.astype(str)

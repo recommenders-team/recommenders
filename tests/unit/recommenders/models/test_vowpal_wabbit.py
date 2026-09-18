@@ -90,11 +90,18 @@ def test_to_vw_file_multiclass_keeps_labels(df):
 
 
 def test_to_vw_file_logistic(df):
-    model = VW(col_user="user", col_item="item", loss_function="logistic")
+    model = VW(
+        col_user="user", col_item="item", loss_function="logistic", binary_threshold=3
+    )
     model.to_vw_file(df, train=True)
     with open(model.train_file, "r") as f:
         labels = [line.split(" ")[0] for line in f.read().splitlines()]
     assert labels == ["-1", "1", "1"]
+
+
+def test_logistic_without_binary_threshold():
+    with pytest.raises(ValueError):
+        VW(loss_function="logistic")
 
 
 def test_fit_and_predict(model, df):
@@ -165,7 +172,11 @@ def test_recommend_k_items(model, df):
 
 def test_logistic_predictions(df):
     model = VW(
-        col_user="user", col_item="item", loss_function="logistic", link="logistic"
+        col_user="user",
+        col_item="item",
+        loss_function="logistic",
+        link="logistic",
+        binary_threshold=3,
     )
     model.fit(df)
     result = model.predict(df)
