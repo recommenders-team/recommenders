@@ -51,8 +51,8 @@ apply_tf_config() {
     #         ]
     #     }
     local unique_name="${1:-}"
-    local tf_config_dir="${1:-./}"
-    local input_vars="${2:-}"
+    local tf_config_dir="${2:-./}"
+    local input_vars="${3:-}"
 
     [[ -z ${unique_name} ]] \
         && echo 'No name specified!' >&2 \
