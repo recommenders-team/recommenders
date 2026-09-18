@@ -58,8 +58,7 @@ variable "vpc_id" {
   # are only accessible via the VPC.
   # In addition, it assume the special services in the first subnet
   # with 4 IP addresses.  For example, if CIDR of the VPC is
-  # "172.16.0.0/4", then CIDR of the VSwitch where the special
-  # services are should be "172.16.0.0/30".
-  # 
+  # "10.0.0.0/8", then CIDR of the VSwitch where the special
+  # services are should be "10.0.0.0/29".
   default = ""
 }

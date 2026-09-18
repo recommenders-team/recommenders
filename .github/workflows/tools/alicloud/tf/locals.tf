@@ -26,17 +26,13 @@ locals {
   vm_name = var.unique_name
 
   vpc = data.alicloud_vpcs.reco.vpcs[0]
-  vpc_name = var.vpc_id == "" ? var.unique_name : local.vpc.vpc_name
-  vpc_id = local.vpc.id
-  vpc_cidr_block = var.vpc_id == "" ? "172.16.0.0/4" : local.vpc.cidr_block
-  vpc_mask_length = split(local.vpc_cidr_block, "/")[1]
-  vpc_subnet_bits = 30 - convert(local.vpc_mask_length, number)
+  vpc_subnet_bits = 29 - convert(split("/", local.vpc.cidr_block)[1], number)
 
   vswitch_name = var.unique_name
   vswitch_cidr_block = (
-    var.vswitch_id == "" ?
-    "172.16.0.0/30" : cidrsubnet(
-      local.vpc_cidr_block,
+    var.vpc_id == "" ?
+    "10.0.0.0/29" : cidrsubnet(
+      local.vpc.cidr_block,
       local.vpc_subnet_bits,
       random_integer.vswitch_netnum
     )
@@ -49,8 +45,8 @@ locals {
 #------------------------------------------------------------------
 locals {
   instance_type = [
-    for it in data.alicloud_instance_types.reco.instance_types: it.id
-    if it.cpu_core_count > 4 && it.memory_size >= 30 && it.price < 20
+    for it in data.alicloud_instance_types.reco.instance_types: it
+    if it.cpu_core_count > 4 && it.memory_size >= 30 && it.price < 22
   ][0]
   instance_zone_id = local.instance_type.availability_zones[0]
 }

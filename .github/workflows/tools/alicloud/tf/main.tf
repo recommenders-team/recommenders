@@ -12,7 +12,7 @@
 resource "random_integer" "vswitch_netnum" {
   # https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer
   min = 1
-  max = pow(2, local.subvpc_subnet_bitsnet_bits) - 1
+  max = pow(2, local.vpc_subnet_bits) - 1
 }
 
 resource "alicloud_resource_manager_resource_group" "reco" {
@@ -32,16 +32,16 @@ resource "alicloud_vpc" "reco" {
   # Use the specified VPC if specified, or a new one will be created.
   count = var.vpc_id == "" ? 1 : 0
 
-  vpc_name = local.vpc_name
+  vpc_name = var.unique_name
   resource_group_id = local.resource_group_id
-  cidr_block = local.vpc_cidr_block
+  cidr_block = "10.0.0.0/8"
 }
 
 resource "alicloud_vswitch" "reco" {
   # VSwitch is regional.
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/vswitch
   vswitch_name = local.vswitch_name
-  vpc_id = local.vpc_id
+  vpc_id = local.vpc.id
   zone_id = local.instance_zone_id
   cidr_block = local.vswitch_cidr_block
 }
@@ -52,7 +52,7 @@ resource "alicloud_security_group" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/security_group
   security_group_name = local.security_group_name
   resource_group_id = local.resource_group_id
-  vpc_id = local.vpc_id
+  vpc_id = local.vpc.id
 }
 
 resource "alicloud_security_group_rule" "ssh" {
@@ -89,7 +89,7 @@ resource "alicloud_instance" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/instance
   instance_name = local.vm_name
   resource_group_id = local.resource_group_id
-  instance_type = local.instance_type
+  instance_type = local.instance_type.id
   image_id = local.image_id
 
   instance_charge_type = local.instance_charge_type
@@ -99,7 +99,7 @@ resource "alicloud_instance" "reco" {
   internet_charge_type = "PayByTraffic"
   internet_max_bandwidth_out = 5
 
-  vpc_id = local.vpc_id
+  vpc_id = local.vpc.id
   vswitch_id = local.vswitch_id
   security_groups = [ local.security_group_id ]
 

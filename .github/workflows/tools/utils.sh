@@ -72,6 +72,9 @@ apply_tf_config() {
         echo "* Trying with" "${inputs[@]}" "..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
             -var "unique_name=${unique_name}" "${inputs[@]}" && return
+
+        echo '* Cleaning up ...'
+        terraform -chdir="${tf_config_dir}" destroy -auto-approve
     done
     echo 'All required resources are sold out!' && return 1
 }
