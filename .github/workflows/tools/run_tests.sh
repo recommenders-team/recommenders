@@ -51,7 +51,7 @@ test_list="$(yq "
     "${test_groups_yml}")"
 test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && source ${venv_dir}/bin/activate \
-    && pytest --durations 0 ${test_list}"
+    && pytest --durations 0 --forked ${test_list}"
 
 
 #--------------------------------------------------------------------

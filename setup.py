@@ -60,6 +60,8 @@ extras_require = {
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
+        # run each test in a new process to completely release GPU memory
+        "pytest-forked>=1.6.0",
     ],
 }
 # For the brave of heart
