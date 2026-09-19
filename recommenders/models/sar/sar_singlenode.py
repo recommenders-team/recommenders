@@ -257,10 +257,10 @@ class SARSingleNode:
         logger.info("Creating index columns")
         # add mapping of user and item ids to indices
         temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].apply(
-            lambda item: self.item2index.get(item, np.NaN)
+            lambda item: self.item2index.get(item, np.nan)
         )
         temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].apply(
-            lambda user: self.user2index.get(user, np.NaN)
+            lambda user: self.user2index.get(user, np.nan)
         )
 
         if self.normalize:
@@ -336,7 +336,7 @@ class SARSingleNode:
         # get user / item indices from test set
         user_ids = list(
             map(
-                lambda user: self.user2index.get(user, np.NaN),
+                lambda user: self.user2index.get(user, np.nan),
                 test[self.col_user].unique(),
             )
         )
@@ -439,7 +439,7 @@ class SARSingleNode:
         item_ids = np.asarray(
             list(
                 map(
-                    lambda item: self.item2index.get(item, np.NaN),
+                    lambda item: self.item2index.get(item, np.nan),
                     items[self.col_item].values,
                 )
             )
@@ -565,7 +565,7 @@ class SARSingleNode:
         user_ids = np.asarray(
             list(
                 map(
-                    lambda user: self.user2index.get(user, np.NaN),
+                    lambda user: self.user2index.get(user, np.nan),
                     test[self.col_user].values,
                 )
             )
@@ -575,7 +575,7 @@ class SARSingleNode:
         item_ids = np.asarray(
             list(
                 map(
-                    lambda item: self.item2index.get(item, np.NaN),
+                    lambda item: self.item2index.get(item, np.nan),
                     test[self.col_item].values,
                 )
             )

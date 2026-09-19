@@ -24,7 +24,7 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [nextitnet](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use NextItNet [14] to predict a set of movies the user is going to interact in a short time. |
 | [sli-rec](slirec_amazon.ipynb) | Amazon | Python CPU, GPU | Use SLi-Rec [11] (PyTorch) to predict a set of movies the user is going to interact in a short time. |
 | [wide-and-deep](wide_deep_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Wide-and-Deep Model (Wide-and-Deep) [5] to predict movie ratings in a Python+GPU (TensorFlow) environment.
-| [xdeepfm](xdeepfm_criteo.ipynb) | Criteo | Python CPU, GPU |  Utilizing the eXtreme Deep Factorization Machine (xDeepFM) [3] to learn both low and high order feature interactions for predicting CTR, in a Python+GPU (TensorFlow) environment.
+| [xdeepfm](xdeepfm_criteo.ipynb) | Criteo | Python CPU, GPU |  Utilizing the eXtreme Deep Factorization Machine (xDeepFM) [3] (PyTorch) to learn both low and high order feature interactions for predicting CTR, in a Python+GPU environment.
 
 [1] _Neural Collaborative Filtering_, Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu and Tat-Seng Chua. WWW 2017.<br>
 [2] _DKN: Deep Knowledge-Aware Network for News Recommendation_, Hongwei Wang, Fuzheng Zhang, Xing Xie and Minyi Guo. WWW 2018.<br>
