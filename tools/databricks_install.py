@@ -12,10 +12,10 @@ import textwrap
 import os
 from pathlib import Path
 
-import pkg_resources
 import sys
 import time
 from urllib.request import urlretrieve
+from packaging.requirements import Requirement
 from requests.exceptions import HTTPError
 
 # requires databricks-cli to be installed and authentication to be configured
@@ -125,7 +125,7 @@ def get_installed_libraries(api_client, cluster_id):
         if "pypi" in lib["library"]
     }
     return {
-        pkg_resources.Requirement.parse(package).name: libraries[package]
+        Requirement(package).name: libraries[package]
         for package in libraries
     }
 
