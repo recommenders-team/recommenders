@@ -4,30 +4,44 @@
 # Licensed under the MIT License.
 
 ######################################################################
-# Delete a CompShare VM
+# Delete the CompShare VM
 # 
 # Params:
 # * VM name
 #
 # The following environment variables must be set:
-# * COMPSHARE_PRIVATE_KEY
-# * COMPSHARE_PUBLIC_KEY
+# * CLOUD_SERVICE_SECRET
+#   + It contains the private key for CompShare APIs and is used as
+#     COMPSHARE_PRIVATE_KEY in the script.
+# * CLOUD_SERVICE_ENVS
+#   + It contains the following keys in JSON:
+#     - COMPSHARE_PUBLIC_KEY (required)
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
 
+script_dir="$(dirname "$0")"
 vm_name="${1:-}"
-[[ -z "${vm_name}" ]] && { echo 'No VM specified.'; exit 0; }
 
+[[ -z ${vm_name} ]] && exit 0
+
+utils_sh="${script_dir}/utils.sh"
+
+
+#--------------------------------------------------------------------
 echo 'Importing utility functions ...'
-source "$(dirname "$0")/utils.sh"
+source "${utils_sh}"
+
+echo 'Exporting environment variables ...'
+export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
+eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
 delay=5
 num_attempts=6
 attempt=1
 while true; do
-    mapfile -t vm_info < <(get_vm_info "${vm_name}")
-    if [[ -n "${vm_info:-}" ]]; then
+    readarray -t vm_info < <(get_vm_info "${vm_name}")
+    if [[ -n ${vm_info:-} ]]; then
         vm_id="${vm_info[0]}"
         echo "Stopping the VM ${vm_name} ..."
         api_call_retry stop_instance "${vm_id}" > /dev/null
@@ -41,7 +55,7 @@ while true; do
         echo "The VM ${vm_name} may not be created."
         exit 0
     fi
-    echo "Attempt ${attempt} failed! The VM info may not be available. Retrying in ${delay} seconds ..." >&2
+    echo "* Attempt ${attempt} failed! The VM info may not be available. Retrying in ${delay} seconds ..." >&2
     sleep "${delay}"
     ((attempt++))
 done
