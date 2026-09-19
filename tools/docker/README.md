@@ -44,7 +44,7 @@ Building and Running with Docker
 * **GPU environment**
 
   ```bash
-  docker build -t recommenders:gpu --build-arg COMPUTE=gpu .
+  docker build -t recommenders:gpu .
   docker run --runtime=nvidia -v ../../examples:/root/examples -p 8888:8888 -d recommenders:gpu
   ```
 
@@ -52,7 +52,7 @@ Building and Running with Docker
 * **GPU + PySpark environment**
 
   ```bash
-  docker build -t recommenders:gpu-pyspark --build-arg COMPUTE=gpu --build-arg EXTRAS=[gpu,spark] .
+  docker build -t recommenders:gpu-pyspark --build-arg EXTRAS=[gpu,spark] .
   docker run --runtime=nvidia -v ../../examples:/root/examples -p 8888:8888 -d recommenders:gpu-pyspark
   ```
 
@@ -66,7 +66,6 @@ the docker build command.
 
 Build Arg|Description|
 ---------|-----------|
-`COMPUTE`|Compute to use, options: `cpu`, `gpu` (defaults to `cpu`)|
 `EXTRAS`|Extra dependencies to use, options: `dev`, `gpu`, `spark` (defaults to none ("")); For example, `[gpu,spark]`|
 `GIT_REF`|Git ref of Recommenders to install, options: `main`, `staging`, etc (defaults to `main`); Empty value means editable installation of current clone|
 `JDK_VERSION`|OpenJDK version to use (defaults to `>=21`)|
