@@ -54,7 +54,8 @@ extras_require = {
         "tensorflow[and-cuda]>=2.11.0,<2.16",
         # Newer PyTorch requires nvidia-nccl-cu13 conflicting with
         # nvidia-nccl-cu12 by TF < 2.16 (See #2378)
-        "torch>=2.0.1,<2.11.0",
+        # And PyTorch requires nvidia-*-cu12 starting from 2.1.0
+        "torch>=2.1.0,<2.11.0",
     ],
     "spark": [
         "pyarrow>=10.0.1",
