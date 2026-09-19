@@ -50,7 +50,7 @@ extras_require = {
     "gpu": [
         "protobuf>=3.20,<5",  # Capped at <5 for tensorflow<2.16 (gpu extra) compatibility; will change when #2073 is closed
         # Fixed TF due to constant security problems and breaking changes #2073
-        # TF requires [and-cuda] from version 3.14.0 on (See #2378)
+        # TF requires [and-cuda] from version 2.14.0 on (See #2378)
         "tensorflow[and-cuda]>=2.11.0,<2.16",
         # Newer PyTorch requires nvidia-nccl-cu13 conflicting with
         # nvidia-nccl-cu12 by TF < 2.16 (See #2378)
