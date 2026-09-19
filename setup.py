@@ -42,14 +42,19 @@ install_requires = [
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
     "transformers>=4.27.0,<6",  # requires packaging, pyyaml, requests, tqdm
+    "vowpalwabbit>=9.9.0,<10",
 ]
 
 # shared dependencies
 extras_require = {
     "gpu": [
         "protobuf>=3.20,<5",  # Capped at <5 for tensorflow<2.16 (gpu extra) compatibility; will change when #2073 is closed
-        "tensorflow>=2.8.4,!=2.9.0.*,!=2.9.1,!=2.9.2,!=2.10.0.*,<2.16",  # Fixed TF due to constant security problems and breaking changes #2073
-        "torch>=2.0.1,<3",
+        # Fixed TF due to constant security problems and breaking changes #2073
+        # TF requires [and-cuda] from version 3.14.0 on (See #2378)
+        "tensorflow[and-cuda]>=2.11.0,<2.16",
+        # Newer PyTorch requires nvidia-nccl-cu13 conflicting with
+        # nvidia-nccl-cu12 by TF < 2.16 (See #2378)
+        "torch>=2.0.1,<2.11.0",
     ],
     "spark": [
         "pyarrow>=10.0.1",
@@ -71,8 +76,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
-    # VW C++ binary needs to be installed manually for some code to work
-    "vowpalwabbit>=8.9.0,<9",
     # nni needs to be upgraded
     "nni==1.5",
     "numba>=0.57.0,<1",  # only used by geoimc and rlrmc, which require pymanopt
