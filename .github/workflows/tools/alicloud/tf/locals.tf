@@ -9,7 +9,10 @@
 #   the network where the mirrors are.
 #------------------------------------------------------------------
 locals {
-  image_id = data.alicloud_images.ubuntu2404.ids[0]
+  image_id = (
+    length(data.alicloud_images.ubuntu2404.ids) != 0
+    ? data.alicloud_images.ubuntu2404.ids[0]
+    : null)
   instance_charge_type = "PostPaid"
   spot_strategy = "SpotAsPriceGo"
 
@@ -41,9 +44,21 @@ locals {
 # Requirements that the VM should satisfy
 #------------------------------------------------------------------
 locals {
-  instance_type = [
+  qualified_instance_types = [
     for it in data.alicloud_instance_types.reco.instance_types: it
     if it.cpu_core_count > 4 && it.memory_size >= 30 && it.price < 22
-  ][0]
-  instance_zone_id = local.instance_type.availability_zones[0]
+  ]
+  instance_type = (
+    length(qualified_instance_types) != 0
+    ? qualified_instance_types[0]
+    : null
+  )
+  instance_type_id = (
+    local.instance_type != null ? local.instance_type.id : null
+  )
+  instance_zone_id = (
+    local.instance_type != null
+    ? local.instance_type.availability_zones[0]
+    : null
+  )
 }
