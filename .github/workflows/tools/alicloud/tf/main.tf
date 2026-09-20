@@ -66,7 +66,7 @@ resource "alicloud_ecs_key_pair" "reco" {
 
   provisioner "local-exec" {
     when = destroy
-    command = "rm -f ${local.key_file_name}"
+    command = "rm -f ${self.key_file}"
   }
 }
 
