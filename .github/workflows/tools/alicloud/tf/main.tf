@@ -76,6 +76,11 @@ resource "alicloud_ecs_key_pair" "reco" {
   key_pair_name = local.key_pair_name
   key_file = local.key_file_name
   resource_group_id = local.resource_group_id
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "rm -f ${local.key_file_name}"
+  }
 }
 
 resource "alicloud_ecs_key_pair_attachment" "reco" {
