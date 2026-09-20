@@ -4,16 +4,8 @@
 #####################################################################
 # Data queries for existing resources
 #####################################################################
-data "alicloud_resource_manager_resource_groups" "reco" {
-  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/resource_manager_resource_groups
-  name_regex = local.resource_group_name
-
-  depends_on = [ alicloud_resource_manager_resource_group.reco ]
-}
-
 data "alicloud_vpcs" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vpcs
-  resource_group_id = var.vpc_id == "" ? local.resource_group_id : null
   vpc_name = var.vpc_id == "" ? var.unique_name : null
   ids = var.vpc_id == "" ? null : [ var.vpc_id ]
 
@@ -22,7 +14,6 @@ data "alicloud_vpcs" "reco" {
 
 data "alicloud_vswitches" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vswitches
-  resource_group_id = local.resource_group_id
   vpc_id = local.vpc.id
   zone_id = local.instance_zone_id
   vswitch_name = local.vswitch_name
@@ -32,7 +23,6 @@ data "alicloud_vswitches" "reco" {
 
 data "alicloud_security_groups" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/security_groups
-  resource_group_id = local.resource_group_id
   vpc_id = local.vpc.id
   name_regex = local.security_group_name
 

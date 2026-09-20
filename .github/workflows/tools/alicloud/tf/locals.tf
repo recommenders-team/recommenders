@@ -16,9 +16,6 @@ locals {
   key_file_name = var.unique_name
   key_pair_name = var.unique_name
 
-  resource_group_name = var.unique_name
-  resource_group_id = data.alicloud_resource_manager_resource_groups.reco.ids[0]
-
   security_group_name = var.unique_name
   security_group_id = data.alicloud_security_groups.reco.ids[0]
 

@@ -15,16 +15,6 @@ resource "random_integer" "vswitch_netnum" {
   max = pow(2, local.vpc_subnet_bits) - 1
 }
 
-resource "alicloud_resource_manager_resource_group" "reco" {
-  # Resource groups can contain resources from different regions.
-  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/resource_manager_resource_group
-  #
-  # Underscores ("_") is not allowed in the name.
-  # See https://www.alibabacloud.com/help/en/resource-management/resource-group/developer-reference/api-resourcemanager-2020-03-31-createresourcegroup-rg
-  resource_group_name = local.resource_group_name
-  display_name = local.resource_group_name
-}
-
 resource "alicloud_vpc" "reco" {
   # VPC is regional.
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/vpc
@@ -33,7 +23,6 @@ resource "alicloud_vpc" "reco" {
   count = var.vpc_id == "" ? 1 : 0
 
   vpc_name = var.unique_name
-  resource_group_id = local.resource_group_id
   cidr_block = "10.0.0.0/8"
 }
 
@@ -51,7 +40,6 @@ resource "alicloud_security_group" "reco" {
   # with VPCs.
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/security_group
   security_group_name = local.security_group_name
-  resource_group_id = local.resource_group_id
   vpc_id = local.vpc.id
 }
 
@@ -68,14 +56,13 @@ resource "alicloud_security_group_rule" "ssh" {
 }
 
 
-#####################################################################
+#------------------------------------------------------------------
 # Create the VM and its SSH key
-#####################################################################
+#------------------------------------------------------------------
 resource "alicloud_ecs_key_pair" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/ecs_key_pair
   key_pair_name = local.key_pair_name
   key_file = local.key_file_name
-  resource_group_id = local.resource_group_id
 
   provisioner "local-exec" {
     when = destroy
@@ -93,7 +80,6 @@ resource "alicloud_ecs_key_pair_attachment" "reco" {
 resource "alicloud_instance" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/instance
   instance_name = local.vm_name
-  resource_group_id = local.resource_group_id
   instance_type = local.instance_type.id
   image_id = local.image_id
 
