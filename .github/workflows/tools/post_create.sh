@@ -82,6 +82,7 @@ if [[ -n ${ssh_dest} ]]; then
     echo 'Rebooting for setup to take effect ...'
     ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "sudo reboot" || true
+        "${ssh_dest}" "rm -rf ${script_dir_name} && sudo reboot" \
+    || true
     wait_for_vm_to_be_available "${ssh_dest}"
 fi

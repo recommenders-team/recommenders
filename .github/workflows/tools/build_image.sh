@@ -147,4 +147,9 @@ else
         "${ssh_dest}" "\
             cd ${recommenders_dir_name} \
             && docker build ." "${docker_args[@]}"
+    
+    echo 'Cleaning up ...'
+    ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "rm -rf ${recommenders_dir_name}"
 fi
