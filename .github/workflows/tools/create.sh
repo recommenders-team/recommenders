@@ -60,7 +60,8 @@
 #                 "ap-southeast-5",
 #                 "ap-northeast-1",
 #                 "eu-central-1",
-#                 "ap-southeast-1"
+#                 "ap-southeast-1",
+#                 "us-east-1"
 #             ]
 #         },
 #         "gpu": {
@@ -73,7 +74,8 @@
 #                 "ap-southeast-5",
 #                 "ap-northeast-1",
 #                 "eu-central-1",
-#                 "ap-southeast-1"
+#                 "ap-southeast-1",
+#                 "us-east-1"
 #             ]
 #         }
 #     }

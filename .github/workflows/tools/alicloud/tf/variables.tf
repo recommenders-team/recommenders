@@ -16,6 +16,7 @@ variable "region" {
   #   + Tokyo,     "ap-northeast-1"
   #   + Frankfurt, "eu-central-1"
   #   + Singapore, "ap-southeast-1"
+  #   + Virginia,  "us-east-1"
   # * China (Mirrors or proxies for GitHub and Docker are required.)
   #   + Ulanqab,   "cn-wulanchabu"
   #   + Hangzhou,  "cn-hangzhou"
