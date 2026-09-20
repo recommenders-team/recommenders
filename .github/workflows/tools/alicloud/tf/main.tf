@@ -3,11 +3,10 @@
 
 #####################################################################
 # Create the following resources for the VM:
-# * a resource group containing all the resources.
-# * a VPC to form a private network with the following associated
+# *  VPC to form a private network with the following associated
 #   resources:
-#   * a VSwitch in the corresponding availability zone.
-#   * a security group and a security group rule to allow SSH access.
+#   + a VSwitch in the corresponding availability zone.
+#   + a security group and a security group rule to allow SSH access.
 #####################################################################
 resource "random_integer" "vswitch_netnum" {
   # https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer
