@@ -49,8 +49,8 @@ locals {
     if it.cpu_core_count > 4 && it.memory_size >= 30 && it.price < 22
   ]
   instance_type = (
-    length(qualified_instance_types) != 0
-    ? qualified_instance_types[0]
+    length(local.qualified_instance_types) != 0
+    ? local.qualified_instance_types[0]
     : null
   )
   instance_type_id = (
