@@ -24,10 +24,12 @@ FROM buildpack-deps:24.04@sha256:6ddc88f2b2d1972421e7ed175f105b4d18785751fd896ed
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
-# * [nvidia/cuda:13.2.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/13.2.1/ubuntu2404/devel/Dockerfile)
-#   + [Created on 2026-04-20](https://hub.docker.com/layers/nvidia/cuda/13.2.1-devel-ubuntu24.04/images/sha256-0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf)
-# * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
-FROM nvidia/cuda:13.2.1-devel-ubuntu24.04@sha256:0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf AS gpu
+# * [nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.2.2/ubuntu2204/devel/cudnn8/Dockerfile)
+#   + [Created on 2023-11-22](https://hub.docker.com/layers/nvidia/cuda/12.2.2-cudnn8-devel-ubuntu22.04/images/sha256-693d4bcb5b05ec381cf815ed0085d4cbc0757d46ccbaa5fab097bb5c250bc69d)
+# * See also
+#   + [Build configuration for tensorflow-2.15.0](https://www.tensorflow.org/install/source#gpu)
+#   + [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
+FROM nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04@sha256:693d4bcb5b05ec381cf815ed0085d4cbc0757d46ccbaa5fab097bb5c250bc69d AS gpu
 
 
 #####################################################################
