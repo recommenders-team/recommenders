@@ -291,7 +291,7 @@ setup_ssh_key() {
         ssh_key_type="$(echo "${ssh_key_type}" \
             | cut -d '(' -f 2 \
             | cut -d ')' -f 1)"
-        mv "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
+        mv -f "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
     else
         local encoded_password_file="${sshkey_or_passfile}"
         local key_file="${HOME}/.ssh/id_ed25519"
