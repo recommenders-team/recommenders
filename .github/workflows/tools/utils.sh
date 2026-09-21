@@ -65,17 +65,15 @@ apply_tf_config() {
     local index
     for index in "${!var_combinations[@]}"; do
         local combination="${var_combinations[${index}]}"
-        local inputs
-        readarray -d '' inputs < <(jq --raw-output0 'to_entries | .[]
-            | "-var", "\(.key)=\(.value)"' <<< "${combination}")
+        echo "${combination}" > "${tf_config_dir}/reco.auto.tfvars.json"
 
-        echo "* Trying with" "${inputs[@]}" "..."
+        echo "* Trying with ${combination} ..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
-            -var "unique_name=${unique_name}" "${inputs[@]}" && return
+            -var "unique_name=${unique_name}" && return
 
         echo '* Cleaning up ...'
         terraform -chdir="${tf_config_dir}" destroy -auto-approve \
-            -var "unique_name=${unique_name}" "${inputs[@]}"
+            -var "unique_name=${unique_name}"
     done
     echo 'All required resources are sold out!' && return 1
 }

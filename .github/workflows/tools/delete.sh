@@ -38,6 +38,9 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 script_dir="$(dirname "$0")"
+unique_name="${1:-}"
+
+[[ -z ${unique_name} ]] && exit 0
 
 [[ -z ${CLOUD_SERVICE:-} ]] \
     && echo 'CLOUD_SERVICE not set!' >&2 && exit 1
@@ -65,4 +68,5 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 #--------------------------------------------------------------------
 echo 'Deleting the VM ...'
 TF_SKIP_RESOURCE_SCHEMA_VALIDATION=true \
-    terraform -chdir="${tf_config_dir}" destroy -auto-approve
+    terraform -chdir="${tf_config_dir}" destroy -auto-approve \
+    -var "unique_name=${unique_name}"

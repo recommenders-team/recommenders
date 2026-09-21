@@ -25,7 +25,7 @@ variable "region" {
   #
   # If var.vpc_id is specified, it should be the same region as the
   # VPC.
-  default = "ap-southeast-5"
+  default = ""
 }
 
 variable "instance_type_family" {
@@ -49,7 +49,7 @@ variable "instance_type_family" {
   #   + 'ecs.gn8is' - NVIDIA L20
   #     - '8' - Ada Lovelace
   #     - price: ~ 19CNY / 3CNY
-  default = "ecs.gn8is"
+  default = ""
 }
 
 variable "vpc_id" {
