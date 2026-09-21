@@ -128,7 +128,7 @@ jobs:
         with:
           ref: ${{ env.PR_REF }}
           allow-unsafe-pr-checkout: true
-      
+
       - name: Generate unique name for VM and Docker image
         run: |
           if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
@@ -148,6 +148,9 @@ jobs:
           # * the Docker image tag
           # * the directory containing the repo on the VM
           echo "UNIQUE_NAME=${unique_name}" >> "${GITHUB_ENV}"
+
+      - uses: hashicorp/setup-terraform@v4
+        if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
 
       - name: Create a VM
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
