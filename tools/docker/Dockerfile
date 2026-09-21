@@ -4,13 +4,40 @@
 # Licensed under the MIT License.
 
 #####################################################################
+# Stage build order depending on the compute:
+#     Compute Stage (CPU/GPU) -> Dependencies Stage -> Final Stage
+#####################################################################
+# Valid computes: cpu, gpu
+ARG COMPUTE="cpu"
+
+
+#####################################################################
+# Compute Stage - CPU
+# Choose an appropriate CPU compute image
+#####################################################################
+# * [buildpack-deps:24.04](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/noble/Dockerfile)
+#   + [Created on 2026-04-19](https://hub.docker.com/layers/library/buildpack-deps/24.04/images/sha256-6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673)
+FROM buildpack-deps:24.04@sha256:6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673 AS cpu
+
+
+#####################################################################
+# Compute Stage - GPU
+# Choose an appropriate GPU compute image
+#####################################################################
+# * [nvidia/cuda:13.2.1-devel-ubuntu24.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/13.2.1/ubuntu2404/devel/Dockerfile)
+#   + [Created on 2026-04-20](https://hub.docker.com/layers/nvidia/cuda/13.2.1-devel-ubuntu24.04/images/sha256-0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf)
+# * See also [AML GPU Base Image](https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04)
+FROM nvidia/cuda:13.2.1-devel-ubuntu24.04@sha256:0e1f7b8e96fa9ec5e36d4709a38c62df7b5665977446081811c12b8234d874bf AS gpu
+
+
+#####################################################################
 # Dependencies Stage
 # Set up all dependencies.  This Stage is used by dev containers,
 # because editable installation is required.
 #####################################################################
-# * [buildpack-deps:24.04](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/noble/Dockerfile)
-#   + [Created on 2026-04-19](https://hub.docker.com/layers/library/buildpack-deps/24.04/images/sha256-6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673)
-FROM buildpack-deps:24.04@sha256:6ddc88f2b2d1972421e7ed175f105b4d18785751fd896edd7f435922852e9673 AS deps
+FROM ${COMPUTE} AS deps
+
+ARG COMPUTE
 
 # Extra dependencies: dev, gpu, spark
 ARG EXTRAS=""

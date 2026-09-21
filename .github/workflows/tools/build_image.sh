@@ -69,7 +69,10 @@ utils_sh="${script_dir}/utils.sh"
 #--------------------------------------------------------------------
 echo 'Generating basic Docker build args ...'
 if [[ ${test_group} == *gpu* ]]; then
+    compute='gpu'
     extras_gpu='gpu'
+else
+    compute='cpu'
 fi
 
 if [[ ${test_group} == *spark* ]]; then
@@ -79,6 +82,7 @@ fi
 docker_args=(\
     -t "${image_tag}" \
     -f "${dockerfile}" \
+    --build-arg "COMPUTE=${compute}" \
     --build-arg "EXTRAS=[dev${extras_gpu:+,$extras_gpu}${extras_spark:+,$extras_spark}]" \
     --build-arg 'GIT_REF=' \
     --build-arg "PYTHON_VERSION=${python_version}" \
