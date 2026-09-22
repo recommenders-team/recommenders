@@ -75,7 +75,7 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
     if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq -o json "${config_yml}" \
+        apt_mirror="$(yq -o json < "${config_yml}" \
             | jq -r '.apt_mirror // empty')"
     fi
     apt_mirror="${apt_mirror:+$apt_mirror,}"

@@ -42,10 +42,10 @@ if [[ ${test_type} == 'nightly' ]]; then
         | .[]
         | select(contains(\"${compute}\"))
         ]" \
-        "${test_groups_yml}")
+        < "${test_groups_yml}")
 else
     test_groups_str=$(yq -o json -I 0 \
-        ".${test_type} | keys" "${test_groups_yml}")
+        ".${test_type} | keys" < "${test_groups_yml}")
 fi
 echo "Test Groups: ${test_groups_str}"
 echo "groups=${test_groups_str}" >> ${GITHUB_OUTPUT}

@@ -58,7 +58,7 @@ echo 'Importing utility functions ...'
 source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
-secret_key_name="$(yq '.secret_key_name' "${config_yml}")"
+secret_key_name="$(yq '.secret_key_name' < "${config_yml}")"
 export "${secret_key_name}"="${CLOUD_SERVICE_SECRET}"
 eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
