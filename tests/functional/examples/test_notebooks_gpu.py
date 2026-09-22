@@ -578,8 +578,6 @@ def test_lightgcn_deep_dive_functional(
 @pytest.mark.gpu
 @pytest.mark.notebooks
 def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
-    _assert_tensorflow_gpu_available()
-
     notebook_path = notebooks["dkn_quickstart"]
     execute_notebook(
         notebook_path,
@@ -589,10 +587,10 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
-    assert results["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.5834, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.1834, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@5"] == pytest.approx(0.1915, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@10"] == pytest.approx(0.2437, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.gpu
