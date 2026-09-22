@@ -143,7 +143,7 @@ fi
 #--------------------------------------------------------------------
 if [[ -z ${ssh_dest} ]]; then
     echo 'Building the Docker image on current runner ...'
-    docker build "${repo_dir}" "${docker_args[@]}"
+    cd "${repo_dir}" && docker build . "${docker_args[@]}"
 else
     pre_image_build "${ssh_dest}" "${repo_dir}" "${dockerfile}" \
         "${config_yml}" "${repo_vm_dir_name}"
@@ -155,7 +155,8 @@ else
         -o ServerAliveInterval=60 \
         -o ServerAliveCountMax=10 \
         "${ssh_dest}" "\
-            docker build ${repo_vm_dir_name}" "${docker_args[@]}"
+            cd ${repo_vm_dir_name} \
+            && docker build ." "${docker_args[@]}"
     
     echo 'Cleaning up ...'
     ssh -t -o StrictHostKeyChecking=no \
