@@ -419,8 +419,6 @@ pr_gate:
 
   # group_gpu_002:                                                                                                                                     # Total: 143.16s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm # 0.76s (Always the first test to check the GPU works)
-    - tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition                                                            #    1.99s
-    - tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition                                                  #    0.70s
     - tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition                                                      #    7.85s
     - tests/unit/recommenders/models/test_sli_rec.py
     - tests/unit/recommenders/models/test_xdeepfm.py
