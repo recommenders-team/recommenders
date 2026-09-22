@@ -70,6 +70,7 @@ fi
 
 echo 'Generating login password ...'
 encoded_password_file="$(mktemp)"
+trap 'rm -rf "${encoded_password_file}"' EXIT
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 \
     | tr -d '\n' > "${encoded_password_file}"
 
