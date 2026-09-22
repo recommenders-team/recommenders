@@ -63,10 +63,12 @@ cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
 image_tag="${unique_name}"
-repo_dir="$(realpath "${repo_dir}")"
 repo_vm_dir_name="${unique_name}"
 utils_sh="${script_dir}/utils.sh"
 
+repo_dir_abs_path="$(realpath "${repo_dir}")"
+dockerfile_abs_path="$(realpath "${dockerfile}")"
+dockerfile_rel_path="${dockerfile_abs_path#"${repo_dir_abs_path}"/}"
 
 #--------------------------------------------------------------------
 # Generate basic Docker build args
@@ -85,7 +87,7 @@ fi
 
 docker_args=(\
     -t "${image_tag}" \
-    -f "${dockerfile}" \
+    -f "${dockerfile_rel_path}" \
     --build-arg "COMPUTE=${compute}" \
     --build-arg "EXTRAS=[dev${extras_gpu:+,$extras_gpu}${extras_spark:+,$extras_spark}]" \
     --build-arg 'GIT_REF=' \

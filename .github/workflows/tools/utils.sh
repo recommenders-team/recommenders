@@ -184,12 +184,17 @@ pre_image_build() {
       || -z ${repo_vm_dir_name} ]] \
       && echo 'Parameter error!' >&2 return 1
 
-    repo_dir="$(realpath "${repo_dir}")"
-    dockerfile="$(realpath "${dockerfile}")"
-    dockerfile="${dockerfile#"${repo_dir}"/}"
+    local repo_dir_abs_path
+    repo_dir_abs_path="$(realpath "${repo_dir}")"
+
+    local dockerfile_abs_path
+    dockerfile_abs_path="$(realpath "${dockerfile}")"
+    local dockerfile_rel_path="${dockerfile_abs_path#"${repo_dir_abs_path}"/}"
+
     if [[ -f ${config_yml} ]]; then
-        config_yml="$(realpath "${config_yml}")"
-        config_yml="${config_yml#"${repo_dir}"/}"
+        local config_yml_abs_path
+        config_yml_abs_path="$(realpath "${config_yml}")"
+        local config_yml_rel_path="${config_yml_abs_path#"${repo_dir_abs_path}"/}"
     fi
 
     echo 'Preparing for the Docker image build ...'
@@ -230,18 +235,18 @@ pre_image_build() {
                     -e \"/download\\\/sdkman/a else cp /root/${sdkman_zip} \\\\\"\\\\$\{sdkman_zip_file\}\\\\\"; fi\" \\\\\\
                     -e \"/download\\\/native/a else cp /root/${sdkman_native_zip} \\\\\"\\\\$\{sdkman_zip_file\}\\\\\"; fi\" \\\\\\
                     ${sdkman_sh} \\\\" \
-        "${dockerfile}"
+        "${dockerfile_rel_path}"
 
     echo '* Configuring APT in Dockerfile ...'
-    if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq -o json < "${config_yml}" \
+    if [[ -f ${config_yml_rel_path} ]]; then
+        apt_mirror="$(yq -o json < "${config_yml_rel_path}" \
             | jq -r '.apt_mirror // empty')"
         if [[ -n ${apt_mirror} ]]; then
             sed -i "/SHELL /a \
                 RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
                         -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
                         \$(if [[ -f /etc/apt/sources.list.d/ubuntu.sources ]]; then echo '/etc/apt/sources.list.d/ubuntu.sources'; else echo '/etc/apt/sources.list'; fi)" \
-                "${dockerfile}"
+                "${dockerfile_rel_path}"
         fi
     fi
 
