@@ -69,6 +69,8 @@ RUN if [[ -n ${VM_PROXY_CERTIFICATE} ]]; then \
 # Upgrade libstdc++ required by cornac
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
