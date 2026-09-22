@@ -144,33 +144,6 @@ def check_nn_config(f_config):
         required_parameters = ["FEATURE_COUNT", "dim", "loss", "data_format", "method"]
     elif f_config["model_type"] in ["lr", "LR"]:
         required_parameters = ["FEATURE_COUNT", "loss", "data_format", "method"]
-    elif f_config["model_type"] in ["dkn", "DKN"]:
-        required_parameters = [
-            "doc_size",
-            "history_size",
-            "wordEmb_file",
-            "entityEmb_file",
-            "contextEmb_file",
-            "news_feature_file",
-            "user_history_file",
-            "word_size",
-            "entity_size",
-            "use_entity",
-            "use_context",
-            "data_format",
-            "dim",
-            "layer_sizes",
-            "activation",
-            "attention_activation",
-            "attention_activation",
-            "attention_dropout",
-            "loss",
-            "data_format",
-            "dropout",
-            "method",
-            "num_filters",
-            "filter_sizes",
-        ]
     elif f_config["model_type"] in ["exDeepFM", "xDeepFM"]:
         required_parameters = [
             "FIELD_COUNT",
@@ -273,13 +246,6 @@ def check_nn_config(f_config):
                     f_config["data_format"]
                 )
             )
-    elif f_config["model_type"] in ["dkn", "DKN"]:
-        if f_config["data_format"] != "dkn":
-            raise ValueError(
-                "For dkn model, data format must be 'dkn', but your set is {0}".format(
-                    f_config["data_format"]
-                )
-            )
     check_type(f_config)
 
 
@@ -349,9 +315,6 @@ def create_hparams(flags):
         HParams: Hyperparameter object.
     """
     init_dict = {
-        # dkn
-        "use_entity": True,
-        "use_context": True,
         # model
         "cross_activation": "identity",
         "user_dropout": False,
