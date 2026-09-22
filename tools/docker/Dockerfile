@@ -66,6 +66,14 @@ RUN if [[ -n ${VM_PROXY_CERTIFICATE} ]]; then \
         && update-ca-certificates; \
     fi
 
+# Upgrade libstdc++ required by cornac
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --only-upgrade libstdc++6
+
 # curl, unzip and zip is required by SDKMAN!
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
