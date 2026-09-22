@@ -167,20 +167,41 @@ pre_image_build() {
     #
     # Params:
     # * SSH destination of the VM in the form of username@ip_address
+    # * Path to recommenders repo directory
     # * path to the Dockerfile
     # * path to config.yml
-    # * name of the directory containing the recommenders repo files
+    # * name of the directory on the VM that will contain the
+    #   recommenders repo files
     local ssh_dest="${1:-}"
-    local dockerfile="${2:-}"
-    local config_yml="${3:-}"
-    local recommenders_dir_name="${4:-}"
+    local repo_dir="${2:-}"
+    local dockerfile="${3:-}"
+    local config_yml="${4:-}"
+    local repo_vm_dir_name="${5:-}"
 
     [[ -z ${ssh_dest} \
+      || -z ${repo_dir} \
       || -z ${dockerfile} \
-      || -z ${recommenders_dir_name} ]] \
+      || -z ${repo_vm_dir_name} ]] \
       && echo 'Parameter error!' >&2 return 1
 
+    repo_dir="$(realpath "${repo_dir}")"
+    dockerfile="$(realpath "${dockerfile}")"
+    dockerfile="${dockerfile#"${repo_dir}"/}"
+    if [[ -f ${config_yml} ]]; then
+        config_yml="$(realpath "${config_yml}")"
+        config_yml="${config_yml#"${repo_dir}"/}"
+    fi
+
     echo 'Preparing for the Docker image build ...'
+    echo '* Making a repo copy ...'
+    local temp_dir
+    temp_dir="$(mktemp -d)"
+    trap 'rm -rf "${temp_dir}"' RETURN
+    local temp_repo_dir="${temp_dir}/${repo_vm_dir_name}"
+    mkdir "${temp_repo_dir}"
+    cp -r "${repo_dir}"/* "${temp_repo_dir}"
+    cd "${temp_repo_dir}" || return 1
+
     echo '* Dowloading SDKMan files ...'
     local sdkman_sh='sdkman.sh'
     local sdkman_zip='sdkman.zip'
@@ -213,30 +234,28 @@ pre_image_build() {
 
     echo '* Configuring APT in Dockerfile ...'
     if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq -o json "${config_yml}" \
+        apt_mirror="$(yq -o json < "${config_yml}" \
             | jq -r '.apt_mirror // empty')"
         if [[ -n ${apt_mirror} ]]; then
             sed -i "/SHELL /a \
                 RUN sed -i -e \"s#archive.ubuntu.com#${apt_mirror}#g\" \\\\\\
                         -e \"s#security.ubuntu.com#${apt_mirror}#g\" \\\\\\
-                        /etc/apt/sources.list.d/ubuntu.sources" \
+                        \$(if [[ -f /etc/apt/sources.list.d/ubuntu.sources ]]; then echo '/etc/apt/sources.list.d/ubuntu.sources'; else echo '/etc/apt/sources.list'; fi)" \
                 "${dockerfile}"
         fi
     fi
 
     echo '* Uploading recommenders ...'
-    local recomenders_tar="${recommenders_dir_name}.tar"
-    tar cf "../${recomenders_tar}" ./*
+    cd - || return 1
+    local repo_tar="${temp_dir}/${repo_vm_dir_name}.tar"
+    tar -cf "${repo_tar}" -C "${temp_dir}" "${repo_vm_dir_name}"
     scp -q -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "../${recomenders_tar}" "${ssh_dest}":
-    rm -rf "../${recomenders_tar}"
+        "${repo_tar}" "${ssh_dest}":
     ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "\
-            mkdir ${recommenders_dir_name} \
-            && tar xf ${recomenders_tar} -C ${recommenders_dir_name} \
-            && rm -rf ${recomenders_tar}"
+        "${ssh_dest}" "tar xf ${repo_tar##*/} \
+            && rm -rf ${repo_tar##*/}"
 }
 
 run_cmd_retry() {
@@ -304,7 +323,6 @@ setup_ssh_key() {
         local -x SSHPASS
         read -r SSHPASS < <(cat "${encoded_password_file}" \
             | tr -d '\n' | base64 -d) || true
-        rm -rf "${encoded_password_file}"
         run_cmd_retry sshpass -e ssh-copy-id \
             -i "${key_file}.pub" \
             -o StrictHostKeyChecking=no \

@@ -62,9 +62,20 @@ if [[ -n ${ssh_dest} ]]; then
     source "${utils_sh}"
 
     echo 'Uploading tools to the VM ...'
-    scp -qr -o StrictHostKeyChecking=no \
+    temp_script_dir="$(mktemp -d)"
+    trap 'rm -rf "${temp_script_dir}"' EXIT
+
+    script_dir_tar="${temp_script_dir}/${script_dir_name}.tar"
+    tar -cf "${script_dir_tar}" \
+        -C "$(dirname "${script_dir}")" \
+        --exclude='tf' "${script_dir_name}"
+    scp -q -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "${script_dir}" "${ssh_dest}":
+        "${script_dir_tar}" "${ssh_dest}":
+    ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "tar xf ${script_dir_tar##*/} \
+            && rm -rf ${script_dir_tar##*/}"
 
     for index in "${!setup_scripts[@]}"; do
         script="${setup_scripts[${index}]}"

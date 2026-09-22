@@ -180,6 +180,7 @@ jobs:
           bash '${{ inputs.tools_dir }}/build_image.sh' \
                "${SSH_DEST}" \
                "${UNIQUE_NAME}" \
+               './' \
                '${{ inputs.dockerfile }}' \
                '${{ matrix.group }}' \
                '${{ matrix.python-version }}' \

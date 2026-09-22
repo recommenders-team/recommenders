@@ -12,6 +12,7 @@
 #   + If not set, then the Docker image will be built on the current
 #     machine.
 # * Name for the Docker image tag and the code directory
+# * Path to recommenders repo directory
 # * Path to Dockerfile in the repo
 # * Test group
 # * Python version
@@ -45,12 +46,14 @@ shopt -s inherit_errexit
 script_dir="$(dirname "$0")"
 ssh_dest="${1:-}"
 unique_name="${2:-}"
-dockerfile="${3:-}"
-test_group="${4:-}"
-python_version="${5:-}"
-venv_dir="${6:-}"
+repo_dir="${3:-}"
+dockerfile="${4:-}"
+test_group="${5:-}"
+python_version="${6:-}"
+venv_dir="${7:-}"
 
 [[ -z ${unique_name} \
+  || -z ${repo_dir} \
   || -z ${dockerfile} \
   || -z ${test_group} \
   || -z ${python_version} \
@@ -60,7 +63,8 @@ cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
 config_yml="${script_dir}/${cloud_service}/config.yml"
 image_tag="${unique_name}"
-recommenders_dir_name="${unique_name}"
+repo_dir="$(realpath "${repo_dir}")"
+repo_vm_dir_name="${unique_name}"
 utils_sh="${script_dir}/utils.sh"
 
 
@@ -137,10 +141,10 @@ fi
 #--------------------------------------------------------------------
 if [[ -z ${ssh_dest} ]]; then
     echo 'Building the Docker image on current runner ...'
-    docker build . "${docker_args[@]}"
+    docker build "${repo_dir}" "${docker_args[@]}"
 else
-    pre_image_build "${ssh_dest}" "${dockerfile}" "${config_yml}" \
-        "${recommenders_dir_name}"
+    pre_image_build "${ssh_dest}" "${repo_dir}" "${dockerfile}" \
+        "${config_yml}" "${repo_vm_dir_name}"
 
     echo 'Building the Docker image on the VM ...'
     mapfile -t docker_args < <(printf '%q\n' "${docker_args[@]}")
@@ -149,11 +153,10 @@ else
         -o ServerAliveInterval=60 \
         -o ServerAliveCountMax=10 \
         "${ssh_dest}" "\
-            cd ${recommenders_dir_name} \
-            && docker build ." "${docker_args[@]}"
+            docker build ${repo_vm_dir_name}" "${docker_args[@]}"
     
     echo 'Cleaning up ...'
     ssh -t -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "rm -rf ${recommenders_dir_name}"
+        "${ssh_dest}" "rm -rf ${repo_vm_dir_name}"
 fi
