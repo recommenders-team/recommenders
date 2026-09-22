@@ -191,3 +191,11 @@ CLAUDE.md
 
 # Superpowers specs / design docs
 docs/superpowers/
+
+# Terraform files
+.terraform/
+*.hcl
+*.tfvars
+*.tfvar.json
+*.tfstate
+*.tfstate.*
