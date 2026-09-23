@@ -42,7 +42,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
         **Note:** If `requirements_kdd.txt` doesn't exist, you can install the dependencies manually:
         ```bash
-        uv pip install numpy pandas jupyter ipykernel scikit-learn matplotlib scipy pytest numba tensorflow
+        uv pip install numpy pandas jupyter ipykernel scikit-learn matplotlib scipy pytest numba tensorflow torch
         ```
 
 1. The tutorial will be conducted by using the Jupyter notebooks. The newly created kernel can be registered with the Jupyter notebook server

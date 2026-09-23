@@ -32,12 +32,6 @@ Iterators
 .. automodule:: recommenders.models.deeprec.io.iterator
     :members:
     :special-members: __init__
-.. automodule:: recommenders.models.deeprec.io.dkn_iterator
-    :members:
-    :special-members: __init__
-.. automodule:: recommenders.models.deeprec.io.dkn_item2item_iterator
-    :members:
-    :special-members: __init__
 .. automodule:: recommenders.models.deeprec.io.nextitnet_iterator
     :members:
     :special-members: __init__
@@ -60,14 +54,17 @@ Utilities
 
 DKN
 ******************************
-.. automodule:: recommenders.models.deeprec.models.dkn
+.. automodule:: recommenders.models.deeprec.models.pytorch.dkn
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.deeprec.io.dkn_dataset
     :members:
     :special-members: __init__
 
 
 DKN item-to-item
 ******************************
-.. automodule:: recommenders.models.deeprec.models.dkn_item2item
+.. automodule:: recommenders.models.deeprec.models.pytorch.dkn_item2item
     :members:
     :special-members: __init__
 
