@@ -24,6 +24,8 @@ FROM buildpack-deps:24.04@sha256:6ddc88f2b2d1972421e7ed175f105b4d18785751fd896ed
 # Compute Stage - GPU
 # Choose an appropriate GPU compute image
 #####################################################################
+# * The CUDA toolkit installed in the image **MUST** be compatible
+#   with the TensorFlow in setup.py
 # * [nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04](https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/12.2.2/ubuntu2204/devel/cudnn8/Dockerfile)
 #   + [Created on 2023-11-22](https://hub.docker.com/layers/nvidia/cuda/12.2.2-cudnn8-devel-ubuntu22.04/images/sha256-693d4bcb5b05ec381cf815ed0085d4cbc0757d46ccbaa5fab097bb5c250bc69d)
 # * See also

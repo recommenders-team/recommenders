@@ -33,7 +33,8 @@ When using the `uv` environment created in the README, prefer `uv pip install ..
 ## Setup for GPU
 
 ```bash
-# 1. Make sure CUDA is installed.
+# 1. Make sure CUDA is installed and compatible with the TensorFlow in
+#    setup.py.
 
 # 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the gpu extra to the uv pip install command:
 uv pip install "recommenders[gpu]"
