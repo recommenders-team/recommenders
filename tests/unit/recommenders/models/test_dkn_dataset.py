@@ -152,18 +152,21 @@ def test_looks_up_the_candidate_and_the_clicked_articles(small_news, write_file)
     )
 
 
-def test_emits_the_dtypes_the_model_consumes(synthetic_dkn):
+@pytest.mark.parametrize(
+    "key, dtype",
+    [
+        ("labels", np.float32),
+        ("candidate_words", np.int64),
+        ("candidate_entities", np.int64),
+        ("clicked_words", np.int64),
+        ("clicked_entities", np.int64),
+    ],
+)
+def test_emits_the_dtypes_the_model_consumes(synthetic_dkn, key, dtype):
     dataset = DKNDataset(synthetic_dkn["news"], synthetic_dkn["history"], HISTORY_SIZE)
     np_batch, _ = next(dataset.load_data_from_file(synthetic_dkn["train"], 4))
 
-    assert np_batch["labels"].dtype == np.float32
-    for key in (
-        "candidate_words",
-        "candidate_entities",
-        "clicked_words",
-        "clicked_entities",
-    ):
-        assert np_batch[key].dtype == np.int64
+    assert np_batch[key].dtype == dtype
 
 
 def test_rejects_a_click_on_an_unknown_article(small_news, write_file):
