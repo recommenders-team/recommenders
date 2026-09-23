@@ -629,6 +629,27 @@ def _extract_kdd2020_dkn_files(directory, suffixes):
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
+def test_dkn_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
+    data_path = _extract_kdd2020_dkn_files(tmp, ("_small.txt", "_embedding.npy"))
+
+    notebook_path = notebooks["dkn_kdd2020"]
+    execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(data_path=data_path, EPOCHS=1),
+    )
+    results = read_notebook(output_notebook)
+
+    assert results["auc"] == pytest.approx(0.8865, rel=TOL, abs=ABS_TOL)
+    assert results["group_auc"] == pytest.approx(0.8777, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.5625, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@2"] == pytest.approx(0.4951, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@4"] == pytest.approx(0.5966, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
 def test_dkn_item2item_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
     data_path = _extract_kdd2020_dkn_files(
         tmp,
