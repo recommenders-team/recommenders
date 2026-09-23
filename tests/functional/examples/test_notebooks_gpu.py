@@ -598,9 +598,7 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-def test_dkn_item2item_kdd2020_functional(
-    notebooks, output_notebook, kernel_name, tmp
-):
+def test_dkn_item2item_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
     zip_file = maybe_download(
         "https://huggingface.co/datasets/Recommenders/kdd2020/resolve/main/data_folder.zip",
         work_directory=tmp,
