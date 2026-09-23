@@ -317,17 +317,22 @@ def test_inserts_batch_norm_only_when_enabled(build_model, enable_BN, expected):
     assert type(model.scorer.bns[0]).__name__ == expected
 
 
-def test_biases_follow_the_init_method(build_model):
-    model = build_model(init_value=0.2)
-    biases = [
-        linear.bias
-        for net in (model.attention, model.scorer)
-        for linear in (*net.linears, net.out)
-    ] + [conv.bias for conv in model.kcnn.convs]
+@pytest.mark.parametrize(
+    "layer",
+    [
+        "attention.linears.0",
+        "attention.out",
+        "scorer.linears.0",
+        "scorer.out",
+        "kcnn.convs.0",
+        "kcnn.convs.1",
+    ],
+)
+def test_biases_follow_the_init_method(build_model, layer):
+    bias = build_model(init_value=0.2).get_submodule(layer).bias
 
-    for bias in biases:
-        assert bias.abs().max().item() <= 0.2
-        assert bias.abs().max().item() > 0.0
+    assert bias.abs().max().item() <= 0.2
+    assert bias.abs().max().item() > 0.0
 
 
 def test_layer_params_leave_out_batch_norm_and_knowledge_transforms(build_model):
