@@ -110,6 +110,7 @@ nightly:
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm                                                                                         #    2.42s (Always the first test to check the GPU works)
     - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_npa                                                                          #  138.63s
     - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_nrms                                                                         #  228.65s
+    - tests/functional/examples/test_notebooks_gpu.py::test_dkn_item2item_kdd2020_functional
 
   group_gpu_007:                                                                                                                                     # Total: 298.02s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm                                                                                         #    2.42s (Always the first test to check the GPU works)
