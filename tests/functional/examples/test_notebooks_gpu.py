@@ -590,10 +590,14 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["auc"] == pytest.approx(0.5834, rel=TOL, abs=ABS_TOL)
-    assert results["mean_mrr"] == pytest.approx(0.1834, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg@5"] == pytest.approx(0.1915, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg@10"] == pytest.approx(0.2437, rel=TOL, abs=ABS_TOL)
+    # Trained with seeds 0-7 and 42, auc spans 0.559-0.600, while the untrained
+    # seed-42 model scores 0.537, so only the auc band tells a trained model from
+    # an untrained one. The ranking metrics barely move with training on the demo
+    # data and guard against regressions only.
+    assert results["auc"] == pytest.approx(0.5834, abs=0.03)
+    assert results["mean_mrr"] == pytest.approx(0.1834, abs=0.02)
+    assert results["ndcg@5"] == pytest.approx(0.1915, abs=0.02)
+    assert results["ndcg@10"] == pytest.approx(0.2437, abs=0.02)
 
 
 @pytest.mark.gpu
