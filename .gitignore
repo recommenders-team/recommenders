@@ -196,6 +196,6 @@ docs/superpowers/
 .terraform/
 *.hcl
 *.tfvars
-*.tfvar.json
+*.tfvars.json
 *.tfstate
 *.tfstate.*
