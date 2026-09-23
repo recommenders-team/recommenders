@@ -60,36 +60,37 @@ The tests in this repository are divided into the following categories:
 
 For more information, see a [quick introduction testing](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
+
 ## Scalable test infrastructure with GitHub Actions
 
 GitHub Actions is used to run the existing unit, smoke and integration
 tests.  GitHub Actions benefits include being able to run the tests in
 parallel, and automatic logging of artifacts from test runs and more.
 
-In the following figure we show a workflow on how the tests are
-executed via GitHub Actions:
+How the tests are executed via GitHub Actions is shown in the
+following diagram:
 
 <img src="./github-actions-tests.svg">
 
-GitHub workflows
-[`unit-tests.yml`](../.github/workflows/unit-tests.yml),
-[`cpu-nightly.yml`](../.github/workflows/cpu-nightly.yml),
-[`gpu-nightly.yml`](../.github/workflows/gpu-nightly.yml) and
-[`spark-nightly.yml`](../.github/workflows/spark-nightly.yml) located
-in [.github/workflows/](../.github/workflows/) are used to run the
-tests.  The tests are divided into groups and each workflow triggers
-these test groups in parallel, which significantly reduces end-to-end
-execution time.
+Tests of different categories are run in the 4 GitHub workflows
+defined under [.github/workflows/](../.github/workflows/) where the
+tests are divided into groups and each workflow triggers these test
+groups in parallel, which significantly reduces end-to-end execution
+time:
+* [`unit-tests.yml`](../.github/workflows/unit-tests.yml)
+* [`cpu-nightly.yml`](../.github/workflows/cpu-nightly.yml)
+* [`gpu-nightly.yml`](../.github/workflows/gpu-nightly.yml)
+* [`spark-nightly.yml`](../.github/workflows/spark-nightly.yml)
 
-These workflows is composed of:
+These workflows are composed of:
 * one [reusable workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations):
   [`template.yml`](../.github/workflows/template.yml)
-  + It is used by other workflows configured for different compute
+  + It is used by the 4 workflows configured for different compute
     environments and test categories.
-  + Different infrastructures can be used to run the tests by setting
-    the [repository
+  + The [repository
     variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-    `CLOUD_SERVICE` to different values.
+    `CLOUD_SERVICE` can be used to select a cloud service to run the
+    tests.
     - Setting `CLOUD_SERVICE` to `alicloud` or `compshare` runs the
       tests on VMs created on demand by [Alibaba
       Cloud](https://www.alibabacloud.com) or [UCloud
@@ -99,8 +100,8 @@ These workflows is composed of:
       runners](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners).
   + It includes 2 jobs:
     - `get-test-groups` extracts test groups collected in the
-      configuration file [`test_groups.yml`](./test_groups.yml) to be
-      run in parallel in the workflows.
+      configuration file [`test_groups.yml`](./test_groups.yml) to run
+      parallelly in the workflows.
     - `execute-tests` runs one test group output from
       `get-test-groups` in a Docker container with appropriate
       environment set up in the
@@ -271,36 +272,36 @@ As described above, different infrastructures can be used to run the
 tests.  In a nutshell,
 this requires the following steps:
 1. Prepare the cloud services described in the subsections below.
-1. Setting `CLOUD_SERVICE` to the name of the cloud service by going
-   to the repo $\to$ Settings $\to$ Secrets and variables $\to$
-   Actions $\to$ Variables $\to$ [Repository
-   variables](https://github.com/recommenders-team/recommenders/settings/variables/actions).
+1. Switch to the cloud service by setting [repository
+   variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
+   `CLOUD_SERVICE` to the name of the cloud service.
 
 
 ### Use self-hosted runners
 
-In this section we explain how to prepare the infrastructure to run
-the tests via self-hosted GitHub Actions runners.
+In this section we explain how to use self-hosted GitHub Actions
+runners to run the tests.
 
-We use 3 types of GitHub Actions runners to execute the tests in
+Three types of GitHub Actions runners are used to execute the tests in
 Recommenders:
 1. free [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)
    (16GB memory by default), to execute the CPU and Spark tests in PR
    gates.
-1. [self-hosted runners](https://docs.github.com/en/actions/reference/runners/self-hosted-runners)
-   with GPU, to execute the GPU tests
-1. self-hosted runners without GPU but having larger memory (64GB), to
-   execute the nightly CPU tests
+   * The
+     [image](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
+     for GitHub-hosted runners have everything required installed, so
+     we don't have to do extra setup.
+   * In addition, for public repositories, GitHub has [usage
+     limits](https://docs.github.com/en/actions/reference/limits) for
+     GitHub-hosted runners.
 
-The
-[image](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
-for GitHub-hosted runners have everything required installed, so we
-don't have to do extra setup.  In addition, for public repositories,
-GitHub has [usage
-limits](https://docs.github.com/en/actions/reference/limits) for
-GitHub-hosted runners.
+1. [self-hosted
+   runners](https://docs.github.com/en/actions/reference/runners/self-hosted-runners)
+   with GPU to execute the GPU tests, and self-hosted runners without
+   GPU but having larger memory (64GB) to execute the nightly CPU
+   tests
 
-For self-hosted runners, follow the steps below for setup:
+Follow the steps below to use GitHub-hosted and self-hosted runners:
 1. Install the following prerequisites on the VMs.
    * [Docker](https://docs.docker.com/engine/install)
      + Docker daemon should be configured run in [rootless
@@ -326,17 +327,16 @@ For self-hosted runners, follow the steps below for setup:
    * The amount of free space required (`80gb` in the example above)
      can vary depending on the actual specification of the VMs.
 
-After preparing the self-hosted runners, assign `self-hosted` to the
-variable `CLOUD_SERVICE` at [Repository
-variables](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-in the repo settings.
+1. After preparing the self-hosted runners, assign `self-hosted` to
+   the [repository
+   variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
+   `CLOUD_SERVICE`.
 
 
 ### Use VMs from Compshare
 
-In this section we explain how to prepare the infrastructure to run
-the tests via VMs created on demand by the
-[CompShare](https://www.compshare.cn) cloud service.
+In this section we explain how to run the tests on VMs created on
+demand by the [CompShare](https://www.compshare.cn) cloud service.
 1. Log into [Compshare console](https://passport.compshare.cn/login).
 1. Create API keys (one API private key and one API public key) for
    the shell scripts under
@@ -352,9 +352,9 @@ the tests via VMs created on demand by the
      caching Docker Hub,
    * [Squid](https://www.squid-cache.org/) for other HTTP/HTTPS
      requests.
-1. Assign the value of the **API private key** to the secret
-   `CLOUD_SERVICE_SECRET` at [Repository
-   secrets](https://github.com/recommenders-team/recommenders/settings/secrets/actions).
+1. Assign the value of the **API private key** to the [repository
+   secret](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+   `CLOUD_SERVICE_SECRET`.
 
    **NOTE**: By default, secrets are not passed to workflows triggered
    by the
@@ -373,9 +373,10 @@ the tests via VMs created on demand by the
      [`tests/`](../tests/), and [`examples`](../examples/), can take
      effect immediately in PR gates without having to merge into
      `main`.
-1. Populate the variable `CLOUD_SERVICE_ENVS` at [Repository
+1. Populate the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   with the following keys in JSON format.  For example:
+   `CLOUD_SERVICE_ENVS` with the following keys in JSON format.  For
+   example:
 
    ```json
    {
@@ -406,16 +407,15 @@ the tests via VMs created on demand by the
    * (**Optional**) For HTTPS proxy CA certificate
      + Name: `VM_PROXY_CERTIFICATE`
      + Value: content of the certificate
-1. Assign `compshare` to the variable `CLOUD_SERVICE` at [Repository
-   variables](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   in the repo settings.
+1. Assign `compshare` to the [repository
+   variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
+   `CLOUD_SERVICE`.
 
 
 ### Use VMs from Alibaba Cloud
 
-In this section we explain how to prepare the infrastructure to run
-the tests via VMs created on demand by the [Alibaba
-Cloud](https://www.alibabacloud.com) service.
+In this section we explain how to run the tests on VMs created on
+demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 1. Log into [Alibaba
    Cloud](https://account.alibabacloud.com/login/login.htm).
 1. Create an access key for the
@@ -431,9 +431,9 @@ Cloud](https://www.alibabacloud.com) service.
    1. Click the new user $\to$ Credential $\to$ AccessKey $\to$ Create
       AccessKey $\to$ CLI, and note down the AccessKey ID and the
       AccessKey Secret for the following steps.
-1. Assign the value of the **AccessKey Secret** to the secret
-   `CLOUD_SERVICE_SECRET` at [Repository
-   secrets](https://github.com/recommenders-team/recommenders/settings/secrets/actions).
+1. Assign the value of the **AccessKey Secret** to the [repository
+   secret](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+   `CLOUD_SERVICE_SECRET`.
    
    **NOTE**: By default, secrets are not passed to workflows triggered
    by the
@@ -452,9 +452,10 @@ Cloud](https://www.alibabacloud.com) service.
      [`tests/`](../tests/), and [`examples`](../examples/), can take
      effect immediately in PR gates without having to merge into
      `main`.
-1. Populate the variable `CLOUD_SERVICE_ENVS` at [Repository
+1. Populate the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   with the following keys in JSON format.  For example:
+   `CLOUD_SERVICE_ENVS` with the following keys in JSON format.  For
+   example:
 
    ```json
    {
@@ -486,15 +487,10 @@ Cloud](https://www.alibabacloud.com) service.
    needed.  However, mirrors can still be used to speed up the setup
    for VMs, as long as the VMs belong to the region where the mirrors
    are.
-1. Provide input vairable values for the Terraform configurations in
-   the [repository
+1. Set the possible values of input vairables for the Terraform
+   configurations via the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE_INPUT_VARS` in JSON format.  More details can be
-   found at
-   [`.github/workflows/tools/create.sh`](../.github/workflows/tools/create.sh)
-   for how to set `CLOUD_SERVICE_INPUT_VARS` and
-   [`.github/workflows/tools/alicloud/tf/variables.tf`](../.github/workflows/tools/alicloud/tf/variables.tf)
-   for what input variables to set.  For example:
+   `CLOUD_SERVICE_INPUT_VARS` in JSON format.  For example:
 
    ```json
    {
@@ -525,9 +521,14 @@ Cloud](https://www.alibabacloud.com) service.
    }
    ```
 
-1. Assign `alicloud` to the variable `CLOUD_SERVICE` at [Repository
-   variables](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   in the repo settings.
+   More details can be found at
+   * [`.github/workflows/tools/create.sh`](../.github/workflows/tools/create.sh)
+     for how to set `CLOUD_SERVICE_INPUT_VARS`
+   * [`.github/workflows/tools/alicloud/tf/variables.tf`](../.github/workflows/tools/alicloud/tf/variables.tf)
+     for what input variables to set.
+1. Assign `alicloud` to the [repository
+   variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
+   `CLOUD_SERVICE`.
 
 
 ## How to add a new cloud servive for the testing infrastructure
@@ -536,77 +537,95 @@ This section describes the general structure and principle of adding a
 new cloud service for the testing infrastructure.
 
 Since [Terraform](https://developer.hashicorp.com/terraform) provides
-a unified and declarative way to provision the infrastructure and most
-cloud services provide support for it, so it is preferred to use the
-cloud services that support Terraform.  But those that do not support
-Terraform are still can be used in the testing infrastructure as long
-as the tools for provisioning follow the structure described below.
+a unified and declarative way to provision the infrastructure and is
+supported by most cloud services, it is preferable to use
+Terraform-support cloud services.  But Non-Terraform support services
+can still be used in the testing infrastructure as long as the tools
+added follow the structure described below.
 
-The directory [`.github/workflows/tools`](../.github/workflows/tools)
-contains tools used in the workflows.
+As described above, we make several assumptions about how to use the
+infrastructure.  Before talking about those assumptions, we give an
+overview of the directory
+[`.github/workflows/tools`](../.github/workflows/tools) containing
+tools used in the workflows.
 * Commonly used tools are under `.github/workflows/tools`
   directly.
   + `create.sh`
-    - It creates a VM provided by the specified cloud service using
-      the Terraform configurations in the directory dedicated to the
-      service.
-    - For cloud services without support to Terraform like CompShare,
-      another `create.sh` is used under
-      `.github/workflows/tools/compshare`.
+    - It creates a VM from the specified cloud service using the
+      Terraform configurations in the directory named after the
+      service, called **the service directory**, like
+      `.github/workflows/tools/alicloud`.
+    - For non-Terraform-support services like CompShare, another
+      `create.sh` is used under its service directory like
+      `.github/workflows/tools/compshare/create.sh`.
   + `post_create.sh`
     - It performs post-create setup on the VM, such as system setup,
       installation of Docker and NVIDIA tools.
   + `build_image.sh`
-    - It builds the Docker image using the Dockerfile.
+    - It builds the Docker image using the
+      [`Dockerfile`](../tools/docker/Dockerfile).
   + `run_tests.sh`
     - It runs the tests in the Docker container.
   + `delete.sh`
     - It cleans up the resources created by `create.sh` using the
-      Terraform configurations in the directory for the service.
-    - For services without support to Terraform like CompShare and
+      Terraform configurations in the service directory.
+    - For non-Terraform-support services like CompShare and ones
       without the need to release the VM, another `delete.sh` is used
-      under `.github/workflows/tools/compshare` and
+      under their sevice directory like
+      `.github/workflows/tools/compshare` and
       `.github/workflows/tools/self-hosted`.
 * Tools dedicated to specific tasks for different cloud services are
-  under directories named after the services.  We call it **the cloud
-  service directory** in the following description.
-  + For cloud services with support to Terraform like Alibaba Cloud, a
-    special directory named `tf` under the cloud service directory is
-    used to store the Terrform configurations for setting up the VM.
-  + For services without support to Terraform like CompShare, scripts
-    are put directly under the service directory.
-  + Special permanent settings are stored in the file name
-    `config.yml` under each service directory.
+  under their service directory in the following description.
+  + For Terraform-support cloud services like Alibaba Cloud, a special
+    subdirectory named `tf` under their service directories is used to
+    store the Terrform configurations for creating the VM.
+  + For non-Terraform-support services like CompShare, scripts are put
+    directly under the service directories.
+  + Special permanent settings are stored in a file named `config.yml`
+    under the service directory.
 
-So tools for the new cloud service should be put into a subdirectory
-named after the cloud service under
-[`.github/workflows/tools`](../.github/workflows/tools) (i.e., its
-servcie directory).
+So tools for the new cloud service should be put into its service
+directory under
+[`.github/workflows/tools`](../.github/workflows/tools).
 * If the cloud service supports
   [Terraform](https://developer.hashicorp.com/terraform), the
   Terraform configurations for creating the VM should be put under a
-  direcotry named `tf` in its service directory.
-* If the service does not support Terraform, two file with special
+  direcotry named `tf` in its service directory.  And the Terraform
+  configurations
+  + **must** accept an input variable called `unique_name` which can
+    be used for the name of the VM, Docker image, and other resources.
+  + **must** output the following two values for subsequent steps in
+    [`template.yml`](../.github/workflows/template.yml) to access to
+    the VM.
+    - `ssh_dest` for the SSH destination in the format like
+      `username@IP_address`.
+    - `ssh_key` for the SSH key.
+* If the service does not support Terraform, two files with special
   names should be put into its service directory.
   + `create.sh`
     - See the description above for the common tool `create.sh`.
     - It can be omitted if no need.  For example, self-hosted runners
       have already existed, a `create.sh` is not neccessary.
+    - It must set the environment variable `SSH_DEST` in the format
+      like `username@IP_address` into `$GITHUB_ENV`, so that
+      subsequent steps in
+      [`template.yml`](../.github/workflows/template.yml) can know
+      where the VM is.
   + `delete.sh`
     - See the description above for the common tool `delete.sh`.
-* As describe above in the sections for how to set up the testing
+* As described above in the sections for how to set up the testing
   infrastructure, several variables or secrets are used to provide
   dynamic settings for those services.
   + `CLOUD_SERVICE`
     - It is used to select which cloud service to use, so the value of
       it should be the name of the service directory.
   + `CLOUD_SERVICE_SECRET`
-    - It contains the private key or acccess token of the cloud
-      service.
+    - It contains the sensitive setting like the private key or
+      acccess token of the cloud service.
   + `CLOUD_SERVICE_ENVS`
-    - It contains the settings in JSON that are not permanent but not
-      changed very often, such as the public key, access key ID,
-      mirror URLs.
+    - It contains the insensitive settings in JSON that are dynamic
+      but not changed very often, such as the public key, access key
+      ID, mirror URLs.
   + `CLOUD_SERVICE_INPUT_VARS`
     - It provides the values for the Terraform input variables, such
       as compute types and regions of the VMs to create, because those
