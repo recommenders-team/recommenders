@@ -47,9 +47,6 @@ def check_type(config):
 
     int_parameters = [
         "word_size",
-        "entity_size",
-        "doc_size",
-        "history_size",
         "FEATURE_COUNT",
         "FIELD_COUNT",
         "dim",
@@ -59,7 +56,6 @@ def check_type(config):
         "save_epoch",
         "PAIR_NUM",
         "DNN_FIELD_NUM",
-        "attention_layer_sizes",
         "n_user",
         "n_item",
         "n_user_attr",
@@ -110,7 +106,6 @@ def check_type(config):
         "loss",
         "optimizer",
         "init_method",
-        "attention_activation",
         "user_vocab",
         "item_vocab",
         "cate_vocab",
