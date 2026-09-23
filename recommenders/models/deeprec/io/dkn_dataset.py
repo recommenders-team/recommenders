@@ -126,14 +126,14 @@ class DKNDataset(NewsDataset):
                 rows += [padding_row] * (history_size - len(rows))
                 self.user_history[user_id] = np.asarray(rows, dtype=np.int64)
 
-    def parser_one_line(self, line: str) -> tuple[float, str, str, str]:
+    def parser_one_line(self, line: str) -> tuple[float, str, str, str | int]:
         """Parse one string line.
 
         Args:
             line (str): A string indicating one instance.
 
         Returns:
-            float, str, str, str:
+            float, str, str, str | int:
             - The label.
             - The user ID.
             - The candidate news ID.
