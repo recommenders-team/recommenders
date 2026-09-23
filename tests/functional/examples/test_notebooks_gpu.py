@@ -600,19 +600,18 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
     assert results["ndcg@10"] == pytest.approx(0.2437, abs=0.02)
 
 
-@pytest.mark.gpu
-@pytest.mark.notebooks
-def test_dkn_item2item_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
+def _extract_kdd2020_dkn_files(directory, suffixes):
+    """Extract the news features and the DKN files ending with ``suffixes``.
+
+    The archive also holds the raw data and the full-size DKN files, which the
+    KDD2020 DKN notebooks do not need.
+
+    Returns:
+        str: The DKN training folder, the notebooks' ``data_path``.
+    """
     zip_file = maybe_download(
         "https://huggingface.co/datasets/Recommenders/kdd2020/resolve/main/data_folder.zip",
-        work_directory=tmp,
-    )
-    # The archive also holds the raw data and the full-size DKN files; the
-    # item-to-item notebook needs only these few preprocessed ones.
-    item2item_files = (
-        "_embedding.npy",
-        "item2item_train_instances.txt",
-        "item2item_valid_instances.txt",
+        work_directory=directory,
     )
     with zipfile.ZipFile(zip_file) as zf:
         members = [
@@ -621,20 +620,31 @@ def test_dkn_item2item_kdd2020_functional(notebooks, output_notebook, kernel_nam
             if name == "my_cached/paper_feature.txt"
             or (
                 name.startswith("my_cached/DKN-training-folder/")
-                and name.endswith(item2item_files)
+                and name.endswith(suffixes)
             )
         ]
-        zf.extractall(tmp, members)
+        zf.extractall(directory, members)
+    return os.path.join(directory, "my_cached", "DKN-training-folder")
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
+def test_dkn_item2item_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
+    data_path = _extract_kdd2020_dkn_files(
+        tmp,
+        (
+            "_embedding.npy",
+            "item2item_train_instances.txt",
+            "item2item_valid_instances.txt",
+        ),
+    )
 
     notebook_path = notebooks["dkn_item2item_kdd2020"]
     execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(
-            data_path=os.path.join(tmp, "my_cached", "DKN-training-folder"),
-            EPOCHS=1,
-        ),
+        parameters=dict(data_path=data_path, EPOCHS=1),
     )
     results = read_notebook(output_notebook)
 
