@@ -41,6 +41,8 @@ install_requires = [
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
+    # vowpalwabbit 9.10 is the last wheel for Python 3.9 and imports pkg_resources, removed in setuptools 82
+    "setuptools<82; python_version<'3.10'",
     "transformers>=4.27.0,<6",  # requires packaging, pyyaml, requests, tqdm
     "vowpalwabbit>=9.9.0,<10",
 ]
