@@ -26,6 +26,7 @@ NEWS_COUNT = 30
 DOC_SIZE = 5
 DIM = 8
 ENTITY_DIM = 6
+N_TRAIN = 40
 N_TEST = 20
 
 HISTORY_SIZE = 4
@@ -440,6 +441,22 @@ def test_fit_and_eval_smoke(build_model, synthetic_dkn, tmp_path):
         "ndcg@5",
         "ndcg@10",
     }
+
+
+def test_fit_skips_a_one_row_trailing_batch_under_batch_norm(
+    build_model, synthetic_dkn
+):
+    model = build_model(enable_BN=True)
+
+    model.fit(
+        synthetic_dkn["train"],
+        synthetic_dkn["valid"],
+        epochs=2,
+        batch_size=N_TRAIN - 1,
+        show_step=100,
+    )
+
+    assert model.scorer.bns[0].num_batches_tracked.item() == 2
 
 
 def test_run_eval_reports_the_requested_metrics(build_model, synthetic_dkn):

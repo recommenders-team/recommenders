@@ -277,13 +277,23 @@ class DKNBase(nn.Module):
             object: An instance of self.
         """
         optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
+        uses_batch_norm = any(
+            isinstance(module, nn.BatchNorm1d) for module in self.modules()
+        )
 
         for epoch in range(1, epochs + 1):
             self.train()
             epoch_loss = 0.0
-            for step, (np_batch, _) in enumerate(
-                self.iterator.load_data_from_file(train_file, batch_size), 1
+            step = 0
+            for np_batch, _ in self.iterator.load_data_from_file(
+                train_file, batch_size
             ):
+                # Batch norm cannot take training statistics over a single row, so
+                # the one-row batch a file of k * batch_size + 1 lines ends with is
+                # skipped. TF padded it by repeating rows instead.
+                if uses_batch_norm and len(np_batch["labels"]) == 1:
+                    continue
+                step += 1
                 batch = self._to_tensors(np_batch)
                 optimizer.zero_grad(set_to_none=True)
                 data_loss = self._data_loss(batch)
