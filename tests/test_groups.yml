@@ -63,6 +63,7 @@ nightly:
     - tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional                                                            #   19.12s
     # - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_sum  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
     - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_dkn                                                                          #  140.12s
+    - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_dkn_item2item
     - tests/functional/examples/test_notebooks_gpu.py::test_dkn_quickstart_functional                                                                #  644.52s
     - tests/functional/examples/test_notebooks_gpu.py::test_slirec_quickstart_functional                                                             #  432.14s
 
