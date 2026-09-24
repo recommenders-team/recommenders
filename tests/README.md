@@ -274,10 +274,14 @@ this requires the following steps:
 1. Prepare the cloud services described in the subsections below.
 1. Switch to the cloud service by setting [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE` to the name of the cloud service.
+   `CLOUD_SERVICE` to the name of the cloud service, such as
+   `alicloud`, `compshare` or `self-hosted`.
 
 
 ### Use self-hosted runners
+
+<details>
+<summary>Click to see more ...</summary>
 
 In this section we explain how to use self-hosted GitHub Actions
 runners to run the tests.
@@ -332,8 +336,13 @@ Follow the steps below to use GitHub-hosted and self-hosted runners:
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
 
+</details>
+
 
 ### Use VMs from Compshare
+
+<details>
+<summary>Click to see more ...</summary>
 
 In this section we explain how to run the tests on VMs created on
 demand by the [CompShare](https://www.compshare.cn) cloud service.
@@ -411,8 +420,13 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
 
+</details>
+
 
 ### Use VMs from Alibaba Cloud
+
+<details>
+<summary>Click to see more ...</summary>
 
 In this section we explain how to run the tests on VMs created on
 demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
@@ -530,8 +544,13 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
 
+</details>
+
 
 ## How to add a new cloud servive for the testing infrastructure
+
+<details>
+<summary>Click to see more ...</summary>
 
 This section describes the general structure and principle of adding a
 new cloud service for the testing infrastructure.
@@ -645,6 +664,8 @@ directory under
     - For example, the name of the secret to access Alibaba Cloud APIs
       is `ALIBABA_CLOUD_ACCESS_KEY_SECRET`, and the name of the
       private key for CompShare is `COMPSHARE_PRIVATE_KEY`.
+
+</details>
 
 
 ## How to execute tests in your local environment
