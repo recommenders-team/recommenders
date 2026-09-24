@@ -27,7 +27,7 @@ In this document we show our test infrastructure and how to contribute tests to 
     - [How to create tests for the notebooks](#how-to-create-tests-for-the-notebooks)
     - [How to add tests to the GitHub workflows](#How-to-add-tests-to-the-GitHub-workflows)
 - [How to set up the testing infrastructure](#how-to-set-up-the-testing-infrastructure)
-    - [Use self-hosted runners](#use-self-hosted-runners)
+    - [Use self-hosted runners or GitHub-hosted large runners](#use-self-hosted-runners-or-github-hosted-large-runners)
     - [Use VMs from Compshare](#use-vms-from-compshare)
     - [Use VMs from Alibaba Cloud](#use-vms-from-alibaba-cloud)
 - [How to add a new cloud servive for the testing infrastructure](#how-to-add-a-new-cloud-servive-for-the-testing-infrastructure)
@@ -278,42 +278,75 @@ this requires the following steps:
    `alicloud`, `compshare` or `self-hosted`.
 
 
-### Use self-hosted runners
+### Use self-hosted runners or GitHub-hosted large runners
 
 <details>
 <summary>Click to see more ...</summary>
 
-In this section we explain how to use self-hosted GitHub Actions
-runners to run the tests.
+In this section we explain how to use self-hosted runners or
+GitHub-hosted large runners to run the tests.
 
-Three types of GitHub Actions runners are used to execute the tests in
-Recommenders:
-1. free [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories)
-   (16GB memory by default), to execute the CPU and Spark tests in PR
-   gates.
-   * The
-     [image](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
-     for GitHub-hosted runners have everything required installed, so
-     we don't have to do extra setup.
-   * In addition, for public repositories, GitHub has [usage
-     limits](https://docs.github.com/en/actions/reference/limits) for
-     GitHub-hosted runners.
+GitHub Actions supports 3 types runners:
+* [Free GitHub-hosted runners](https://docs.github.com/en/actions/concepts/runners/github-hosted-runners)
+  + They are machines that execute jobs in a GitHub Actions workflow,
+    with 16GB memory by default.
+  + They can be used for the CPU and Spark tests in PR gates.
+  + The [Docker image](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
+    for GitHub-hosted runners have everything required installed, so
+    we don't have to do extra setup.
+  + In addition, for public repositories, GitHub has [usage
+    limits](https://docs.github.com/en/actions/reference/limits) for
+    GitHub-hosted runners.
+* [Paid GitHub-hosted large runners](https://docs.github.com/en/actions/concepts/runners/larger-runners)
+  + They are also machines provided by GitHub but have larger memory
+    or GPUs so that they can be used for GPU tests or nightly CPU
+    tests requiring more memory than 16GB.
+  + They are expensive but easy to use because they are managed by
+    GitHub.
+* [Self-hosted runners](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners)
+  + They are machines provisioned and managed by ourselves from
+    selected cloud services, but can be orchestrated by GitHub after
+    installing the runner application.
+  + They can be used for the tests that paid GitHub-hosted large
+    runners are used for, but usually with lower price.
 
-1. [self-hosted
-   runners](https://docs.github.com/en/actions/reference/runners/self-hosted-runners)
-   with GPU to execute the GPU tests, and self-hosted runners without
-   GPU but having larger memory (64GB) to execute the nightly CPU
-   tests
+To use a paid GitHub-hosted or self-hosted runner, follow the steps:
+1. Create the machine
+   * For paid GitHub-hosted runners:
+     1. Change the current GitHub base plan to **Team Plan** or
+        **Enterprice Plan**
+        * Go to Settings of the organization instead of the repo $\to$
+          Billing and licensing $\to$ Licensing $\to$ Current GitHub
+          base plan, then choose Team plan or Enterprice plan.
+     1. [Add a GitHub-hosted large runner to the
+        organization](https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners/manage-larger-runners#adding-a-larger-runner-to-an-organization).
+        * Click Actions $\to$ Runners $\to$ New runner $\to$ New
+          GitHub-hosted runner.
+          + To add a GPU runner, after choosing Linux x64, go to Image
+            $\to$ Partner, and check "NVIDIA GPU-Optimizaed Image for
+            AI and HPC", then GPU-powered options will show in Size.
 
-Follow the steps below to use GitHub-hosted and self-hosted runners:
-1. Install the following prerequisites on the VMs.
-   * [Docker](https://docs.docker.com/engine/install)
-     + Docker daemon should be configured run in [rootless
-       mode](https://docs.docker.com/engine/security/rootless/).
-   * (For GPU runners) [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-1. Follow the steps described in [Adding self-hosted
-   runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
-   to add the VMs as self-hosted runners on GitHub.
+   * For self-hosted runners:
+     1. Create a machine from a cloud service.
+     1. Install the following prerequisites on the machine.
+        * [Docker](https://docs.docker.com/engine/install)
+          + Docker daemon should be configured run in [rootless
+            mode](https://docs.docker.com/engine/security/rootless/).
+        * (For GPU runners) [NVIDIA container
+          toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+     1. Schedule Docker build cache cleanup by adding the following
+        entry into crontab.
+
+        ```
+        0 * * * * docker buildx prune -f --min-free-space 80gb
+        ```
+
+        * The amount of free space required (`80gb` in the example
+          above) can vary depending on the actual specification of the
+          VMs.
+     1. [Add the machine as a self-hosted runner on
+        GitHub](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
+1. Categorize the runner.
    * Currently, we have 2 runner groups.
      + `GPU`, for GPU runners.
      + `CPU`, for CPU runners with larger memory (64GB).
@@ -321,18 +354,7 @@ Follow the steps below to use GitHub-hosted and self-hosted runners:
      runners is determined by their labels instead of their runner
      groups.  So we have to label GPU runners as `GPU` and CPU runners
      as `CPU` in the configure step.
-1. Schedule Docker build cache cleanup by adding the following entry
-   into crontab.
-   
-   ```
-   0 * * * * docker buildx prune -f --min-free-space 80gb
-   ```
-
-   * The amount of free space required (`80gb` in the example above)
-     can vary depending on the actual specification of the VMs.
-
-1. After preparing the self-hosted runners, assign `self-hosted` to
-   the [repository
+1. Assign `self-hosted` to the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
 
