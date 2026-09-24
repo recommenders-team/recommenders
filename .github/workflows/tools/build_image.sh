@@ -57,7 +57,7 @@ venv_dir="${7:-}"
   || -z ${dockerfile} \
   || -z ${test_group} \
   || -z ${python_version} \
-  || -z ${venv_dir} ]] && echo 'Parameter error!' >&2 && exit 1
+  || -z ${venv_dir} ]] && { echo 'Parameter error!' >&2; exit 1; }
 
 cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"

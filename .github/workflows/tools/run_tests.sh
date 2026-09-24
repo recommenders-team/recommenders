@@ -36,7 +36,7 @@ venv_dir="${6:-}"
   || -z ${test_groups_yml} \
   || -z ${test_type} \
   || -z ${test_group} \
-  || -z ${venv_dir} ]] && echo 'Parameter error!' >&2 && exit 1
+  || -z ${venv_dir} ]] && { echo 'Parameter error!' >&2; exit 1; }
 
 utils_sh="${script_dir}/utils.sh"
 

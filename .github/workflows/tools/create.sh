@@ -108,7 +108,7 @@ test_group="${3:-}"
 [[ -z ${unique_name} \
   || -z ${test_type} \
   || -z ${test_group} \
-  || -z ${CLOUD_SERVICE:-} ]] && echo 'Parameter error!' >&2 && exit 1
+  || -z ${CLOUD_SERVICE:-} ]] && { echo 'Parameter error!' >&2; exit 1; }
 
 cloud_service="${CLOUD_SERVICE}"
 cloud_service="${cloud_service@L}"

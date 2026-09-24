@@ -29,7 +29,7 @@ compute="${3:-}"
 
 [[ -z ${test_groups_yml} \
   || -z ${test_type} \
-  || -z ${compute} ]] && echo 'Parameter error!' >&2 && exit 1
+  || -z ${compute} ]] && { echo 'Parameter error!' >&2; exit 1; }
 
 
 #--------------------------------------------------------------------

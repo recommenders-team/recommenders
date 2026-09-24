@@ -31,7 +31,7 @@ test_group="{3:-}"
 requirements="${4:-}"
 
 [[ -z ${vm_name} || -z ${test_type} ]] \
-    && echo 'Parameter error!' >&2 && exit 1
+    && { echo 'Parameter error!' >&2; exit 1; }
 
 utils_sh="${script_dir}/utils.sh"
 
