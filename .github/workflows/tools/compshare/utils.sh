@@ -87,7 +87,7 @@ gen_action_digest() {
     # visible
     local action_spec_file
     action_spec_file="$(mktemp)"
-    trap 'rm -f "${action_spec_file}"; trap - EXIT' EXIT
+    trap 'rm -f "${action_spec_file}"; trap - EXIT RETURN' EXIT RETURN
     echo "${action_spec}" > "${action_spec_file}"
     if [[ -n ${encoded_password_file} ]]; then
         echo "${action_spec}" \
@@ -111,7 +111,6 @@ gen_action_digest() {
         | tr -d '\n' \
         | sha1sum \
         | head -c 40)"
-    rm -rf "${action_spec_file}"
 
     [[ "${reset_x}" == true ]] && set -x
 
