@@ -288,8 +288,14 @@ restore_tfstate_tfvars() {
 
     if [[ -n ${VM_TFSTATE} ]]; then
         echo 'Restoring the Terraform state ...'
+        local reset_x=false
+        [[ "$-" == *x* ]] && reset_x=true
+        set +x
+
         gpg -d --passphrase "${CLOUD_SERVICE_SECRET}" --batch \
             -o "${tfstate}" <(echo "${VM_TFSTATE}" | base64 -d)
+
+        [[ "${reset_x}" == true ]] && set -x
     fi
 }
 
@@ -354,8 +360,14 @@ store_tfstate_tfvars() {
         trap "rm -f '${encrypted_tfstate}'; trap - EXIT RETURN" \
             EXIT RETURN
 
+        local reset_x=false
+        [[ "$-" == *x* ]] && reset_x=true
+        set +x
+
         gpg -ac --passphrase "${CLOUD_SERVICE_SECRET}" --batch \
             -o "${encrypted_tfstate}" "${tfstate}"
+
+        [[ "${reset_x}" == true ]] && set -x
 
         local encoded_tfstate
         encoded_tfstate="$(base64 -w 0 "${encrypted_tfstate}")"
