@@ -69,5 +69,6 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 restore_tfstate_tfvars "${tf_config_dir}"
 
 echo 'Deleting the VM ...'
+terraform -chdir="${tf_config_dir}" init
 terraform -chdir="${tf_config_dir}" destroy -auto-approve \
     -var "unique_name=${unique_name}"
