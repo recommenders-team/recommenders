@@ -63,7 +63,7 @@ if [[ -n ${ssh_dest} ]]; then
 
     echo 'Uploading tools to the VM ...'
     temp_script_dir="$(mktemp -d)"
-    trap 'rm -rf "${temp_script_dir}"; trap - EXIT' EXIT
+    trap "rm -rf '${temp_script_dir}'; trap - EXIT" EXIT
 
     script_dir_tar="${temp_script_dir}/${script_dir_name}.tar"
     tar -cf "${script_dir_tar}" \

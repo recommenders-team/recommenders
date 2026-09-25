@@ -88,7 +88,7 @@ gen_action_digest() {
     # visible
     local action_spec_file
     action_spec_file="$(mktemp)"
-    trap 'rm -f "${action_spec_file}"; trap - EXIT RETURN' EXIT RETURN
+    trap "rm -f '${action_spec_file}'; trap - EXIT RETURN" EXIT RETURN
     echo "${action_spec}" > "${action_spec_file}"
     if [[ -n ${encoded_password_file} ]]; then
         echo "${action_spec}" \
