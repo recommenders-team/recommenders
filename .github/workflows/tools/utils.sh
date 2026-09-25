@@ -349,7 +349,7 @@ store_tfstate_tfvars() {
     if [[ -f ${tfvars} ]]; then
         echo 'Storing the Terraform input variables ...'
         local encoded_tfvars
-        encoded_tfvars="$(cat "${tfvars}" | base64 -w 0)"
+        encoded_tfvars="$(base64 -w 0 "${tfvars}")"
         echo "VM_TFVARS=${encoded_tfvars}" >> "$GITHUB_ENV"
     fi
 
@@ -411,8 +411,8 @@ setup_ssh_key() {
 
         echo '* Deplying SSH key ...'
         local -x SSHPASS
-        read -r SSHPASS < <(cat "${encoded_password_file}" \
-            | base64 -d) || true
+        read -r SSHPASS < <(base64 -d "${encoded_password_file}") \
+            || true
         run_cmd_retry sshpass -e ssh-copy-id \
             -i "${key_file}.pub" \
             -o StrictHostKeyChecking=no \
