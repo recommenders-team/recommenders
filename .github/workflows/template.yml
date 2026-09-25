@@ -99,7 +99,7 @@ jobs:
     # Docker and sshpass are required on the runner.
     runs-on: |-
       ${{ case(
-          vars.CLOUD_SERVICE == 'self-hosted' && fromJSON(vars.CLOUD_SERVICE_ENVS).SSH_DEST == null, case(
+          vars.CLOUD_SERVICE == 'self-hosted', case(
               contains(matrix.group, 'gpu'), 'GPU',
               contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu'), 'CPU',
               'ubuntu-24.04'),
@@ -123,12 +123,6 @@ jobs:
       # * Otherwise, standard runner is enough.
       EXTRA_VM_REQUIRED: ${{ contains(matrix.group, 'gpu') || (contains(inputs.type, 'nightly') && contains(matrix.group, 'cpu')) }}
     steps:
-      - name: Check out repository code from the PR
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ env.PR_REF }}
-          allow-unsafe-pr-checkout: true
-
       - name: Generate unique name for VM and Docker image
         run: |
           if [[ '${{ github.event_name }}' == 'pull_request_target' ]]
@@ -152,6 +146,9 @@ jobs:
       - uses: hashicorp/setup-terraform@v4
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
 
+      - name: Check out repository code from main before using secrets
+        uses: actions/checkout@v7
+
       - name: Create a VM
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
         env:
@@ -168,6 +165,12 @@ jobs:
                "${UNIQUE_NAME}" \
                '${{ inputs.type }}' \
                '${{ matrix.group }}'
+
+      - name: Check out repository code from the PR
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.PR_REF }}
+          allow-unsafe-pr-checkout: true
 
       - name: Post create setup
         if: ${{ fromJSON(env.EXTRA_VM_REQUIRED) && env.CLOUD_SERVICE != 'self-hosted' }}
@@ -195,6 +198,9 @@ jobs:
                '${{ inputs.type }}' \
                '${{ matrix.group }}' \
                '${{ inputs.venv_dir }}'
+
+      - name: Check out repository code from main before using secrets
+        uses: actions/checkout@v7
 
       - name: Clean up
         if: ${{ always() && fromJSON(env.EXTRA_VM_REQUIRED) }}
