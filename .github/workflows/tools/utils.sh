@@ -293,7 +293,7 @@ restore_tfstate_tfvars() {
         set +x
 
         gpg -d --passphrase "${CLOUD_SERVICE_SECRET}" --batch \
-            -o "${tfstate}" <(echo "${VM_TFSTATE}" | base64 -d)
+            -o - <(echo "${VM_TFSTATE}" | base64 -d) > "${tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
     fi
