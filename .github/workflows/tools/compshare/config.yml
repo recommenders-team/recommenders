@@ -1,0 +1,7 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+######################################################################
+# Configuration for scripts to setup VMs on CompShare
+######################################################################
+apt_mirror: mirrors.ucloud.cn
