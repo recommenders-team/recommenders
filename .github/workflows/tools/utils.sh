@@ -365,7 +365,7 @@ store_tfstate_tfvars() {
         set +x
 
         gpg -ac --passphrase "${CLOUD_SERVICE_SECRET}" --batch \
-            -o "${encrypted_tfstate}" "${tfstate}"
+            -o - "${tfstate}" > "${encrypted_tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
 
