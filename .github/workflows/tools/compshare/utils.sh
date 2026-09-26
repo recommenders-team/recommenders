@@ -426,8 +426,7 @@ create_instance() {
       || -z ${charge_type} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates
-    updates="{\
+    local updates="{\
         \"Name\": \"${vm_name}\", \
         \"GPUType\": \"${gpu_type}\", \
         \"CPU\": ${cpu_cores}, \
@@ -452,8 +451,7 @@ describe_available_instance_types() {
       || -z ${zone} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates
-    updates="{\
+    local updates="{\
       \"Region\": \"${region}\", \
       \"Zone\": \"${zone}\"}"
 
@@ -467,7 +465,6 @@ describe_available_instance_types() {
 describe_instance() {
     # Get the list of VMs
     # See https://www.compshare.cn/docs/gpus/instance/describecompshareinstance
-
     local response
     response="$(invoke_action 'DescribeCompShareInstance')"
 
@@ -492,8 +489,7 @@ stop_instance() {
     local vm_id="${1:-}"
     [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates
-    updates="{\"UHostId\": \"${vm_id}\"}"
+    local updates="{\"UHostId\": \"${vm_id}\"}"
 
     local response
     response="$(invoke_action 'StopCompShareInstance' "${updates}")"
@@ -511,8 +507,7 @@ terminate_instance() {
     local vm_id="${1:-}"
     [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates
-    updates="{\"UHostId\": \"${vm_id}\"}"
+    local updates="{\"UHostId\": \"${vm_id}\"}"
 
     local response
     response="$(invoke_action 'TerminateCompShareInstance' "${updates}")"
@@ -531,8 +526,7 @@ update_stop_scheduler() {
     [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
     [[ -z ${stop_time} ]] && stop_time="$(date --date='3 hours' '+%s')"
 
-    local updates
-    updates="{\
+    local updates="{\
         \"UHostId\": \"${vm_id}\", \
         \"SchedulerStopTime\": ${stop_time}}"
 
