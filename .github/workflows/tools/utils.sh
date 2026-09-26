@@ -271,7 +271,7 @@ restore_tfstate_tfvars() {
     #
     # NOTE: 
     # This function assumes there is an environment variable
-    # CLOUD_SERVICE_SECRET for decrypting the value of GitHub Actions
+    # ENCRYPT_PASSPHRASE for decrypting the value of GitHub Actions
     # environment variable VM_TFSTATE into Terraform state file for
     # cleanup.
     local tf_config_dir="${1:-}"
@@ -292,7 +292,7 @@ restore_tfstate_tfvars() {
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
-        gpg -d --passphrase "${CLOUD_SERVICE_SECRET}" --batch \
+        gpg -d --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
             -o - <(echo "${VM_TFSTATE}" | base64 -d) > "${tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
@@ -336,7 +336,7 @@ store_tfstate_tfvars() {
     #
     # NOTE: 
     # This function assumes there is an environment variable
-    # CLOUD_SERVICE_SECRET for encrypting the Terraform state into
+    # ENCRYPT_PASSPHRASE for encrypting the Terraform state into
     # the GitHub Actions environment variable VM_TFSTATE for
     # subsequent cleanup step.
     local tf_config_dir="${1:-}"
@@ -364,7 +364,7 @@ store_tfstate_tfvars() {
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
-        gpg -ac --passphrase "${CLOUD_SERVICE_SECRET}" --batch \
+        gpg -ac --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
             -o - "${tfstate}" > "${encrypted_tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x

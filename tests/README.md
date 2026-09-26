@@ -82,22 +82,11 @@ time:
 * [`gpu-nightly.yml`](../.github/workflows/gpu-nightly.yml)
 * [`spark-nightly.yml`](../.github/workflows/spark-nightly.yml)
 
-These workflows are composed of:
+These workflows are controlled by:
 * one [reusable workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations):
   [`template.yml`](../.github/workflows/template.yml)
   + It is used by the 4 workflows configured for different compute
     environments and test categories.
-  + The [repository
-    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-    `CLOUD_SERVICE` can be used to select a cloud service to run the
-    tests.
-    - Setting `CLOUD_SERVICE` to `alicloud` or `compshare` runs the
-      tests on VMs created on demand by [Alibaba
-      Cloud](https://www.alibabacloud.com) or [UCloud
-      CompShare](https://www.compshare.cn) respectively.
-    - Settng `CLOUD_SERVICE` to `self-hosted` runs the tests on
-      pre-allocated VMs set up as [GitHub Actions self-hosted
-      runners](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners).
   + It includes 2 jobs:
     - `get-test-groups` extracts test groups collected in the
       configuration file [`test_groups.yml`](./test_groups.yml) to run
@@ -114,6 +103,27 @@ These workflows are composed of:
       of each group should be less than 15min.
     - If the tests are part of the nightly builds, the total time of
       each group should be less than 35min.
+* and several repository variables and repository secrets
+  + [Repository
+    variables](https://github.com/recommenders-team/recommenders/settings/variables/actions)
+    - `CLOUD_SERVICE`: specify which cloud service to run the tests.
+      - Setting `CLOUD_SERVICE` to `alicloud` or `compshare` runs the
+        tests on VMs created on demand by [Alibaba
+        Cloud](https://www.alibabacloud.com) or [UCloud
+        CompShare](https://www.compshare.cn) respectively.
+      - Settng `CLOUD_SERVICE` to `self-hosted` runs the tests on
+        pre-allocated VMs set up as [GitHub Actions self-hosted
+        runners](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners).
+    - `CLOUD_SERVICE_ENVS`: a set of environment variables to
+      configure the selected cloud service.
+    - `CLOUD_SERVICE_INPUT_VARS`: a set of input variables for VM
+      creation, such compute type, region.
+  + [Repository
+    secrets](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+    - `CLOUD_SERVICE_SECRET`: access or private key to access the
+      selected cloud service.
+    - `ENCRYPT_PASSPHRASE`: passphrase for general purpose data
+      encryption.
 
 
 ## How to contribute tests to the repository
