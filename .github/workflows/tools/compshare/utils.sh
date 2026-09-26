@@ -174,6 +174,11 @@ get_action_template() {
                 "CPU": 8
             },
             {
+                "Action": "DescribeAvailableCompShareInstanceTypes",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01"
+            },
+            {
                 "Action": "DescribeCompShareInstance"
             },
             {
@@ -434,6 +439,28 @@ create_instance() {
         'CreateCompShareInstance' \
         "${updates}" \
         "${encoded_password_file}")"
+    echo "${response}"
+}
+
+describe_available_instance_types() {
+    # Get the list of available instance types in the zone.
+    # See https://www.compshare.cn/docs/gpus/instance/describeavailablecompshareinstancetypes
+    local region="{1:-}"
+    local zone="${2:-}"
+
+    [[ -z ${region} \
+      || -z ${zone} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    local updates
+    updates="{\
+      \"Region\": \"${region}\", \
+      \"Zone\": \"${zone}\"}"
+
+    local response
+    response="$(invoke_action \
+        'DescribeAvailableCompShareInstanceTypes' \
+        "${updates}")"
     echo "${response}"
 }
 
