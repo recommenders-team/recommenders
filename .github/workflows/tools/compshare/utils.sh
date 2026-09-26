@@ -158,6 +158,19 @@ get_action_template() {
     action_template="$(cat << 'EOF'
         [
             {
+                "Action": "CheckCompShareResourceCapacity",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "GpuType": "",
+                "MachineType": "G",
+                "MinimalCpuPlatform": "Auto",
+                "CompShareImageId": "compshareImage-12rjyhwynazd",
+                "ChargeType": "Spot",
+                "Disks.0.IsBoot": true,
+                "Disks.0.Type": "CLOUD_SSD",
+                "Disks.0.Size": 100
+            },
+            {
                 "Action": "CreateCompShareInstance",
                 "ChargeType": "Postpay",
                 "CompShareImageId": "compshareImage-12rjyhwynazd",
@@ -180,6 +193,16 @@ get_action_template() {
             },
             {
                 "Action": "DescribeCompShareInstance"
+            },
+            {
+                "Action": "GetCompShareInstancePrice",
+                "Region": "cn-wlcb",
+                "Zone": "cn-wlcb-01",
+                "GpuType": "",
+                "Gpu": 1,
+                "Cpu": 16,
+                "Memory": 65536,
+                "ChargeType": "Spot"
             },
             {
                 "Action": "GetProjectList"
@@ -392,6 +415,35 @@ invoke_action() {
 #---------------------------------------------------------------------
 # CompShare API wrappers
 #---------------------------------------------------------------------
+check_resource_capacity() {
+    # Check if there are enough resources.
+    # See https://www.compshare.cn/docs/gpus/instance/checkcompshareresourcecapacity
+    local region="${1:-}"
+    local zone="${2:-}"
+    local gpu_type="${3:-}"
+    local image_id="${4:-}"
+    local charge_type="${5:-}"
+
+    [[ -z ${region} \
+      || -z ${zone} \
+      || -z ${gpu_type} \
+      || -z ${image_id} \
+      || -z ${charge_type} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    local updates="{\
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\", \
+        \"GpuType\": \"${gpu_type}\", \
+        \"CompShareImageId\": \"${image_id}\", \
+        \"ChargeType\": \"${charge_type}\"}"
+
+    local response
+    response="$(invoke_action \
+        'CheckCompShareResourceCapacity' \
+        "${updates}")"
+}
+
 create_instance() {
     # Create a VM instance
     # See https://www.compshare.cn/docs/gpus/instance/createcompshareinstance
@@ -471,6 +523,38 @@ describe_instance() {
     echo "${response}"
 }
 
+get_instance_price() {
+    # Get the price for creating the instance.
+    # See https://www.compshare.cn/docs/gpus/instance/getcompshareinstanceprice
+    local region="${1:-}"
+    local zone="${2:-}"
+    local gpu_type="${3:-}"
+    local cpu_cores="${4:-}"
+    local memory="${5:-}"
+    local charge_type="${6:-}"
+
+    [[ -z ${region} \
+      || -z ${zone} \
+      || -z ${gpu_type} \
+      || -z ${cpu_cores} \
+      || -z ${memory} \
+      || -z ${charge_type} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    local updates="{\
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\", \
+        \"GpuType\": \"${gpu_type}\", \
+        \"Cpu\": \"${cpu_cores}\", \
+        \"Memory\": \"${memory}\", \
+        \"ChargeType\": \"${charge_type}\"}"
+
+    local response
+    response="$(invoke_action \
+        'GetCompShareInstancePrice' \
+        "${updates}")"
+}
+
 get_project_list() {
     # Get the list of projects
     # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
@@ -510,7 +594,9 @@ terminate_instance() {
     local updates="{\"UHostId\": \"${vm_id}\"}"
 
     local response
-    response="$(invoke_action 'TerminateCompShareInstance' "${updates}")"
+    response="$(invoke_action \
+        'TerminateCompShareInstance' \
+        "${updates}")"
     echo "${response}"
 }
 
@@ -520,18 +606,22 @@ update_stop_scheduler() {
     #
     # Params:
     # * VM ID
-    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC), in 3 hours by default
+    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC),
+    #   in 3 hours by default
     local vm_id="${1:-}"
     local stop_time="${2:-}"
     [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
-    [[ -z ${stop_time} ]] && stop_time="$(date --date='3 hours' '+%s')"
+    [[ -z ${stop_time} ]] \
+        && stop_time="$(date --date='3 hours' '+%s')"
 
     local updates="{\
         \"UHostId\": \"${vm_id}\", \
         \"SchedulerStopTime\": ${stop_time}}"
 
     local response
-    response="$(invoke_action 'UpdateCompShareStopScheduler' "${updates}")"
+    response="$(invoke_action \
+        'UpdateCompShareStopScheduler' \
+        "${updates}")"
     echo "${response}"
 }
 
@@ -598,7 +688,8 @@ allocate_vm() {
         available_charge_type="$(jq '.ChargeType' <<< "${compute}")"
 
         local required_charge_types
-        if jq -e 'has("ChargeType")' <<< "${requirements}" > /dev/null; then
+        if jq -e 'has("ChargeType")' <<< "${requirements}" \
+            > /dev/null; then
             readarray -t required_charge_types < \
                 <(jq -rc '.ChargeType.[]' <<< "${requirements}")
         else
