@@ -125,6 +125,22 @@ These workflows are controlled by:
     - `ENCRYPT_PASSPHRASE`: passphrase for general purpose data
       encryption.
 
+**NOTE**: The testing workflows are triggered by the
+[`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target)
+event, since the
+[`pull_request`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)
+event cannot read repository secrets when [triggered from a forked
+repository](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflows-in-forked-repositories).
+So all steps requiring secrets to provision the infrastructure are by
+default [restricted to the code from the main
+branch](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#risks-of-pull_request_target).
+In other words, any new changes to the code regarding to VM creation
+and deletion in the workflows have to be merged into the `main` branch
+before taking any effects.  Except that, all other changes such as
+those made into [`recommenders/`](../recommenders/),
+[`tests/`](../tests/), and [`examples`](../examples/), can take effect
+immediately in PR gates without having to merge into `main`.
+
 
 ## How to contribute tests to the repository
 
@@ -581,9 +597,6 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 
 ## How to add a new cloud servive for the testing infrastructure
 
-<details>
-<summary>Click to see more ...</summary>
-
 This section describes the general structure and principle of adding a
 new cloud service for the testing infrastructure.
 
@@ -593,6 +606,12 @@ supported by most cloud services, it is preferable to use
 Terraform-support cloud services.  But Non-Terraform support services
 can still be used in the testing infrastructure as long as the tools
 added follow the structure described below.
+
+
+### Overview of the `tools` directory
+
+<details>
+<summary>Click to see more ...</summary>
 
 As described above, we make several assumptions about how to use the
 infrastructure.  Before talking about those assumptions, we give an
@@ -634,6 +653,14 @@ tools used in the workflows.
     directly under the service directories.
   + Special permanent settings are stored in a file named `config.yml`
     under the service directory.
+
+</details>
+
+
+### General structure and principle of adding a new cloud service
+
+<details>
+<summary>Click to see more ...</summary>
 
 So tools for the new cloud service should be put into its service
 directory under
@@ -696,6 +723,22 @@ directory under
     - For example, the name of the secret to access Alibaba Cloud APIs
       is `ALIBABA_CLOUD_ACCESS_KEY_SECRET`, and the name of the
       private key for CompShare is `COMPSHARE_PRIVATE_KEY`.
+
+**NOTE**: The testing workflows are triggered by the
+[`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target)
+event, since the
+[`pull_request`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)
+event cannot read repository secrets when [triggered from a forked
+repository](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflows-in-forked-repositories).
+So all steps requiring secrets to provision the infrastructure are by
+default [restricted to the code from the main
+branch](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target#risks-of-pull_request_target).
+In other words, any new changes to the code regarding to VM creation
+and deletion in the workflows have to be merged into the `main` branch
+before taking any effects.  Except that, all other changes such as
+those made into [`recommenders/`](../recommenders/),
+[`tests/`](../tests/), and [`examples`](../examples/), can take effect
+immediately in PR gates without having to merge into `main`.
 
 </details>
 
