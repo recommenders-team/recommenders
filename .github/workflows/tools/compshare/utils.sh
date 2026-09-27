@@ -18,7 +18,6 @@ source "$(dirname "$0")/../utils.sh"
 # Contants
 COMPSHARE_ZONE_CHINA_NORTH_2A='cn-wlcb-01'
 COMPSHARE_IMAGE_UBUNTU2404='compshareImage-12rjyhwynazd'
-COMPSHARE_PROJECT_ID='org-hmgw4i'
 
 
 #---------------------------------------------------------------------

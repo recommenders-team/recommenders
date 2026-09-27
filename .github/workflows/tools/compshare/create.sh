@@ -87,7 +87,11 @@ echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 echo 'Setting stop scheduler ...'
 stop_time="$(jq '.SchedulerStopTime // empty' <<< "${requirements}")"
-api_call_retry update_stop_scheduler "${vm_id}" "${stop_time}" > /dev/null
+api_call_retry update_stop_scheduler \
+    "${vm_id}" \
+    "${stop_time}" \
+    "${project_id}" \
+    "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
 
 unset COMPSHARE_PRIVATE_KEY
 
