@@ -452,6 +452,7 @@ describe_images() {
     # Params:
     # * zone
     local zone="${1:-}"
+
     [[ -z ${zone} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
@@ -587,16 +588,22 @@ update_stop_scheduler() {
     #   in 3 hours by default
     local vm_id="${1:-}"
     local stop_time="${2:-}"
-    local project_id="${3:-}"
-    local zone="${4:-}"
+    local zone="${3:-}"
+
     [[ -z ${vm_id} \
-      || -z ${stop_time} \
-      || -z ${project_id} \
       || -z ${zone} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     [[ -z ${stop_time} ]] \
         && stop_time="$(date --date='3 hours' '+%s')"
+
+    local projects
+    projects="$(api_call_retry get_project_list)"
+    local project_id
+    project_id="$(jq -r '
+        .ProjectSet[]
+        | select(.IsDefault)
+        | .ProjectId' <<< "${projects}")"
 
     local region="${zone%-*}"
     local action_spec="{\
