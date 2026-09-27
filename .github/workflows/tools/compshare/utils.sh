@@ -15,6 +15,11 @@
 # Source common utils
 source "$(dirname "$0")/../utils.sh"
 
+# Contants
+COMPSHARE_ZONE_CHINA_NORTH_2A='cn-wlcb-01'
+COMPSHARE_IMAGE_UBUNTU2404='compshareImage-12rjyhwynazd'
+COMPSHARE_PROJECT_ID='org-hmgw4i'
+
 
 #---------------------------------------------------------------------
 # Utils used by other CompShare API wrappers and utils
@@ -366,7 +371,7 @@ create_instance() {
     #           "NIdfqvRv"
     #       ]
     #   }
-
+    #
     # Params:
     # * VM name
     # * file containing the base64-encoded login password
@@ -432,6 +437,29 @@ describe_available_instance_types() {
     local region="${zone%-*}"
     local action_spec="{\
         \"Action\": \"DescribeAvailableCompShareInstanceTypes\", \
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\" \
+    }"
+
+    local response
+    response="$(invoke_action "${action_spec}")"
+    echo "${response}"
+}
+
+describe_images() {
+    # Get a list of system images
+    # See https://www.compshare.cn/docs/gpus/image/describecompshareimages
+    #
+    # Params:
+    # * zone
+    local zone="${1:-}"
+    [[ -z ${zone} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"DescribeCompShareImages\", \
+        \"ImageType\": \"System\", \
         \"Region\": \"${region}\", \
         \"Zone\": \"${zone}\" \
     }"
@@ -669,7 +697,9 @@ allocate_vm() {
                     "${gpu_type}" \
                     "${cpu_cores}" \
                     "${memory}" \
-                    "${charge_type}" > /dev/null && return
+                    "${charge_type}" \
+                    "${image_id:-${COMPSHARE_IMAGE_UBUNTU2404}}" \
+                    "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null && return
             fi
         done
     done
