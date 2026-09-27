@@ -123,20 +123,17 @@ gen_request_url() {
     # the parameter digest
     #
     # Params:
-    # * API action name
-    # * (Optional) updates for the parameters in JSON
+    # * API action specification in JSON
     # * (Optional) file containing the base64-encoded login password
-    local action="${1:-}"
-    local updates="${2:-}"
-    local encoded_password_file="${3:-}"
-    [[ -z ${action} ]] && { echo 'Parameter error!' >&2; return 1; }
+    local action_spec="${1:-}"
+    local encoded_password_file="${2:-}"
 
-    local action_spec
-    action_spec="$(get_action_template "${action}")"
+    [[ -z ${action_spec} ]] \
+        && { echo 'Parameter error!' >&2; return 1; }
 
-    if [[ -n ${updates} ]]; then
-        action_spec="$(update_json "${action_spec}" "${updates}")"
-    fi
+    # COMPSHARE_PUBLIC_KEY is an environment variable.
+    action_spec="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
+        <<< "${action_spec}")"
 
     local digest
     digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
@@ -144,101 +141,6 @@ gen_request_url() {
     params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
         <<< "${action_spec}")"
     echo "https://api.compshare.cn/?${params}&Signature=${digest}"
-}
-
-get_action_template() {
-    # Get the specification template for a specific action
-    #
-    # Params:
-    # * API action name
-    local action="${1:-}"
-    [[ -z ${action} ]] && { echo 'Parameter error!' >&2; return 1; }
-
-    local action_template
-    action_template="$(cat << 'EOF'
-        [
-            {
-                "Action": "CheckCompShareResourceCapacity",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "GpuType": "",
-                "MachineType": "G",
-                "MinimalCpuPlatform": "Auto",
-                "CompShareImageId": "compshareImage-12rjyhwynazd",
-                "ChargeType": "Spot",
-                "Disks.0.IsBoot": true,
-                "Disks.0.Type": "CLOUD_SSD",
-                "Disks.0.Size": 100
-            },
-            {
-                "Action": "CreateCompShareInstance",
-                "ChargeType": "Postpay",
-                "CompShareImageId": "compshareImage-12rjyhwynazd",
-                "Disks.0.IsBoot": true,
-                "Disks.0.Size": 100,
-                "Disks.0.Type": "CLOUD_SSD",
-                "GPU": 1,
-                "GPUType": "",
-                "MachineType": "G",
-                "Memory": 65536,
-                "Name": "",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "CPU": 8
-            },
-            {
-                "Action": "DescribeAvailableCompShareInstanceTypes",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01"
-            },
-            {
-                "Action": "DescribeCompShareInstance"
-            },
-            {
-                "Action": "GetCompShareInstancePrice",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "GpuType": "",
-                "Gpu": 1,
-                "Cpu": 16,
-                "Memory": 65536,
-                "ChargeType": "Spot"
-            },
-            {
-                "Action": "GetProjectList"
-            },
-            {
-                "Action": "StopCompShareInstance",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "UHostId": ""
-            },
-            {
-                "Action": "TerminateCompShareInstance",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "UHostId": "",
-                "ReleaseUDisk": true
-            },
-            {
-                "Action": "UpdateCompShareStopScheduler",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "ProjectId": "org-hmgw4i",
-                "UHostId": "",
-                "SchedulerStopTime": 1779164372
-            }
-        ]
-EOF
-    )"
-    action_template="$(jq ".[] | select(.Action == \"${action}\")" \
-        <<< "${action_template}")"
-
-    # COMPSHARE_PUBLIC_KEY is not set directly in the script
-    action_template="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
-        <<< "${action_template}")"
-
-    echo "${action_template}"
 }
 
 get_compute_spec() {
@@ -383,18 +285,15 @@ invoke_action() {
     # Call the API for the specified action
     #
     # Params:
-    # * API action name
-    # * (Optional) updates for the parameters in JSON
+    # * API action specification in JSON
     # * (Optional) file containing the base64-encoded login password
-    local action="${1:-}"
-    local updates="${2:-}"
-    local encoded_password_file="${3:-}"
-    [[ -z ${action} ]] && { echo 'Parameter error!' >&2; return 1; }
+    local action_spec="${1:-}"
+    local encoded_password_file="${2:-}"
+    [[ -z ${action_spec} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     local request_url
     request_url="$(gen_request_url \
-        "${action}" \
-        "${updates}" \
+        "${action_spec}" \
         "${encoded_password_file}")"
 
     local password
@@ -416,32 +315,43 @@ invoke_action() {
 # CompShare API wrappers
 #---------------------------------------------------------------------
 check_resource_capacity() {
-    # Check if there are enough resources.
+    # Check if there are enough resources of specified type.
     # See https://www.compshare.cn/docs/gpus/instance/checkcompshareresourcecapacity
-    local region="${1:-}"
-    local zone="${2:-}"
-    local gpu_type="${3:-}"
-    local image_id="${4:-}"
-    local charge_type="${5:-}"
+    #
+    # Params:
+    # * GPU type, such as P40, 3090
+    # * charge type, such as Postpay, Spot
+    # * image ID
+    # * zone
+    local gpu_type="${1:-}"
+    local charge_type="${2:-}"
+    local image_id="${3:-}"
+    local zone="${4:-}"
 
-    [[ -z ${region} \
-      || -z ${zone} \
-      || -z ${gpu_type} \
+    [[ -z ${gpu_type} \
+      || -z ${charge_type} \
       || -z ${image_id} \
-      || -z ${charge_type} ]] \
+      || -z ${zone} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates="{\
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\", \
-        \"GpuType\": \"${gpu_type}\", \
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"CheckCompShareResourceCapacity\", \
+        \"ChargeType\": \"${charge_type}\", \
         \"CompShareImageId\": \"${image_id}\", \
-        \"ChargeType\": \"${charge_type}\"}"
+        \"Disks.0.IsBoot\": true, \
+        \"Disks.0.Size\": 100, \
+        \"Disks.0.Type\": \"CLOUD_SSD\", \
+        \"GpuType\": \"${gpu_type}\", \
+        \"MachineType\": \"G\", \
+        \"MinimalCpuPlatform\": \"Auto\", \
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\" \
+    }"
 
     local response
-    response="$(invoke_action \
-        'CheckCompShareResourceCapacity' \
-        "${updates}")"
+    response="$(invoke_action "${action_spec}")"
+    echo "${response}"
 }
 
 create_instance() {
@@ -464,103 +374,124 @@ create_instance() {
     # * CPU cores
     # * memory in MB
     # * charge type
+    # * image ID
+    # * zone
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
     local gpu_type="${3:-}"
     local cpu_cores="${4:-}"
     local memory="${5:-}"
     local charge_type="${6:-}"
+    local image_id="${7:-}"
+    local zone="${8:-}"
     [[ -z ${vm_name} \
       || -z ${encoded_password_file} \
       || -z ${gpu_type} \
       || -z ${cpu_cores} \
       || -z ${memory} \
-      || -z ${charge_type} ]] \
+      || -z ${charge_type} \
+      || -z ${image_id} \
+      || -z ${zone} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates="{\
-        \"Name\": \"${vm_name}\", \
-        \"GPUType\": \"${gpu_type}\", \
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"CreateCompShareInstance\", \
         \"CPU\": ${cpu_cores}, \
+        \"ChargeType\": \"${charge_type}\", \
+        \"CompShareImageId\": \"${image_id}\", \
+        \"Disks.0.IsBoot\": true, \
+        \"Disks.0.Size\": 100, \
+        \"Disks.0.Type\": \"CLOUD_SSD\", \
+        \"GPU\": 1, \
+        \"GpuType\": \"${gpu_type}\", \
+        \"MachineType\": \"G\", \
         \"Memory\": ${memory}, \
-        \"ChargeType\": \"${charge_type}\"}"
+        \"Name\": \"${vm_name}\", \
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\" \
+    }"
     
     local response
     response="$(invoke_action \
-        'CreateCompShareInstance' \
-        "${updates}" \
+        "${action_spec}" \
         "${encoded_password_file}")"
     echo "${response}"
 }
 
 describe_available_instance_types() {
-    # Get the list of available instance types in the zone.
+    # Get the list of all instance types in the zone.
     # See https://www.compshare.cn/docs/gpus/instance/describeavailablecompshareinstancetypes
-    local region="{1:-}"
-    local zone="${2:-}"
+    #
+    # Params:
+    # * zone
+    local zone="${1:-}"
 
-    [[ -z ${region} \
-      || -z ${zone} ]] \
-      && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${zone} ]] && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates="{\
-      \"Region\": \"${region}\", \
-      \"Zone\": \"${zone}\"}"
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"DescribeAvailableCompShareInstanceTypes\", \
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\" \
+    }"
 
     local response
-    response="$(invoke_action \
-        'DescribeAvailableCompShareInstanceTypes' \
-        "${updates}")"
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
 describe_instance() {
     # Get the list of VMs
     # See https://www.compshare.cn/docs/gpus/instance/describecompshareinstance
+    local action_spec="{\"Action\": \"DescribeCompShareInstance\"}"
     local response
-    response="$(invoke_action 'DescribeCompShareInstance')"
-
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
 get_instance_price() {
     # Get the price for creating the instance.
     # See https://www.compshare.cn/docs/gpus/instance/getcompshareinstanceprice
-    local region="${1:-}"
-    local zone="${2:-}"
-    local gpu_type="${3:-}"
-    local cpu_cores="${4:-}"
-    local memory="${5:-}"
-    local charge_type="${6:-}"
+    #
+    # Params:
+    # * GPU type
+    # * CPU cores
+    # * memory in MB
+    # * zone
+    local gpu_type="${1:-}"
+    local cpu_cores="${2:-}"
+    local memory="${3:-}"
+    local zone="${4:-}"
 
-    [[ -z ${region} \
-      || -z ${zone} \
-      || -z ${gpu_type} \
+    [[ -z ${gpu_type} \
       || -z ${cpu_cores} \
       || -z ${memory} \
-      || -z ${charge_type} ]] \
+      || -z ${zone} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates="{\
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\", \
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"GetCompShareInstancePrice\", \
+        \"Cpu\": ${cpu_cores}, \
+        \"Gpu\": 1, \
         \"GpuType\": \"${gpu_type}\", \
-        \"Cpu\": \"${cpu_cores}\", \
-        \"Memory\": \"${memory}\", \
-        \"ChargeType\": \"${charge_type}\"}"
+        \"Memory\": ${memory}, \
+        \"Region\": \"${region}\", \
+        \"Zone\": \"${zone}\" \
+    }"
 
     local response
-    response="$(invoke_action \
-        'GetCompShareInstancePrice' \
-        "${updates}")"
+    response="$(invoke_action "${action_spec}")"
+    echo "${response}"
 }
 
 get_project_list() {
     # Get the list of projects
     # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
+    local action_spec="{\"Action\": \"GetProjectList\"}"
     local response
-    response="$(invoke_action 'GetProjectList')"
-
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
@@ -570,13 +501,23 @@ stop_instance() {
     #
     # Params:
     # * VM ID
+    # * zone
     local vm_id="${1:-}"
-    [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
+    local zone="${2:-}"
+    [[ -z ${vm_id} \
+      || -z ${zone} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates="{\"UHostId\": \"${vm_id}\"}"
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"StopCompShareInstance\", \
+        \"Region\": \"${region}\", \
+        \"UHostId\": \"${vm_id}\", \
+        \"Zone\": \"${zone}\" \
+    }"
 
     local response
-    response="$(invoke_action 'StopCompShareInstance' "${updates}")"
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
@@ -588,15 +529,24 @@ terminate_instance() {
     #
     # Params:
     # * VM ID
+    # * zone
     local vm_id="${1:-}"
-    [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
+    local zone="${2:-}"
+    [[ -z ${vm_id} \
+      || -z ${zone} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
-    local updates="{\"UHostId\": \"${vm_id}\"}"
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"TerminateCompShareInstance\", \
+        \"Region\": \"${region}\", \
+        \"ReleaseUDisk\": true, \
+        \"UHostId\": \"${vm_id}\", \
+        \"Zone\": \"${zone}\" \
+    }"
 
     local response
-    response="$(invoke_action \
-        'TerminateCompShareInstance' \
-        "${updates}")"
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
@@ -610,18 +560,29 @@ update_stop_scheduler() {
     #   in 3 hours by default
     local vm_id="${1:-}"
     local stop_time="${2:-}"
-    [[ -z ${vm_id} ]] && { echo 'Parameter error!' >&2; return 1; }
+    local project_id="${3:-}"
+    local zone="${4:-}"
+    [[ -z ${vm_id} \
+      || -z ${stop_time} \
+      || -z ${project_id} \
+      || -z ${zone} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
     [[ -z ${stop_time} ]] \
         && stop_time="$(date --date='3 hours' '+%s')"
 
-    local updates="{\
+    local region="${zone%-*}"
+    local action_spec="{\
+        \"Action\": \"UpdateCompShareStopScheduler\", \
+        \"ProjectId\": \"${project_id}\", \
+        \"Region\": \"${region}\", \
+        \"SchedulerStopTime\": ${stop_time}, \
         \"UHostId\": \"${vm_id}\", \
-        \"SchedulerStopTime\": ${stop_time}}"
+        \"Zone\": \"${zone}\" \
+    }"
 
     local response
-    response="$(invoke_action \
-        'UpdateCompShareStopScheduler' \
-        "${updates}")"
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
