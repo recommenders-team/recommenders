@@ -52,8 +52,8 @@ if [[ -z ${requirements} ]]; then
     # * All VMs from CompShare have GPUs.
     # * Unit tests require less than half hour
     # * Nightly tests take more than an hour and more GPU memory.
-    # * VMs with Spot ChargeType are cheaper but there is a risk of being
-    #   deleted after 1 hour.
+    # * VMs with Spot ChargeType are cheaper but there is a risk of
+    #   being deleted after 1 hour.
     if [[ ${test_type} == *nightly* ]]; then
         gpu_type='"GPUType": "!2080,P40"'
         gpu_mem='"Memory": {"GPU": 12, "CPU": 32}'
