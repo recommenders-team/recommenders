@@ -96,6 +96,11 @@
 #             "ap-southeast-1"
 #         ]
 #     }
+#
+#   + Possible values of region can be found at
+#     https://help.aliyun.com/en/document_detail/40654.html
+#   + Possible values of instance_type_family can be found at
+#     https://help.aliyun.com/en/ecs/user-guide/instance-specification-naming-and-classification
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
