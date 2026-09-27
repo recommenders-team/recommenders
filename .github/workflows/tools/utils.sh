@@ -494,15 +494,15 @@ wait_for_vm_to_be_available() {
     sleep 5
     local count=0
     local ssh_response
-    until ssh_response=$(\
+    until ssh_response="$(\
         ssh -o BatchMode=yes \
             -o ConnectTimeout=5 \
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
-            "${ssh_dest}" true 2>&1) \
+            "${ssh_dest}" true 2>&1)" \
         || grep -iq 'permission' <<< "${ssh_response}"
     do
-        # Set timeout to (5 + 5) * 60 = 600 seconds
+        # Set timeout to 5 + 5 * 60 = 305 seconds
         [[ "${count}" -gt 60 ]] \
             && { echo 'Time out!' >&2; return 1; }
         count=$((count + 1))

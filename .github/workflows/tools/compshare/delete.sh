@@ -48,6 +48,8 @@ while true; do
             "${vm_id}" \
             "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
 
+        wait_for_vm_to_stop "${vm_name}"
+
         echo "Deleting the VM ${vm_name} ..."
         api_call_retry 10 terminate_instance \
             "${vm_id}" \
