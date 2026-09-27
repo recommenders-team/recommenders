@@ -44,10 +44,14 @@ while true; do
     if [[ -n ${vm_info:-} ]]; then
         vm_id="${vm_info[0]}"
         echo "Stopping the VM ${vm_name} ..."
-        api_call_retry stop_instance "${vm_id}" > /dev/null
+        api_call_retry stop_instance \
+            "${vm_id}" \
+            "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
 
         echo "Deleting the VM ${vm_name} ..."
-        api_call_retry 10 terminate_instance "${vm_id}" > /dev/null
+        api_call_retry 10 terminate_instance \
+            "${vm_id}" \
+            "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
         break
     fi
 
