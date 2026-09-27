@@ -136,9 +136,11 @@ terraform -chdir="${tf_config_dir}" init
 
 cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
 if [[ ${test_group} == *gpu* ]]; then
-    input_vars="$(jq '.gpu // empty' <<< "${cloud_service_input_vars}")"
+    input_vars="$(jq '.gpu // empty' \
+        <<< "${cloud_service_input_vars}")"
 else
-    input_vars="$(jq '.cpu // empty' <<< "${cloud_service_input_vars}")"
+    input_vars="$(jq '.cpu // empty' \
+        <<< "${cloud_service_input_vars}")"
 fi
 input_vars="${input_vars:-$cloud_service_input_vars}"
 
@@ -147,10 +149,12 @@ apply_tf_config "${unique_name}" "${tf_config_dir}" "${input_vars}"
 unset "${secret_key_name}"
 
 echo 'Exporting VM info for subsequent steps ...'
-ssh_dest="$(terraform -chdir="${tf_config_dir}" output -json ssh_dest | jq -r)"
+ssh_dest="$(terraform -chdir="${tf_config_dir}" output \
+    -json ssh_dest | jq -r)"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
-ssh_key="$(terraform -chdir="${tf_config_dir}" output -json ssh_key | jq -r)"
+ssh_key="$(terraform -chdir="${tf_config_dir}" output \
+    -json ssh_key | jq -r)"
 ssh_key="${tf_config_dir}/${ssh_key}"
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${ssh_key}"

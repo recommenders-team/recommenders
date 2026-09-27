@@ -96,7 +96,8 @@ gen_action_digest() {
     echo "${action_spec}" > "${action_spec_file}"
     if [[ -n ${encoded_password_file} ]]; then
         echo "${action_spec}" \
-            | jq --rawfile encoded_password "${encoded_password_file}" \
+            | jq --rawfile encoded_password \
+                "${encoded_password_file}" \
                 '.Password = $encoded_password' \
                 > "${action_spec_file}"
     fi
@@ -109,8 +110,11 @@ gen_action_digest() {
     # not directly in the script
     local digest
     digest="$(\
-        jq -r 'to_entries | sort | map("\(.key)\(.value)") | join("")' \
-            "${action_spec_file}" \
+        jq -r '
+            to_entries
+            | sort
+            | map("\(.key)\(.value)")
+            | join("")' "${action_spec_file}" \
         | tr -d '\n' \
         | cat - <(echo "${COMPSHARE_PRIVATE_KEY}") \
         | tr -d '\n' \
@@ -142,8 +146,10 @@ gen_request_url() {
     local digest
     digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
     local params
-    params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
-        <<< "${action_spec}")"
+    params="$(jq -r '
+        to_entries
+        | map("\(.key)=\(.value)")
+        | join("&")' <<< "${action_spec}")"
     echo "https://api.compshare.cn/?${params}&Signature=${digest}"
 }
 
@@ -692,7 +698,8 @@ allocate_vm() {
         fi
         local charge_type
         for charge_type in "${required_charge_types[@]}"; do
-            if jq -e "map((. | ascii_downcase) == \"${charge_type@L}\") 
+            if jq -e "
+                map((. | ascii_downcase) == \"${charge_type@L}\")
                 | any" <<< "${available_charge_type}" > /dev/null
             then
                 echo "  + Trying charge type: ${charge_type} ..."
@@ -705,7 +712,8 @@ allocate_vm() {
                     "${memory}" \
                     "${charge_type}" \
                     "${image_id:-${COMPSHARE_IMAGE_UBUNTU2404}}" \
-                    "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null && return
+                    "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" \
+                    > /dev/null && return
             fi
         done
     done
@@ -759,16 +767,21 @@ get_vm_info() {
     # Params:
     # * VM name
     local vm_name="${1:-}"
-    [[ -z ${vm_name} ]] && { echo 'Parameter error!' >&2; return 1; }
+
+    [[ -z ${vm_name} ]] \
+        && { echo 'Parameter error!' >&2; return 1; }
 
     echo "Getting info of the VM ..." >&2
     local response
     response="$(api_call_retry describe_instance)"
 
     local vm_info
-    vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
+    vm_info="$(jq "
+        .UHostSet.[]
+        | select(.Name == \"${vm_name}\")" \
         <<< "${response}")"
-    [[ -z ${vm_info} ]] && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${vm_info} ]] \
+        && { echo 'Parameter error!' >&2; return 1; }
     
     local vm_id
     vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
