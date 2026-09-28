@@ -340,7 +340,7 @@ check_resource_capacity() {
           has("GpuType")
           and has("ChargeType")
           and has("CompShareImageId")
-          and has("Zone") | not' <<< "${params}" \
+          and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
     
     local action_spec="{\
@@ -483,11 +483,9 @@ describe_available_instance_types() {
     #     ]
     # }
     local params="${1:-}"
-    local zone
-    zone="$(jq -r '.Zone // empty' <<< "${params}")"
 
-    [[ -z ${params} \
-      || -z ${zone} ]] \
+    [[ -z ${params} ]] \
+      || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
     local action_spec='{\
@@ -496,6 +494,8 @@ describe_available_instance_types() {
     action_spec="$(update_json "${action_spec}" "${params}")"
 
     if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone // empty' <<< "${params}")"
         local region="{\"Region\": \"${zone%-*}\"}"
         action_spec="$(update_json "${action_spec}" "${region}")"
     fi
