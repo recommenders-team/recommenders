@@ -878,18 +878,22 @@ get_gpu_type_combinations() {
       && -z ${params} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    if jq -e 'has("GpuType")' <<< "${input_vars}" \
-        > /dev/null; then
-        jq -c '.GpuType[] | {"GpuType": .}' \
-                <<< "${input_vars}"
-    else
-        local gpu_list
-        gpu_list="$(api_call_retry \
-            describe_available_instance_types "${params}")"
-        jq -c '.AvailableInstanceTypes[]
-            | select(.Status == "Normal")
-            | {"GpuType": .Name}' <<< "${gpu_list}"
+    local gpu_list
+    gpu_list="$(api_call_retry describe_available_instance_types \
+        "${params}")"
+    gpu_list="$(jq -c '[ .AvailableInstanceTypes[]
+        | select(.Status == "Normal")
+        | .Name ]' <<< "${gpu_list}")"
+
+    if jq -e 'has("GpuType")  and (.GpuType | length) != 0' \
+        <<< "${input_vars}" > /dev/null
+    then
+        local input_gpu_list
+        input_gpu_list="$(jq -c '.GpuType' <<< "${input_vars}")"
+        gpu_list="$(array_intersection \
+            "${input_gpu_list}" "${gpu_list}")"
     fi
+    jq -c '.[] | {"GpuType": .}' <<< "${gpu_list}"
 }
 
 get_zone_combinations() {
@@ -918,18 +922,16 @@ get_zone_combinations() {
     zone_list="$(api_call_retry describe_zones)"
     zone_list="$(jq -c '[ .ZoneInfo[]
         | select(.IsPod | not)
-        | .Zone ]' <<< "${zone_list}")
+        | .Zone ]' <<< "${zone_list}")"
     
-    if jq -e 'has("Zone")' <<< "${input_vars}" > /dev/null; then
+    if jq -e 'has("Zone") and (.Zone | length) != 0' \
+        <<< "${input_vars}" > /dev/null
+    then
         # Get the intersection of the two zone lists.
         local input_zone_list
         input_zone_list="$(jq -c '.Zone' <<< "${input_vars}")"
-        zone_list="$(jq -n \
-            --argjson a "${zone_list}" \
-            --argjson b "${input_zone_list}" \
-            '($a | unique) as $au
-            | ($b | unique) as $bu
-            | $au | map(select([.] | inside($bu)))')"
+        zone_list="$(array_intersection \
+            "${input_zone_list}" "${zone_list}")"
     fi
     jq -c '.[] | {"Zone": .}' <<< "${zone_list}"
 }
