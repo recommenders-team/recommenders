@@ -54,15 +54,15 @@ apply_tf_config() {
     [[ -z ${unique_name} ]] \
         && { echo 'No name specified!' >&2; return 1; }
 
-    local var_combinations
-    readarray -t var_combinations < \
+    local combination_list
+    readarray -t combination_list < \
         <(get_input_var_combinations "${input_vars}")
 
     trap "store_tfstate_tfvars '${tf_config_dir}'; \
         trap - EXIT RETURN" EXIT RETURN
     local index
-    for index in "${!var_combinations[@]}"; do
-        local combination="${var_combinations[${index}]}"
+    for index in "${!combination_list[@]}"; do
+        local combination="${combination_list[${index}]}"
         echo "${combination}" > "${tf_config_dir}/terraform.tfvars.json"
 
         echo "* Trying with ${combination} ..."
@@ -140,8 +140,8 @@ get_input_var_combinations() {
     #     {"instance_type_family":"ecs.gn6i","region":"eu-central-1"}
     #     {"instance_type_family":"ecs.gn6i","region":"ap-southeast-1"}
     local input_vars="${1:-}"
-    local combinations
-    combinations="$(jq -c '
+    local combination_list
+    combination_list="$(jq -c '
         to_entries
         | reduce .[] as $cur_var (
             [{}];
@@ -152,7 +152,7 @@ get_input_var_combinations() {
             ])
         | .[]' <<< "${input_vars}")" \
         || { echo 'Incorrect input variables!' >&2; exit 1; }
-    echo "${combinations}"
+    echo "${combination_list}"
 }
 
 pre_image_build() {
