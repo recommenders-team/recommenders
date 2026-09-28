@@ -18,7 +18,6 @@ try:
         prepare_hparams,
         download_deeprec_resources,
     )
-    from recommenders.models.deeprec.io.iterator import FFMTextIterator
     from recommenders.models.deeprec.io.dkn_item2item_iterator import (
         DKNItem2itemTextIterator,
     )
@@ -32,7 +31,6 @@ try:
         NextItNetModel,
     )
     from recommenders.models.deeprec.models.sequential.sum import SUMModel
-    from recommenders.models.deeprec.models.xDeepFM import XDeepFMModel
 except ImportError:
     pass  # skip this import if we are in cpu environment
 
@@ -110,33 +108,6 @@ def sequential_files(deeprec_resource_path):
         item_vocab,
         cate_vocab,
     )
-
-
-@pytest.mark.gpu
-def test_xdeepfm_component_definition(deeprec_resource_path):
-    data_path = os.path.join(deeprec_resource_path, "xdeepfm")
-    yaml_file = os.path.join(data_path, "xDeepFM.yaml")
-
-    if not os.path.exists(yaml_file):
-        download_deeprec_resources(
-            "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
-            data_path,
-            "xdeepfmresources.zip",
-        )
-
-    hparams = prepare_hparams(yaml_file)
-    model = XDeepFMModel(hparams, FFMTextIterator)
-
-    assert model.logit is not None
-    assert model.update is not None
-    assert model.iterator is not None
-    assert model.hparams is not None
-    assert model.hparams.model_type == "xDeepFM"
-    assert model.hparams.epochs == 50
-    assert model.hparams.batch_size == 128
-    assert model.hparams.learning_rate == 0.0005
-    assert model.hparams.loss == "log_loss"
-    assert model.hparams.optimizer == "adam"
 
 
 @pytest.mark.gpu

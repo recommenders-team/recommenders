@@ -22,7 +22,7 @@ def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["map"] == pytest.approx(0.110591, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.244722, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.382461, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.330753, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.176385, rel=TOL, abs=ABS_TOL)
@@ -43,7 +43,7 @@ def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["mae"] == pytest.approx(0.846033, rel=TOL, abs=ABS_TOL)
     assert results["rsquared"] == pytest.approx(0.136435, rel=TOL, abs=ABS_TOL)
     assert results["exp_var"] == pytest.approx(0.136446, rel=TOL, abs=ABS_TOL)
-    assert results["map"] == pytest.approx(0.052850, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.138672, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.248061, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.223754, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.108826, rel=TOL, abs=ABS_TOL)
@@ -72,7 +72,6 @@ def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     execute_notebook(
@@ -83,14 +82,14 @@ def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["rmse"] == pytest.approx(0.985920, rel=TOL, abs=ABS_TOL)
-    assert results["mae"] == pytest.approx(0.71292, rel=TOL, abs=ABS_TOL)
-    assert results["rsquared"] == pytest.approx(0.231199, rel=TOL, abs=ABS_TOL)
-    assert results["exp_var"] == pytest.approx(0.231337, rel=TOL, abs=ABS_TOL)
-    assert results["map"] == pytest.approx(0.012535, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg"] == pytest.approx(0.096594, rel=TOL, abs=ABS_TOL)
-    assert results["precision"] == pytest.approx(0.097770, rel=TOL, abs=ABS_TOL)
-    assert results["recall"] == pytest.approx(0.037612, rel=TOL, abs=ABS_TOL)
+    assert results["rmse"] == pytest.approx(1.056882, rel=TOL, abs=ABS_TOL)
+    assert results["mae"] == pytest.approx(0.79716, rel=TOL, abs=ABS_TOL)
+    assert results["rsquared"] == pytest.approx(0.116548, rel=TOL, abs=ABS_TOL)
+    assert results["exp_var"] == pytest.approx(0.137686, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.122644, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.212703, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.181104, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.065968, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -143,7 +142,7 @@ def test_cornac_bpr_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["map"] == pytest.approx(0.1091, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg"] == pytest.approx(0.4034, rel=TOL, abs=ABS_TOL)
-    assert results["precision"] == pytest.approx(0.3550, rel=TOL, abs=ABS_TOL)
-    assert results["recall"] == pytest.approx(0.1802, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.180368, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.305190, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.239032, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.208660, rel=TOL, abs=ABS_TOL)

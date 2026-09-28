@@ -4,8 +4,10 @@
 import os
 import re
 import shutil
+import logging
 import warnings
 import pandas as pd
+import requests
 from typing import Optional
 from zipfile import ZipFile
 from recommenders.datasets.download_utils import maybe_download, download_path
@@ -19,6 +21,8 @@ from recommenders.utils.constants import (
     DEFAULT_TITLE_COL,
     DEFAULT_GENRE_COL,
 )
+
+log = logging.getLogger(__name__)
 
 try:
     from pyspark.sql.types import (
@@ -91,6 +95,12 @@ class _DataFormat:
     def item_has_header(self):
         return self._item_has_header
 
+
+# Original MovieLens URL, and the Recommenders backup used when it is unreachable
+MOVIELENS_URL = "http://files.grouplens.org/datasets/movielens/ml-{size}.zip"
+MOVIELENS_BACKUP_URL = (
+    "https://huggingface.co/datasets/Recommenders/MovieLens/resolve/main/ml-{size}.zip"
+)
 
 # 10m and 20m data do not have user data
 DATA_FORMAT = {
@@ -557,16 +567,30 @@ def _maybe_download_and_extract(size, dest_path):
 def download_movielens(size, dest_path):
     """Downloads MovieLens datafile.
 
+    The file is downloaded from the original MovieLens URL. If that download fails,
+    it is retried from the Recommenders backup hosted on Hugging Face. The original
+    URL is tried fewer times than the default so that an outage falls back to the
+    backup quickly, while the backup uses the default number of attempts.
+
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
         dest_path (str): File path for the downloaded file
+
+    Raises:
+        requests.exceptions.RequestException: If the download fails from both the
+            original and the backup URL.
     """
     if size not in DATA_FORMAT:
         raise ValueError(f"Size: {size}. " + ERROR_MOVIE_LENS_SIZE)
 
-    url = "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip"
+    url = MOVIELENS_URL.format(size=size)
+    backup_url = MOVIELENS_BACKUP_URL.format(size=size)
     dirs, file = os.path.split(dest_path)
-    maybe_download(url, file, work_directory=dirs)
+    try:
+        maybe_download(url, file, work_directory=dirs, num_attempts=3)
+    except requests.exceptions.RequestException:
+        log.warning(f"Failed to download {url}, using backup {backup_url}")
+        maybe_download(backup_url, file, work_directory=dirs)
 
 
 def extract_movielens(size, rating_path, item_path, zip_path):

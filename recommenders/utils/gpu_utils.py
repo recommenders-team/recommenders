@@ -52,7 +52,7 @@ def get_cuda_version():
     """Get CUDA version
 
     Returns:
-        str: Version of the library.
+        str or None: Version of the library, or None if PyTorch was built without CUDA.
     """
     return torch.version.cuda
 
@@ -61,6 +61,7 @@ def get_cudnn_version():
     """Get the CuDNN version
 
     Returns:
-        str: Version of the library.
+        str or None: Version of the library, or None if cuDNN is not available.
     """
-    return str(torch.backends.cudnn.version())
+    version = torch.backends.cudnn.version()
+    return str(version) if version is not None else None

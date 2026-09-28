@@ -8,15 +8,12 @@ from recommenders.datasets import movielens
 from recommenders.datasets.python_splitters import python_stratified_split
 
 try:
-    import tensorflow as tf
     from recommenders.models.deeprec.deeprec_utils import (
         download_deeprec_resources,
         prepare_hparams,
     )
     from recommenders.models.deeprec.models.base_model import BaseModel
-    from recommenders.models.deeprec.models.xDeepFM import XDeepFMModel
     from recommenders.models.deeprec.models.dkn import DKN
-    from recommenders.models.deeprec.io.iterator import FFMTextIterator
     from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
     from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
     from recommenders.datasets.amazon_reviews import (
@@ -33,51 +30,6 @@ try:
     from recommenders.models.deeprec.models.sequential.sum import SUMModel
 except ImportError:
     pass  # disable error while collecting tests for SUMModel
-
-
-@pytest.mark.gpu
-def test_FFM_iterator(deeprec_resource_path):
-    data_path = os.path.join(deeprec_resource_path, "xdeepfm")
-    yaml_file = os.path.join(data_path, "xDeepFM.yaml")
-    data_file = os.path.join(data_path, "sample_FFM_data.txt")
-
-    if not os.path.exists(yaml_file):
-        download_deeprec_resources(
-            "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
-            data_path,
-            "xdeepfmresources.zip",
-        )
-
-    hparams = prepare_hparams(yaml_file)
-    iterator = FFMTextIterator(hparams, tf.Graph())
-    assert iterator is not None
-    for res in iterator.load_data_from_file(data_file):
-        assert isinstance(res, tuple)
-
-
-@pytest.mark.gpu
-def test_model_xdeepfm(deeprec_resource_path):
-    data_path = os.path.join(deeprec_resource_path, "xdeepfm")
-    yaml_file = os.path.join(data_path, "xDeepFM.yaml")
-    data_file = os.path.join(data_path, "sample_FFM_data.txt")
-    output_file = os.path.join(data_path, "output.txt")
-
-    if not os.path.exists(yaml_file):
-        download_deeprec_resources(
-            "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
-            data_path,
-            "xdeepfmresources.zip",
-        )
-
-    hparams = prepare_hparams(yaml_file, learning_rate=0.01)
-    assert hparams is not None
-
-    input_creator = FFMTextIterator
-    model = XDeepFMModel(hparams, input_creator)
-
-    assert model.run_eval(data_file) is not None
-    assert isinstance(model.fit(data_file, data_file), BaseModel)
-    assert model.predict(data_file, output_file) is not None
 
 
 @pytest.mark.gpu

@@ -33,7 +33,8 @@ When using the `uv` environment created in the README, prefer `uv pip install ..
 ## Setup for GPU
 
 ```bash
-# 1. Make sure CUDA is installed.
+# 1. Make sure CUDA is installed and compatible with the TensorFlow in
+#    setup.py.  See also tools/docker/Dockerfile.
 
 # 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the gpu extra to the uv pip install command:
 uv pip install "recommenders[gpu]"
@@ -61,7 +62,10 @@ uv pip install "recommenders[spark]"
 
 ## Setup for Databricks
 
-The following instructions were tested on Databricks Runtime 15.4 LTS (Apache Spark version 3.5.0), 14.3 LTS (Apache Spark version 3.5.0), 13.3 LTS (Apache Spark version 3.4.1), and 12.2 LTS (Apache Spark version 3.3.2). We have tested the runtime on python 3.9,3.10 and 3.11. 
+The following instructions were tested on Databricks Runtime 15.4 LTS
+(Apache Spark version 3.5.0), 14.3 LTS (Apache Spark version 3.5.0),
+13.3 LTS (Apache Spark version 3.4.1), and 12.2 LTS (Apache Spark
+version 3.3.2). We have tested the runtime on python 3.10 and 3.11.
 
 After an Databricks cluster is provisioned:
 ```bash

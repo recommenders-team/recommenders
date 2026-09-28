@@ -111,7 +111,6 @@ jobs:
       max-parallel: 6
       matrix:
         python-version:
-          - '3.9'
           - '3.10'
           - '3.11'
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
