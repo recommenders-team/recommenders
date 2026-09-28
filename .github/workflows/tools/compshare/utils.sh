@@ -430,21 +430,74 @@ create_instance() {
 }
 
 describe_available_instance_types() {
-    # Get the list of all instance types in the zone.
+    # Get the list of all instance types provided in the zone.
     # See https://www.compshare.cn/docs/gpus/instance/describeavailablecompshareinstancetypes
     #
     # Params:
-    # * zone
-    local zone="${1:-}"
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + Zone
+    #
+    # Return looks like:
+    # {
+    #     "RetCode": 0,
+    #     "AvailableInstanceTypes": [
+    #         {
+    #             "Name": "5090",
+    #             "Status": "Normal",
+    #             "MachineSizes": [
+    #                 {
+    #                     "Gpu": 1,
+    #                     "Collection": [
+    #                         {
+    #                             "Cpu": 16,
+    #                             "Memory": [96]
+    #                         }
+    #                     ]
+    #                 },
+    #                 {
+    #                     "Gpu": 2,
+    #                     "Collection": [
+    #                         {
+    #                             "Cpu": 32,
+    #                             "Memory": [192]
+    #                         }
+    #                     ]
+    #                 }
+    #             ],
+    #             "GraphicsMemory": {
+    #                 "Value": 32,
+    #                 "Rate": 3
+    #             },
+    #             "MachineClass": "GPU",
+    #             "InstanceType": "uhost",
+    #             "ParentType": "G"
+    #         },
+    #         {
+    #             "Name": "4090",
+    #             "Status": "Normal",
+    #             ...
+    #         },
+    #         ...
+    #     ]
+    # }
+    local params="${1:-}"
+    local zone
+    zone="$(jq -r '.Zone // empty' <<< "${params}")"
 
-    [[ -z ${zone} ]] && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${params} \
+      || -z ${zone} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
-    local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"DescribeAvailableCompShareInstanceTypes\", \
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\" \
-    }"
+    local action_spec='{\
+        "Action": "DescribeAvailableCompShareInstanceTypes" \
+    }'
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
