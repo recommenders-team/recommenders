@@ -847,6 +847,51 @@ api_call_retry() {
     echo "${response}"
 }
 
+get_gpu_type_combinations() {
+    # Returns available GPU types in the following format
+    #
+    #   {"GpuType":"5090"}
+    #   {"GpuType":"4090"}
+    #   {"GpuType":"4090_48G"}
+    #   {"GpuType":"2080Ti"}
+    #
+    # Params:
+    # * a JSON object of input variables.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ]
+    #     }
+    #
+    # * parameters for querying the API
+    local input_vars="${1:-}"
+    local params="${2:-}"
+
+    [[ -z ${input_vars} \
+      && -z ${params} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    if jq -e 'has("GpuType")' <<< "${input_vars}" \
+        > /dev/null; then
+        jq -c '.GpuType[] | {"GpuType": .}' \
+                <<< "${input_vars}"
+    else
+        local gpu_list
+        gpu_list="$(api_call_retry \
+            describe_available_instance_types "${params}")"
+        jq -c '.AvailableInstanceTypes[]
+            | select(.Status == "Normal")
+            | {"GpuType": .Name}' <<< "${gpu_list}"
+    fi
+}
+
 get_zone_combinations() {
     # Returns available zones in the following format
     #
