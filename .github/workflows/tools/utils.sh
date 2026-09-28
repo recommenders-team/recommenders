@@ -77,6 +77,29 @@ apply_tf_config() {
     return 1
 }
 
+array_intersection() {
+    # Get the intersection of two JSON arrays.
+    #
+    # Params:
+    # * the first array
+    # * the second array
+    local array1="${1:-}"
+    local array2="${2:-}"
+
+    [[ -z ${array1} \
+      || -z ${array2} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    local intersection
+    intersection="$(jq -nc \
+        --argjson a "${array1}" \
+        --argjson b "${array2}" \
+        '($a | unique) as $au
+        | ($b | unique) as $bu
+        | $au | map(select([.] | inside($bu)))')"
+    echo "${intersection}"
+}
+
 get_env_exports() {
     # Generate shell environment variable export statements for
     # key-value pairs in $1
