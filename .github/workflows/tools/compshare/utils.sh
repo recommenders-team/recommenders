@@ -484,6 +484,43 @@ describe_instance() {
     echo "${response}"
 }
 
+describe_zones() {
+    # Get the list of zones
+    # See https://www.compshare.cn/docs/gpus/instance/describecompsharesupportzone
+    #
+    # Return looks like:
+    #
+    # {
+    #     "RetCode": 0,
+    #     "ZoneInfo": [
+    #         {
+    #             "Region": "cn-wlcb",
+    #             "RegionId": 1000039,
+    #             "Zone": "cn-wlcb-01",
+    #             "ZoneId": 10027,
+    #             "IsPod": false,
+    #             "UnsupportedImageTypes": []
+    #         },
+    #         {
+    #             "Region": "cn-wlcb",
+    #             "RegionId": 1000039,
+    #             "Zone": "cn-wlcb-03",
+    #             "ZoneId": 10033,
+    #             "IsPod": true,
+    #             "UnsupportedImageTypes": [
+    #                 "System",
+    #                 "Other"
+    #             ]
+    #         },
+    #     ]
+    # }
+
+    local action_spec="{\"Action\": \"DescribeCompShareSupportZone\"}"
+    local response
+    response="$(invoke_action "${action_spec}")"
+    echo "${response}"
+}
+
 get_instance_price() {
     # Get the price for creating the instance.
     # See https://www.compshare.cn/docs/gpus/instance/getcompshareinstanceprice
