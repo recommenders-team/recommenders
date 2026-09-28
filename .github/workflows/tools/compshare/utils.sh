@@ -333,31 +333,32 @@ check_resource_capacity() {
     # * charge type, such as Postpay, Spot
     # * image ID
     # * zone
-    local gpu_type="${1:-}"
-    local charge_type="${2:-}"
-    local image_id="${3:-}"
-    local zone="${4:-}"
+    local params="${1:-}"
 
-    [[ -z ${gpu_type} \
-      || -z ${charge_type} \
-      || -z ${image_id} \
-      || -z ${zone} ]] \
+    [[ -z ${params} ]] \
+      || jq -e '
+          has("GpuType")
+          and has("ChargeType")
+          and has("CompShareImageId")
+          and has("Zone") | not' <<< "${params}" \
       && { echo 'Parameter error!' >&2; return 1; }
-
-    local region="${zone%-*}"
+    
     local action_spec="{\
         \"Action\": \"CheckCompShareResourceCapacity\", \
-        \"ChargeType\": \"${charge_type}\", \
-        \"CompShareImageId\": \"${image_id}\", \
         \"Disks.0.IsBoot\": true, \
         \"Disks.0.Size\": 100, \
         \"Disks.0.Type\": \"CLOUD_SSD\", \
-        \"GpuType\": \"${gpu_type}\", \
         \"MachineType\": \"G\", \
-        \"MinimalCpuPlatform\": \"Auto\", \
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\" \
+        \"MinimalCpuPlatform\": \"Auto\" \
     }"
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
