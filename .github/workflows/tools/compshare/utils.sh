@@ -914,17 +914,24 @@ get_zone_combinations() {
     #     }
     local input_vars="${1:-}"
 
-    if jq -e 'has("Zone")' <<< "${input_vars}" \
-        > /dev/null; then
-        jq -c '.Zone[] | {"Zone": .}' <<< "${input_vars}"
-    else
-        local zone_list
-        zone_list="$(api_call_retry describe_zones)"
-        jq -c '.ZoneInfo[]
-            | select(.IsPod | not)
-            | .Zone
-            | {"Zone": .}' <<< "${zone_list}"
+    local zone_list
+    zone_list="$(api_call_retry describe_zones)"
+    zone_list="$(jq -c '[ .ZoneInfo[]
+        | select(.IsPod | not)
+        | .Zone ]' <<< "${zone_list}")
+    
+    if jq -e 'has("Zone")' <<< "${input_vars}" > /dev/null; then
+        # Get the intersection of the two zone lists.
+        local input_zone_list
+        input_zone_list="$(jq -c '.Zone' <<< "${input_vars}")"
+        zone_list="$(jq -n \
+            --argjson a "${zone_list}" \
+            --argjson b "${input_zone_list}" \
+            '($a | unique) as $au
+            | ($b | unique) as $bu
+            | $au | map(select([.] | inside($bu)))')"
     fi
+    jq -c '.[] | {"Zone": .}' <<< "${zone_list}"
 }
 
 get_vm_info() {
