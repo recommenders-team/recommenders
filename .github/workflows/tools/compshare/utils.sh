@@ -847,6 +847,41 @@ api_call_retry() {
     echo "${response}"
 }
 
+get_zone_combinations() {
+    # Returns available zones in the following format
+    #
+    #   {"Zone":"cn-wlcb-01"}
+    #   {"Zone":"cn-sh2-02"}
+    #
+    # Params:
+    # * a JSON object of input variables.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ]
+    #     }
+    local input_vars="${1:-}"
+
+    if jq -e 'has("Zone")' <<< "${input_vars}" \
+        > /dev/null; then
+        jq -c '.Zone[] | {"Zone": .}' <<< "${input_vars}"
+    else
+        local zone_list
+        zone_list="$(api_call_retry describe_zones)"
+        jq -c '.ZoneInfo[]
+            | select(.IsPod | not)
+            | .Zone
+            | {"Zone": .}' <<< "${zone_list}"
+    fi
+}
+
 get_vm_info() {
     # Get VM info
     #
