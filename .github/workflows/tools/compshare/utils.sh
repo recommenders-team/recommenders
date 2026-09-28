@@ -729,7 +729,7 @@ allocate_vm() {
         if jq -e 'has("ChargeType")' <<< "${requirements}" \
             > /dev/null; then
             readarray -t required_charge_types < \
-                <(jq -rc '.ChargeType.[]' <<< "${requirements}")
+                <(jq -r '.ChargeType.[]' <<< "${requirements}")
         else
             required_charge_types=('Spot' 'Postpay')
         fi
