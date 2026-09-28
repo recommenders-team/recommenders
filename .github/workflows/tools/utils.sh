@@ -455,7 +455,7 @@ update_json() {
       && { echo 'Parameter error!' >&2; return 1; }
 
     local res
-    res=$(jq -s '
+    res=$(jq -cs '
         def update($a; $b):
             ($a | type) as $ta | ($b | type) as $tb |
             if $ta == "object" and $tb == "object" then
