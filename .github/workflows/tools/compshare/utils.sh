@@ -329,10 +329,12 @@ check_resource_capacity() {
     # See https://www.compshare.cn/docs/gpus/instance/checkcompshareresourcecapacity
     #
     # Params:
-    # * GPU type, such as P40, 3090
-    # * charge type, such as Postpay, Spot
-    # * image ID
-    # * zone
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + GPU type, such as P40, 3090
+    #   + charge type, such as Postpay, Spot
+    #   + image ID
+    #   + zone
     #
     # Return looks like:
     # {
