@@ -874,6 +874,78 @@ api_call_retry() {
     echo "${response}"
 }
 
+get_capacity_combinations() {
+    # Returns the list of available instance types in the following
+    # format.
+    #
+    #   {"Cpu":16,"Gpu":1,"Memory":64,"ChargeType":"Postpay"}
+    #   {"Cpu":16,"Gpu":1,"Memory":128,"ChargeType":"Spot"}
+    #
+    # Params:
+    # * a JSON object of input variables.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
+    #         ]
+    #     }
+    #
+    # * parameters for querying the API
+    #   + For example, 
+    #
+    #     {
+    #         "Region":"cn-wlcb",
+    #         "Zone":"cn-wlcb-01",
+    #         "GpuType":"3090",
+    #         "CompShareImageId": "compshareImage-12rjyhwynazd"
+    #     }
+    local input_vars="${1:-}"
+    local params="${2:-}"
+
+    [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
+
+    # Get the intersection of the user required charge types and the
+    # availables.
+    local charge_type_list='["Spot", "Postpay"]'
+    if jq -e 'has("ChargeType") and (.ChargeType | length) != 0' \
+        <<< "${input_vars}" > /dev/null
+    then
+        local input_charge_type_list
+        input_charge_type_list="$(jq -c \
+            '.ChargeType' <<< "${input_vars}")"
+        charge_type_list="$(array_intersection \
+            "${input_charge_type_list}" "${charge_type_list}")"
+    fi
+    readarray -t charge_type_list < \
+        <(jq -c '.[] | {"ChargeType": .}' <<< "${charge_type_list}")
+
+    local charge_type_index
+    for charge_type_index in "${!charge_type_list[@]}"; do
+        # Add charge type to params
+        local charge_type="${charge_type_list[${charge_type_index}]}"
+        params="$(update_json "${params}" "${charge_type}")"
+
+        # Get the list of instance types with enough resources. 
+        local capacity_list
+        capacity_list="$(api_call_retry \
+            check_resource_capacity "${params}")"
+        jq -c --argjson chargetype "${charge_type}" \
+            '.Specs[]
+            | select(.ResourceEnough and .Gpu == 1)
+            | {Cpu, Gpu, "Memory": .Mem} + $chargetype' \
+            <<< "${capacity_list}"
+    done
+}
+
 get_gpu_type_combinations() {
     # Returns available GPU types in the following format
     #
