@@ -342,6 +342,12 @@ check_resource_capacity() {
     #         {
     #             "Cpu": 16,
     #             "Gpu": 1,
+    #             "Mem": 64,
+    #             "ResourceEnough": true
+    #         },
+    #         {
+    #             "Cpu": 16,
+    #             "Gpu": 1,
     #             "Mem": 240,
     #             "ResourceEnough": true
     #         },
@@ -928,10 +934,10 @@ get_capacity_combinations() {
     readarray -t charge_type_list < \
         <(jq -c '.[] | {"ChargeType": .}' <<< "${charge_type_list}")
 
-    local charge_type_index
-    for charge_type_index in "${!charge_type_list[@]}"; do
+    local index
+    for index in "${!charge_type_list[@]}"; do
         # Add charge type to params
-        local charge_type="${charge_type_list[${charge_type_index}]}"
+        local charge_type="${charge_type_list[${index}]}"
         params="$(update_json "${params}" "${charge_type}")"
 
         # Get the list of instance types with enough resources. 
