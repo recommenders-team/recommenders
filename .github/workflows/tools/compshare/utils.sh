@@ -987,9 +987,7 @@ get_gpu_type_combinations() {
     local input_vars="${1:-}"
     local params="${2:-}"
 
-    [[ -z ${input_vars} \
-      && -z ${params} ]] \
-      && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     # Get the list of available GPU types in the format like
     #
