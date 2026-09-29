@@ -333,6 +333,32 @@ check_resource_capacity() {
     # * charge type, such as Postpay, Spot
     # * image ID
     # * zone
+    #
+    # Return looks like:
+    # {
+    #     "Action": "CheckCompShareResourceCapacityResponse",
+    #     "RetCode": 0,
+    #     "Specs": [
+    #         {
+    #             "Cpu": 16,
+    #             "Gpu": 1,
+    #             "Mem": 240,
+    #             "ResourceEnough": true
+    #         },
+    #         {
+    #             "Cpu": 32,
+    #             "Gpu": 2,
+    #             "Mem": 480,
+    #             "ResourceEnough": true
+    #         },
+    #         {
+    #             "Cpu": 40,
+    #             "Gpu": 4,
+    #             "Mem": 512,
+    #             "ResourceEnough": false
+    #         }
+    #     ]
+    # }
     local params="${1:-}"
 
     [[ -z ${params} ]] \
@@ -868,10 +894,14 @@ get_gpu_type_combinations() {
     #         "Zone": [
     #             "cn-wlcb-01",
     #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
     #         ]
     #     }
     #
     # * parameters for querying the API
+    #   + For example, {"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
     local input_vars="${1:-}"
     local params="${2:-}"
 
@@ -879,6 +909,9 @@ get_gpu_type_combinations() {
       && -z ${params} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    # Get the list of available GPU types in the format like
+    #
+    #   ["3080","4090","5090"]
     local gpu_list
     gpu_list="$(api_call_retry describe_available_instance_types \
         "${params}")"
@@ -886,6 +919,8 @@ get_gpu_type_combinations() {
         | select(.Status == "Normal")
         | .Name ]' <<< "${gpu_list}")"
 
+    # Get the intersection of the user required GPU types and the
+    # availables.
     if jq -e 'has("GpuType")  and (.GpuType | length) != 0' \
         <<< "${input_vars}" > /dev/null
     then
@@ -915,10 +950,16 @@ get_zone_combinations() {
     #         "Zone": [
     #             "cn-wlcb-01",
     #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
     #         ]
     #     }
     local input_vars="${1:-}"
 
+    # Get the list of available zones in the format like
+    #
+    #   ["cn-wlcb-01","cn-sh2-02"]
     local zone_list
     zone_list="$(api_call_retry describe_zones)"
     zone_list="$(jq -c '[ .ZoneInfo[]
@@ -928,7 +969,8 @@ get_zone_combinations() {
     if jq -e 'has("Zone") and (.Zone | length) != 0' \
         <<< "${input_vars}" > /dev/null
     then
-        # Get the intersection of the two zone lists.
+        # Get the intersection of the user required zones and the
+        # availables.
         local input_zone_list
         input_zone_list="$(jq -c '.Zone' <<< "${input_vars}")"
         zone_list="$(array_intersection \
