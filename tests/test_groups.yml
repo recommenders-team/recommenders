@@ -270,6 +270,7 @@ pr_gate:
     - tests/unit/recommenders/utils/test_python_utils.py::test_python_lift
     - tests/unit/recommenders/utils/test_python_utils.py::test_exponential_decay
     - tests/unit/recommenders/utils/test_python_utils.py::test_get_top_k_scored_items
+    - tests/unit/recommenders/utils/test_zero_top_k.py
     - tests/unit/recommenders/utils/test_python_utils.py::test_binarize
     - tests/unit/recommenders/utils/test_python_utils.py::test_rescale
     - tests/unit/recommenders/utils/test_timer.py::test_no_time
