@@ -614,31 +614,37 @@ get_instance_price() {
     # See https://www.compshare.cn/docs/gpus/instance/getcompshareinstanceprice
     #
     # Params:
-    # * GPU type
-    # * CPU cores
-    # * memory in MB
-    # * zone
-    local gpu_type="${1:-}"
-    local cpu_cores="${2:-}"
-    local memory="${3:-}"
-    local zone="${4:-}"
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + zone
+    #   + GPU type
+    #   + number of GPUs
+    #   + number of CPU cores
+    #   + memory in MB
+    #
+    # Return looks like:
 
-    [[ -z ${gpu_type} \
-      || -z ${cpu_cores} \
-      || -z ${memory} \
-      || -z ${zone} ]] \
+    local params="${1:-}"
+
+    [[ -z ${params} ]] \
+      || jq -e '
+          and has("Zone")
+          and has("GpuType")
+          and has("Gpu")
+          and has("Cpu")
+          and has("Memory")
+          | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"GetCompShareInstancePrice\", \
-        \"Cpu\": ${cpu_cores}, \
-        \"Gpu\": 1, \
-        \"GpuType\": \"${gpu_type}\", \
-        \"Memory\": ${memory}, \
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\" \
-    }"
+    local action_spec='{"Action": "GetCompShareInstancePrice"}'
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
