@@ -166,6 +166,7 @@ pr_gate:
     - tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_lru_cache_df
     - tests/unit/recommenders/datasets/test_python_splitter.py::test_split_pandas_data
     - tests/unit/recommenders/datasets/test_python_splitter.py::test_min_rating_filter
+    - tests/unit/recommenders/datasets/test_kcore_columns.py
     - tests/unit/recommenders/datasets/test_python_splitter.py::test_random_splitter                                                                 #    0.02s
     - tests/unit/recommenders/datasets/test_python_splitter.py::test_chrono_splitter                                                                 #    0.02s
     - tests/unit/recommenders/datasets/test_python_splitter.py::test_stratified_splitter                                                             #    0.01s
