@@ -888,12 +888,12 @@ api_call_retry() {
     echo "${response}"
 }
 
-get_capacity_combinations() {
-    # Returns the list of available instance types in the following
-    # format.
+get_spec_combinations() {
+    # Returns the list of specifications having enough resources in
+    # the following format.
     #
-    #   {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay"}
-    #   {"Cpu":16,"Gpu":1,"Memory":128*1024,"ChargeType":"Spot"}
+    #   {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    #   {"Cpu":16,"Gpu":1,"Memory":128*1024,"ChargeType":"Spot","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -914,14 +914,8 @@ get_capacity_combinations() {
     #     }
     #
     # * parameters for querying the API
-    #   + For example, 
-    #
-    #     {
-    #         "Region":"cn-wlcb",
-    #         "Zone":"cn-wlcb-01",
-    #         "GpuType":"3090",
-    #         "CompShareImageId": "compshareImage-12rjyhwynazd"
-    #     }
+    #   + For example,
+    #     {"Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
     local input_vars="${1:-}"
     local params="${2:-}"
 
@@ -949,24 +943,26 @@ get_capacity_combinations() {
         params="$(update_json "${params}" "${charge_type}")"
 
         # Get the list of instance types with enough resources. 
-        local capacity_list
-        capacity_list="$(api_call_retry \
+        local spec_list
+        spec_list="$(api_call_retry \
             check_resource_capacity "${params}")"
         jq -c --argjson chargetype "${charge_type}" \
+            --argjson params "${params}" \
             '.Specs[]
             | select(.ResourceEnough and .Gpu == 1)
-            | {Cpu, Gpu, "Memory": .Mem * 1024} + $chargetype' \
-            <<< "${capacity_list}"
+            | {Cpu, Gpu, "Memory": .Mem * 1024} 
+              + $chargetype + $params' \
+            <<< "${spec_list}"
     done
 }
 
 get_gpu_type_combinations() {
     # Returns available GPU types in the following format
     #
-    #   {"GpuType":"5090"}
-    #   {"GpuType":"4090"}
-    #   {"GpuType":"4090_48G"}
-    #   {"GpuType":"2080Ti"}
+    #   {"GpuType":"5090","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"4090","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"4090_48G","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"2080Ti","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -1015,14 +1011,15 @@ get_gpu_type_combinations() {
         gpu_list="$(array_intersection \
             "${input_gpu_list}" "${gpu_list}")"
     fi
-    jq -c '.[] | {"GpuType": .}' <<< "${gpu_list}"
+    jq -c --argjson params "${params}" \
+        '.[] | {"GpuType": .} + $params' <<< "${gpu_list}"
 }
 
 get_zone_combinations() {
     # Returns available zones in the following format
     #
-    #   {"Zone":"cn-wlcb-01"}
-    #   {"Zone":"cn-sh2-02"}
+    #   {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"Zone":"cn-sh2-02","Region":"cn-sh2"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -1062,7 +1059,9 @@ get_zone_combinations() {
         zone_list="$(array_intersection \
             "${input_zone_list}" "${zone_list}")"
     fi
-    jq -c '.[] | {"Zone": .}' <<< "${zone_list}"
+    jq -c '.[]
+        | {"Zone": ., "Region": (. | capture("(?<r>.*)-[^-]+").r)}' \
+          <<< "${zone_list}"
 }
 
 get_vm_info() {
