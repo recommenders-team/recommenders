@@ -521,7 +521,7 @@ describe_available_instance_types() {
 
     if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
         local zone
-        zone="$(jq -r '.Zone // empty' <<< "${params}")"
+        zone="$(jq -r '.Zone' <<< "${params}")"
         local region="{\"Region\": \"${zone%-*}\"}"
         action_spec="$(update_json "${action_spec}" "${region}")"
     fi
