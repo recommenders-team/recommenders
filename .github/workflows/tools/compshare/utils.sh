@@ -886,8 +886,8 @@ get_capacity_combinations() {
     # Returns the list of available instance types in the following
     # format.
     #
-    #   {"Cpu":16,"Gpu":1,"Memory":64,"ChargeType":"Postpay"}
-    #   {"Cpu":16,"Gpu":1,"Memory":128,"ChargeType":"Spot"}
+    #   {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay"}
+    #   {"Cpu":16,"Gpu":1,"Memory":128*1024,"ChargeType":"Spot"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -949,7 +949,7 @@ get_capacity_combinations() {
         jq -c --argjson chargetype "${charge_type}" \
             '.Specs[]
             | select(.ResourceEnough and .Gpu == 1)
-            | {Cpu, Gpu, "Memory": .Mem} + $chargetype' \
+            | {Cpu, Gpu, "Memory": .Mem * 1024} + $chargetype' \
             <<< "${capacity_list}"
     done
 }
