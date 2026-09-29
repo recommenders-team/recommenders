@@ -200,6 +200,10 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
             "Number of items is less than top_k, limiting top_k to number of items"
         )
     k = min(top_k, scores.shape[1])
+    if k == 0:
+        return np.empty((scores.shape[0], 0), dtype=np.intp), np.empty(
+            (scores.shape[0], 0), dtype=scores.dtype
+        )
 
     test_user_idx = np.arange(scores.shape[0])[:, None]
 
