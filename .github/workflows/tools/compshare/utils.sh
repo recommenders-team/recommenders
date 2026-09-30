@@ -890,6 +890,72 @@ api_call_retry() {
     echo "${response}"
 }
 
+get_instance_param_combinations() {
+    # Returns all combinations of request parameters for creating an
+    # instance.
+    #
+    # Params:
+    # * a JSON object of input variables.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
+    #         ]
+    #     }
+    local input_vars="${1:-}"
+    local param_combinations='[]'
+
+    # Get the list of available zones
+    local zone_list
+    readarray -t zone_list < <(get_zone_combinations "${input_vars}")
+
+    local zone_index
+    for zone_index in "${!zone_list[@]}"; do
+        # Get the list of available GpuTypes in the zone
+        local gpu_list
+        readarray -t gpu_list < \
+            <(get_gpu_type_combinations "${input_vars}" \
+                "${zone_list[${zone_index}]}")
+
+        local gpu_index
+        for gpu_index in "${!gpu_list[@]}"; do
+            # Add the image ID.
+            local gpu
+            gpu="$(update_json "${gpu_list[${gpu_index}]}" \
+                '{"CompShareImageId": "compshareImage-12rjyhwynazd"}')"
+
+            # Get the list of specifications having enough resources.
+            local spec_list
+            readarray -t spec_list < \
+                <(get_spec_combinations "${input_vars}" "${gpu}")
+
+            local spec_index
+            for spec_index in "${!spec_list[@]}"; do
+                local instance_params
+                instance_params="$(get_price_combinations \
+                    "${spec_list[${spec_index}]}")"
+                param_combinations="$(jq -nc \
+                    --argjson arr "${param_combinations}" \
+                    --argjson obj "${instance_params}" \
+                    '$arr + [$obj]')"
+            done
+        done
+    done
+
+    param_combinations="$(jq -c 'sort_by(.Price) | .[]' \
+        <<< "${param_combinations}")"
+    echo "${param_combinations}"
+}
+
 get_spec_combinations() {
     # Returns the list of specifications having enough resources in
     # the following format.
