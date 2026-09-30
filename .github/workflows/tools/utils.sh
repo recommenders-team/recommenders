@@ -96,7 +96,7 @@ array_intersection() {
         --argjson b "${array2}" \
         '($a | unique) as $au
         | ($b | unique) as $bu
-        | $au | map(select([.] | inside($bu)))')"
+        | $au | $au - ($au - $bu)')"
     echo "${intersection}"
 }
 
