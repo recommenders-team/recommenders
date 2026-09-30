@@ -405,6 +405,19 @@ create_instance() {
     # Create a VM instance
     # See https://www.compshare.cn/docs/gpus/instance/createcompshareinstance
     #
+    # Params:
+    # * VM name
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + GPU type, such as P40, 3090
+    #   + number of GPUs
+    #   + CPU cores
+    #   + memory in MB
+    #   + charge type, such as Postpay, Spot
+    #   + image ID
+    #   + zone
+    # * file containing the base64-encoded login password
+    #
     # Reponse:
     #   {
     #       "Action": "CreateCompShareInstanceResponse", 
@@ -415,49 +428,38 @@ create_instance() {
     #   }
     #
     # Params:
-    # * VM name
-    # * file containing the base64-encoded login password
-    # * GPU type, such as P40, 3090
-    # * CPU cores
-    # * memory in MB
-    # * charge type
-    # * image ID
-    # * zone
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
-    local gpu_type="${3:-}"
-    local cpu_cores="${4:-}"
-    local memory="${5:-}"
-    local charge_type="${6:-}"
-    local image_id="${7:-}"
-    local zone="${8:-}"
-    [[ -z ${vm_name} \
-      || -z ${encoded_password_file} \
-      || -z ${gpu_type} \
-      || -z ${cpu_cores} \
-      || -z ${memory} \
-      || -z ${charge_type} \
-      || -z ${image_id} \
-      || -z ${zone} ]] \
+    local params="${3:-}"
+
+    [[ -z ${params} ]] \
+      || jq -e '
+          has("GpuType")
+          and has("Gpu")
+          and has("Cpu")
+          and has("Memory")
+          and has("ChargeType")
+          and has("CompShareImageId")
+          and has("Zone") | not' <<< "${params}" > /dev/null \
+      || [[ -z ${encoded_password_file} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local region="${zone%-*}"
     local action_spec="{
         \"Action\": \"CreateCompShareInstance\",
-        \"CPU\": ${cpu_cores},
-        \"ChargeType\": \"${charge_type}\",
-        \"CompShareImageId\": \"${image_id}\",
         \"Disks.0.IsBoot\": true,
         \"Disks.0.Size\": 100,
         \"Disks.0.Type\": \"CLOUD_SSD\",
-        \"GPU\": 1,
-        \"GpuType\": \"${gpu_type}\",
-        \"MachineType\": \"G\",
-        \"Memory\": ${memory},
         \"Name\": \"${vm_name}\",
-        \"Region\": \"${region}\",
-        \"Zone\": \"${zone}\"
+        \"Quantity\": 1
     }"
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
     
     local response
     response="$(invoke_action \
