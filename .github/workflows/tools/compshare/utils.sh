@@ -604,7 +604,6 @@ describe_zones() {
     #         },
     #     ]
     # }
-
     local action_spec='{"Action": "DescribeCompShareSupportZone"}'
     local response
     response="$(invoke_action "${action_spec}")"
@@ -892,7 +891,10 @@ api_call_retry() {
 
 get_instance_param_combinations() {
     # Returns all combinations of request parameters for creating an
-    # instance.
+    # instance like
+    #
+    # {"Price":1.5,"Cpu":16,"Gpu":1,"Memory":65536,"ChargeType":"u","GpuType":"x","Zone":"y","Region":"z","CompShareImageId":"w"}
+    # {"Price":1.6,"Cpu":16,"Gpu":1,"Memory":96256,"ChargeType":"u","GpuType":"x","Zone":"y","Region":"x","CompShareImageId":"w"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -914,35 +916,39 @@ get_instance_param_combinations() {
     local input_vars="${1:-}"
     local param_combinations='[]'
 
-    # Get the list of available zones
+    echo '* Getting available zones ...' >&2
     local zone_list
     readarray -t zone_list < <(get_zone_combinations "${input_vars}")
 
     local zone_index
     for zone_index in "${!zone_list[@]}"; do
-        # Get the list of available GpuTypes in the zone
+        local zone="${zone_list[${zone_index}]}"
+
+        echo "* Getting available GPUs in ${zone%%,*} ..." >&2
         local gpu_list
         readarray -t gpu_list < \
-            <(get_gpu_type_combinations "${input_vars}" \
-                "${zone_list[${zone_index}]}")
+            <(get_gpu_type_combinations "${input_vars}" "${zone}")
 
         local gpu_index
         for gpu_index in "${!gpu_list[@]}"; do
+            local gpu="${gpu_list[${gpu_index}]}"
+            echo "  + Checking the stock of ${gpu%%,*} ..." >&2
+
             # Add the image ID.
-            local gpu
-            gpu="$(update_json "${gpu_list[${gpu_index}]}" \
+            gpu="$(update_json "${gpu}" \
                 '{"CompShareImageId": "compshareImage-12rjyhwynazd"}')"
 
-            # Get the list of specifications having enough resources.
             local spec_list
             readarray -t spec_list < \
                 <(get_spec_combinations "${input_vars}" "${gpu}")
 
             local spec_index
             for spec_index in "${!spec_list[@]}"; do
+                local spec="${spec_list[${spec_index}]}"
+                echo "    - Querying the price of ${spec%%,*} ..." >&2
+
                 local instance_params
-                instance_params="$(get_price_combinations \
-                    "${spec_list[${spec_index}]}")"
+                instance_params="$(get_price_combinations "${spec}")"
                 param_combinations="$(jq -nc \
                     --argjson arr "${param_combinations}" \
                     --argjson obj "${instance_params}" \
