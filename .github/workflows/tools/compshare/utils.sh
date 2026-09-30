@@ -1038,10 +1038,10 @@ get_spec_combinations() {
 get_gpu_type_combinations() {
     # Returns available GPU types in the following format
     #
-    #   {"GpuType":"5090","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
-    #   {"GpuType":"4090","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
-    #   {"GpuType":"4090_48G","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
-    #   {"GpuType":"2080Ti","Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"5090","GraphicsMemory":32*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"4090","GraphicsMemory":24*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"4090_48G","GraphicsMemory":48*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"2080Ti","GraphicsMemory":11*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -1071,12 +1071,16 @@ get_gpu_type_combinations() {
     # Get the list of available GPU types in the format like
     #
     #   ["3080","4090","5090"]
-    local gpu_list
-    gpu_list="$(api_call_retry describe_available_instance_types \
+    local gpu_types
+    gpu_types="$(api_call_retry describe_available_instance_types \
         "${params}")"
-    gpu_list="$(jq -c '[ .AvailableInstanceTypes[]
+    gpu_types="$(jq -c '[.AvailableInstanceTypes[]
         | select(.Status == "Normal")
-        | .Name ]' <<< "${gpu_list}")"
+        | {"GpuType": .Name,
+           "GraphicsMemory": (.GraphicsMemory.Value * 1024)}]' \
+        <<< "${gpu_types}")"
+    local gpu_list
+    gpu_list="$(jq '[ .[].GpuType ]' <<< "${gpu_types}")"
 
     # Get the intersection of the user required GPU types and the
     # availables.
@@ -1089,7 +1093,10 @@ get_gpu_type_combinations() {
             "${input_gpu_list}" "${gpu_list}")"
     fi
     jq -c --argjson params "${params}" \
-        '.[] | {"GpuType": .} + $params' <<< "${gpu_list}"
+        --argjson gpu_list "${gpu_list}" \
+        'map(select([.GpuType] - $gpu_list | length | . == 0))
+        | .[]
+        | . + $params' <<< "${gpu_types}"
 }
 
 get_price_combinations() {
