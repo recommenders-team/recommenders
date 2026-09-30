@@ -630,7 +630,7 @@ get_instance_price() {
 
     [[ -z ${params} ]] \
       || jq -e '
-          and has("Zone")
+          has("Zone")
           and has("GpuType")
           and has("Gpu")
           and has("Cpu")
@@ -952,7 +952,7 @@ get_spec_combinations() {
             --argjson params "${params}" \
             '.Specs[]
             | select(.ResourceEnough and .Gpu == 1)
-            | {Cpu, Gpu, "Memory": .Mem * 1024} 
+            | {Cpu, Gpu, "Memory": (.Mem * 1024)} 
               + $chargetype + $params' \
             <<< "${spec_list}"
     done
