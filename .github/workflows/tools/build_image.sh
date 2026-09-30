@@ -43,7 +43,8 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-script_dir="$(dirname "$0")"
+script_path="$(realpath -- "${BASH_SOURCE[0]}")"
+script_dir="$(dirname -- "${script_path}")"
 ssh_dest="${1:-}"
 unique_name="${2:-}"
 repo_dir="${3:-}"

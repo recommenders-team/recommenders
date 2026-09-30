@@ -11,9 +11,11 @@
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
 ######################################################################
+script_path="$(realpath -- "${BASH_SOURCE[0]}")"
+script_dir="$(dirname -- "${script_path}")"
 
 # Source common utils
-source "$(dirname "$0")/../utils.sh"
+source "${script_dir}/../utils.sh"
 
 # Constants
 COMPSHARE_ZONE_CHINA_NORTH_2A='cn-wlcb-01'
