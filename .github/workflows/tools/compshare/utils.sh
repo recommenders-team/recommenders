@@ -937,8 +937,10 @@ get_instance_param_combinations() {
             echo "  + Checking the stock of ${gpu%%,*} ..." >&2
 
             # Add the image ID.
-            gpu="$(update_json "${gpu}" \
-                '{"CompShareImageId": "compshareImage-12rjyhwynazd"}')"
+            local image_id='{
+                "CompShareImageId": "compshareImage-12rjyhwynazd"
+            }'
+            gpu="$(update_json "${gpu}" "${image_id}")"
 
             local spec_list
             readarray -t spec_list < \
@@ -959,9 +961,10 @@ get_instance_param_combinations() {
         done
     done
 
-    param_combinations="$(jq -c 'sort_by(.Price) | .[]' \
+    local compute_list
+    compute_list="$(jq -c 'sort_by(.Price) | .[]' \
         <<< "${param_combinations}")"
-    echo "${param_combinations}"
+    echo "${compute_list}"
 }
 
 get_spec_combinations() {
