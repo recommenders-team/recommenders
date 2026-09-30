@@ -1015,6 +1015,28 @@ get_gpu_type_combinations() {
         '.[] | {"GpuType": .} + $params' <<< "${gpu_list}"
 }
 
+get_price_combinations() {
+    # Returns the list of specifications with their prices in the
+    # following format.
+    #
+    #   {"Price":1.30,"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    #
+    # Params:
+    # * parameters for querying the API
+    #   + For example,
+    #     {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    local params="${1:-}"
+
+    [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
+
+    local price_list
+    price_list="$(api_call_retry get_instance_price "${params}")"
+    jq -c --argjson params "${params}" \
+        '.PriceDetails[0]
+        | {"Price": .Instance} + $params' \
+        <<< "${price_list}"
+}
+
 get_zone_combinations() {
     # Returns available zones in the following format
     #
