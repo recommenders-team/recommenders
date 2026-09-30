@@ -379,14 +379,14 @@ check_resource_capacity() {
           and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
     
-    local action_spec="{\
-        \"Action\": \"CheckCompShareResourceCapacity\", \
-        \"Disks.0.IsBoot\": true, \
-        \"Disks.0.Size\": 100, \
-        \"Disks.0.Type\": \"CLOUD_SSD\", \
-        \"MachineType\": \"G\", \
-        \"MinimalCpuPlatform\": \"Auto\" \
-    }"
+    local action_spec='{
+        "Action": "CheckCompShareResourceCapacity",
+        "Disks.0.IsBoot": true,
+        "Disks.0.Size": 100,
+        "Disks.0.Type": "CLOUD_SSD",
+        "MachineType": "G",
+        "MinimalCpuPlatform": "Auto"
+    }'
     action_spec="$(update_json "${action_spec}" "${params}")"
 
     if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
@@ -442,21 +442,21 @@ create_instance() {
       && { echo 'Parameter error!' >&2; return 1; }
 
     local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"CreateCompShareInstance\", \
-        \"CPU\": ${cpu_cores}, \
-        \"ChargeType\": \"${charge_type}\", \
-        \"CompShareImageId\": \"${image_id}\", \
-        \"Disks.0.IsBoot\": true, \
-        \"Disks.0.Size\": 100, \
-        \"Disks.0.Type\": \"CLOUD_SSD\", \
-        \"GPU\": 1, \
-        \"GpuType\": \"${gpu_type}\", \
-        \"MachineType\": \"G\", \
-        \"Memory\": ${memory}, \
-        \"Name\": \"${vm_name}\", \
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\" \
+    local action_spec="{
+        \"Action\": \"CreateCompShareInstance\",
+        \"CPU\": ${cpu_cores},
+        \"ChargeType\": \"${charge_type}\",
+        \"CompShareImageId\": \"${image_id}\",
+        \"Disks.0.IsBoot\": true,
+        \"Disks.0.Size\": 100,
+        \"Disks.0.Type\": \"CLOUD_SSD\",
+        \"GPU\": 1,
+        \"GpuType\": \"${gpu_type}\",
+        \"MachineType\": \"G\",
+        \"Memory\": ${memory},
+        \"Name\": \"${vm_name}\",
+        \"Region\": \"${region}\",
+        \"Zone\": \"${zone}\"
     }"
     
     local response
@@ -524,8 +524,8 @@ describe_available_instance_types() {
       || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local action_spec='{\
-        "Action": "DescribeAvailableCompShareInstanceTypes" \
+    local action_spec='{
+        "Action": "DescribeAvailableCompShareInstanceTypes"
     }'
     action_spec="$(update_json "${action_spec}" "${params}")"
 
@@ -553,11 +553,11 @@ describe_images() {
       && { echo 'Parameter error!' >&2; return 1; }
 
     local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"DescribeCompShareImages\", \
-        \"ImageType\": \"System\", \
-        \"Region\": \"${region}\", \
-        \"Zone\": \"${zone}\" \
+    local action_spec="{
+        \"Action\": \"DescribeCompShareImages\",
+        \"ImageType\": \"System\",
+        \"Region\": \"${region}\",
+        \"Zone\": \"${zone}\"
     }"
 
     local response
@@ -568,7 +568,7 @@ describe_images() {
 describe_instance() {
     # Get the list of VMs
     # See https://www.compshare.cn/docs/gpus/instance/describecompshareinstance
-    local action_spec="{\"Action\": \"DescribeCompShareInstance\"}"
+    local action_spec='{"Action": "DescribeCompShareInstance"}'
     local response
     response="$(invoke_action "${action_spec}")"
     echo "${response}"
@@ -605,7 +605,7 @@ describe_zones() {
     #     ]
     # }
 
-    local action_spec="{\"Action\": \"DescribeCompShareSupportZone\"}"
+    local action_spec='{"Action": "DescribeCompShareSupportZone"}'
     local response
     response="$(invoke_action "${action_spec}")"
     echo "${response}"
@@ -656,7 +656,7 @@ get_instance_price() {
 get_project_list() {
     # Get the list of projects
     # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
-    local action_spec="{\"Action\": \"GetProjectList\"}"
+    local action_spec='{"Action": "GetProjectList"}'
     local response
     response="$(invoke_action "${action_spec}")"
     echo "${response}"
@@ -676,11 +676,11 @@ stop_instance() {
       && { echo 'Parameter error!' >&2; return 1; }
 
     local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"StopCompShareInstance\", \
-        \"Region\": \"${region}\", \
-        \"UHostId\": \"${vm_id}\", \
-        \"Zone\": \"${zone}\" \
+    local action_spec="{
+        \"Action\": \"StopCompShareInstance\",
+        \"Region\": \"${region}\",
+        \"UHostId\": \"${vm_id}\",
+        \"Zone\": \"${zone}\"
     }"
 
     local response
@@ -704,12 +704,12 @@ terminate_instance() {
       && { echo 'Parameter error!' >&2; return 1; }
 
     local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"TerminateCompShareInstance\", \
-        \"Region\": \"${region}\", \
-        \"ReleaseUDisk\": true, \
-        \"UHostId\": \"${vm_id}\", \
-        \"Zone\": \"${zone}\" \
+    local action_spec="{
+        \"Action\": \"TerminateCompShareInstance\",
+        \"Region\": \"${region}\",
+        \"ReleaseUDisk\": true,
+        \"UHostId\": \"${vm_id}\",
+        \"Zone\": \"${zone}\"
     }"
 
     local response
@@ -745,13 +745,13 @@ update_stop_scheduler() {
         | .ProjectId' <<< "${projects}")"
 
     local region="${zone%-*}"
-    local action_spec="{\
-        \"Action\": \"UpdateCompShareStopScheduler\", \
-        \"ProjectId\": \"${project_id}\", \
-        \"Region\": \"${region}\", \
-        \"SchedulerStopTime\": ${stop_time}, \
-        \"UHostId\": \"${vm_id}\", \
-        \"Zone\": \"${zone}\" \
+    local action_spec="{
+        \"Action\": \"UpdateCompShareStopScheduler\",
+        \"ProjectId\": \"${project_id}\",
+        \"Region\": \"${region}\",
+        \"SchedulerStopTime\": ${stop_time},
+        \"UHostId\": \"${vm_id}\",
+        \"Zone\": \"${zone}\"
     }"
 
     local response
