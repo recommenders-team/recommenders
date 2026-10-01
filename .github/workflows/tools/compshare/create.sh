@@ -24,7 +24,8 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-script_dir="$(dirname "$0")"
+script_path="$(realpath -- "${BASH_SOURCE[0]}")"
+script_dir="$(dirname -- "${script_path}")"
 vm_name="${1:-}"
 test_type="${2:-}"
 test_group="{3:-}"
