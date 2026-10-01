@@ -41,9 +41,9 @@ delay=5
 num_attempts=6
 attempt=1
 while true; do
-    readarray -t vm_info < <(get_vm_info "${vm_name}")
+    vm_info="$(get_vm_info "${vm_name}")"
     if [[ -n ${vm_info:-} ]]; then
-        vm_id="${vm_info[0]}"
+        vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
         echo "Stopping the VM ${vm_name} ..."
         api_call_retry stop_instance \
             "${vm_id}" \

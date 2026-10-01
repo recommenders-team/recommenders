@@ -81,9 +81,14 @@ allocate_vm \
     "$(jq 'del(.SchedulerStopTime)' <<< "${requirements}")"
 
 echo 'Exporting VM info for subsequent steps ...'
-readarray -t vm_info < <(get_vm_info "${vm_name}")
-vm_id="${vm_info[0]}"
-ssh_dest="${vm_info[1]}"
+vm_info="$(get_vm_info "${vm_name}")"
+[[ -z ${vm_info} ]] && exit 1
+
+vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
+ssh_dest="$(jq -r '.SshLoginCommand
+    | split(" +"; null)
+    | .[]
+    | select(contains("@"))' <<< "${vm_info}")"
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 echo 'Setting stop scheduler ...'

@@ -1065,16 +1065,11 @@ get_vm_info() {
         <<< "${response}")"
     [[ -z ${vm_info} ]] \
         && { echo "No VM named ${vm_name}" >&2; return; }
-    
-    local vm_id
-    vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
 
-    local ssh_dest
-    ssh_dest="$(jq -r '.SshLoginCommand' <<< "${vm_info}" \
-        | cut -d ' ' -f 2)"
-
-    echo "${vm_id}"
-    echo "${ssh_dest}"
+    vm_info="$(jq -c '{
+        .UHostId, .State, .Zone, .Region, .SshLoginCommand
+        }' <<< "${vm_info}")"
+    echo "${vm_info}"
 }
 
 get_vm_state() {
