@@ -538,21 +538,27 @@ stop_instance() {
     # See https://www.compshare.cn/docs/gpus/instance/stopcompshareinstance
     #
     # Params:
-    # * VM ID
-    # * zone
-    local vm_id="${1:-}"
-    local zone="${2:-}"
-    [[ -z ${vm_id} \
-      || -z ${zone} ]] \
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + UHostId
+    #   + Zone
+    local params="${1:-}"
+
+    [[ -z ${params} ]] \
+      || jq -e '
+          has("UHostId")
+          and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local region="${zone%-*}"
-    local action_spec="{
-        \"Action\": \"StopCompShareInstance\",
-        \"Region\": \"${region}\",
-        \"UHostId\": \"${vm_id}\",
-        \"Zone\": \"${zone}\"
-    }"
+    local action_spec='{"Action": "StopCompShareInstance"}'
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -566,22 +572,31 @@ terminate_instance() {
     # NOTE: The VM must be shut down before deletion
     #
     # Params:
-    # * VM ID
-    # * zone
-    local vm_id="${1:-}"
-    local zone="${2:-}"
-    [[ -z ${vm_id} \
-      || -z ${zone} ]] \
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + UHostId
+    #   + Zone
+    local params="${1:-}"
+
+    [[ -z ${params} ]] \
+      || jq -e '
+          has("UHostId")
+          and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local region="${zone%-*}"
-    local action_spec="{
-        \"Action\": \"TerminateCompShareInstance\",
-        \"Region\": \"${region}\",
-        \"ReleaseUDisk\": true,
-        \"UHostId\": \"${vm_id}\",
-        \"Zone\": \"${zone}\"
-    }"
+
+    local action_spec='{
+        "Action": "TerminateCompShareInstance",
+        "ReleaseUDisk": true
+    }'
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"

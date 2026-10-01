@@ -43,18 +43,13 @@ attempt=1
 while true; do
     vm_info="$(get_vm_info "${vm_name}")"
     if [[ -n ${vm_info:-} ]]; then
-        vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
         echo "Stopping the VM ${vm_name} ..."
-        api_call_retry stop_instance \
-            "${vm_id}" \
-            "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
+        api_call_retry stop_instance "${vm_info}" > /dev/null
 
         wait_for_vm_to_stop "${vm_name}"
 
         echo "Deleting the VM ${vm_name} ..."
-        api_call_retry 10 terminate_instance \
-            "${vm_id}" \
-            "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
+        api_call_retry 10 terminate_instance "${vm_info}" > /dev/null
         break
     fi
 
