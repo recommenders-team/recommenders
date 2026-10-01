@@ -1072,34 +1072,6 @@ get_vm_info() {
     echo "${vm_info}"
 }
 
-get_vm_state() {
-    # Get the VM state.
-    #
-    # Params:
-    # * VM name
-    local vm_name="${1:-}"
-
-    [[ -z ${vm_name} ]] \
-        && { echo 'Parameter error!' >&2; return 1; }
-
-    echo "Getting info of the VM ..." >&2
-    local response
-    response="$(api_call_retry describe_instance)"
-
-    local vm_info
-    vm_info="$(jq "
-        .UHostSet.[]
-        | select(.Name == \"${vm_name}\")" \
-        <<< "${response}")"
-    [[ -z ${vm_info} ]] \
-        && { echo "No VM named ${vm_name}" >&2; return; }
-
-    local vm_state
-    vm_state="$(jq -r '.State' <<< "${vm_info}")"
-
-    echo "${vm_state}"
-}
-
 wait_for_vm_to_stop() {
     # Check and wait for the VM to stop.
     #
@@ -1114,8 +1086,8 @@ wait_for_vm_to_stop() {
     sleep 5
     local count=0
     local vm_state
-    until vm_state="$(get_vm_state "${vm_name}")" \
-        && [[ ${vm_state} == 'Stopped'  ]]
+    until vm_state="$(get_vm_info "${vm_name}" | jq -r '.State')" \
+        && [[ ${vm_state} == 'Stopped' ]]
     do
         # Set timeout to 5 + 5 * 60 = 305 seconds
         [[ "${count}" -gt 60 ]] \
