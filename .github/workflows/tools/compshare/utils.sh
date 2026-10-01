@@ -25,6 +25,27 @@ COMPSHARE_IMAGE_UBUNTU2404='compshareImage-12rjyhwynazd'
 #---------------------------------------------------------------------
 # Utils used by other CompShare API wrappers and utils
 #---------------------------------------------------------------------
+add_region() {
+    # Extract the region from the zone in params.
+    #
+    # Params:
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + Zone
+    local params="${1:-}"
+
+    [[ -z ${params} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        params="$(update_json "${params}" "${region}")"
+    fi
+    echo "${params}"
+}
+
 check_vm_requirement() {
     # Check if the VM specification match the requirements.
     #
@@ -240,6 +261,8 @@ check_resource_capacity() {
           and has("CompShareImageId")
           and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
+
+    params="$(add_region "${params}")"
     
     local action_spec='{
         "Action": "CheckCompShareResourceCapacity",
@@ -250,13 +273,6 @@ check_resource_capacity() {
         "MinimalCpuPlatform": "Auto"
     }'
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -306,6 +322,8 @@ create_instance() {
       || [[ -z ${encoded_password_file} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
+
     local action_spec="{
         \"Action\": \"CreateCompShareInstance\",
         \"Disks.0.IsBoot\": true,
@@ -315,13 +333,6 @@ create_instance() {
         \"Quantity\": 1
     }"
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
     
     local response
     response="$(invoke_action \
@@ -388,17 +399,12 @@ describe_available_instance_types() {
       || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
+
     local action_spec='{
         "Action": "DescribeAvailableCompShareInstanceTypes"
     }'
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -419,18 +425,13 @@ describe_images() {
       || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
+
     local action_spec='{
         "Action": "DescribeCompShareImages",
         "ImageType": "System"
     }'
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -509,15 +510,10 @@ get_instance_price() {
           | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
+
     local action_spec='{"Action": "GetCompShareInstancePrice"}'
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -550,15 +546,10 @@ stop_instance() {
           and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
+
     local action_spec='{"Action": "StopCompShareInstance"}'
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -584,19 +575,13 @@ terminate_instance() {
           and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
 
     local action_spec='{
         "Action": "TerminateCompShareInstance",
         "ReleaseUDisk": true
     }'
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
@@ -623,6 +608,8 @@ update_stop_scheduler() {
           and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
+    params="$(add_region "${params}")"
+
     local projects
     projects="$(api_call_retry get_project_list)"
     local project_id
@@ -636,13 +623,6 @@ update_stop_scheduler() {
         \"ProjectId\": \"${project_id}\"
     }"
     action_spec="$(update_json "${action_spec}" "${params}")"
-
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
-        local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
-        local region="{\"Region\": \"${zone%-*}\"}"
-        action_spec="$(update_json "${action_spec}" "${region}")"
-    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
