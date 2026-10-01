@@ -269,6 +269,7 @@ create_instance() {
     #
     # Params:
     # * VM name
+    # * file containing the base64-encoded login password
     # * a JSON object containing the parameters for the API with the
     #   following keys required:
     #   + GPU type, such as P40, 3090
@@ -278,7 +279,6 @@ create_instance() {
     #   + charge type, such as Postpay, Spot
     #   + image ID
     #   + zone
-    # * file containing the base64-encoded login password
     #
     # Reponse:
     #   {
