@@ -250,8 +250,12 @@ class TfidfRecommender:
         results = {}
         for idx, row in zip(range(0, len_df_clean), data):
             similar_indices = sorted_idx[idx][: -(len_df_clean + 1) : -1]
+            # Drop the item itself rather than assuming it is first: when another
+            # item has an identical (tied) similarity score, argsort does not
+            # guarantee the item appears before its tied duplicate.
+            similar_indices = similar_indices[similar_indices != idx]
             similar_items = [(cosine_sim[idx][i], data[i]) for i in similar_indices]
-            results[row] = similar_items[1:]
+            results[row] = similar_items
 
         # Save to class
         self.recommendations = results

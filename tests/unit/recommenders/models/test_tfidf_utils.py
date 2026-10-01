@@ -119,6 +119,42 @@ def test_get_top_k_recommendations(model_fit, df_clean):
     assert len(displayed_top_k.data) == K
 
 
+def test_recommend_top_k_items_excludes_self_on_tied_similarity():
+    # Regression test: when two items have identical text, their cosine
+    # similarity to each other ties with their self-similarity (both 1.0).
+    # recommend_top_k_items used to assume the item itself was always first
+    # in the similarity-sorted list and dropped only that first entry, so a
+    # tied duplicate could be dropped instead and the item would recommend
+    # itself.
+    df_clean = pd.DataFrame(
+        {
+            "itemID": ["A", "B", "C", "D"],
+            CLEAN_COL: [
+                "apple banana cherry",
+                "apple banana cherry",
+                "dog cat bird",
+                "fish shark whale",
+            ],
+        }
+    )
+    recommender = TfidfRecommender(id_col="itemID", tokenization_method="none")
+    tf, vectors_tokenized = recommender.tokenize_text(df_clean, text_col=CLEAN_COL)
+    recommender.fit(tf, vectors_tokenized)
+
+    recommendations = recommender.recommend_top_k_items(df_clean, k=2)
+
+    self_recommended = recommendations[
+        recommendations["itemID"] == recommendations["rec_itemID"]
+    ]
+    assert len(self_recommended) == 0
+
+    b_top = recommendations[
+        (recommendations["itemID"] == "B") & (recommendations["rec_rank"] == 1)
+    ]
+    assert list(b_top["rec_itemID"]) == ["A"]
+    assert b_top["rec_score"].iloc[0] == pytest.approx(1.0)
+
+
 def test_get_top_k_recommendations_scalar_index():
     # Regression test for #2353: get_top_k_recommendations must not raise on
     # NumPy >= 2 ("only 0-dimensional arrays can be converted to Python
