@@ -410,19 +410,27 @@ describe_images() {
     # See https://www.compshare.cn/docs/gpus/image/describecompshareimages
     #
     # Params:
-    # * zone
-    local zone="${1:-}"
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + zone
+    local params="${1:-}"
 
-    [[ -z ${zone} ]] \
+    [[ -z ${params} ]] \
+      || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local region="${zone%-*}"
-    local action_spec="{
-        \"Action\": \"DescribeCompShareImages\",
-        \"ImageType\": \"System\",
-        \"Region\": \"${region}\",
-        \"Zone\": \"${zone}\"
-    }"
+    local action_spec='{
+        "Action": "DescribeCompShareImages",
+        "ImageType": "System"
+    }'
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
