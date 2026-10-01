@@ -93,10 +93,12 @@ echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 echo 'Setting stop scheduler ...'
 stop_time="$(jq '.SchedulerStopTime // empty' <<< "${requirements}")"
-api_call_retry update_stop_scheduler \
-    "${vm_id}" \
-    "${stop_time}" \
-    "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" > /dev/null
+if [[ -z ${stop_time} ]]; then
+    stop_time="$(date --date='3 hours' '+%s')"
+fi
+stop_scheduler="$(update_json "${vm_info}" \
+    "{\"SchedulerStopTime\": ${stop_time}}")"
+api_call_retry update_stop_scheduler "${stop_scheduler}" > /dev/null
 
 unset COMPSHARE_PRIVATE_KEY
 

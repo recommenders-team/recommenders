@@ -608,19 +608,20 @@ update_stop_scheduler() {
     # See https://www.compshare.cn/docs/gpus/instance/updatecompsharestopscheduler
     #
     # Params:
-    # * VM ID
-    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC),
-    #   in 3 hours by default
-    local vm_id="${1:-}"
-    local stop_time="${2:-}"
-    local zone="${3:-}"
+    # * a JSON object containing the parameters for the API with the
+    #   following keys required:
+    #   + UHostId
+    #   + SchedulerStopTime
+    #     - seconds since the Epoch (1970-01-01 00:00 UTC)
+    #   + Zone
+    local params="${1:-}"
 
-    [[ -z ${vm_id} \
-      || -z ${zone} ]] \
+    [[ -z ${params} ]] \
+      || jq -e '
+          has("UHostId")
+          and has("SchedulerStopTime")
+          and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
-
-    [[ -z ${stop_time} ]] \
-        && stop_time="$(date --date='3 hours' '+%s')"
 
     local projects
     projects="$(api_call_retry get_project_list)"
@@ -630,15 +631,18 @@ update_stop_scheduler() {
         | select(.IsDefault)
         | .ProjectId' <<< "${projects}")"
 
-    local region="${zone%-*}"
     local action_spec="{
         \"Action\": \"UpdateCompShareStopScheduler\",
-        \"ProjectId\": \"${project_id}\",
-        \"Region\": \"${region}\",
-        \"SchedulerStopTime\": ${stop_time},
-        \"UHostId\": \"${vm_id}\",
-        \"Zone\": \"${zone}\"
+        \"ProjectId\": \"${project_id}\"
     }"
+    action_spec="$(update_json "${action_spec}" "${params}")"
+
+    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${params}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        action_spec="$(update_json "${action_spec}" "${region}")"
+    fi
 
     local response
     response="$(invoke_action "${action_spec}")"
