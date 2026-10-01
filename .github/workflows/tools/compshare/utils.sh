@@ -52,18 +52,22 @@ check_vm_requirement() {
     # Params:
     # * VM specification in JSON
     # * requirements in JSON, for example
-    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #   + {"GPUType":"!2080,P40","Memory":10240,"GraphicsMemory":10240}
     #     - It means the GPUType should not be 2080 and P40,
-    #       GPU memory should be greater than or equal to 10GB
-    #       and CPU 9GB.
+    #       GPU memory should >= 10240MB
+    #       and CPU 10240MB.
     #   + {"GPUType":"2080,P40"}
     #     - It means the GPUType should be 2080 or P40.
-    local spec="${1:-}"
+    #   + {"GPUType":["2080","P40"],"ChargeType":"Spot"}
+    #     - It means the GPUType should be 2080 or P40,
+    #       ChargeType should be Spot.
+    local specs="${1:-}"
     local requirements="${2:-}"
 
     local match
-    match=$(jq -s '
-        def equalstr($a; $b):
+    match="$(jq -n --argjson specs "${specs}" \
+        --argjson reqs "${requirements}" \
+        'def equalstr($a; $b):
             if ($a | startswith(" ")) then
                 equalstr(($a | ltrimstr(" ")); $b)
             elif ($a | endswith(" ")) then
@@ -71,30 +75,41 @@ check_vm_requirement() {
             else
                 $a == $b
             end;
-        def compareitem($req; $spec; $i):
-            ($req | getpath($i)) as $a
-            | ($spec | getpath($i)) as $b
-            | ($a | type) as $ta
-            | if $ta == "string" then
-                $a | if startswith("!") then
-                    $a | ltrimstr("!") | split(",")
-                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
+        def compareitem($reqs; $specs; $p):
+            ($reqs | getpath($p)) as $r
+            | ($specs | getpath($p)) as $s
+            | ($r | type) as $r_type
+            | if $r_type == "string" and $s then
+                $r
+                | if startswith("!") then
+                    $r | ltrimstr("!") | split(",")
+                    | reduce .[] as $ri
+                        (true; . and (equalstr($ri; $s) | not))
                 else
-                    $a | split(",")
-                    | reduce .[] as $i (false; . or equalstr($i; $b))
-                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
+                    $r | split(",")
+                    | reduce .[] as $ri
+                        (false; . or equalstr($ri; $s))
                 end
-            elif $ta == "number" then
-                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
+                | if . then . else
+                    debug("\($p[0]) requires \($r), but got \($s)")
+                end
+            elif $r_type == "number" and $s then
+                $r <= $s
+                | if . then . else
+                    debug("\($p[0]) must >= \($r), but got \($s)")
+                end
+            elif $r_type == "array" and $s then
+                reduce $r.[] as $ri (false; . or $ri == $s)
+                | if . then . else
+                    debug("\($p[0]) requires \($r), but got \($s)")
+                end
             else
                 true
             end;
-        .[0] as $req
-        | .[1] as $spec
-        | .[0] | [path(..)]
-        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-        <(echo "${requirements}") <(echo "${spec}"))
+        $reqs
+        | [path(..) | select(length | . == 1)]
+        | reduce .[] as $p
+            (true; . and compareitem($reqs; $specs; $p))')"
 
     echo "${match}"
 }
@@ -640,85 +655,72 @@ allocate_vm() {
     # * VM name
     # * file containing the base64-encoded login password
     # * requirements in JSON, for example
-    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #   + {"GPUType":"!2080,P40","Memory":10240,"GraphicsMemory":10240}
     #     - It means the GPUType should not be 2080 and P40,
-    #       GPU memory should be greater than or equal to 10GB
-    #       and CPU 9GB.
+    #       GPU memory should >= 10240MB
+    #       and CPU 10240MB.
     #   + {"GPUType":"2080,P40"}
     #     - It means the GPUType should be 2080 or P40.
+    #   + {"GPUType":["2080","P40"],"ChargeType":"Spot"}
+    #     - It means the GPUType should be 2080 or P40,
+    #       ChargeType should be Spot.
+    # * a JSON object of input variables such as Zone and GpuType
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090",
+    #             "4090",
+    #             "5090",
+    #             "4090_48G"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay",
+    #             "Spot"
+    #         ]
+    #     }
     local vm_name="${1:-}"
     local encoded_password_file="${2:-}"
     local requirements="${3:-}"
+    local input_vars="${4:-}"
+
     [[ -z ${vm_name} \
       || -z ${encoded_password_file} \
       || ! -f ${encoded_password_file} \
       || -z ${requirements} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    echo "Allocating a new VM named ${vm_name} ..."
-    local compute_spec
-    compute_spec="$(get_compute_spec)"
+    echo 'Getting available instance info ...'
+    local compute_list
+    readarray -t compute_list < \
+        <(get_instance_param_combinations "${input_vars}")
 
-    local num_computes
-    num_computes="$(jq 'length' <<< "${compute_spec}")"
-    local index
-    for ((index=0; index<"${num_computes}"; index++)); do
+    local compute_index
+    for compute_index in "${!compute_list[@]}"; do
         local compute
-        compute="$(jq -c ".[${index}]" <<< "${compute_spec}")"
-        echo "* Trying spec: ${compute}"
+        compute="${compute_list[${compute_index}]}"
+        compute="$(jq 'del(.Price)' <<< "${compute}")"
 
-        # Check if the compute satisfy requirements
-        local reqt
-        reqt="$(jq -e 'del(.ChargeType)' <<< "${requirements}")"
-        if jq -e 'length != 0' <<< "${reqt}" > /dev/null; then
+        if jq -e 'length != 0' <<< "${requirements}" > /dev/null; then
+            echo "Checking if the spec is qualified: ${compute} ..."
             local match
-            match="$(check_vm_requirement "${compute}" "${reqt}")"
+            match="$(check_vm_requirement "${compute}" "${requirements}")"
             if [[ "${match}" != 'true' ]]; then
-                echo '  + Requirements mismatch.'
                 continue
             fi
         fi
 
-        local gpu_type
-        gpu_type="$(jq -r '.GPUType' <<< "${compute}")"
-
-        local cpu_cores
-        cpu_cores="$(jq '.CPU' <<< "${compute}")"
-
-        local memory
-        memory="$(jq '.Memory.CPU * 1024' <<< "${compute}")"
-
-        local available_charge_type
-        available_charge_type="$(jq '.ChargeType' <<< "${compute}")"
-
-        local required_charge_types
-        if jq -e 'has("ChargeType")' <<< "${requirements}" \
-            > /dev/null; then
-            readarray -t required_charge_types < \
-                <(jq -r '.ChargeType.[]' <<< "${requirements}")
-        else
-            required_charge_types=('Spot' 'Postpay')
-        fi
-        local charge_type
-        for charge_type in "${required_charge_types[@]}"; do
-            if jq -e "
-                map((. | ascii_downcase) == \"${charge_type@L}\")
-                | any" <<< "${available_charge_type}" > /dev/null
-            then
-                echo "  + Trying charge type: ${charge_type} ..."
-                # Try to create the VM 2 times
-                api_call_retry 1 create_instance \
-                    "${vm_name}" \
-                    "${encoded_password_file}" \
-                    "${gpu_type}" \
-                    "${cpu_cores}" \
-                    "${memory}" \
-                    "${charge_type}" \
-                    "${image_id:-${COMPSHARE_IMAGE_UBUNTU2404}}" \
-                    "${zone:-${COMPSHARE_ZONE_CHINA_NORTH_2A}}" \
-                    > /dev/null && return
-            fi
-        done
+        echo "Allocating a VM named ${vm_name} of ${compute} ..."
+        api_call_retry 1 create_instance \
+            "${vm_name}" \
+            "${encoded_password_file}" \
+            "${compute}" \
+            > /dev/null && return
     done
     echo 'No available resources!' >&2
     return 1
@@ -764,8 +766,8 @@ get_instance_param_combinations() {
     # Returns all combinations of request parameters for creating an
     # instance like
     #
-    # {"Price":1.5,"Cpu":16,"Gpu":1,"Memory":65536,"ChargeType":"u","GpuType":"x","Zone":"y","Region":"z","CompShareImageId":"w"}
-    # {"Price":1.6,"Cpu":16,"Gpu":1,"Memory":96256,"ChargeType":"u","GpuType":"x","Zone":"y","Region":"x","CompShareImageId":"w"}
+    # {"Price":1.5,"Cpu":16,"Gpu":1,"Memory":65536,"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"z","CompShareImageId":"w"}
+    # {"Price":1.6,"Cpu":16,"Gpu":1,"Memory":96256,"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -840,8 +842,8 @@ get_spec_combinations() {
     # Returns the list of specifications having enough resources in
     # the following format.
     #
-    #   {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
-    #   {"Cpu":16,"Gpu":1,"Memory":128*1024,"ChargeType":"Spot","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    #   {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
+    #   {"Cpu":16,"Gpu":1,"Memory":128*1024,"ChargeType":"Spot","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
     #
     # Params:
     # * a JSON object of input variables.
@@ -863,7 +865,7 @@ get_spec_combinations() {
     #
     # * parameters for querying the API
     #   + For example,
-    #     {"Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    #     {"Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
     local input_vars="${1:-}"
     local params="${2:-}"
 
@@ -972,12 +974,12 @@ get_price_combinations() {
     # Returns the list of specifications with their prices in the
     # following format.
     #
-    #   {"Price":1.30,"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    #   {"Price":1.30,"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
     #
     # Params:
     # * parameters for querying the API
     #   + For example,
-    #     {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","CompShareImageId":"w"}
+    #     {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
     local params="${1:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }

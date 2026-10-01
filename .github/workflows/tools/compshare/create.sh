@@ -20,6 +20,28 @@
 # * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - COMPSHARE_PUBLIC_KEY (required)
+# * CLOUD_SERVICE_INPUT_VARS
+#   + It contains the possible values of the input variables for
+#     creating the VM, in the JSON format like the following:
+#
+#     {
+#         "GpuType": [
+#             "3080Ti",
+#             "3090",
+#             "4090",
+#             "5090",
+#             "4090_48G"
+#         ],
+#         "Zone": [
+#             "cn-wlcb-01",
+#             "cn-sh2-02"
+#         ]
+#     }
+#
+#   + Possible values of Zone can be found at
+#     https://www.compshare.cn/docs/gpus/instance/describecompsharesupportzone
+#   + Possible values of GpuType can be found at
+#     https://www.compshare.cn/docs/gpus/instance/createcompshareinstance#gpu-类型列表
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit
@@ -56,17 +78,20 @@ if [[ -z ${requirements} ]]; then
     # * VMs with Spot ChargeType are cheaper but there is a risk of
     #   being deleted after 1 hour.
     if [[ ${test_type} == *nightly* ]]; then
-        gpu_type='"GPUType": "!2080,P40"'
-        gpu_mem='"Memory": {"GPU": 12, "CPU": 32}'
-        charge_type='"ChargeType": ["Postpay"]'
-        stop_time="\"SchedulerStopTime\": $(date --date='3 hours' '+%s')"
+        requirements='{
+            "GpgType": "!2080,P40",
+            "Memory": 32,
+            "GraphicsMemory": 12,
+            "ChargeType": ["Postpay"]
+        }'
     else
-        gpu_type='"GPUType": "!P40"'
-        gpu_mem='"Memory": {"GPU": 8, "CPU": 32}'
-        charge_type='"ChargeType": ["Spot","Postpay"]'
-        stop_time="\"SchedulerStopTime\": $(date --date='1 hours' '+%s')"
+        requirements='{
+            "GpuType": "!P40",
+            "Memory": 32,
+            "GraphicsMemory": 8,
+            "ChargeType": ["Spot","Postpay"]
+        }'
     fi
-    requirements="{${gpu_type}, ${gpu_mem}, ${charge_type}, ${stop_time}}"
 fi
 
 echo 'Generating login password ...'
@@ -75,16 +100,25 @@ trap "rm -f '${encoded_password_file}'; trap - EXIT" EXIT
 mktemp -u XXXXXXXXXX | tr -d '\n' | base64 -w 0 \
     > "${encoded_password_file}"
 
+cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
+if [[ ${test_group} == *gpu* ]]; then
+    input_vars="$(jq '.gpu // empty' \
+        <<< "${cloud_service_input_vars}")"
+else
+    input_vars="$(jq '.cpu // empty' \
+        <<< "${cloud_service_input_vars}")"
+fi
+input_vars="${input_vars:-$cloud_service_input_vars}"
+
 allocate_vm \
     "${vm_name}" \
     "${encoded_password_file}" \
-    "$(jq 'del(.SchedulerStopTime)' <<< "${requirements}")"
+    "${requirements}" \
+    "${input_vars}"
 
 echo 'Exporting VM info for subsequent steps ...'
 vm_info="$(get_vm_info "${vm_name}")"
 [[ -z ${vm_info} ]] && exit 1
-
-vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
 ssh_dest="$(jq -r '.SshLoginCommand
     | split(" +"; null)
     | .[]
@@ -92,12 +126,13 @@ ssh_dest="$(jq -r '.SshLoginCommand
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 echo 'Setting stop scheduler ...'
-stop_time="$(jq '.SchedulerStopTime // empty' <<< "${requirements}")"
-if [[ -z ${stop_time} ]]; then
+if [[ ${test_type} == *nightly* ]]; then
     stop_time="$(date --date='3 hours' '+%s')"
+else
+    stop_time="$(date --date='1 hours' '+%s')"
 fi
-stop_scheduler="$(update_json "${vm_info}" \
-    "{\"SchedulerStopTime\": ${stop_time}}")"
+stop_time="{\"SchedulerStopTime\": ${stop_time}}"
+stop_scheduler="$(update_json "${vm_info}" "${stop_time}")"
 api_call_retry update_stop_scheduler "${stop_scheduler}" > /dev/null
 
 unset COMPSHARE_PRIVATE_KEY
