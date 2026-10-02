@@ -5,3 +5,6 @@
 # Configuration for scripts to setup VMs on CompShare
 ######################################################################
 apt_mirror: mirrors.ucloud.cn
+
+# The name of the secret for accessing CompShare APIs
+secret_key_name: COMPSHARE_PRIVATE_KEY

@@ -9,7 +9,23 @@
 # Params:
 # * VM name
 #
+# NOTE:
+# * It is assumed that there is a configuration file called
+#
+#     config.yml
+#
+#   in a directory named '${CLOUD_SERVICE@L}' under the
+#   script directory.  In config.yml, the following key may need to be
+#   set:
+#   + secret_key_name
+#     - the name of the secret of private key for the cloud service
+#       indicated by the environment variable CLOUD_SERVICE.
+#
 # The following environment variables must be set:
+# * CLOUD_SERVICE
+#   + It should be the name of the directory containing the
+#     configuration files for the cloud service, such as alicloud and
+#     compshare.
 # * CLOUD_SERVICE_SECRET
 #   + It contains the private key for CompShare APIs and is used as
 #     COMPSHARE_PRIVATE_KEY in the script.
@@ -26,6 +42,13 @@ vm_name="${1:-}"
 
 [[ -z ${vm_name} ]] && exit 0
 
+[[ -z ${CLOUD_SERVICE:-} ]] \
+    && echo 'CLOUD_SERVICE not set!' >&2 && exit 1
+
+cloud_service="${CLOUD_SERVICE}"
+cloud_service="${cloud_service@L}"
+config_dir="${script_dir}/${cloud_service}"
+config_yml="${config_dir}/config.yml"
 utils_sh="${script_dir}/utils.sh"
 
 
@@ -34,7 +57,8 @@ echo 'Importing utility functions ...'
 source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
-export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
+secret_key_name="$(yq '.secret_key_name' < "${config_yml}")"
+export "${secret_key_name}"="${CLOUD_SERVICE_SECRET}"
 eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
 delay=5

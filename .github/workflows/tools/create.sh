@@ -25,7 +25,7 @@
 #   script directory.  In config.yml, the following key may need to be
 #   set:
 #   + secret_key_name
-#     - the name of the secret of private key for the cloud service
+#     - the name of the secret of access key for the cloud service
 #       indicated by the environment variable CLOUD_SERVICE.
 #
 # Params:

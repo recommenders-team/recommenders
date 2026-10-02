@@ -6,8 +6,19 @@
 ######################################################################
 # Create a CompShare VM.
 #
-# The script must set the environment variable SSH_DEST into
-# $GITHUB_ENV for subsequent steps.
+# NOTE:
+# * The script must set the environment variable SSH_DEST into
+#   $GITHUB_ENV for subsequent steps.
+# * It is assumed that there is a configuration file called
+#
+#     config.yml
+#
+#   in a directory named '${CLOUD_SERVICE@L}' under the
+#   script directory.  In config.yml, the following key may need to be
+#   set:
+#   + secret_key_name
+#     - the name of the secret of private key for the cloud service
+#       indicated by the environment variable CLOUD_SERVICE.
 #
 # Params:
 # * VM name
@@ -26,12 +37,18 @@
 #       ChargeType should be Spot.
 #
 # The following environment variables must be set:
+# * CLOUD_SERVICE
+#   + It should be the name of the directory containing the
+#     configuration files for the cloud service, such as alicloud and
+#     compshare.
 # * CLOUD_SERVICE_SECRET
 #   + It contains the private key for CompShare APIs and is used as
 #     COMPSHARE_PRIVATE_KEY in the script.
 # * CLOUD_SERVICE_ENVS
 #   + It contains the following keys in JSON:
 #     - COMPSHARE_PUBLIC_KEY (required)
+#
+# The following environment variables may need to be set:
 # * CLOUD_SERVICE_INPUT_VARS
 #   + It contains the possible values of the input variables for
 #     creating the VM, in the JSON format like the following:
@@ -60,14 +77,21 @@ shopt -s inherit_errexit
 
 script_path="$(realpath -- "${BASH_SOURCE[0]}")"
 script_dir="$(dirname -- "${script_path}")"
-vm_name="${1:-}"
+unique_name="${1:-}"
 test_type="${2:-}"
 test_group="{3:-}"
 requirements="${4:-}"
 
-[[ -z ${vm_name} || -z ${test_type} ]] \
+[[ -z ${unique_name} \
+  || -z ${test_type} \
+  || -z ${test_group} \
+  || -z ${CLOUD_SERVICE:-} ]] \
     && { echo 'Parameter error!' >&2; exit 1; }
 
+cloud_service="${CLOUD_SERVICE}"
+cloud_service="${cloud_service@L}"
+config_dir="${script_dir}/${cloud_service}"
+config_yml="${config_dir}/config.yml"
 utils_sh="${script_dir}/utils.sh"
 
 
@@ -76,7 +100,8 @@ echo 'Importing utility functions ...'
 source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
-export COMPSHARE_PRIVATE_KEY="${CLOUD_SERVICE_SECRET}"
+secret_key_name="$(yq '.secret_key_name' < "${config_yml}")"
+export "${secret_key_name}"="${CLOUD_SERVICE_SECRET}"
 eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 
 
@@ -123,13 +148,13 @@ fi
 input_vars="${input_vars:-$cloud_service_input_vars}"
 
 allocate_vm \
-    "${vm_name}" \
+    "${unique_name}" \
     "${encoded_password_file}" \
     "${requirements}" \
     "${input_vars}"
 
 echo "Getting info of the VM ..."
-vm_info="$(get_vm_info "${vm_name}")"
+vm_info="$(get_vm_info "${unique_name}")"
 [[ -z ${vm_info} ]] && exit 1
 
 echo 'Exporting VM info for subsequent steps ...'
@@ -149,7 +174,7 @@ stop_time="{\"SchedulerStopTime\": ${stop_time}}"
 stop_scheduler="$(update_json "${vm_info}" "${stop_time}")"
 api_call_retry update_stop_scheduler "${stop_scheduler}" > /dev/null
 
-unset COMPSHARE_PRIVATE_KEY
+unset "${secret_key_name}"
 
 wait_for_vm_to_be_available "${ssh_dest}"
 setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
