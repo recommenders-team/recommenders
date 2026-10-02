@@ -700,7 +700,7 @@ allocate_vm() {
     for compute_index in "${!compute_list[@]}"; do
         local compute
         compute="${compute_list[${compute_index}]}"
-        compute="$(jq 'del(.Price)' <<< "${compute}")"
+        compute="$(jq -c 'del(.Price)' <<< "${compute}")"
 
         if jq -e 'length != 0' <<< "${requirements}" > /dev/null; then
             echo "Checking if the spec is qualified: ${compute} ..."
