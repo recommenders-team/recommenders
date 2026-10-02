@@ -718,7 +718,7 @@ allocate_vm() {
             "${compute}" \
             > /dev/null && return
     done
-    echo 'No available resources!' >&2
+    echo 'No available required resources!' >&2
     return 1
 }
 
