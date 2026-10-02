@@ -273,7 +273,7 @@ pre_image_build() {
     fi
 
     echo '* Uploading recommenders ...'
-    cd - || return 1
+    cd - > /dev/null || return 1
     local repo_tar="${temp_dir}/${repo_vm_dir_name}.tar"
     tar -cf "${repo_tar}" -C "${temp_dir}" "${repo_vm_dir_name}"
     scp -q -o StrictHostKeyChecking=no \
