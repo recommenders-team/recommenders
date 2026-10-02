@@ -701,9 +701,9 @@ allocate_vm() {
         local compute
         compute="${compute_list[${compute_index}]}"
         compute="$(jq -c 'del(.Price)' <<< "${compute}")"
+        echo "Trying to create a VM named ${vm_name} of ${compute%,\"GraphicsMemory*} ..."
 
         if jq -e 'length != 0' <<< "${requirements}" > /dev/null; then
-            echo "Checking if the spec is qualified: ${compute} ..."
             local match
             match="$(check_vm_requirement "${compute}" "${requirements}")"
             if [[ "${match}" != 'true' ]]; then
@@ -711,7 +711,6 @@ allocate_vm() {
             fi
         fi
 
-        echo "Allocating a VM named ${vm_name} of ${compute} ..."
         api_call_retry 1 create_instance \
             "${vm_name}" \
             "${encoded_password_file}" \
@@ -803,7 +802,6 @@ get_available_required_computes() {
         local gpu_index
         for gpu_index in "${!gpu_list[@]}"; do
             local gpu="${gpu_list[${gpu_index}]}"
-            echo "  + Checking the stock of ${gpu%%,*} ..." >&2
 
             # Add the image ID.
             local image_id='{
@@ -819,7 +817,6 @@ get_available_required_computes() {
             local spec_index
             for spec_index in "${!spec_list[@]}"; do
                 local spec="${spec_list[${spec_index}]}"
-                echo "    - Querying the price of ${spec%%,*} ..." >&2
 
                 local compute
                 compute="$(get_gpu_spec_price "${spec}")"
