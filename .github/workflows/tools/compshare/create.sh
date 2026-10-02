@@ -12,6 +12,18 @@
 # Params:
 # * VM name
 # * Test type
+# * Test group
+# * requirements in JSON.  It is not intended to be used in the
+#   testing workflow.
+#   + {"GPUType":"!2080,P40","Memory":10240,"GraphicsMemory":10240}
+#     - It means the GPUType should not be 2080 and P40,
+#       GPU memory should >= 10240MB
+#       and CPU 10240MB.
+#   + {"GPUType":"2080,P40"}
+#     - It means the GPUType should be 2080 or P40.
+#   + {"GPUType":["2080","P40"],"ChargeType":"Spot"}
+#     - It means the GPUType should be 2080 or P40,
+#       ChargeType should be Spot.
 #
 # The following environment variables must be set:
 # * CLOUD_SERVICE_SECRET
