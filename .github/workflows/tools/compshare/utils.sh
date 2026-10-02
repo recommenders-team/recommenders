@@ -182,7 +182,7 @@ gen_request_url() {
     local params
     params="$(jq -r '
         to_entries
-        | map("\(.key)=\(.value)")
+        | map("\(.key)=\(.value | @uri)")
         | join("&")' <<< "${action_spec}")"
     echo "https://api.compshare.cn/?${params}&Signature=${digest}"
 }
@@ -1070,7 +1070,7 @@ get_vm_info() {
         && { echo "No VM named ${vm_name}" >&2; return; }
 
     vm_info="$(jq -c '{
-        .UHostId, .State, .Zone, .Region, .SshLoginCommand
+        UHostId, State, Zone, Region, SshLoginCommand
         }' <<< "${vm_info}")"
     echo "${vm_info}"
 }
