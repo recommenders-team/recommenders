@@ -17,10 +17,6 @@ script_dir="$(dirname -- "${script_path}")"
 # Source common utils
 source "${script_dir}/../utils.sh"
 
-# Constants
-COMPSHARE_ZONE_CHINA_NORTH_2A='cn-wlcb-01'
-COMPSHARE_IMAGE_UBUNTU2404='compshareImage-12rjyhwynazd'
-
 
 #---------------------------------------------------------------------
 # Utils used by other CompShare API wrappers and utils
