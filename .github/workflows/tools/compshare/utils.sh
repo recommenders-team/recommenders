@@ -698,7 +698,7 @@ allocate_vm() {
     echo 'Getting available instance info ...'
     local compute_list
     readarray -t compute_list < \
-        <(get_instance_param_combinations "${input_vars}")
+        <(get_available_required_computes "${input_vars}")
 
     local compute_index
     for compute_index in "${!compute_list[@]}"; do
@@ -762,12 +762,12 @@ api_call_retry() {
     echo "${response}"
 }
 
-get_instance_param_combinations() {
-    # Returns all combinations of request parameters for creating an
-    # instance like
+get_available_required_computes() {
+    # Returns the infos of available required computes sorted by price
+    # in the following format including the prices:
     #
-    # {"Price":1.5,"Cpu":16,"Gpu":1,"Memory":65536,"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"z","CompShareImageId":"w"}
-    # {"Price":1.6,"Cpu":16,"Gpu":1,"Memory":96256,"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
+    # {"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"z","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":65536,"Price":1.5}
+    # {"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":96256,"Price":1.6}
     #
     # Params:
     # * a JSON object of input variables.
@@ -787,11 +787,12 @@ get_instance_param_combinations() {
     #         ]
     #     }
     local input_vars="${1:-}"
-    local param_combinations='[]'
+    local compute_list='[]'
 
     echo '* Getting available zones ...' >&2
     local zone_list
-    readarray -t zone_list < <(get_zone_combinations "${input_vars}")
+    readarray -t zone_list < \
+        <(get_available_required_zones "${input_vars}")
 
     local zone_index
     for zone_index in "${!zone_list[@]}"; do
@@ -800,7 +801,8 @@ get_instance_param_combinations() {
         echo "* Getting available GPUs in ${zone%%,*} ..." >&2
         local gpu_list
         readarray -t gpu_list < \
-            <(get_gpu_type_combinations "${input_vars}" "${zone}")
+            <(get_available_required_gpu_types \
+                "${input_vars}" "${zone}")
 
         local gpu_index
         for gpu_index in "${!gpu_list[@]}"; do
@@ -815,18 +817,19 @@ get_instance_param_combinations() {
 
             local spec_list
             readarray -t spec_list < \
-                <(get_spec_combinations "${input_vars}" "${gpu}")
+                <(get_available_required_gpu_specs \
+                    "${input_vars}" "${gpu}")
 
             local spec_index
             for spec_index in "${!spec_list[@]}"; do
                 local spec="${spec_list[${spec_index}]}"
                 echo "    - Querying the price of ${spec%%,*} ..." >&2
 
-                local instance_params
-                instance_params="$(get_price_combinations "${spec}")"
-                param_combinations="$(jq -nc \
-                    --argjson arr "${param_combinations}" \
-                    --argjson obj "${instance_params}" \
+                local compute
+                compute="$(get_gpu_spec_price "${spec}")"
+                compute_list="$(jq -nc \
+                    --argjson arr "${compute_list}" \
+                    --argjson obj "${compute}" \
                     '$arr + [$obj]')"
             done
         done
@@ -834,19 +837,20 @@ get_instance_param_combinations() {
 
     local compute_list
     compute_list="$(jq -c 'sort_by(.Price) | .[]' \
-        <<< "${param_combinations}")"
+        <<< "${compute_list}")"
     echo "${compute_list}"
 }
 
-get_spec_combinations() {
-    # Returns the list of specifications having enough resources in
-    # the following format.
+get_available_required_gpu_specs() {
+    # Returns specifications of the available required GPUs in the
+    # following format:
     #
-    #   {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
-    #   {"Cpu":16,"Gpu":1,"Memory":128*1024,"ChargeType":"Spot","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
+    #   {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
+    #   {"ChargeType":"Spot","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":128*1024}
     #
     # Params:
-    # * a JSON object of input variables.
+    # * a JSON object of input variables that may specified the
+    #   the required charge types.
     #   + For example,
     #
     #     {
@@ -865,7 +869,7 @@ get_spec_combinations() {
     #
     # * parameters for querying the API
     #   + For example,
-    #     {"Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
+    #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
     local input_vars="${1:-}"
     local params="${2:-}"
 
@@ -900,22 +904,23 @@ get_spec_combinations() {
             --argjson params "${params}" \
             '.Specs[]
             | select(.ResourceEnough and .Gpu == 1)
-            | {Cpu, Gpu, "Memory": (.Mem * 1024)} 
-              + $chargetype + $params' \
+            | $chargetype + $params
+              + {Cpu, Gpu, "Memory": (.Mem * 1024)}' \
             <<< "${spec_list}"
     done
 }
 
-get_gpu_type_combinations() {
-    # Returns available GPU types in the following format
+get_available_required_gpu_types() {
+    # Returns available required GPU types in the following format:
     #
-    #   {"GpuType":"5090","GraphicsMemory":32*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
-    #   {"GpuType":"4090","GraphicsMemory":24*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
-    #   {"GpuType":"4090_48G","GraphicsMemory":48*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
-    #   {"GpuType":"2080Ti","GraphicsMemory":11*1024,"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   {"GpuType":"5090","GraphicsMemory":32*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"GpuType":"4090","GraphicsMemory":24*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"GpuType":"4090_48G","GraphicsMemory":48*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"GpuType":"2080Ti","GraphicsMemory":11*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     #
     # Params:
-    # * a JSON object of input variables.
+    # * a JSON object of input variables that may specifiy the
+    #   required GPU Types.
     #   + For example,
     #
     #     {
@@ -933,7 +938,7 @@ get_gpu_type_combinations() {
     #     }
     #
     # * parameters for querying the API
-    #   + For example, {"Region":"cn-wlcb","Zone":"cn-wlcb-01"}
+    #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     local input_vars="${1:-}"
     local params="${2:-}"
 
@@ -970,36 +975,37 @@ get_gpu_type_combinations() {
         | . + $params' <<< "${gpu_types}"
 }
 
-get_price_combinations() {
-    # Returns the list of specifications with their prices in the
-    # following format.
+get_gpu_spec_price() {
+    # Returns the price of the GPU specified in the parameter in the
+    # following format:
     #
-    #   {"Price":1.30,"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
+    #   {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024,"Price":1.30}
     #
     # Params:
     # * parameters for querying the API
     #   + For example,
-    #     {"Cpu":16,"Gpu":1,"Memory":64*1024,"ChargeType":"Postpay","Region":"x","Zone":"y","GpuType":"z","GraphicsMemory":32*1024,"CompShareImageId":"w"}
+    #     {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
     local params="${1:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
-    local price_list
-    price_list="$(api_call_retry get_instance_price "${params}")"
+    local price
+    price="$(api_call_retry get_instance_price "${params}")"
     jq -c --argjson params "${params}" \
         '.PriceDetails[0]
-        | {"Price": .Instance} + $params' \
-        <<< "${price_list}"
+        | $params + {"Price": .Instance}' \
+        <<< "${price}"
 }
 
-get_zone_combinations() {
-    # Returns available zones in the following format
+get_available_required_zones() {
+    # Returns available requried zones in the following format:
     #
     #   {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     #   {"Zone":"cn-sh2-02","Region":"cn-sh2"}
     #
     # Params:
-    # * a JSON object of input variables.
+    # * a JSON object of input variables that may specifiy the
+    #   required zones.
     #   + For example,
     #
     #     {
