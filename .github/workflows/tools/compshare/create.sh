@@ -128,9 +128,11 @@ allocate_vm \
     "${requirements}" \
     "${input_vars}"
 
-echo 'Exporting VM info for subsequent steps ...'
+echo "Getting info of the VM ..."
 vm_info="$(get_vm_info "${vm_name}")"
 [[ -z ${vm_info} ]] && exit 1
+
+echo 'Exporting VM info for subsequent steps ...'
 ssh_dest="$(jq -r '.SshLoginCommand
     | split(" +"; null)
     | .[]

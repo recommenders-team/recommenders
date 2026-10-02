@@ -1057,7 +1057,6 @@ get_vm_info() {
     [[ -z ${vm_name} ]] \
         && { echo 'Parameter error!' >&2; return 1; }
 
-    echo "Getting info of the VM ..." >&2
     local response
     response="$(api_call_retry describe_instance)"
 
