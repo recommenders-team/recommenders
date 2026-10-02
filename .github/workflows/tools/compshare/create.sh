@@ -64,13 +64,23 @@
 #         "Zone": [
 #             "cn-wlcb-01",
 #             "cn-sh2-02"
+#         ],
+#         "ChargeType": [
+#             "Spot",
+#             "Postpay"
 #         ]
 #     }
 #
+#   + Possible keys are
+#     - GpuType
+#     - Zone
+#     - ChargeType
 #   + Possible values of Zone can be found at
 #     https://www.compshare.cn/docs/gpus/instance/describecompsharesupportzone
 #   + Possible values of GpuType can be found at
 #     https://www.compshare.cn/docs/gpus/instance/createcompshareinstance#gpu-类型列表
+#   + Possible values of ChargeType can be found at
+#     https://www.compshare.cn/docs/gpus/instance/createcompshareinstance#计费参数
 ######################################################################
 set -euo pipefail
 shopt -s inherit_errexit

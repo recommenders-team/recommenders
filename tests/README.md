@@ -82,7 +82,7 @@ time:
 * [`gpu-nightly.yml`](../.github/workflows/gpu-nightly.yml)
 * [`spark-nightly.yml`](../.github/workflows/spark-nightly.yml)
 
-These workflows are controlled by:
+These workflows are controlled and configured by:
 * one [reusable workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations):
   [`template.yml`](../.github/workflows/template.yml)
   + It is used by the 4 workflows configured for different compute
@@ -103,6 +103,9 @@ These workflows are controlled by:
       of each group should be less than 15min.
     - If the tests are part of the nightly builds, the total time of
       each group should be less than 35min.
+* one `config.yml` in each cloud service directory
+  + It contains some permanent settings to be used by and specific to
+    each cloud service.
 * and several repository variables and repository secrets
   + [Repository
     variables](https://github.com/recommenders-team/recommenders/settings/variables/actions)
@@ -399,7 +402,7 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
    the shell scripts under
    [`.github/workflows/tools/compshare/`](../.github/workflows/tools/compshare/)
    to interact with the CompShare APIs.
-1. (**Optional**) Create a VM as pull-through caches/mirrors for
+1. (*Optional Step*) Create a VM as pull-through caches/mirrors for
    Docker, PyPI index and HTTP/HTTPS proxy by using any possible
    tools, such as
    * [devpi-server](https://pypi.org/project/devpi-server/) for
@@ -432,8 +435,7 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
      `main`.
 1. Populate the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE_ENVS` with the following keys in JSON format.  For
-   example:
+   `CLOUD_SERVICE_ENVS` with the following keys in JSON.  For example:
 
    ```json
    {
@@ -446,24 +448,52 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
    }
    ```
 
-   * For the CompShare **API public key**
+   * (**Required**) For the CompShare **API public key**
      + Name: `COMPSHARE_PUBLIC_KEY`
      + Value: value of the API public key
-   * (**Optional**) For Docker Hub
+   * (*Optional*) For Docker Hub
      + Name: `VM_DOCKER_MIRROR_URL`
      + Value: URL of the Docker Hub mirror
-   * (**Optional**) For HTTP proxy
+   * (*Optional*) For HTTP proxy
      + Name: `VM_HTTP_PROXY`
      + Value: URL of the HTTP proxy
-   * (**Optional**) For HTTPS proxy
+   * (*Optional*) For HTTPS proxy
      + Name: `VM_HTTPS_PROXY`
      + Value: URL of the HTTPS proxy
-   * (**Optional**) For PyPI index
+   * (*Optional*) For PyPI index
      + Name: `VM_PIP_INDEX_URL`
      + Value: URL of the PyPI index mirror
-   * (**Optional**) For HTTPS proxy CA certificate
+   * (*Optional*) For HTTPS proxy CA certificate
      + Name: `VM_PROXY_CERTIFICATE`
      + Value: content of the certificate
+1. (*Optional Step*) Specify the required values for allocating the machine via the
+   [repository
+   variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
+   `CLOUD_SERVICE_INPUT_VARS` in JSON.  For example:
+   
+   ```json
+   {
+       "GpuType": [
+           "3080Ti",
+           "3090",
+           "4090",
+           "5090",
+           "4090_48G"
+       ],
+       "Zone": [
+           "cn-wlcb-01",
+           "cn-sh2-02"
+       ],
+       "ChargeType": [
+           "Postpay",
+           "Spot"
+       ]
+   }
+   ```
+   
+   More details can be found at
+   * [`.github/workflows/tools/compshare/create.sh`](../.github/workflows/tools/compshare/create.sh)
+     for how to set `CLOUD_SERVICE_INPUT_VARS`.
 1. Assign `compshare` to the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
@@ -493,6 +523,16 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
    1. Click the new user $\to$ Credential $\to$ AccessKey $\to$ Create
       AccessKey $\to$ CLI, and note down the AccessKey ID and the
       AccessKey Secret for the following steps.
+1. (*Optional Step*) Create a VM as pull-through caches/mirrors for
+   Docker, PyPI index and HTTP/HTTPS proxy by using any possible
+   tools, such as
+   * [devpi-server](https://pypi.org/project/devpi-server/) for
+     caching PyPI index,
+   * [Distribution
+     Registry](https://distribution.github.io/distribution/) for
+     caching Docker Hub,
+   * [Squid](https://www.squid-cache.org/) for other HTTP/HTTPS
+     requests.
 1. Assign the value of the **AccessKey Secret** to the [repository
    secret](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
    `CLOUD_SERVICE_SECRET`.
@@ -516,8 +556,7 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
      `main`.
 1. Populate the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE_ENVS` with the following keys in JSON format.  For
-   example:
+   `CLOUD_SERVICE_ENVS` with the following keys in JSON.  For example:
 
    ```json
    {
@@ -525,22 +564,22 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
    }
    ```
 
-   * For the **AccessKey ID**
+   * (**Required**)For the **AccessKey ID**
      + Name: `ALIBABA_CLOUD_ACCESS_KEY_ID`
      + Value: the AccessKey ID
-   * (**Optional**) For Docker Hub
+   * (*Optional*) For Docker Hub
      + Name: `VM_DOCKER_MIRROR_URL`
      + Value: URL of the Docker Hub mirror
-   * (**Optional**) For HTTP proxy
+   * (*Optional*) For HTTP proxy
      + Name: `VM_HTTP_PROXY`
      + Value: URL of the HTTP proxy
-   * (**Optional**) For HTTPS proxy
+   * (*Optional*) For HTTPS proxy
      + Name: `VM_HTTPS_PROXY`
      + Value: URL of the HTTPS proxy
-   * (**Optional**) For PyPI index
+   * (*Optional*) For PyPI index
      + Name: `VM_PIP_INDEX_URL`
      + Value: URL of the PyPI index mirror
-   * (**Optional**) For HTTPS proxy CA certificate
+   * (*Optional*) For HTTPS proxy CA certificate
      + Name: `VM_PROXY_CERTIFICATE`
      + Value: content of the certificate
      
@@ -552,7 +591,7 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 1. Set the possible values of input vairables for the Terraform
    configurations via the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE_INPUT_VARS` in JSON format.  For example:
+   `CLOUD_SERVICE_INPUT_VARS` in JSON.  For example:
 
    ```json
    {
@@ -585,7 +624,7 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 
    More details can be found at
    * [`.github/workflows/tools/create.sh`](../.github/workflows/tools/create.sh)
-     for how to set `CLOUD_SERVICE_INPUT_VARS`
+     for how to set `CLOUD_SERVICE_INPUT_VARS`,
    * [`.github/workflows/tools/alicloud/tf/variables.tf`](../.github/workflows/tools/alicloud/tf/variables.tf)
      for what input variables to set.
 1. Assign `alicloud` to the [repository
