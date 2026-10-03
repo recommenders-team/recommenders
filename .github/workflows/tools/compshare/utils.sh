@@ -573,6 +573,7 @@ update_stop_scheduler() {
     # * a JSON object containing the parameters for the API with the
     #   following keys required:
     #   + UHostId
+    #   + ProjectId
     #   + SchedulerStopTime
     #     - seconds since the Epoch (1970-01-01 00:00 UTC)
     #   + Zone
@@ -581,24 +582,14 @@ update_stop_scheduler() {
     [[ -z ${params} ]] \
       || jq -e '
           has("UHostId")
+          and has("ProjectId")
           and has("SchedulerStopTime")
           and has("Zone") | not' <<< "${params}"  > /dev/null \
       && { echo 'Parameter error!' >&2; return 1; }
 
     params="$(add_region "${params}")"
 
-    local projects
-    projects="$(api_call_retry get_project_list)"
-    local project_id
-    project_id="$(jq -r '
-        .ProjectSet[]
-        | select(.IsDefault)
-        | .ProjectId' <<< "${projects}")"
-
-    local action_spec="{
-        \"Action\": \"UpdateCompShareStopScheduler\",
-        \"ProjectId\": \"${project_id}\"
-    }"
+    local action_spec='{"Action": "UpdateCompShareStopScheduler"}'
     action_spec="$(update_json "${action_spec}" "${params}")"
 
     local response

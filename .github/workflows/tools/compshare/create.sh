@@ -165,13 +165,19 @@ ssh_dest="$(jq -r '.SshLoginCommand
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 echo 'Setting stop scheduler ...'
+projects="$(api_call_retry get_project_list)"
+project_id="$(jq -r '
+    .ProjectSet[]
+    | select(.IsDefault)
+    | { ProjectId }' <<< "${projects}")"
+stop_scheduler="$(update_json "${vm_info}" "${project_id}")"
 if [[ ${test_type} == *nightly* ]]; then
     stop_time="$(date --date='3 hours' '+%s')"
 else
     stop_time="$(date --date='1 hours' '+%s')"
 fi
 stop_time="{\"SchedulerStopTime\": ${stop_time}}"
-stop_scheduler="$(update_json "${vm_info}" "${stop_time}")"
+stop_scheduler="$(update_json "${stop_scheduler}" "${stop_time}")"
 api_call_retry update_stop_scheduler "${stop_scheduler}" > /dev/null
 
 unset "${secret_key_name}"
