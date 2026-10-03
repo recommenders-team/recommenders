@@ -13,8 +13,8 @@ try:
         prepare_hparams,
     )
     from recommenders.models.deeprec.models.base_model import BaseModel
-    from recommenders.models.deeprec.models.dkn import DKN
-    from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from recommenders.models.deeprec.models.pytorch.dkn import DKN
+    from recommenders.models.deeprec.models.pytorch.dkn_item2item import DKNItem2Item
     from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
     from recommenders.datasets.amazon_reviews import (
         download_and_extract,
@@ -33,16 +33,11 @@ except ImportError:
 
 
 @pytest.mark.gpu
-def test_model_dkn(deeprec_resource_path):
+def test_model_dkn(deeprec_resource_path, tmp_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
-    yaml_file = os.path.join(data_path, r"dkn.yaml")
-    train_file = os.path.join(data_path, r"train_mind_demo.txt")
-    valid_file = os.path.join(data_path, r"valid_mind_demo.txt")
-    news_feature_file = os.path.join(data_path, r"doc_feature.txt")
-    user_history_file = os.path.join(data_path, r"user_history.txt")
-    wordEmb_file = os.path.join(data_path, r"word_embeddings_100.npy")
-    entityEmb_file = os.path.join(data_path, r"TransE_entity2vec_100.npy")
-    contextEmb_file = os.path.join(data_path, r"TransE_context2vec_100.npy")
+    train_file = os.path.join(data_path, "train_mind_demo.txt")
+    valid_file = os.path.join(data_path, "valid_mind_demo.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     download_deeprec_resources(
         "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
@@ -50,21 +45,70 @@ def test_model_dkn(deeprec_resource_path):
         "mind-demo.zip",
     )
 
-    hparams = prepare_hparams(
-        yaml_file,
-        news_feature_file=news_feature_file,
-        user_history_file=user_history_file,
-        wordEmb_file=wordEmb_file,
-        entityEmb_file=entityEmb_file,
-        contextEmb_file=contextEmb_file,
-        epochs=1,
-        learning_rate=0.0001,
+    model = DKN(
+        news_feature_file=os.path.join(data_path, "doc_feature.txt"),
+        user_history_file=os.path.join(data_path, "user_history.txt"),
+        word_embedding_file=os.path.join(data_path, "word_embeddings_100.npy"),
+        entity_embedding_file=os.path.join(data_path, "TransE_entity2vec_100.npy"),
+        context_embedding_file=os.path.join(data_path, "TransE_context2vec_100.npy"),
+        seed=42,
     )
-    input_creator = DKNTextIterator
-    model = DKN(hparams, input_creator)
 
-    assert isinstance(model.fit(train_file, valid_file), BaseModel)
-    assert model.run_eval(valid_file) is not None
+    assert model.fit(train_file, valid_file, epochs=1, learning_rate=0.0001) is model
+    res = model.run_eval(valid_file)
+    assert set(res) == {"auc", "group_auc", "mean_mrr", "ndcg@5", "ndcg@10"}
+    assert all(0 <= value <= 1 for value in res.values())
+
+    model.predict(valid_file, output_file)
+    with open(valid_file) as rd:
+        n_instances = sum(1 for _ in rd)
+    with open(output_file) as rd:
+        preds = [float(line) for line in rd]
+    assert len(preds) == n_instances
+    assert all(0 <= pred <= 1 for pred in preds)
+
+
+@pytest.mark.gpu
+def test_model_dkn_item2item(deeprec_resource_path, tmp_path):
+    data_path = os.path.join(deeprec_resource_path, "dkn")
+    news_feature_file = os.path.join(data_path, "doc_feature.txt")
+    # 20 news IDs: 4 groups of a source, its related target and 3 unrelated ones.
+    doc_list_file = os.path.join(data_path, "doc_list.txt")
+    embedding_file = os.path.join(tmp_path, "embedding.txt")
+
+    download_deeprec_resources(
+        "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
+        data_path,
+        "mind-demo.zip",
+    )
+
+    model = DKNItem2Item(
+        news_feature_file=news_feature_file,
+        word_embedding_file=os.path.join(data_path, "word_embeddings_100.npy"),
+        neg_num=3,
+        entity_embedding_file=os.path.join(data_path, "TransE_entity2vec_100.npy"),
+        context_embedding_file=os.path.join(data_path, "TransE_context2vec_100.npy"),
+        seed=42,
+    )
+
+    fitted = model.fit(
+        doc_list_file, doc_list_file, epochs=2, batch_size=2, max_grad_norm=0.5
+    )
+    assert fitted is model
+    res = model.run_eval(doc_list_file, batch_size=2)
+    assert set(res) == {"group_auc", "mean_mrr", "ndcg@5", "ndcg@10"}
+    assert all(0 <= value <= 1 for value in res.values())
+
+    model.run_get_embedding(news_feature_file, embedding_file)
+    with open(news_feature_file) as rd:
+        n_news = sum(1 for _ in rd)
+    with open(embedding_file) as rd:
+        norms = [
+            sum(float(v) ** 2 for v in line.split(" ")[1].split(",")) ** 0.5
+            for line in rd
+        ]
+    assert len(norms) == n_news
+    assert norms == pytest.approx([1.0] * n_news, abs=1e-4)
 
 
 @pytest.mark.gpu

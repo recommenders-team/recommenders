@@ -14,18 +14,9 @@ from recommenders.datasets.python_splitters import python_stratified_split
 
 try:
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from recommenders.models.deeprec.deeprec_utils import (
-        prepare_hparams,
-        download_deeprec_resources,
-    )
-    from recommenders.models.deeprec.io.dkn_item2item_iterator import (
-        DKNItem2itemTextIterator,
-    )
-    from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from recommenders.models.deeprec.deeprec_utils import prepare_hparams
     from recommenders.models.deeprec.io.nextitnet_iterator import NextItNetIterator
     from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
-    from recommenders.models.deeprec.models.dkn import DKN
-    from recommenders.models.deeprec.models.dkn_item2item import DKNItem2Item
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.models.sequential.nextitnet import (
         NextItNetModel,
@@ -33,32 +24,6 @@ try:
     from recommenders.models.deeprec.models.sequential.sum import SUMModel
 except ImportError:
     pass  # skip this import if we are in cpu environment
-
-
-@pytest.fixture(scope="module")
-def dkn_files(deeprec_resource_path):
-    data_path = os.path.join(deeprec_resource_path, "dkn")
-    yaml_file = os.path.join(data_path, "dkn.yaml")
-    news_feature_file = os.path.join(data_path, "doc_feature.txt")
-    user_history_file = os.path.join(data_path, "user_history.txt")
-    wordEmb_file = os.path.join(data_path, "word_embeddings_100.npy")
-    entityEmb_file = os.path.join(data_path, "TransE_entity2vec_100.npy")
-    contextEmb_file = os.path.join(data_path, "TransE_context2vec_100.npy")
-
-    download_deeprec_resources(
-        "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
-        data_path,
-        "mind-demo.zip",
-    )
-    return (
-        data_path,
-        yaml_file,
-        news_feature_file,
-        user_history_file,
-        wordEmb_file,
-        entityEmb_file,
-        contextEmb_file,
-    )
 
 
 @pytest.fixture(scope="module")
@@ -108,89 +73,6 @@ def sequential_files(deeprec_resource_path):
         item_vocab,
         cate_vocab,
     )
-
-
-@pytest.mark.gpu
-def test_dkn_component_definition(dkn_files):
-    # Load params from fixture
-    (
-        _,
-        yaml_file,
-        news_feature_file,
-        user_history_file,
-        wordEmb_file,
-        entityEmb_file,
-        contextEmb_file,
-    ) = dkn_files
-
-    # Test DKN model
-    hparams = prepare_hparams(
-        yaml_file,
-        news_feature_file=news_feature_file,
-        user_history_file=user_history_file,
-        wordEmb_file=wordEmb_file,
-        entityEmb_file=entityEmb_file,
-        contextEmb_file=contextEmb_file,
-        epochs=1,
-        learning_rate=0.0001,
-    )
-
-    model = DKN(hparams, DKNTextIterator)
-    assert model.logit is not None
-    assert model.update is not None
-    assert model.iterator is not None
-    assert model.hparams is not None
-    assert model.hparams.model_type == "dkn"
-    assert model.hparams.epochs == 1
-    assert model.hparams.batch_size == 100
-    assert model.hparams.learning_rate == 0.0001
-    assert model.hparams.loss == "log_loss"
-    assert model.hparams.optimizer == "adam"
-
-
-@pytest.mark.gpu
-def test_dkn_item2item_component_definition(dkn_files):
-    # Load params from fixture
-    (
-        data_path,
-        yaml_file,
-        news_feature_file,
-        _,
-        wordEmb_file,
-        entityEmb_file,
-        contextEmb_file,
-    ) = dkn_files
-
-    # Test DKN's item2item version
-    hparams = prepare_hparams(
-        yaml_file,
-        news_feature_file=news_feature_file,
-        wordEmb_file=wordEmb_file,
-        entityEmb_file=entityEmb_file,
-        contextEmb_file=contextEmb_file,
-        epochs=1,
-        is_clip_norm=True,
-        max_grad_norm=0.5,
-        his_size=20,
-        MODEL_DIR=os.path.join(data_path, "save_models"),
-        use_entity=True,
-        use_context=True,
-    )
-
-    hparams.neg_num = 9
-    model_item2item = DKNItem2Item(hparams, DKNItem2itemTextIterator)
-    assert model_item2item.pred_logits is not None
-    assert model_item2item.update is not None
-    assert model_item2item.iterator is not None
-    assert model_item2item.hparams is not None
-    assert model_item2item.hparams.model_type == "dkn"
-    assert model_item2item.hparams.epochs == 1
-    assert model_item2item.hparams.batch_size == 100
-    assert model_item2item.hparams.learning_rate == 0.0005
-    assert model_item2item.hparams.loss == "log_loss"
-    assert model_item2item.hparams.optimizer == "adam"
-    assert model_item2item.hparams.max_grad_norm == 0.5
-    assert model_item2item.hparams.his_size == 20
 
 
 @pytest.mark.gpu
