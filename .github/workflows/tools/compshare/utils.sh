@@ -116,25 +116,9 @@ gen_action_digest() {
     # 
     # Params:
     # * API action specification in JSON
-    # * (Optional) file containing the base64-encoded login password
     local action_spec="${1:-}"
-    local encoded_password_file="${2:-}"
     [[ -z ${action_spec} ]] \
         && { echo 'Parameter error!' >&2; return 1; }
-
-    # Store the spec into a file to hide the password from being
-    # visible
-    local action_spec_file
-    action_spec_file="$(mktemp)"
-    trap "rm -f '${action_spec_file}'; trap - EXIT RETURN" EXIT RETURN
-    echo "${action_spec}" > "${action_spec_file}"
-    if [[ -n ${encoded_password_file} ]]; then
-        echo "${action_spec}" \
-            | jq --rawfile encoded_password \
-                "${encoded_password_file}" \
-                '.Password = $encoded_password' \
-                > "${action_spec_file}"
-    fi
 
     local reset_x=false
     [[ "$-" == *x* ]] && reset_x=true
@@ -148,7 +132,7 @@ gen_action_digest() {
             to_entries
             | sort
             | map("\(.key)\(.value)")
-            | join("")' "${action_spec_file}" \
+            | join("")' <<< "${action_spec}" \
         | tr -d '\n' \
         | cat - <(echo "${COMPSHARE_PRIVATE_KEY}") \
         | tr -d '\n' \
@@ -166,9 +150,7 @@ gen_request_url() {
     #
     # Params:
     # * API action specification in JSON
-    # * (Optional) file containing the base64-encoded login password
     local action_spec="${1:-}"
-    local encoded_password_file="${2:-}"
 
     [[ -z ${action_spec} ]] \
         && { echo 'Parameter error!' >&2; return 1; }
@@ -178,7 +160,7 @@ gen_request_url() {
         <<< "${action_spec}")"
 
     local digest
-    digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
+    digest="$(gen_action_digest "${action_spec}")"
     local params
     params="$(jq -r '
         to_entries
@@ -192,25 +174,15 @@ invoke_action() {
     #
     # Params:
     # * API action specification in JSON
-    # * (Optional) file containing the base64-encoded login password
     local action_spec="${1:-}"
-    local encoded_password_file="${2:-}"
     [[ -z ${action_spec} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     local request_url
-    request_url="$(gen_request_url \
-        "${action_spec}" \
-        "${encoded_password_file}")"
-
-    local password
-    if [[ -n ${encoded_password_file} ]]; then
-        password=(--url-query "Password@${encoded_password_file}")
-    fi
+    request_url="$(gen_request_url "${action_spec}")"
 
     local response
     response="$(curl -LsSf \
         --retry 5 --retry-delay 5 --retry-all-errors \
-        "${password[@]}" \
         "${request_url}")"
 
     echo "${response}"
@@ -318,8 +290,7 @@ create_instance() {
     #
     # Params:
     local vm_name="${1:-}"
-    local encoded_password_file="${2:-}"
-    local params="${3:-}"
+    local params="${2:-}"
 
     [[ -z ${params} ]] \
       || jq -e '
@@ -330,7 +301,6 @@ create_instance() {
           and has("ChargeType")
           and has("CompShareImageId")
           and has("Zone") | not' <<< "${params}" > /dev/null \
-      || [[ -z ${encoded_password_file} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     params="$(add_region "${params}")"
@@ -346,9 +316,7 @@ create_instance() {
     action_spec="$(update_json "${action_spec}" "${params}")"
     
     local response
-    response="$(invoke_action \
-        "${action_spec}" \
-        "${encoded_password_file}")"
+    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
@@ -681,13 +649,10 @@ allocate_vm() {
     #         ]
     #     }
     local vm_name="${1:-}"
-    local encoded_password_file="${2:-}"
-    local requirements="${3:-}"
-    local input_vars="${4:-}"
+    local requirements="${2:-}"
+    local input_vars="${3:-}"
 
     [[ -z ${vm_name} \
-      || -z ${encoded_password_file} \
-      || ! -f ${encoded_password_file} \
       || -z ${requirements} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
@@ -711,10 +676,7 @@ allocate_vm() {
             fi
         fi
 
-        api_call_retry 1 create_instance \
-            "${vm_name}" \
-            "${encoded_password_file}" \
-            "${compute}" \
+        api_call_retry 1 create_instance "${vm_name}" "${compute}" \
             > /dev/null && return
     done
     echo 'No available required resources!' >&2
@@ -1046,7 +1008,7 @@ get_vm_info() {
         && { echo "No VM named ${vm_name}" >&2; return; }
 
     vm_info="$(jq -c '{
-        UHostId, State, Zone, Region, SshLoginCommand
+        UHostId, State, Zone, Region, SshLoginCommand, Password
         }' <<< "${vm_info}")"
     echo "${vm_info}"
 }

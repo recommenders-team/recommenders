@@ -415,26 +415,24 @@ setup_ssh_key() {
     #
     # Params:
     # * SSH destination, in the format like `user@ip_address`
-    # * SSH private key or file containing the base64-encoded login
-    #   password 
+    # * SSH private key or base64-encoded login password 
     local ssh_dest="${1:-}"
-    local sshkey_or_passfile="${2:-}"
+    local sshkey_or_password="${2:-}"
     [[ -z ${ssh_dest} \
-      || -z ${sshkey_or_passfile} \
-      || ! -f ${sshkey_or_passfile} ]] \
+      || -z ${sshkey_or_password} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     echo 'Setting up SSH key for login ...'
-    local ssh_key_type
-    if ssh_key_type="$(ssh-keygen -l -f "${sshkey_or_passfile}" \
-        2>/dev/null)"; then
-        local ssh_key="${sshkey_or_passfile}"
+    if [[ -f ${sshkey_or_password} ]]; then
+        local ssh_key="${sshkey_or_password}"
+        local ssh_key_type
+        ssh_key_type="$(ssh-keygen -l -f "${ssh_key}" 2>/dev/null)"
         ssh_key_type="$(echo "${ssh_key_type}" \
             | cut -d '(' -f 2 \
             | cut -d ')' -f 1)"
         mv -f "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
     else
-        local encoded_password_file="${sshkey_or_passfile}"
+        local encoded_password="${sshkey_or_password}"
         local key_file="${HOME}/.ssh/id_ed25519"
         local sshd_config="/etc/ssh/sshd_config"
 
@@ -445,7 +443,7 @@ setup_ssh_key() {
 
         echo '* Deplying SSH key ...'
         local -x SSHPASS
-        read -r SSHPASS < <(base64 -d "${encoded_password_file}") \
+        read -r SSHPASS < <(base64 -d <<< "${encoded_password}") \
             || true
         run_cmd_retry sshpass -e ssh-copy-id \
             -i "${key_file}.pub" \

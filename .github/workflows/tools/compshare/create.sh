@@ -141,12 +141,6 @@ if [[ -z ${requirements} ]]; then
     fi
 fi
 
-echo 'Generating login password ...'
-encoded_password_file="$(mktemp)"
-trap "rm -f '${encoded_password_file}'; trap - EXIT" EXIT
-mktemp -u XXXXXXXXXX | tr -d '\n' | base64 -w 0 \
-    > "${encoded_password_file}"
-
 cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
 if [[ ${test_group} == *gpu* ]]; then
     input_vars="$(jq '.gpu // empty' \
@@ -157,11 +151,7 @@ else
 fi
 input_vars="${input_vars:-$cloud_service_input_vars}"
 
-allocate_vm \
-    "${unique_name}" \
-    "${encoded_password_file}" \
-    "${requirements}" \
-    "${input_vars}"
+allocate_vm "${unique_name}" "${requirements}" "${input_vars}"
 
 echo "Getting info of the VM ..."
 vm_info="$(get_vm_info "${unique_name}")"
@@ -187,4 +177,5 @@ api_call_retry update_stop_scheduler "${stop_scheduler}" > /dev/null
 unset "${secret_key_name}"
 
 wait_for_vm_to_be_available "${ssh_dest}"
-setup_ssh_key "${ssh_dest}" "${encoded_password_file}"
+encoded_password="$(jq '.Password' <<< "${vm_info}")"
+setup_ssh_key "${ssh_dest}" "${encoded_password}"
