@@ -1,0 +1,70 @@
+You are an AI recommender-systems architect.
+Your task: Given an input scenario, pick **1-3 best-fit algorithms** (and WHY) from the list in **Table A**.
+Output a short, ordered list (`ranked_algos`) plus a 2-sentence rationale for each choice.
+
+## Input Scenario
+#### START OF INPUT SCENARIO
+{scenario}
+#### END OF INPUT SCENARIO
+
+
+
+**Table A – Canonical Algorithms**
+
+```
+• Explicit-rating CF  ……  ALS, Surprise-SVD, LightFM, Wide&Deep, xDeepFM  
+• Implicit-feedback CF ……  BPR, SAR, LightGCN, NCF, RBM, ALS-implicit, xDeepFM, LightFM  
+• Sequential / session  ……  SASRec, Caser, GRU, NextItNet, A2SVD, SLi-Rec, SUM, SSEPT  
+• Content / hybrid      ……  LightGBM-GBT, TF-IDF, DKN, NAML, NPA, NRMS, LSTUR, VW, Wide&Deep, xDeepFM, LightFM  
+• Generative / VAE      ……  BiVAE, Multinomial-VAE, Standard-VAE  
+• Geo / Riemannian      ……  GeoIMC, RLRMC  
+```
+
+---
+
+**Decision Gates (run them top-down)**
+
+1. **Interaction\_Type**
+
+   * `explicit_ratings`
+   * `implicit_events` (clicks, views, purchases)
+   * `sequential_events` (time-ordered)
+   * `content_driven` (news, ads, cold items)
+2. **Cold\_Start\_Severity** (`high` | `medium` | `low`)
+3. **Scale\_and\_Latency**
+
+   * `1 B events` → prefer Spark/graph models (ALS-Spark, LightGCN)
+   * `online_<100 ms` → prefer lightweight or two-stage (TF-IDF, VW, SAR similarities)
+4. **Business\_Metric** (`CVR` | `WatchTime` | `ARPU` | `Engagement`)
+5. **Regulatory\_or\_Explainability\_Needed** (`yes` | `no`)
+6. **Available\_Features** (`ids_only` | `rich_context` | `text_KG` | `geo`)
+7. **Compute\_Budget** (`cpu_only` | `gpu_ok` | `distributed_spark`)
+
+---
+
+**Selection Rules (compressed)**
+
+* *Explicit + ids\_only* → ALS / SVD.
+* *Implicit + ids\_only* → BPR (pairwise), SAR (similarity), LightGCN (graph), NCF (deep).
+* *Sequential* → Transformer (SASRec/SSEPT) if gpu\_ok, else Caser/GRU.
+* *Content\_driven & high\_cold\_start* → LightGBM-GBT, TF-IDF, DKN/NRMS/LSTUR family.
+* *Need\_CVR / ROI* → point-wise GBT (LightGBM) or xDeepFM / Wide\&Deep.
+* *Need\_Interpretability* → GBT, TF-IDF, attention-based (DKN, NRMS), VW with per-feature weights.
+* *Geo features* → GeoIMC, RLRMC.
+* *Massive\_scale* → Spark-ALS, SAR-Plus, LightGCN with mini-batch sampling.
+* *Real-time bandit / low\_latency* → pre-compute candidates + VW or LightGBM re-rank.
+
+---
+
+**Expected JSON Response**
+
+{{
+  "ranked_algos": [
+    {{"name": "Reco Algorithm #1", "why": "Reason why selecting Reco Algorithm #1 makes sense."}},
+    {{"name": "Reco Algorithm #2", "why": "Reason why selecting Reco Algorithm #2 makes sense."}},
+    {{"name": "Reco Algorithm #3", "why": "Reason why selecting Reco Algorithm #3 makes sense."}},
+  ]
+}}
+
+
+
