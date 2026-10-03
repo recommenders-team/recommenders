@@ -77,27 +77,38 @@ apply_tf_config() {
     return 1
 }
 
-array_intersection() {
-    # Get the intersection of two JSON arrays.
+get_available_required_items() {
+    # Returns the available items that are required.
     #
     # Params:
-    # * the first array
-    # * the second array
-    local array1="${1:-}"
-    local array2="${2:-}"
+    # * an array of available items 
+    # * a JSON object that contains the required items
+    # * the key in the JSON object whose values are the required
+    #   items
+    local available_items="${1:-}"
+    local requirements="${2:-}"
+    local key="${3:-}"
 
-    [[ -z ${array1} \
-      || -z ${array2} ]] \
+    [[ -z ${available_items} \
+      || -z ${requirements} \
+      || -z ${key} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local intersection
-    intersection="$(jq -nc \
-        --argjson a "${array1}" \
-        --argjson b "${array2}" \
-        '($a | unique) as $au
-        | ($b | unique) as $bu
-        | $au | $au - ($au - $bu)')"
-    echo "${intersection}"
+    if jq -e "has(\"${key}\") and (.${key} | length) != 0" \
+        <<< "${requirements}" > /dev/null
+    then
+        # Get the intersection of the required and the available.
+        local required_items
+        required_items="$(jq -c ".${key}" <<< "${requirements}")"
+        local available_required
+        available_required="$(jq -nc \
+            --argjson a "${required_items}" \
+            --argjson b "${available_items}" \
+            '($a | unique) as $au
+            | ($b | unique) as $bu
+            | $au | $au - ($au - $bu)')"
+    fi
+    echo "${available_required}"
 }
 
 get_env_exports() {

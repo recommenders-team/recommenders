@@ -868,18 +868,10 @@ get_available_required_gpu_specs() {
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
-    # Get the intersection of the user required charge types and the
-    # availables.
+    # Get the available required charge types.
     local charge_type_list='["Spot", "Postpay"]'
-    if jq -e 'has("ChargeType") and (.ChargeType | length) != 0' \
-        <<< "${input_vars}" > /dev/null
-    then
-        local input_charge_type_list
-        input_charge_type_list="$(jq -c \
-            '.ChargeType' <<< "${input_vars}")"
-        charge_type_list="$(array_intersection \
-            "${input_charge_type_list}" "${charge_type_list}")"
-    fi
+    charge_type_list="$(get_available_required_items \
+        "${charge_type_list}" "${input_vars}" 'ChargeType')"
     readarray -t charge_type_list < \
         <(jq -c '.[] | {"ChargeType": .}' <<< "${charge_type_list}")
 
@@ -951,16 +943,10 @@ get_available_required_gpu_types() {
     local gpu_list
     gpu_list="$(jq '[ .[].GpuType ]' <<< "${gpu_types}")"
 
-    # Get the intersection of the user required GPU types and the
-    # availables.
-    if jq -e 'has("GpuType")  and (.GpuType | length) != 0' \
-        <<< "${input_vars}" > /dev/null
-    then
-        local input_gpu_list
-        input_gpu_list="$(jq -c '.GpuType' <<< "${input_vars}")"
-        gpu_list="$(array_intersection \
-            "${input_gpu_list}" "${gpu_list}")"
-    fi
+    # Get the available required GPU types.
+    gpu_list="$(get_available_required_items \
+        "${gpu_list}" "${input_vars}" 'GpuType')"
+
     jq -c --argjson params "${params}" \
         --argjson gpu_list "${gpu_list}" \
         'map(select([.GpuType] - $gpu_list | length | . == 0))
@@ -1025,16 +1011,10 @@ get_available_required_zones() {
         | select(.IsPod | not)
         | .Zone ]' <<< "${zone_list}")"
     
-    if jq -e 'has("Zone") and (.Zone | length) != 0' \
-        <<< "${input_vars}" > /dev/null
-    then
-        # Get the intersection of the user required zones and the
-        # availables.
-        local input_zone_list
-        input_zone_list="$(jq -c '.Zone' <<< "${input_vars}")"
-        zone_list="$(array_intersection \
-            "${input_zone_list}" "${zone_list}")"
-    fi
+    # Get the available required zones.
+    zone_list="$(get_available_required_items \
+        "${zone_list}" "${input_vars}" 'Zone')"
+
     jq -c '.[]
         | {"Zone": ., "Region": (. | capture("(?<r>.*)-[^-]+").r)}' \
           <<< "${zone_list}"
