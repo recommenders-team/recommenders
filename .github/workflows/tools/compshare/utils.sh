@@ -264,20 +264,22 @@ allocate_vm() {
     #             "Spot"
     #         ]
     #     }
-    local vm_name="${1:-}"
-    local requirements="${2:-}"
-    local input_vars="${3:-}"
-    local config_yml="${4:-}"
+    # * path to config.yml
+    local config_yml="${1:-}"
+    local vm_name="${2:-}"
+    local requirements="${3:-}"
+    local input_vars="${4:-}"
 
     [[ -z ${vm_name} \
-      || -z ${requirements} ]] \
+      || -z ${requirements} \
+      || -f ${config_yml} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     echo 'Getting available instance info ...'
     local compute_list
     readarray -t compute_list < \
         <(get_available_required_computes \
-            "${input_vars}" "${config_yml}")
+            "${config_yml}" "${input_vars}")
 
     local compute_index
     for compute_index in "${!compute_list[@]}"; do
@@ -348,6 +350,7 @@ get_available_required_computes() {
     # {"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":96256,"Price":1.6}
     #
     # Params:
+    # * path to config.yml
     # * a JSON object of input variables.
     #   + For example,
     #
@@ -364,15 +367,15 @@ get_available_required_computes() {
     #             "Postpay"
     #         ]
     #     }
-    local input_vars="${1:-}"
-    local config_yml="${2:-}"
+    local config_yml="${1:-}"
+    local input_vars="${2:-}"
     local compute_list='[]'
 
     echo '* Getting available zones ...' >&2
     local zone_list
     readarray -t zone_list < \
         <(get_available_required_zones \
-            "${input_vars}" "${config_yml}")
+            "${config_yml}" "${input_vars}")
 
     local zone_index
     for zone_index in "${!zone_list[@]}"; do
@@ -382,7 +385,7 @@ get_available_required_computes() {
         local gpu_list
         readarray -t gpu_list < \
             <(get_available_required_gpu_types \
-                "${input_vars}" "${zone}" "${config_yml}")
+                "${config_yml}" "${zone}" "${input_vars}")
 
         local gpu_index
         for gpu_index in "${!gpu_list[@]}"; do
@@ -397,14 +400,14 @@ get_available_required_computes() {
             local spec_list
             readarray -t spec_list < \
                 <(get_available_required_gpu_specs \
-                    "${input_vars}" "${gpu}" "${config_yml}")
+                    "${config_yml}" "${gpu}" "${input_vars}")
 
             local spec_index
             for spec_index in "${!spec_list[@]}"; do
                 local spec="${spec_list[${spec_index}]}"
 
                 local compute
-                compute="$(get_gpu_spec_price "${spec}" "${config_yml}")"
+                compute="$(get_gpu_spec_price "${config_yml}" "${spec}")"
                 compute_list="$(jq -nc \
                     --argjson arr "${compute_list}" \
                     --argjson obj "${compute}" \
@@ -427,6 +430,10 @@ get_available_required_gpu_specs() {
     #   {"ChargeType":"Spot","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":128*1024}
     #
     # Params:
+    # * path to config_yml
+    # * parameters for querying the API
+    #   + For example,
+    #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
     # * a JSON object of input variables that may specified the
     #   the required charge types.
     #   + For example,
@@ -444,14 +451,9 @@ get_available_required_gpu_specs() {
     #             "Postpay"
     #         ]
     #     }
-    #
-    # * parameters for querying the API
-    #   + For example,
-    #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
-    # * path to config_yml
-    local input_vars="${1:-}"
+    local config_yml="${1:-}"
     local params="${2:-}"
-    local config_yml="${3:-}"
+    local input_vars="${3:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
@@ -491,6 +493,9 @@ get_available_required_gpu_types() {
     #   {"GpuType":"2080Ti","GraphicsMemory":11*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     #
     # Params:
+    # * path to config.yml
+    # * parameters for querying the API
+    #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     # * a JSON object of input variables that may specifiy the
     #   required GPU Types.
     #   + For example,
@@ -509,12 +514,9 @@ get_available_required_gpu_types() {
     #         ]
     #     }
     #
-    # * parameters for querying the API
-    #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
-    # * path to config.yml
-    local input_vars="${1:-}"
+    local config_yml="${1:-}"
     local params="${2:-}"
-    local config_yml="${3:-}"
+    local input_vars="${3:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
@@ -550,11 +552,12 @@ get_gpu_spec_price() {
     #   {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024,"Price":1.30}
     #
     # Params:
+    # * path to config_yml
     # * parameters for querying the API
     #   + For example,
     #     {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
-    local params="${1:-}"
-    local config_yml="${2:-}"
+    local config_yml="${1:-}"
+    local params="${2:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
@@ -574,6 +577,7 @@ get_available_required_zones() {
     #   {"Zone":"cn-sh2-02","Region":"cn-sh2"}
     #
     # Params:
+    # * path to config.yml
     # * a JSON object of input variables that may specifiy the
     #   required zones.
     #   + For example,
@@ -591,8 +595,8 @@ get_available_required_zones() {
     #             "Postpay"
     #         ]
     #     }
-    local input_vars="${1:-}"
-    local config_yml="${2:-}"
+    local config_yml="${1:-}"
+    local input_vars="${2:-}"
 
     # Get the list of available zones in the format like
     #
@@ -621,12 +625,14 @@ get_vm_info() {
     # * SSH destination, in the format like `user@ip_address`
     #
     # Params:
+    # * path to config.yml
     # * VM name
-    local vm_name="${1:-}"
-    local config_yml="${2:-}"
+    local config_yml="${1:-}"
+    local vm_name="${2:-}"
 
-    [[ -z ${vm_name} ]] \
-        && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${vm_name} \
+      || -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
     local response
     response="$(api_call_retry invoke_action "${config_yml}" \
@@ -650,18 +656,20 @@ wait_for_vm_to_stop() {
     # Check and wait for the VM to stop.
     #
     # Params:
+    # * path to config.yml
     # * VM name
-    local vm_name="${1:-}"
-    local config_yml="${2:-}"
+    local config_yml="${1:-}"
+    local vm_name="${2:-}"
 
-    [[ -z ${vm_name} ]] \
-        && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${vm_name} \
+      || -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
     echo 'Waiting for the VM to stop ...'
     sleep 5
     local count=0
     local vm_state
-    until vm_state="$(get_vm_info "${vm_name}" "${config_yml}" \
+    until vm_state="$(get_vm_info "${config_yml}" "${vm_name}" \
         | jq -r '.State')" \
         && [[ ${vm_state} == 'Stopped' ]]
     do

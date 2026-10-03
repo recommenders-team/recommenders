@@ -151,11 +151,11 @@ else
 fi
 input_vars="${input_vars:-$cloud_service_input_vars}"
 
-allocate_vm "${unique_name}" "${requirements}" "${input_vars}" \
-    "${config_yml}"
+allocate_vm "${config_yml}" "${unique_name}" "${requirements}" \
+    "${input_vars}"
 
 echo "Getting info of the VM ..."
-vm_info="$(get_vm_info "${unique_name}" "${config_yml}")"
+vm_info="$(get_vm_info "${config_yml}" "${unique_name}")"
 [[ -z ${vm_info} ]] && exit 1
 
 echo 'Exporting VM info for subsequent steps ...'
