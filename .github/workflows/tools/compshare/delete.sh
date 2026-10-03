@@ -65,15 +65,17 @@ delay=5
 num_attempts=6
 attempt=1
 while true; do
-    vm_info="$(get_vm_info "${vm_name}")"
+    vm_info="$(get_vm_info "${vm_name}" "${config_yml}")"
     if [[ -n ${vm_info:-} ]]; then
         echo "Stopping the VM ${vm_name} ..."
-        api_call_retry stop_instance "${vm_info}" > /dev/null
+        api_call_retry invoke_action "${config_yml}" \
+            'StopCompShareInstance' "${vm_info}" > /dev/null
 
-        wait_for_vm_to_stop "${vm_name}"
+        wait_for_vm_to_stop "${vm_name}" "${config_yml}"
 
         echo "Deleting the VM ${vm_name} ..."
-        api_call_retry 10 terminate_instance "${vm_info}" > /dev/null
+        api_call_retry 10 invoke_action "${config_yml}" \
+            'TerminateCompShareInstance' "${vm_info}" > /dev/null
         break
     fi
 

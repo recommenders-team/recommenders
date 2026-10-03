@@ -151,10 +151,11 @@ else
 fi
 input_vars="${input_vars:-$cloud_service_input_vars}"
 
-allocate_vm "${unique_name}" "${requirements}" "${input_vars}"
+allocate_vm "${unique_name}" "${requirements}" "${input_vars}" \
+    "${config_yml}"
 
 echo "Getting info of the VM ..."
-vm_info="$(get_vm_info "${unique_name}")"
+vm_info="$(get_vm_info "${unique_name}" "${config_yml}")"
 [[ -z ${vm_info} ]] && exit 1
 
 echo 'Exporting VM info for subsequent steps ...'
@@ -165,7 +166,8 @@ ssh_dest="$(jq -r '.SshLoginCommand
 echo "SSH_DEST=${ssh_dest}" >> "$GITHUB_ENV"
 
 echo 'Setting stop scheduler ...'
-projects="$(api_call_retry get_project_list)"
+projects="$(api_call_retry invoke_action "${config_yml}" \
+    'GetProjectList')"
 project_id="$(jq -r '
     .ProjectSet[]
     | select(.IsDefault)
@@ -178,7 +180,8 @@ else
 fi
 stop_time="{\"SchedulerStopTime\": ${stop_time}}"
 stop_scheduler="$(update_json "${stop_scheduler}" "${stop_time}")"
-api_call_retry update_stop_scheduler "${stop_scheduler}" > /dev/null
+api_call_retry invoke_action "${config_yml}" \
+    'UpdateCompShareStopScheduler' "${stop_scheduler}" > /dev/null
 
 unset "${secret_key_name}"
 

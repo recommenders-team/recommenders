@@ -33,7 +33,10 @@ add_region() {
     [[ -z ${params} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    if jq -e 'has("Region") | not' <<< "${params}" > /dev/null; then
+    if jq -e 'has("Zone")
+        and ((has("Region") and (.Region | not))
+            or (has("Region") | not))' <<< "${params}" > /dev/null
+    then
         local zone
         zone="$(jq -r '.Zone' <<< "${params}")"
         local region="{\"Region\": \"${zone%-*}\"}"
@@ -173,10 +176,44 @@ invoke_action() {
     # Call the API for the specified action
     #
     # Params:
-    # * API action specification in JSON
-    local action_spec="${1:-}"
-    [[ -z ${action_spec} ]] && { echo 'Parameter error!' >&2; return 1; }
+    # * action
+    # * a JSON object containing the parameters for the action API
+    # * the config.yml file containing the action specification
+    local config_yml="${1:-}"
+    local action="${2:-}"
+    local parameters="${3:-{\}}"
 
+    [[ -z ${action} \
+      || ! -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+    
+    local action_spec
+    action_spec="$(yq -o json < "${config_yml}" \
+        | jq -c ".action_specs.${action}")"
+
+    action="{\"Action\": \"${action}\"}"
+    parameters="$(update_json "${parameters}" "${action}")"
+    parameters="$(add_region "${parameters}")"
+
+    local required_params
+    readarray -t required_params < \
+        <(jq -rc 'to_entries?
+            | map(select(.value | not))
+            | map(.key)
+            | .[]' <<< "${action_spec}")
+
+    local param_index
+    for param_index in "${!required_params[@]}"; do
+        local param="${required_params[${param_index}]}"
+        if jq -e "has(\"${param}\") | not" <<< "${parameters}" \
+            > /dev/null; then
+            echo "Parameter '${param}' missing!" >&2
+            return 1
+        fi
+    done
+
+    action_spec="$(update_json "${action_spec}" "${parameters}")"
+    
     local request_url
     request_url="$(gen_request_url "${action_spec}")"
 
@@ -185,415 +222,6 @@ invoke_action() {
         --retry 5 --retry-delay 5 --retry-all-errors \
         "${request_url}")"
 
-    echo "${response}"
-}
-
-
-#---------------------------------------------------------------------
-# CompShare API wrappers
-#---------------------------------------------------------------------
-check_resource_capacity() {
-    # Check if there are enough resources of specified type.
-    # See https://www.compshare.cn/docs/gpus/instance/checkcompshareresourcecapacity
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + GPU type, such as P40, 3090
-    #   + charge type, such as Postpay, Spot
-    #   + image ID
-    #   + zone
-    #
-    # Return looks like:
-    # {
-    #     "Action": "CheckCompShareResourceCapacityResponse",
-    #     "RetCode": 0,
-    #     "Specs": [
-    #         {
-    #             "Cpu": 16,
-    #             "Gpu": 1,
-    #             "Mem": 64,
-    #             "ResourceEnough": true
-    #         },
-    #         {
-    #             "Cpu": 16,
-    #             "Gpu": 1,
-    #             "Mem": 240,
-    #             "ResourceEnough": true
-    #         },
-    #         {
-    #             "Cpu": 32,
-    #             "Gpu": 2,
-    #             "Mem": 480,
-    #             "ResourceEnough": true
-    #         },
-    #         {
-    #             "Cpu": 40,
-    #             "Gpu": 4,
-    #             "Mem": 512,
-    #             "ResourceEnough": false
-    #         }
-    #     ]
-    # }
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e '
-          has("GpuType")
-          and has("ChargeType")
-          and has("CompShareImageId")
-          and has("Zone") | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-    
-    local action_spec='{
-        "Action": "CheckCompShareResourceCapacity",
-        "Disks.0.IsBoot": true,
-        "Disks.0.Size": 100,
-        "Disks.0.Type": "CLOUD_SSD",
-        "MachineType": "G",
-        "MinimalCpuPlatform": "Auto"
-    }'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-create_instance() {
-    # Create a VM instance
-    # See https://www.compshare.cn/docs/gpus/instance/createcompshareinstance
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + VM name
-    #   + GPU type, such as P40, 3090
-    #   + number of GPUs
-    #   + CPU cores
-    #   + memory in MB
-    #   + charge type, such as Postpay, Spot
-    #   + image ID
-    #   + zone
-    #
-    # Reponse:
-    #   {
-    #       "Action": "CreateCompShareInstanceResponse", 
-    #       "RetCode": 0, 
-    #       "UHostIds": [
-    #           "NIdfqvRv"
-    #       ]
-    #   }
-    #
-    # Params:
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e '
-          has("Name")
-          and has("GpuType")
-          and has("Gpu")
-          and has("Cpu")
-          and has("Memory")
-          and has("ChargeType")
-          and has("CompShareImageId")
-          and has("Zone") | not' <<< "${params}" > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{
-        "Action": "CreateCompShareInstance",
-        "Disks.0.IsBoot": true,
-        "Disks.0.Size": 100,
-        "Disks.0.Type": "CLOUD_SSD",
-        "Quantity": 1
-    }'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-    
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-describe_available_instance_types() {
-    # Get the list of all instance types provided in the zone.
-    # See https://www.compshare.cn/docs/gpus/instance/describeavailablecompshareinstancetypes
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + Zone
-    #
-    # Return looks like:
-    # {
-    #     "RetCode": 0,
-    #     "AvailableInstanceTypes": [
-    #         {
-    #             "Name": "5090",
-    #             "Status": "Normal",
-    #             "MachineSizes": [
-    #                 {
-    #                     "Gpu": 1,
-    #                     "Collection": [
-    #                         {
-    #                             "Cpu": 16,
-    #                             "Memory": [96]
-    #                         }
-    #                     ]
-    #                 },
-    #                 {
-    #                     "Gpu": 2,
-    #                     "Collection": [
-    #                         {
-    #                             "Cpu": 32,
-    #                             "Memory": [192]
-    #                         }
-    #                     ]
-    #                 }
-    #             ],
-    #             "GraphicsMemory": {
-    #                 "Value": 32,
-    #                 "Rate": 3
-    #             },
-    #             "MachineClass": "GPU",
-    #             "InstanceType": "uhost",
-    #             "ParentType": "G"
-    #         },
-    #         {
-    #             "Name": "4090",
-    #             "Status": "Normal",
-    #             ...
-    #         },
-    #         ...
-    #     ]
-    # }
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{
-        "Action": "DescribeAvailableCompShareInstanceTypes"
-    }'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-describe_images() {
-    # Get a list of system images
-    # See https://www.compshare.cn/docs/gpus/image/describecompshareimages
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + zone
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e 'has("Zone") | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{
-        "Action": "DescribeCompShareImages",
-        "ImageType": "System"
-    }'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-describe_instance() {
-    # Get the list of VMs
-    # See https://www.compshare.cn/docs/gpus/instance/describecompshareinstance
-    local action_spec='{"Action": "DescribeCompShareInstance"}'
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-describe_zones() {
-    # Get the list of zones
-    # See https://www.compshare.cn/docs/gpus/instance/describecompsharesupportzone
-    #
-    # Return looks like:
-    #
-    # {
-    #     "RetCode": 0,
-    #     "ZoneInfo": [
-    #         {
-    #             "Region": "cn-wlcb",
-    #             "RegionId": 1000039,
-    #             "Zone": "cn-wlcb-01",
-    #             "ZoneId": 10027,
-    #             "IsPod": false,
-    #             "UnsupportedImageTypes": []
-    #         },
-    #         {
-    #             "Region": "cn-wlcb",
-    #             "RegionId": 1000039,
-    #             "Zone": "cn-wlcb-03",
-    #             "ZoneId": 10033,
-    #             "IsPod": true,
-    #             "UnsupportedImageTypes": [
-    #                 "System",
-    #                 "Other"
-    #             ]
-    #         },
-    #     ]
-    # }
-    local action_spec='{"Action": "DescribeCompShareSupportZone"}'
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-get_instance_price() {
-    # Get the price for creating the instance.
-    # See https://www.compshare.cn/docs/gpus/instance/getcompshareinstanceprice
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + zone
-    #   + GPU type
-    #   + number of GPUs
-    #   + number of CPU cores
-    #   + memory in MB
-    #
-    # Return looks like:
-
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e '
-          has("Zone")
-          and has("GpuType")
-          and has("Gpu")
-          and has("Cpu")
-          and has("Memory")
-          | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{"Action": "GetCompShareInstancePrice"}'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-get_project_list() {
-    # Get the list of projects
-    # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
-    local action_spec='{"Action": "GetProjectList"}'
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-stop_instance() {
-    # Shutdown the specified VM
-    # See https://www.compshare.cn/docs/gpus/instance/stopcompshareinstance
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + UHostId
-    #   + Zone
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e '
-          has("UHostId")
-          and has("Zone") | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{"Action": "StopCompShareInstance"}'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-terminate_instance() {
-    # Delete the specified VM
-    # See https://www.compshare.cn/docs/gpus/instance/terminatecompshareinstance
-    #
-    # NOTE: The VM must be shut down before deletion
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + UHostId
-    #   + Zone
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e '
-          has("UHostId")
-          and has("Zone") | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{
-        "Action": "TerminateCompShareInstance",
-        "ReleaseUDisk": true
-    }'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
-    echo "${response}"
-}
-
-update_stop_scheduler() {
-    # Set/update scheduler to stop VM
-    # See https://www.compshare.cn/docs/gpus/instance/updatecompsharestopscheduler
-    #
-    # Params:
-    # * a JSON object containing the parameters for the API with the
-    #   following keys required:
-    #   + UHostId
-    #   + ProjectId
-    #   + SchedulerStopTime
-    #     - seconds since the Epoch (1970-01-01 00:00 UTC)
-    #   + Zone
-    local params="${1:-}"
-
-    [[ -z ${params} ]] \
-      || jq -e '
-          has("UHostId")
-          and has("ProjectId")
-          and has("SchedulerStopTime")
-          and has("Zone") | not' <<< "${params}"  > /dev/null \
-      && { echo 'Parameter error!' >&2; return 1; }
-
-    params="$(add_region "${params}")"
-
-    local action_spec='{"Action": "UpdateCompShareStopScheduler"}'
-    action_spec="$(update_json "${action_spec}" "${params}")"
-
-    local response
-    response="$(invoke_action "${action_spec}")"
     echo "${response}"
 }
 
@@ -639,6 +267,7 @@ allocate_vm() {
     local vm_name="${1:-}"
     local requirements="${2:-}"
     local input_vars="${3:-}"
+    local config_yml="${4:-}"
 
     [[ -z ${vm_name} \
       || -z ${requirements} ]] \
@@ -647,7 +276,8 @@ allocate_vm() {
     echo 'Getting available instance info ...'
     local compute_list
     readarray -t compute_list < \
-        <(get_available_required_computes "${input_vars}")
+        <(get_available_required_computes \
+            "${input_vars}" "${config_yml}")
 
     local compute_index
     for compute_index in "${!compute_list[@]}"; do
@@ -666,7 +296,8 @@ allocate_vm() {
 
         vm_name="{\"Name\": \"${vm_name}\"}"
         compute="$(update_json "${compute}" "${vm_name}")"
-        api_call_retry 1 create_instance "${compute}" > /dev/null \
+        api_call_retry 1 invoke_action "${config_yml}" \
+            'CreateCompShareInstance' "${compute}" > /dev/null \
             && return
     done
     echo 'No available required resources!' >&2
@@ -734,12 +365,14 @@ get_available_required_computes() {
     #         ]
     #     }
     local input_vars="${1:-}"
+    local config_yml="${2:-}"
     local compute_list='[]'
 
     echo '* Getting available zones ...' >&2
     local zone_list
     readarray -t zone_list < \
-        <(get_available_required_zones "${input_vars}")
+        <(get_available_required_zones \
+            "${input_vars}" "${config_yml}")
 
     local zone_index
     for zone_index in "${!zone_list[@]}"; do
@@ -749,7 +382,7 @@ get_available_required_computes() {
         local gpu_list
         readarray -t gpu_list < \
             <(get_available_required_gpu_types \
-                "${input_vars}" "${zone}")
+                "${input_vars}" "${zone}" "${config_yml}")
 
         local gpu_index
         for gpu_index in "${!gpu_list[@]}"; do
@@ -764,14 +397,14 @@ get_available_required_computes() {
             local spec_list
             readarray -t spec_list < \
                 <(get_available_required_gpu_specs \
-                    "${input_vars}" "${gpu}")
+                    "${input_vars}" "${gpu}" "${config_yml}")
 
             local spec_index
             for spec_index in "${!spec_list[@]}"; do
                 local spec="${spec_list[${spec_index}]}"
 
                 local compute
-                compute="$(get_gpu_spec_price "${spec}")"
+                compute="$(get_gpu_spec_price "${spec}" "${config_yml}")"
                 compute_list="$(jq -nc \
                     --argjson arr "${compute_list}" \
                     --argjson obj "${compute}" \
@@ -815,8 +448,10 @@ get_available_required_gpu_specs() {
     # * parameters for querying the API
     #   + For example,
     #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
+    # * path to config_yml
     local input_vars="${1:-}"
     local params="${2:-}"
+    local config_yml="${3:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
@@ -835,8 +470,8 @@ get_available_required_gpu_specs() {
 
         # Get the list of instance types with enough resources. 
         local spec_list
-        spec_list="$(api_call_retry \
-            check_resource_capacity "${params}")"
+        spec_list="$(api_call_retry invoke_action "${config_yml}" \
+            'CheckCompShareResourceCapacity' "${params}")"
         jq -c --argjson chargetype "${charge_type}" \
             --argjson params "${params}" \
             '.Specs[]
@@ -876,8 +511,10 @@ get_available_required_gpu_types() {
     #
     # * parameters for querying the API
     #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    # * path to config.yml
     local input_vars="${1:-}"
     local params="${2:-}"
+    local config_yml="${3:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
@@ -885,8 +522,8 @@ get_available_required_gpu_types() {
     #
     #   ["3080","4090","5090"]
     local gpu_types
-    gpu_types="$(api_call_retry describe_available_instance_types \
-        "${params}")"
+    gpu_types="$(api_call_retry invoke_action "${config_yml}" \
+        'DescribeAvailableCompShareInstanceTypes' "${params}")"
     gpu_types="$(jq -c '[.AvailableInstanceTypes[]
         | select(.Status == "Normal")
         | {"GpuType": .Name,
@@ -917,11 +554,13 @@ get_gpu_spec_price() {
     #   + For example,
     #     {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
     local params="${1:-}"
+    local config_yml="${2:-}"
 
     [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     local price
-    price="$(api_call_retry get_instance_price "${params}")"
+    price="$(api_call_retry invoke_action "${config_yml}" \
+        'GetCompShareInstancePrice' "${params}")"
     jq -c --argjson params "${params}" \
         '.PriceDetails[0]
         | $params + {"Price": .Instance}' \
@@ -953,12 +592,14 @@ get_available_required_zones() {
     #         ]
     #     }
     local input_vars="${1:-}"
+    local config_yml="${2:-}"
 
     # Get the list of available zones in the format like
     #
     #   ["cn-wlcb-01","cn-sh2-02"]
     local zone_list
-    zone_list="$(api_call_retry describe_zones)"
+    zone_list="$(api_call_retry invoke_action "${config_yml}" \
+        'DescribeCompShareSupportZone')"
     zone_list="$(jq -c '[ .ZoneInfo[]
         | select(.IsPod | not)
         | .Zone ]' <<< "${zone_list}")"
@@ -982,12 +623,14 @@ get_vm_info() {
     # Params:
     # * VM name
     local vm_name="${1:-}"
+    local config_yml="${2:-}"
 
     [[ -z ${vm_name} ]] \
         && { echo 'Parameter error!' >&2; return 1; }
 
     local response
-    response="$(api_call_retry describe_instance)"
+    response="$(api_call_retry invoke_action "${config_yml}" \
+        'DescribeCompShareInstance')"
 
     local vm_info
     vm_info="$(jq "
@@ -1009,6 +652,7 @@ wait_for_vm_to_stop() {
     # Params:
     # * VM name
     local vm_name="${1:-}"
+    local config_yml="${2:-}"
 
     [[ -z ${vm_name} ]] \
         && { echo 'Parameter error!' >&2; return 1; }
@@ -1017,7 +661,8 @@ wait_for_vm_to_stop() {
     sleep 5
     local count=0
     local vm_state
-    until vm_state="$(get_vm_info "${vm_name}" | jq -r '.State')" \
+    until vm_state="$(get_vm_info "${vm_name}" "${config_yml}" \
+        | jq -r '.State')" \
         && [[ ${vm_state} == 'Stopped' ]]
     do
         # Set timeout to 5 + 5 * 60 = 305 seconds

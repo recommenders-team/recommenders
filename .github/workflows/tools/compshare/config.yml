@@ -8,3 +8,201 @@ apt_mirror: mirrors.ucloud.cn
 
 # The name of the secret for accessing CompShare APIs
 secret_key_name: COMPSHARE_PRIVATE_KEY
+
+# CompShare API specifications
+# * Keys with null values are required parameters that should be
+#   customized by caller when invoking the action.  Other keys are
+#   paramters without customization.
+action_specs:
+  CheckCompShareResourceCapacity:
+    # Check if there are enough resources of specified type.
+    # See https://www.compshare.cn/docs/gpus/instance/checkcompshareresourcecapacity
+    #
+    # Response looks like:
+    # {
+    #     "Action": "CheckCompShareResourceCapacityResponse",
+    #     "RetCode": 0,
+    #     "Specs": [
+    #         {
+    #             "Cpu": 16,
+    #             "Gpu": 1,
+    #             "Mem": 64,
+    #             "ResourceEnough": true
+    #         },
+    #         {
+    #             "Cpu": 16,
+    #             "Gpu": 1,
+    #             "Mem": 240,
+    #             "ResourceEnough": true
+    #         },
+    #         {
+    #             "Cpu": 32,
+    #             "Gpu": 2,
+    #             "Mem": 480,
+    #             "ResourceEnough": true
+    #         },
+    #         {
+    #             "Cpu": 40,
+    #             "Gpu": 4,
+    #             "Mem": 512,
+    #             "ResourceEnough": false
+    #         }
+    #     ]
+    # }
+    ChargeType:
+    CompShareImageId:
+    Disks.0.IsBoot: true
+    Disks.0.Size: 100
+    Disks.0.Type: CLOUD_SSD
+    GpuType:
+    MachineType: G
+    MinimalCpuPlatform: Auto
+    Region:
+    Zone:
+  CreateCompShareInstance:
+    # Create a VM instance
+    # See https://www.compshare.cn/docs/gpus/instance/createcompshareinstance
+    #
+    # Reponse looks like:
+    #   {
+    #       "Action": "CreateCompShareInstanceResponse", 
+    #       "RetCode": 0, 
+    #       "UHostIds": [
+    #           "NIdfqvRv"
+    #       ]
+    #   }
+    ChargeType:
+    CompShareImageId:
+    Cpu:
+    Disks.0.IsBoot: true
+    Disks.0.Size: 100
+    Disks.0.Type: CLOUD_SSD
+    Gpu:
+    GpuType:
+    Memory:
+    Name:
+    Quantity: 1
+    Region:
+    Zone:
+  DescribeAvailableCompShareInstanceTypes:
+    # Get the list of all instance types provided in the zone.
+    # See https://www.compshare.cn/docs/gpus/instance/describeavailablecompshareinstancetypes
+    #
+    # Response looks like:
+    # {
+    #     "RetCode": 0,
+    #     "AvailableInstanceTypes": [
+    #         {
+    #             "Name": "5090",
+    #             "Status": "Normal",
+    #             "MachineSizes": [
+    #                 {
+    #                     "Gpu": 1,
+    #                     "Collection": [
+    #                         {
+    #                             "Cpu": 16,
+    #                             "Memory": [96]
+    #                         }
+    #                     ]
+    #                 },
+    #                 {
+    #                     "Gpu": 2,
+    #                     "Collection": [
+    #                         {
+    #                             "Cpu": 32,
+    #                             "Memory": [192]
+    #                         }
+    #                     ]
+    #                 }
+    #             ],
+    #             "GraphicsMemory": {
+    #                 "Value": 32,
+    #                 "Rate": 3
+    #             },
+    #             "MachineClass": "GPU",
+    #             "InstanceType": "uhost",
+    #             "ParentType": "G"
+    #         },
+    #         {
+    #             "Name": "4090",
+    #             "Status": "Normal",
+    #             ...
+    #         },
+    #         ...
+    #     ]
+    # }
+    Region:
+    Zone:
+  DescribeCompShareImages:
+    # Get a list of system images
+    # See https://www.compshare.cn/docs/gpus/image/describecompshareimages
+    ImageType: System
+    Region:
+    Zone:
+  DescribeCompShareInstance:
+    # Get the list of VMs
+    # See https://www.compshare.cn/docs/gpus/instance/describecompshareinstance
+  DescribeCompShareSupportZone:
+    # Get the list of zones
+    # See https://www.compshare.cn/docs/gpus/instance/describecompsharesupportzone
+    #
+    # Return looks like:
+    #
+    # {
+    #     "RetCode": 0,
+    #     "ZoneInfo": [
+    #         {
+    #             "Region": "cn-wlcb",
+    #             "RegionId": 1000039,
+    #             "Zone": "cn-wlcb-01",
+    #             "ZoneId": 10027,
+    #             "IsPod": false,
+    #             "UnsupportedImageTypes": []
+    #         },
+    #         {
+    #             "Region": "cn-wlcb",
+    #             "RegionId": 1000039,
+    #             "Zone": "cn-wlcb-03",
+    #             "ZoneId": 10033,
+    #             "IsPod": true,
+    #             "UnsupportedImageTypes": [
+    #                 "System",
+    #                 "Other"
+    #             ]
+    #         },
+    #     ]
+    # }
+  GetCompShareInstancePrice:
+    # Get the price for creating the instance.
+    # See https://www.compshare.cn/docs/gpus/instance/getcompshareinstanceprice
+    ChargeType:
+    Cpu:
+    Gpu:
+    GpuType:
+    Memory:
+    Region:
+    Zone:
+  GetProjectList:
+    # Get the list of projects
+    # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
+  StopCompShareInstance:
+    # Shutdown the specified VM
+    # See https://www.compshare.cn/docs/gpus/instance/stopcompshareinstance
+    Region:
+    UHostId:
+    Zone:
+  TerminateCompShareInstance:
+    # Delete the specified VM
+    # See https://www.compshare.cn/docs/gpus/instance/terminatecompshareinstance
+    Region:
+    ReleaseUDisk: true
+    UHostId:
+    Zone:
+  UpdateCompShareStopScheduler:
+    # Set/update scheduler to stop VM
+    # See https://www.compshare.cn/docs/gpus/instance/updatecompsharestopscheduler
+    ProjectId:
+    Region:
+    SchedulerStopTime:
+    UHostId:
+    Zone:
