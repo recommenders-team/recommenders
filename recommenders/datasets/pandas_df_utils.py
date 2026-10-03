@@ -343,14 +343,9 @@ def negative_feedback_sampler(
         # instead of items, which is more efficient when len(items) is large.
         sample_size = min(n_u + neg_sample_size, len(items))
         items_sample = rng.choice(items, sample_size, replace=False)
-        # np.setdiff1d returns its result sorted, so slicing it directly would
-        # always keep the lowest-valued item IDs among the over-drawn
-        # candidates instead of a random subset of them. Sample from the
-        # eligible items instead of truncating the sorted array.
-        eligible_items = np.setdiff1d(items_sample, user_df[col_item])
-        new_items = rng.choice(
-            eligible_items, min(neg_sample_size, len(eligible_items)), replace=False
-        )
+        new_items = items_sample[~np.isin(items_sample, user_df[col_item])][
+            :neg_sample_size
+        ]
         new_df = pd.DataFrame(
             data={
                 col_user: user_df.name,

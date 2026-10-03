@@ -125,35 +125,19 @@ def test_negative_feedback_sampler():
     assert set(sample_df["test_feedback"].unique()) == set([2.4, 0.2])
 
 
-def test_negative_feedback_sampler_does_not_bias_toward_low_item_ids():
-    # User 1 already has items 0-4; user 2 covers the rest of a 50-item catalog,
-    # so user 1 has plenty of eligible negatives spread across the full range.
-    other_items = list(range(5, 50))
+@pytest.mark.parametrize("seed", [0, 1, 2])
+def test_negative_feedback_sampler_does_not_bias_toward_low_item_ids(seed):
     df = pd.DataFrame(
-        data={
-            "userID": [1, 1, 1, 1, 1] + [2] * len(other_items),
-            "itemID": [0, 1, 2, 3, 4] + other_items,
+        {
+            "userID": [0] * 45 + [u for u in range(1, 101) for _ in range(5)],
+            "itemID": list(range(5, 50)) + list(range(5)) * 100,
         }
     )
-
     sample_df = negative_feedback_sampler(
-        df, col_user="userID", col_item="itemID", ratio_neg_per_user=1, seed=1
+        df, col_user="userID", col_item="itemID", ratio_neg_per_user=1, seed=seed
     )
-    user1_negatives = sorted(
-        sample_df[(sample_df.userID == 1) & (sample_df.feedback == 0)][
-            "itemID"
-        ].tolist()
-    )
-
-    # With seed=1, the 10-item candidate draw for user 1 is
-    # [15, 19, 38, 1, 45, 21, 6, 32, 41, 12]. Removing the overlap with the
-    # user's own items (1) leaves [6, 12, 15, 19, 21, 32, 38, 41, 45] eligible.
-    # np.setdiff1d sorts its output, so slicing the first 5 of it always picks
-    # the 5 smallest eligible items ([6, 12, 15, 19, 21]) instead of a random
-    # subset of the 9. A correct sample should reach outside that bottom
-    # slice.
-    assert user1_negatives == [6, 21, 32, 38, 41]
-    assert max(user1_negatives) > 21
+    negatives = sample_df[(sample_df.userID > 0) & (sample_df.feedback == 0)]
+    assert negatives["itemID"].mean() > 22
 
 
 def test_filter_by():
