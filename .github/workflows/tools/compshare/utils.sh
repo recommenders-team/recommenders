@@ -244,7 +244,7 @@ allocate_vm() {
     #   + {"GPUType":["2080","P40"],"ChargeType":"Spot"}
     #     - It means the GPUType should be 2080 or P40,
     #       ChargeType should be Spot.
-    # * a JSON object of input variables such as Zone and GpuType
+    # * a JSON object of specified arguments such as Zone and GpuType
     #   + For example,
     #
     #     {
@@ -268,7 +268,7 @@ allocate_vm() {
     local config_yml="${1:-}"
     local vm_name="${2:-}"
     local requirements="${3:-}"
-    local input_vars="${4:-}"
+    local specified_args="${4:-}"
 
     [[ -z ${vm_name} \
       || -z ${requirements} \
@@ -279,7 +279,7 @@ allocate_vm() {
     local compute_list
     readarray -t compute_list < \
         <(get_available_required_computes \
-            "${config_yml}" "${input_vars}")
+            "${config_yml}" "${specified_args}")
 
     local compute_index
     for compute_index in "${!compute_list[@]}"; do
@@ -351,7 +351,7 @@ get_available_required_computes() {
     #
     # Params:
     # * path to config.yml
-    # * a JSON object of input variables.
+    # * a JSON object of specified arguments.
     #   + For example,
     #
     #     {
@@ -368,14 +368,14 @@ get_available_required_computes() {
     #         ]
     #     }
     local config_yml="${1:-}"
-    local input_vars="${2:-}"
+    local specified_args="${2:-}"
     local compute_list='[]'
 
     echo '* Getting available zones ...' >&2
     local zone_list
     readarray -t zone_list < \
         <(get_available_required_zones \
-            "${config_yml}" "${input_vars}")
+            "${config_yml}" "${specified_args}")
 
     local zone_index
     for zone_index in "${!zone_list[@]}"; do
@@ -385,7 +385,7 @@ get_available_required_computes() {
         local gpu_list
         readarray -t gpu_list < \
             <(get_available_required_gpu_types \
-                "${config_yml}" "${zone}" "${input_vars}")
+                "${config_yml}" "${zone}" "${specified_args}")
 
         local gpu_index
         for gpu_index in "${!gpu_list[@]}"; do
@@ -400,7 +400,7 @@ get_available_required_computes() {
             local spec_list
             readarray -t spec_list < \
                 <(get_available_required_gpu_specs \
-                    "${config_yml}" "${gpu}" "${input_vars}")
+                    "${config_yml}" "${gpu}" "${specified_args}")
 
             local spec_index
             for spec_index in "${!spec_list[@]}"; do
@@ -434,7 +434,7 @@ get_available_required_gpu_specs() {
     # * Arguments for querying the API
     #   + For example,
     #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
-    # * a JSON object of input variables that may specified the
+    # * a JSON object of arguments that may specified the
     #   the required charge types.
     #   + For example,
     #
@@ -453,14 +453,14 @@ get_available_required_gpu_specs() {
     #     }
     local config_yml="${1:-}"
     local args="${2:-}"
-    local input_vars="${3:-}"
+    local specified_args="${3:-}"
 
     [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     # Get the available required charge types.
     local charge_type_list='["Spot", "Postpay"]'
     charge_type_list="$(get_available_required_items \
-        "${charge_type_list}" "${input_vars}" 'ChargeType')"
+        "${charge_type_list}" "${specified_args}" 'ChargeType')"
     readarray -t charge_type_list < \
         <(jq -c '.[] | {"ChargeType": .}' <<< "${charge_type_list}")
 
@@ -496,7 +496,7 @@ get_available_required_gpu_types() {
     # * path to config.yml
     # * Arguments for querying the API
     #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
-    # * a JSON object of input variables that may specifiy the
+    # * a JSON object of arguments that may specifiy the
     #   required GPU Types.
     #   + For example,
     #
@@ -516,7 +516,7 @@ get_available_required_gpu_types() {
     #
     local config_yml="${1:-}"
     local args="${2:-}"
-    local input_vars="${3:-}"
+    local specified_args="${3:-}"
 
     [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
 
@@ -536,7 +536,7 @@ get_available_required_gpu_types() {
 
     # Get the available required GPU types.
     gpu_list="$(get_available_required_items \
-        "${gpu_list}" "${input_vars}" 'GpuType')"
+        "${gpu_list}" "${specified_args}" 'GpuType')"
 
     jq -c --argjson args "${args}" \
         --argjson gpu_list "${gpu_list}" \
@@ -578,7 +578,7 @@ get_available_required_zones() {
     #
     # Params:
     # * path to config.yml
-    # * a JSON object of input variables that may specifiy the
+    # * a JSON object of arguments that may specifiy the
     #   required zones.
     #   + For example,
     #
@@ -596,7 +596,7 @@ get_available_required_zones() {
     #         ]
     #     }
     local config_yml="${1:-}"
-    local input_vars="${2:-}"
+    local specified_args="${2:-}"
 
     # Get the list of available zones in the format like
     #
@@ -610,7 +610,7 @@ get_available_required_zones() {
     
     # Get the available required zones.
     zone_list="$(get_available_required_items \
-        "${zone_list}" "${input_vars}" 'Zone')"
+        "${zone_list}" "${specified_args}" 'Zone')"
 
     jq -c '.[]
         | {"Zone": ., "Region": (. | capture("(?<r>.*)-[^-]+").r)}' \

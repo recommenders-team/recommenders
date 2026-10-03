@@ -49,9 +49,10 @@
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required when using AliCloud)
 #
 # The following environment variables may need to be set:
-# * CLOUD_SERVICE_INPUT_VARS
-#   + It contains the possible values of the input variables for
-#     creating the VM, in the JSON format like the following:
+# * CLOUD_SERVICE_SPECIFIED_ARGS
+#   + It specifies the required values of arguments for the input
+#     variables when creating the VM, in the JSON format like the
+#     following:
 #
 #     {
 #         "cpu": {
@@ -141,17 +142,18 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 echo 'Creating a VM ...'
 terraform -chdir="${tf_config_dir}" init
 
-cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
+cloud_service_specified_args="${CLOUD_SERVICE_SPECIFIED_ARGS:-}"
 if [[ ${test_group} == *gpu* ]]; then
-    input_vars="$(jq '.gpu // empty' \
-        <<< "${cloud_service_input_vars}")"
+    specified_args="$(jq '.gpu // empty' \
+        <<< "${cloud_service_specified_args}")"
 else
-    input_vars="$(jq '.cpu // empty' \
-        <<< "${cloud_service_input_vars}")"
+    specified_args="$(jq '.cpu // empty' \
+        <<< "${cloud_service_specified_args}")"
 fi
-input_vars="${input_vars:-$cloud_service_input_vars}"
+specified_args="${specified_args:-$cloud_service_specified_args}"
 
-apply_tf_config "${unique_name}" "${tf_config_dir}" "${input_vars}"
+apply_tf_config "${unique_name}" "${tf_config_dir}" \
+    "${specified_args}"
 
 unset "${secret_key_name}"
 

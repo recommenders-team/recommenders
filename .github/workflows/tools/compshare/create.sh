@@ -49,8 +49,8 @@
 #     - COMPSHARE_PUBLIC_KEY (required)
 #
 # The following environment variables may need to be set:
-# * CLOUD_SERVICE_INPUT_VARS
-#   + It contains the possible values of the input variables for
+# * CLOUD_SERVICE_SPECIFIED_ARGS
+#   + It specifies the required values of arguments for
 #     creating the VM, in the JSON format like the following:
 #
 #     {
@@ -141,18 +141,18 @@ if [[ -z ${requirements} ]]; then
     fi
 fi
 
-cloud_service_input_vars="${CLOUD_SERVICE_INPUT_VARS:-}"
+cloud_service_specified_args="${CLOUD_SERVICE_SPECIFIED_ARGS:-}"
 if [[ ${test_group} == *gpu* ]]; then
-    input_vars="$(jq '.gpu // empty' \
-        <<< "${cloud_service_input_vars}")"
+    specified_args="$(jq '.gpu // empty' \
+        <<< "${cloud_service_specified_args}")"
 else
-    input_vars="$(jq '.cpu // empty' \
-        <<< "${cloud_service_input_vars}")"
+    specified_args="$(jq '.cpu // empty' \
+        <<< "${cloud_service_specified_args}")"
 fi
-input_vars="${input_vars:-$cloud_service_input_vars}"
+specified_args="${specified_args:-$cloud_service_specified_args}"
 
 allocate_vm "${config_yml}" "${unique_name}" "${requirements}" \
-    "${input_vars}"
+    "${specified_args}"
 
 echo "Getting info of the VM ..."
 vm_info="$(get_vm_info "${config_yml}" "${unique_name}")"

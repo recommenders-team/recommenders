@@ -49,14 +49,14 @@ apply_tf_config() {
     local unique_name="${1:-}"
     local tf_config_dir="${2:-./}"
     tf_config_dir="$(realpath "${tf_config_dir}")"
-    local input_vars="${3:-}"
+    local specified_args="${3:-}"
 
     [[ -z ${unique_name} ]] \
         && { echo 'No name specified!' >&2; return 1; }
 
     local combination_list
     readarray -t combination_list < \
-        <(get_input_var_combinations "${input_vars}")
+        <(get_input_var_combinations "${specified_args}")
 
     trap "store_tfstate_tfvars '${tf_config_dir}'; \
         trap - EXIT RETURN" EXIT RETURN
@@ -173,7 +173,7 @@ get_input_var_combinations() {
     #     {"instance_type_family":"ecs.gn6i","region":"ap-northeast-1"}
     #     {"instance_type_family":"ecs.gn6i","region":"eu-central-1"}
     #     {"instance_type_family":"ecs.gn6i","region":"ap-southeast-1"}
-    local input_vars="${1:-}"
+    local specified_args="${1:-}"
     local combination_list
     combination_list="$(jq -c '
         to_entries
@@ -184,7 +184,7 @@ get_input_var_combinations() {
                 | $cur_var.value[] as $cur_var_val
                 | $combination + {($cur_var.key): $cur_var_val}
             ])
-        | .[]' <<< "${input_vars}")" \
+        | .[]' <<< "${specified_args}")" \
         || { echo 'Incorrect input variables!' >&2; exit 1; }
     echo "${combination_list}"
 }
