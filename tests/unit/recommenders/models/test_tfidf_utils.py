@@ -120,12 +120,6 @@ def test_get_top_k_recommendations(model_fit, df_clean):
 
 
 def test_recommend_top_k_items_excludes_self_on_tied_similarity():
-    # Regression test: when two items have identical text, their cosine
-    # similarity to each other ties with their self-similarity (both 1.0).
-    # recommend_top_k_items used to assume the item itself was always first
-    # in the similarity-sorted list and dropped only that first entry, so a
-    # tied duplicate could be dropped instead and the item would recommend
-    # itself.
     df_clean = pd.DataFrame(
         {
             "itemID": ["A", "B", "C", "D"],
