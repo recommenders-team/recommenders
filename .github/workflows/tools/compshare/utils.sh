@@ -267,10 +267,9 @@ create_instance() {
     # See https://www.compshare.cn/docs/gpus/instance/createcompshareinstance
     #
     # Params:
-    # * VM name
-    # * file containing the base64-encoded login password
     # * a JSON object containing the parameters for the API with the
     #   following keys required:
+    #   + VM name
     #   + GPU type, such as P40, 3090
     #   + number of GPUs
     #   + CPU cores
@@ -289,12 +288,12 @@ create_instance() {
     #   }
     #
     # Params:
-    local vm_name="${1:-}"
-    local params="${2:-}"
+    local params="${1:-}"
 
     [[ -z ${params} ]] \
       || jq -e '
-          has("GpuType")
+          has("Name")
+          and has("GpuType")
           and has("Gpu")
           and has("Cpu")
           and has("Memory")
@@ -305,14 +304,13 @@ create_instance() {
 
     params="$(add_region "${params}")"
 
-    local action_spec="{
-        \"Action\": \"CreateCompShareInstance\",
-        \"Disks.0.IsBoot\": true,
-        \"Disks.0.Size\": 100,
-        \"Disks.0.Type\": \"CLOUD_SSD\",
-        \"Name\": \"${vm_name}\",
-        \"Quantity\": 1
-    }"
+    local action_spec='{
+        "Action": "CreateCompShareInstance",
+        "Disks.0.IsBoot": true,
+        "Disks.0.Size": 100,
+        "Disks.0.Type": "CLOUD_SSD",
+        "Quantity": 1
+    }'
     action_spec="$(update_json "${action_spec}" "${params}")"
     
     local response
@@ -617,7 +615,6 @@ allocate_vm() {
     #
     # Params:
     # * VM name
-    # * file containing the base64-encoded login password
     # * requirements in JSON, for example
     #   + {"GPUType":"!2080,P40","Memory":10240,"GraphicsMemory":10240}
     #     - It means the GPUType should not be 2080 and P40,
@@ -676,8 +673,10 @@ allocate_vm() {
             fi
         fi
 
-        api_call_retry 1 create_instance "${vm_name}" "${compute}" \
-            > /dev/null && return
+        vm_name="{\"Name\": \"${vm_name}\"}"
+        compute="$(update_json "${compute}" "${vm_name}")"
+        api_call_retry 1 create_instance "${compute}" > /dev/null \
+            && return
     done
     echo 'No available required resources!' >&2
     return 1
