@@ -343,7 +343,9 @@ def negative_feedback_sampler(
         # instead of items, which is more efficient when len(items) is large.
         sample_size = min(n_u + neg_sample_size, len(items))
         items_sample = rng.choice(items, sample_size, replace=False)
-        new_items = np.setdiff1d(items_sample, user_df[col_item])[:neg_sample_size]
+        new_items = items_sample[~np.isin(items_sample, user_df[col_item])][
+            :neg_sample_size
+        ]
         new_df = pd.DataFrame(
             data={
                 col_user: user_df.name,
