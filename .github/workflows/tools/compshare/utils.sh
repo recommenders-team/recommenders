@@ -22,27 +22,27 @@ source "${script_dir}/../utils.sh"
 # Utils used by other CompShare API wrappers and utils
 #---------------------------------------------------------------------
 add_region() {
-    # Extract the region from the zone in params.
+    # Extract the region from the zone in the arguments.
     #
     # Params:
-    # * a JSON object containing the parameters for the API with the
+    # * a JSON object containing the arguments for the API with the
     #   following keys required:
     #   + Zone
-    local params="${1:-}"
+    local args="${1:-}"
 
-    [[ -z ${params} ]] \
+    [[ -z ${args} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     if jq -e 'has("Zone")
         and ((has("Region") and (.Region | not))
-            or (has("Region") | not))' <<< "${params}" > /dev/null
+            or (has("Region") | not))' <<< "${args}" > /dev/null
     then
         local zone
-        zone="$(jq -r '.Zone' <<< "${params}")"
+        zone="$(jq -r '.Zone' <<< "${args}")"
         local region="{\"Region\": \"${zone%-*}\"}"
-        params="$(update_json "${params}" "${region}")"
+        args="$(update_json "${args}" "${region}")"
     fi
-    echo "${params}"
+    echo "${args}"
 }
 
 check_vm_requirement() {
@@ -114,7 +114,7 @@ check_vm_requirement() {
 }
 
 gen_action_digest() {
-    # Generate the digest for the action requrest parameters
+    # Generate the digest for the action requrest arguments
     # See https://docs.ucloud.cn/api/summary/signature
     # 
     # Params:
@@ -149,7 +149,7 @@ gen_action_digest() {
 
 gen_request_url() {
     # Generate the API request URL using the action specification and
-    # the parameter digest
+    # the argument digest
     #
     # Params:
     # * API action specification in JSON
@@ -164,12 +164,12 @@ gen_request_url() {
 
     local digest
     digest="$(gen_action_digest "${action_spec}")"
-    local params
-    params="$(jq -r '
+    local args
+    args="$(jq -r '
         to_entries
         | map("\(.key)=\(.value | @uri)")
         | join("&")' <<< "${action_spec}")"
-    echo "https://api.compshare.cn/?${params}&Signature=${digest}"
+    echo "https://api.compshare.cn/?${args}&Signature=${digest}"
 }
 
 invoke_action() {
@@ -177,11 +177,11 @@ invoke_action() {
     #
     # Params:
     # * action
-    # * a JSON object containing the parameters for the action API
+    # * a JSON object containing the arguments for the action API
     # * the config.yml file containing the action specification
     local config_yml="${1:-}"
     local action="${2:-}"
-    local parameters="${3:-{\}}"
+    local arguments="${3:-{\}}"
 
     [[ -z ${action} \
       || ! -f ${config_yml} ]] \
@@ -192,8 +192,8 @@ invoke_action() {
         | jq -c ".action_specs.${action}")"
 
     action="{\"Action\": \"${action}\"}"
-    parameters="$(update_json "${parameters}" "${action}")"
-    parameters="$(add_region "${parameters}")"
+    arguments="$(update_json "${arguments}" "${action}")"
+    arguments="$(add_region "${arguments}")"
 
     local required_params
     readarray -t required_params < \
@@ -202,17 +202,17 @@ invoke_action() {
             | map(.key)
             | .[]' <<< "${action_spec}")
 
-    local param_index
-    for param_index in "${!required_params[@]}"; do
-        local param="${required_params[${param_index}]}"
-        if jq -e "has(\"${param}\") | not" <<< "${parameters}" \
+    local index
+    for index in "${!required_params[@]}"; do
+        local param="${required_params[${index}]}"
+        if jq -e "has(\"${param}\") | not" <<< "${arguments}" \
             > /dev/null; then
             echo "Parameter '${param}' missing!" >&2
             return 1
         fi
     done
 
-    action_spec="$(update_json "${action_spec}" "${parameters}")"
+    action_spec="$(update_json "${action_spec}" "${arguments}")"
     
     local request_url
     request_url="$(gen_request_url "${action_spec}")"
@@ -431,7 +431,7 @@ get_available_required_gpu_specs() {
     #
     # Params:
     # * path to config_yml
-    # * parameters for querying the API
+    # * Arguments for querying the API
     #   + For example,
     #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
     # * a JSON object of input variables that may specified the
@@ -452,10 +452,10 @@ get_available_required_gpu_specs() {
     #         ]
     #     }
     local config_yml="${1:-}"
-    local params="${2:-}"
+    local args="${2:-}"
     local input_vars="${3:-}"
 
-    [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     # Get the available required charge types.
     local charge_type_list='["Spot", "Postpay"]'
@@ -466,19 +466,19 @@ get_available_required_gpu_specs() {
 
     local index
     for index in "${!charge_type_list[@]}"; do
-        # Add charge type to params
+        # Add charge type to args
         local charge_type="${charge_type_list[${index}]}"
-        params="$(update_json "${params}" "${charge_type}")"
+        args="$(update_json "${args}" "${charge_type}")"
 
         # Get the list of instance types with enough resources. 
         local spec_list
         spec_list="$(api_call_retry invoke_action "${config_yml}" \
-            'CheckCompShareResourceCapacity' "${params}")"
+            'CheckCompShareResourceCapacity' "${args}")"
         jq -c --argjson chargetype "${charge_type}" \
-            --argjson params "${params}" \
+            --argjson args "${args}" \
             '.Specs[]
             | select(.ResourceEnough and .Gpu == 1)
-            | $chargetype + $params
+            | $chargetype + $args
               + {Cpu, Gpu, "Memory": (.Mem * 1024)}' \
             <<< "${spec_list}"
     done
@@ -494,7 +494,7 @@ get_available_required_gpu_types() {
     #
     # Params:
     # * path to config.yml
-    # * parameters for querying the API
+    # * Arguments for querying the API
     #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     # * a JSON object of input variables that may specifiy the
     #   required GPU Types.
@@ -515,17 +515,17 @@ get_available_required_gpu_types() {
     #     }
     #
     local config_yml="${1:-}"
-    local params="${2:-}"
+    local args="${2:-}"
     local input_vars="${3:-}"
 
-    [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     # Get the list of available GPU types in the format like
     #
     #   ["3080","4090","5090"]
     local gpu_types
     gpu_types="$(api_call_retry invoke_action "${config_yml}" \
-        'DescribeAvailableCompShareInstanceTypes' "${params}")"
+        'DescribeAvailableCompShareInstanceTypes' "${args}")"
     gpu_types="$(jq -c '[.AvailableInstanceTypes[]
         | select(.Status == "Normal")
         | {"GpuType": .Name,
@@ -538,35 +538,35 @@ get_available_required_gpu_types() {
     gpu_list="$(get_available_required_items \
         "${gpu_list}" "${input_vars}" 'GpuType')"
 
-    jq -c --argjson params "${params}" \
+    jq -c --argjson args "${args}" \
         --argjson gpu_list "${gpu_list}" \
         'map(select([.GpuType] - $gpu_list | length | . == 0))
         | .[]
-        | . + $params' <<< "${gpu_types}"
+        | . + $args' <<< "${gpu_types}"
 }
 
 get_gpu_spec_price() {
-    # Returns the price of the GPU specified in the parameter in the
+    # Returns the price of the GPU specified in the argument in the
     # following format:
     #
     #   {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024,"Price":1.30}
     #
     # Params:
     # * path to config_yml
-    # * parameters for querying the API
+    # * Arguments for querying the API
     #   + For example,
     #     {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
     local config_yml="${1:-}"
-    local params="${2:-}"
+    local args="${2:-}"
 
-    [[ -z ${params} ]] && { echo 'Parameter error!' >&2; return 1; }
+    [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
 
     local price
     price="$(api_call_retry invoke_action "${config_yml}" \
-        'GetCompShareInstancePrice' "${params}")"
-    jq -c --argjson params "${params}" \
+        'GetCompShareInstancePrice' "${args}")"
+    jq -c --argjson args "${args}" \
         '.PriceDetails[0]
-        | $params + {"Price": .Instance}' \
+        | $args + {"Price": .Instance}' \
         <<< "${price}"
 }
 
