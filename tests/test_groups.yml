@@ -342,6 +342,8 @@ pr_gate:
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_ndcg_at_k                                                              #    2.36s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_recall_at_k                                                            #    1.16s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_precision_at_k                                                         #    2.86s
+    - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_r_precision
+    - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_r_precision_zero_hits_and_custom_columns
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_map_at_k                                                               #    1.58s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_map                                                                    #    1.45s
     - tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_rmse                                                                   #    1.40s
