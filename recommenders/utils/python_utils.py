@@ -5,7 +5,6 @@ import logging
 import numpy as np
 from scipy import sparse
 
-
 logger = logging.getLogger()
 
 
@@ -181,7 +180,7 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
 
     Args:
         scores (numpy.ndarray): Score matrix (users x items).
-        top_k (int): Number of top items to recommend.
+        top_k (int): Number of top items to recommend. Must be at least 1.
         sort_top_k (bool): Flag to sort top k results.
 
     Returns:
@@ -189,7 +188,13 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
         - Indices into score matrix for each user's top items.
         - Scores corresponding to top items.
 
+    Raises:
+        ValueError: If top_k is less than 1.
+
     """
+
+    if top_k < 1:
+        raise ValueError(f"top_k must be at least 1, got {top_k}")
 
     # ensure we're working with a dense ndarray
     if isinstance(scores, sparse.spmatrix):
@@ -200,10 +205,6 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
             "Number of items is less than top_k, limiting top_k to number of items"
         )
     k = min(top_k, scores.shape[1])
-    if k == 0:
-        return np.empty((scores.shape[0], 0), dtype=np.intp), np.empty(
-            (scores.shape[0], 0), dtype=scores.dtype
-        )
 
     test_user_idx = np.arange(scores.shape[0])[:, None]
 
