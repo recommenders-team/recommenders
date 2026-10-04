@@ -43,9 +43,13 @@ script_path="$(realpath -- "${BASH_SOURCE[0]}")"
 script_dir="$(dirname -- "${script_path}")"
 
 ssh_dest="${1:-}"
-
 cloud_service="${CLOUD_SERVICE:-}"
+
+[[ -z ${cloud_service} ]] && { echo 'Parameter error!' >&2; exit 1; }
+
 cloud_service="${cloud_service@L}"
+cloud_service_envs="$(jq ".${cloud_service} // empty" \
+    <<< "${CLOUD_SERVICE_ENVS:-}")"
 utils_sh="${script_dir}/utils.sh"
 
 # Setup scripts for configuring network,
@@ -87,7 +91,7 @@ if [[ -n ${ssh_dest} ]]; then
             -o UserKnownHostsFile=/dev/null \
             "${ssh_dest}" "\
                 export CLOUD_SERVICE='${cloud_service}'; \
-                $(get_env_exports "${CLOUD_SERVICE_ENVS:-}") \
+                $(get_env_exports "${cloud_service_envs}") \
                 bash ./${script}"
     done
 

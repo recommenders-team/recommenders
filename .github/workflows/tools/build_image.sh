@@ -52,20 +52,24 @@ dockerfile="${4:-}"
 test_group="${5:-}"
 python_version="${6:-}"
 venv_dir="${7:-}"
+cloud_service="${CLOUD_SERVICE:-}"
 
 [[ -z ${unique_name} \
   || -z ${repo_dir} \
   || -z ${dockerfile} \
   || -z ${test_group} \
   || -z ${python_version} \
-  || -z ${venv_dir} ]] && { echo 'Parameter error!' >&2; exit 1; }
+  || -z ${venv_dir} \
+  || -z ${cloud_service} ]] && { echo 'Parameter error!' >&2; exit 1; }
 
-cloud_service="${CLOUD_SERVICE:-}"
 cloud_service="${cloud_service@L}"
+cloud_service_envs="$(jq ".${cloud_service} // empty" \
+    <<< "${CLOUD_SERVICE_ENVS:-}")"
 config_yml="${script_dir}/${cloud_service}/config.yml"
 image_tag="${unique_name}"
 repo_vm_dir_name="${unique_name}"
 utils_sh="${script_dir}/utils.sh"
+
 
 repo_dir_abs_path="$(realpath "${repo_dir}")"
 dockerfile_abs_path="$(realpath "${dockerfile}")"
@@ -103,7 +107,7 @@ echo 'Importing utility functions ...'
 source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
-eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
+eval "$(get_env_exports "${cloud_service_envs}")"
 
 echo 'Generating extra Docker build args ...'
 if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then

@@ -40,14 +40,16 @@ shopt -s inherit_errexit
 script_path="$(realpath -- "${BASH_SOURCE[0]}")"
 script_dir="$(dirname -- "${script_path}")"
 unique_name="${1:-}"
+cloud_service="${CLOUD_SERVICE:-}"
 
 [[ -z ${unique_name} ]] && exit 0
 
-[[ -z ${CLOUD_SERVICE:-} ]] \
+[[ -z ${cloud_service} ]] \
     && echo 'CLOUD_SERVICE not set!' >&2 && exit 1
 
-cloud_service="${CLOUD_SERVICE}"
 cloud_service="${cloud_service@L}"
+cloud_service_envs="$(jq ".${cloud_service} // empty" \
+    <<< "${CLOUD_SERVICE_ENVS:-}")"
 config_dir="${script_dir}/${cloud_service}"
 config_yml="${config_dir}/config.yml"
 tf_config_dir="${config_dir}/tf"
@@ -61,7 +63,7 @@ source "${utils_sh}"
 echo 'Exporting environment variables ...'
 secret_key_name="$(yq '.secret_key_name' < "${config_yml}")"
 export "${secret_key_name}"="${CLOUD_SERVICE_SECRET}"
-eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
+eval "$(get_env_exports "${cloud_service_envs}")"
 
 
 #--------------------------------------------------------------------

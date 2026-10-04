@@ -32,13 +32,18 @@ test_groups_yml="${3:-}"
 test_type="${4:-}"
 test_group="${5:-}"
 venv_dir="${6:-}"
+cloud_service="${CLOUD_SERVICE:-}"
 
 [[ -z ${image_tag} \
   || -z ${test_groups_yml} \
   || -z ${test_type} \
   || -z ${test_group} \
-  || -z ${venv_dir} ]] && { echo 'Parameter error!' >&2; exit 1; }
+  || -z ${venv_dir} \
+  || -z ${cloud_service} ]] && { echo 'Parameter error!' >&2; exit 1; }
 
+cloud_service="${cloud_service@L}"
+cloud_service_envs="$(jq ".${cloud_service} // empty" \
+    <<< "${CLOUD_SERVICE_ENVS:-}")"
 utils_sh="${script_dir}/utils.sh"
 
 
@@ -62,7 +67,7 @@ echo 'Importing utility functions ...'
 source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
-eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
+eval "$(get_env_exports "${cloud_service_envs}")"
 
 
 echo 'Generating Docker run args ...'

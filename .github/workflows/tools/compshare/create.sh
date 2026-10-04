@@ -91,15 +91,19 @@ unique_name="${1:-}"
 test_type="${2:-}"
 test_group="{3:-}"
 requirements="${4:-}"
+cloud_service="${CLOUD_SERVICE:-}"
 
 [[ -z ${unique_name} \
   || -z ${test_type} \
   || -z ${test_group} \
-  || -z ${CLOUD_SERVICE:-} ]] \
+  || -z ${cloud_service} ]] \
     && { echo 'Parameter error!' >&2; exit 1; }
 
-cloud_service="${CLOUD_SERVICE}"
 cloud_service="${cloud_service@L}"
+cloud_service_args="$(jq ".${cloud_service} // empty" \
+    <<< "${CLOUD_SERVICE_ARGS:-}")"
+cloud_service_envs="$(jq ".${cloud_service} // empty" \
+    <<< "${CLOUD_SERVICE_ENVS:-}")"
 config_dir="${script_dir}/${cloud_service}"
 config_yml="${config_dir}/config.yml"
 utils_sh="${script_dir}/utils.sh"
@@ -112,7 +116,7 @@ source "${utils_sh}"
 echo 'Exporting environment variables ...'
 secret_key_name="$(yq '.secret_key_name' < "${config_yml}")"
 export "${secret_key_name}"="${CLOUD_SERVICE_SECRET}"
-eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
+eval "$(get_env_exports "${cloud_service_envs}")"
 
 
 #--------------------------------------------------------------------
@@ -141,7 +145,6 @@ if [[ -z ${requirements} ]]; then
     fi
 fi
 
-cloud_service_args="${CLOUD_SERVICE_ARGS:-}"
 if [[ ${test_group} == *gpu* ]]; then
     specified_args="$(jq '.gpu // empty' \
         <<< "${cloud_service_args}")"

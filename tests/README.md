@@ -125,8 +125,8 @@ These workflows are controlled and configured by:
     secrets](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
     - `CLOUD_SERVICE_SECRET`: access or private key to access the
       selected cloud service.
-    - `ENCRYPT_PASSPHRASE`: passphrase for general purpose data
-      encryption.
+    - `ENCRYPT_PASSPHRASE`: an arbitrary passphrase, which can simply
+      be '123', for general purpose data encryption.
 
 **NOTE**: The testing workflows are triggered by the
 [`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target)
@@ -439,12 +439,19 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
 
    ```json
    {
-       "COMPSHARE_PUBLIC_KEY": "4eZDWALVcX98NZMdRMC6xXFgwDWRTpLA3",
-       "VM_DOCKER_MIRROR_URL": "http://10.60.204.164:5000",
-       "VM_HTTP_PROXY": "http://10.60.204.164:3128",
-       "VM_HTTPS_PROXY": "http://10.60.204.164:4128",
-       "VM_PIP_INDEX_URL": "http://10.60.204.164:3141/root/pypi",
-       "VM_PROXY_CERTIFICATE": "-----BEGIN CERTIFICATE-----\nMII...XMo\n-----END CERTIFICATE-----"
+       ...
+       "alicloud": {
+           ...
+       },
+       "compshare": {
+           "COMPSHARE_PUBLIC_KEY": "4eZDWALVcX98NZMdRMC6xXFgwDWRTpLA3",
+           "VM_DOCKER_MIRROR_URL": "http://10.60.204.164:5000",
+           "VM_HTTP_PROXY": "http://10.60.204.164:3128",
+           "VM_HTTPS_PROXY": "http://10.60.204.164:4128",
+           "VM_PIP_INDEX_URL": "http://10.60.204.164:3141/root/pypi",
+           "VM_PROXY_CERTIFICATE": "-----BEGIN CERTIFICATE-----\nMII...XMo\n-----END CERTIFICATE-----"
+       },
+       ...
    }
    ```
 
@@ -473,21 +480,28 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
    
    ```json
    {
-       "GpuType": [
-           "3080Ti",
-           "3090",
-           "4090",
-           "5090",
-           "4090_48G"
-       ],
-       "Zone": [
-           "cn-wlcb-01",
-           "cn-sh2-02"
-       ],
-       "ChargeType": [
-           "Postpay",
-           "Spot"
-       ]
+       ...
+       "alicloud": {
+           ...
+       },
+       "compshare": {
+           "GpuType": [
+               "3080Ti",
+               "3090",
+               "4090",
+               "5090",
+               "4090_48G"
+           ],
+           "Zone": [
+               "cn-wlcb-01",
+               "cn-sh2-02"
+           ],
+           "ChargeType": [
+               "Postpay",
+               "Spot"
+           ]
+       },
+       ...
    }
    ```
    
@@ -560,7 +574,14 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 
    ```json
    {
-       "ALIBABA_CLOUD_ACCESS_KEY_ID": "LTAI5t7r7gbhcPwzzuFc3SPy"
+       ...
+       "alicloud": {
+           "ALIBABA_CLOUD_ACCESS_KEY_ID": "LTAI5t7r7gbhcPwzzuFc3SPy"
+       },
+       "compshare": {
+           ...
+       },
+       ...
    }
    ```
 
@@ -595,30 +616,37 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 
    ```json
    {
-       "cpu": {
-           "instance_type_family": [ "ecs.e" ],
-           "region": [
-               "ap-southeast-5",
-               "ap-northeast-1",
-               "eu-central-1",
-               "ap-southeast-1",
-               "us-east-1"
-           ]
+       ...
+       "alicloud": {
+           "cpu": {
+               "instance_type_family": [ "ecs.e" ],
+               "region": [
+                   "ap-southeast-5",
+                   "ap-northeast-1",
+                   "eu-central-1",
+                   "ap-southeast-1",
+                   "us-east-1"
+               ]
+           },
+           "gpu": {
+               "instance_type_family": [
+                   "ecs.gn8is",
+                   "ecs.gn7i",
+                   "ecs.gn6i"
+               ],
+               "region": [
+                   "ap-southeast-5",
+                   "ap-northeast-1",
+                   "eu-central-1",
+                   "ap-southeast-1",
+                   "us-east-1"
+               ]
+           }
        },
-       "gpu": {
-           "instance_type_family": [
-               "ecs.gn8is",
-               "ecs.gn7i",
-               "ecs.gn6i"
-           ],
-           "region": [
-               "ap-southeast-5",
-               "ap-northeast-1",
-               "eu-central-1",
-               "ap-southeast-1",
-               "us-east-1"
-           ]
-       }
+       "compshare": {
+           ...
+       },
+       ...
    }
    ```
 
