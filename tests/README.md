@@ -119,7 +119,7 @@ These workflows are controlled and configured by:
         runners](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners).
     - `CLOUD_SERVICE_ENVS`: a set of environment variables to
       configure the selected cloud service.
-    - `CLOUD_SERVICE_SPECIFIED_ARGS`: a set of required values for the
+    - `CLOUD_SERVICE_ARGS`: a set of required values for the
       specified arguments during VM creation, such compute type, region.
   + [Repository
     secrets](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
@@ -469,7 +469,7 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
 1. (*Optional Step*) Specify the required values for allocating the machine via the
    [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE_SPECIFIED_ARGS` in JSON.  For example:
+   `CLOUD_SERVICE_ARGS` in JSON.  For example:
    
    ```json
    {
@@ -493,7 +493,7 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
    
    More details can be found at
    * [`.github/workflows/tools/compshare/create.sh`](../.github/workflows/tools/compshare/create.sh)
-     for how to set `CLOUD_SERVICE_SPECIFIED_ARGS`.
+     for how to set `CLOUD_SERVICE_ARGS`.
 1. Assign `compshare` to the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
@@ -591,7 +591,7 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 1. Set the possible values of input vairables for the Terraform
    configurations via the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
-   `CLOUD_SERVICE_SPECIFIED_ARGS` in JSON.  For example:
+   `CLOUD_SERVICE_ARGS` in JSON.  For example:
 
    ```json
    {
@@ -624,7 +624,7 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
 
    More details can be found at
    * [`.github/workflows/tools/create.sh`](../.github/workflows/tools/create.sh)
-     for how to set `CLOUD_SERVICE_SPECIFIED_ARGS`,
+     for how to set `CLOUD_SERVICE_ARGS`,
    * [`.github/workflows/tools/alicloud/tf/variables.tf`](../.github/workflows/tools/alicloud/tf/variables.tf)
      for what input variables to set.
 1. Assign `alicloud` to the [repository
@@ -743,7 +743,7 @@ directory under
     - It contains the insensitive settings in JSON that are dynamic
       but not changed very often, such as the public key, access key
       ID, mirror URLs.
-  + `CLOUD_SERVICE_SPECIFIED_ARGS`
+  + `CLOUD_SERVICE_ARGS`
     - It provides the values for the Terraform input variables, such
       as compute types and regions of the VMs to create, because those
       values are changed very often depending on the costs and the

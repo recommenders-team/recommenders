@@ -49,7 +49,7 @@
 #     - COMPSHARE_PUBLIC_KEY (required)
 #
 # The following environment variables may need to be set:
-# * CLOUD_SERVICE_SPECIFIED_ARGS
+# * CLOUD_SERVICE_ARGS
 #   + It specifies the required values of arguments for
 #     creating the VM, in the JSON format like the following:
 #
@@ -141,15 +141,15 @@ if [[ -z ${requirements} ]]; then
     fi
 fi
 
-cloud_service_specified_args="${CLOUD_SERVICE_SPECIFIED_ARGS:-}"
+cloud_service_args="${CLOUD_SERVICE_ARGS:-}"
 if [[ ${test_group} == *gpu* ]]; then
     specified_args="$(jq '.gpu // empty' \
-        <<< "${cloud_service_specified_args}")"
+        <<< "${cloud_service_args}")"
 else
     specified_args="$(jq '.cpu // empty' \
-        <<< "${cloud_service_specified_args}")"
+        <<< "${cloud_service_args}")"
 fi
-specified_args="${specified_args:-$cloud_service_specified_args}"
+specified_args="${specified_args:-$cloud_service_args}"
 
 allocate_vm "${config_yml}" "${unique_name}" "${requirements}" \
     "${specified_args}"

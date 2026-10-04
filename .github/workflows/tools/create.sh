@@ -49,7 +49,7 @@
 #     - ALIBABA_CLOUD_ACCESS_KEY_ID (required when using AliCloud)
 #
 # The following environment variables may need to be set:
-# * CLOUD_SERVICE_SPECIFIED_ARGS
+# * CLOUD_SERVICE_ARGS
 #   + It specifies the required values of arguments for the input
 #     variables when creating the VM, in the JSON format like the
 #     following:
@@ -142,15 +142,15 @@ eval "$(get_env_exports "${CLOUD_SERVICE_ENVS:-}")"
 echo 'Creating a VM ...'
 terraform -chdir="${tf_config_dir}" init
 
-cloud_service_specified_args="${CLOUD_SERVICE_SPECIFIED_ARGS:-}"
+cloud_service_args="${CLOUD_SERVICE_ARGS:-}"
 if [[ ${test_group} == *gpu* ]]; then
     specified_args="$(jq '.gpu // empty' \
-        <<< "${cloud_service_specified_args}")"
+        <<< "${cloud_service_args}")"
 else
     specified_args="$(jq '.cpu // empty' \
-        <<< "${cloud_service_specified_args}")"
+        <<< "${cloud_service_args}")"
 fi
-specified_args="${specified_args:-$cloud_service_specified_args}"
+specified_args="${specified_args:-$cloud_service_args}"
 
 apply_tf_config "${unique_name}" "${tf_config_dir}" \
     "${specified_args}"
