@@ -125,6 +125,21 @@ def test_negative_feedback_sampler():
     assert set(sample_df["test_feedback"].unique()) == set([2.4, 0.2])
 
 
+@pytest.mark.parametrize("seed", [0, 1, 2])
+def test_negative_feedback_sampler_does_not_bias_toward_low_item_ids(seed):
+    df = pd.DataFrame(
+        {
+            "userID": [0] * 45 + [u for u in range(1, 101) for _ in range(5)],
+            "itemID": list(range(5, 50)) + list(range(5)) * 100,
+        }
+    )
+    sample_df = negative_feedback_sampler(
+        df, col_user="userID", col_item="itemID", ratio_neg_per_user=1, seed=seed
+    )
+    negatives = sample_df[(sample_df.userID > 0) & (sample_df.feedback == 0)]
+    assert negatives["itemID"].mean() > 22
+
+
 def test_filter_by():
     user_df = pd.DataFrame(
         {"user_id": [1, 9, 3, 5, 5, 1], "item_id": [1, 6, 7, 6, 8, 9]}
