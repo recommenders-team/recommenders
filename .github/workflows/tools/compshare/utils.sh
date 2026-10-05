@@ -393,7 +393,7 @@ get_available_required_computes() {
 
             # Add the image ID.
             local image_id='{
-                "CompShareImageId": "compshareImage-12rjyhwynazd"
+                "CompShareImageId": "compshareImage-1b6bx62uvf70"
             }'
             gpu="$(update_json "${gpu}" "${image_id}")"
 

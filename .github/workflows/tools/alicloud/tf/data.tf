@@ -35,7 +35,7 @@ data "alicloud_images" "ubuntu2404" {
   # For example, "ubuntu_24_04_x64_20G_alibase_20260615.vhd",
   # note that the image names end with a date 20260615,
   # so we need to use this data source to get the latest one.
-  name_regex = "^ubuntu_24_04.*20G"
+  name_regex = "^ubuntu_24_04_x64.*with_gpu_driver"
   os_type = "linux"
   architecture = "x86_64"
   most_recent = true
