@@ -313,22 +313,23 @@ restore_tfstate_tfvars() {
     [[ -z ${tf_config_dir} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    if [[ -n ${VM_TFVARS} ]]; then
+    if [[ -n ${VM_TFVARS:-} ]]; then
         echo 'Restoring the Terraform input variables ...'
         echo "${VM_TFVARS}" | base64 -d > "${tfvars}"
     fi
 
-    if [[ -n ${VM_TFSTATE} ]]; then
+    if [[ -n ${VM_TFSTATE:-} ]]; then
         echo 'Restoring the Terraform state ...'
         local reset_x=false
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
         gpg -d --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
-            -o - <(echo "${VM_TFSTATE}" | base64 -d) > "${tfstate}"
+            -o - <(echo "${VM_TFSTATE:-}" | base64 -d) > "${tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
     fi
+    return 0
 }
 
 run_cmd_retry() {
