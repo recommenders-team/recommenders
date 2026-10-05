@@ -272,7 +272,7 @@ allocate_vm() {
 
     [[ -z ${vm_name} \
       || -z ${requirements} \
-      || -f ${config_yml} ]] \
+      || ! -f ${config_yml} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     echo 'Getting available instance info ...'
@@ -631,7 +631,7 @@ get_vm_info() {
     local vm_name="${2:-}"
 
     [[ -z ${vm_name} \
-      || -f ${config_yml} ]] \
+      || ! -f ${config_yml} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     local response
@@ -662,7 +662,7 @@ wait_for_vm_to_stop() {
     local vm_name="${2:-}"
 
     [[ -z ${vm_name} \
-      || -f ${config_yml} ]] \
+      || ! -f ${config_yml} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
     echo 'Waiting for the VM to stop ...'
