@@ -416,10 +416,7 @@ get_available_required_computes() {
         done
     done
 
-    local compute_list
-    compute_list="$(jq -c 'sort_by(.Price) | .[]' \
-        <<< "${compute_list}")"
-    echo "${compute_list}"
+    jq -c 'sort_by(.Price) | .[]' <<< "${compute_list}"
 }
 
 get_available_required_gpu_specs() {

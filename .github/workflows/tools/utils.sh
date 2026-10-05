@@ -100,15 +100,13 @@ get_available_required_items() {
         # Get the intersection of the required and the available.
         local required_items
         required_items="$(jq -c ".${key}" <<< "${requirements}")"
-        local available_required
-        available_required="$(jq -nc \
+        jq -nc \
             --argjson a "${required_items}" \
             --argjson b "${available_items}" \
             '($a | unique) as $au
             | ($b | unique) as $bu
-            | $au | $au - ($au - $bu)')"
+            | $au | $au - ($au - $bu)'
     fi
-    echo "${available_required}"
 }
 
 get_env_exports() {

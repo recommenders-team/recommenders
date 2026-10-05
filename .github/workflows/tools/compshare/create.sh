@@ -188,5 +188,5 @@ api_call_retry invoke_action "${config_yml}" \
 unset "${secret_key_name}"
 
 wait_for_vm_to_be_available "${ssh_dest}"
-encoded_password="$(jq '.Password' <<< "${vm_info}")"
+encoded_password="$(jq -r '.Password' <<< "${vm_info}")"
 setup_ssh_key "${ssh_dest}" "${encoded_password}"
