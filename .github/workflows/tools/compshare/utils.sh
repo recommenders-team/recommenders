@@ -371,7 +371,7 @@ get_available_required_computes() {
     local specified_args="${2:-}"
     local compute_list='[]'
 
-    echo '* Getting available zones ...' >&2
+    # Get available zones
     local zone_list
     readarray -t zone_list < \
         <(get_available_required_zones \
@@ -381,7 +381,7 @@ get_available_required_computes() {
     for zone_index in "${!zone_list[@]}"; do
         local zone="${zone_list[${zone_index}]}"
 
-        echo "* Getting available GPUs in ${zone%%,*} ..." >&2
+        # Get available GPUs in the zone
         local gpu_list
         readarray -t gpu_list < \
             <(get_available_required_gpu_types \
