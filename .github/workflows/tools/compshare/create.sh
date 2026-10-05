@@ -104,8 +104,7 @@ cloud_service_args="$(jq ".${cloud_service} // empty" \
     <<< "${CLOUD_SERVICE_ARGS:-}")"
 cloud_service_envs="$(jq ".${cloud_service} // empty" \
     <<< "${CLOUD_SERVICE_ENVS:-}")"
-config_dir="${script_dir}/${cloud_service}"
-config_yml="${config_dir}/config.yml"
+config_yml="${script_dir}/config.yml"
 utils_sh="${script_dir}/utils.sh"
 
 
