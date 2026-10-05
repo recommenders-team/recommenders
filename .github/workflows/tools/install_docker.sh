@@ -52,8 +52,14 @@ source "${utils_sh}"
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl gnupg jq snapd
-snap_install_retry yq
+apt_install_retry ca-certificates curl gnupg jq
+
+if ! yq --version 2>/dev/null; then
+    yq_url='https://gh-proxy.com/https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
+    yq_path='/usr/local/bin/yq'
+    run_cmd_retry 10 sudo curl -fsSL "${yq_url}" -o "${yq_path}"
+    sudo chmod a+x "${yq_path}"
+fi
 
 if [[ $(whoami) == 'root' ]]; then
     rootless='false'
@@ -141,7 +147,7 @@ if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     else
         echo "  ## Creating ${daemon_json} ..."
         mkdir -p "$(dirname "${daemon_json}")"
-        jq '.' > "${daemon_json}" <<< "${updates}"
+        jq '.' <<< "${updates}" | sudo tee "${daemon_json}" > /dev/null
     fi
 fi
 

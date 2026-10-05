@@ -58,8 +58,14 @@ sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl git-all jq snapd
-snap_install_retry yq
+apt_install_retry ca-certificates curl git-all jq
+
+if ! yq --version 2>/dev/null; then
+    yq_url='https://gh-proxy.com/https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
+    yq_path='/usr/local/bin/yq'
+    run_cmd_retry 10 sudo curl -fsSL "${yq_url}" -o "${yq_path}"
+    sudo chmod a+x "${yq_path}"
+fi
 
 
 #--------------------------------------------------------------------

@@ -493,8 +493,7 @@ demand by the [CompShare](https://www.compshare.cn) cloud service.
                "4090_48G"
            ],
            "Zone": [
-               "cn-wlcb-01",
-               "cn-sh2-02"
+               "cn-wlcb-01"
            ],
            "ChargeType": [
                "Postpay",
