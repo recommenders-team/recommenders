@@ -11,8 +11,7 @@ from functools import lru_cache
 logger = logging.getLogger(__name__)
 
 
-API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
-API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
+WIKIDATA_API_URL = "https://www.wikidata.org/w/api.php" 
 SESSION = None
 
 
@@ -80,54 +79,39 @@ def find_wikidata_id(name, limit=1, session=None):
         session (requests.Session): requests session to reuse connections
 
     Returns:
-        str: wikidata entityID corresponding to the title string. 'entityNotFound' will be returned if no page is found
+        str: wikidata entityID corresponding to the title string. 
+             'entityNotFound' will be returned if no page is found
     """
     session = get_session(session=session)
-    params = dict(
-        action="query",
-        list="search",
-        srsearch=bytes(name, encoding="utf8"),
-        srlimit=limit,
-        srprop="",
-        format="json",
-    )
+    
+    params = {
+        "action"  : "wbsearchentities",
+        "search"  : name,
+        "language": "en",
+        "format"  : "json",
+        "limit"   : limit       
+    }
 
     try:
-        response = session.get(API_URL_WIKIPEDIA, params=params)
-        response.raise_for_status()  # Raise HTTPError for bad responses
+        response = session.get(WIKIDATA_API_URL, params=params)
+        response.raise_for_status()
         response_json = response.json()
+        
         try:
-            search_results = response_json["query"]["search"]
-            page_id = search_results[0]["pageid"]
+            search_results = response_json["search"]       
+            entity_id      = search_results[0]["id"]       
+            return entity_id                              
+            
         except (KeyError, IndexError):
             logger.warning(f"Entity '{name}' not found (search)")
             return "entityNotFound"
+            
     except Exception as e:
         logger.warning(f"REQUEST FAILED or unexpected error during search for {name}: {e}")
-        raise  # Re-raise for retry
+        raise
 
-    params = dict(
-        action="query",
-        prop="pageprops",
-        ppprop="wikibase_item",
-        pageids=[page_id],
-        format="json",
-    )
+    
 
-    try:
-        response = session.get(API_URL_WIKIPEDIA, params=params)
-        response.raise_for_status()
-        response_json = response.json()
-        try:
-            entity_id = response_json["query"]["pages"][str(page_id)]["pageprops"]["wikibase_item"]
-        except KeyError:
-            logger.warning(f"Entity '{name}' not found (pageprops)")
-            return "entityNotFound"
-    except Exception as e:
-        logger.warning(f"REQUEST FAILED or unexpected error during pageprops fetch for {name}: {e}")
-        raise  # Re-raise for retry
-
-    return entity_id
 
 
 @lru_cache(maxsize=1024)
