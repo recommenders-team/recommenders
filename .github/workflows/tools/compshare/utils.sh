@@ -296,8 +296,8 @@ allocate_vm() {
             fi
         fi
 
-        vm_name="{\"Name\": \"${vm_name}\"}"
-        compute="$(update_json "${compute}" "${vm_name}")"
+        compute="$(update_json "${compute}" \
+            "{\"Name\": \"${vm_name}\"}")"
         api_call_retry 1 invoke_action "${config_yml}" \
             'CreateCompShareInstance' "${compute}" > /dev/null \
             && return
@@ -465,17 +465,17 @@ get_available_required_gpu_specs() {
     for index in "${!charge_type_list[@]}"; do
         # Add charge type to args
         local charge_type="${charge_type_list[${index}]}"
-        args="$(update_json "${args}" "${charge_type}")"
+        local new_args
+        new_args="$(update_json "${args}" "${charge_type}")"
 
         # Get the list of instance types with enough resources. 
         local spec_list
         spec_list="$(api_call_retry invoke_action "${config_yml}" \
-            'CheckCompShareResourceCapacity' "${args}")"
-        jq -c --argjson chargetype "${charge_type}" \
-            --argjson args "${args}" \
+            'CheckCompShareResourceCapacity' "${new_args}")"
+        jq -c --argjson new_args "${new_args}" \
             '.Specs[]
             | select(.ResourceEnough and .Gpu == 1)
-            | $chargetype + $args
+            | $new_args
               + {Cpu, Gpu, "Memory": (.Mem * 1024)}' \
             <<< "${spec_list}"
     done
