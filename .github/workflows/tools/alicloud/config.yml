@@ -1,0 +1,12 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+######################################################################
+# Configuration for scripts to setup VMs on AliCloud
+######################################################################
+apt_mirror: mirrors.cloud.aliyuncs.com
+
+# docker_download_mirror: http://mirrors.cloud.aliyuncs.com/docker-ce/linux/ubuntu
+
+# The name of the secret for accessing AliCloud APIs
+secret_key_name: ALIBABA_CLOUD_ACCESS_KEY_SECRET

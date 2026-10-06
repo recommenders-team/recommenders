@@ -11,236 +11,117 @@
 # * COMPSHARE_PRIVATE_KEY
 # * COMPSHARE_PUBLIC_KEY
 ######################################################################
+script_path="$(realpath -- "${BASH_SOURCE[0]}")"
+script_dir="$(dirname -- "${script_path}")"
+
+# Source common utils
+source "${script_dir}/../utils.sh"
+
 
 #---------------------------------------------------------------------
 # Utils used by other CompShare API wrappers and utils
 #---------------------------------------------------------------------
-get_compute_spec() {
-    # Return the specification for all available CompShare computes.
-    local compute_spec
-    compute_spec="$(cat << 'EOF'
-        [
-            {
-                "GPUType": "P40",
-                "Memory": {
-                    "CPU": 64,
-                    "GPU": 24
-                },
-                "CPU": 8,
-                "Price": 0.38,
-                "ChargeType": [
-                    "Postpay"
-                ]
-            },
-            {
-                "GPUType": "2080",
-                "Memory": {
-                    "CPU": 40,
-                    "GPU": 8
-                },
-                "CPU": 8,
-                "Price": 0.39,
-                "ChargeType": [
-                    "Postpay"
-                ]
-            },
-            {
-                "GPUType": "3080Ti",
-                "Memory": {
-                    "CPU": 32,
-                    "GPU": 12
-                },
-                "CPU": 12,
-                "Price": 0.7,
-                "ChargeType": [
-                    "Postpay",
-                    "Spot"
-                ]
-            },
-            {
-                "GPUType": "3090",
-                "Memory": {
-                    "CPU": 64,
-                    "GPU": 24
-                },
-                "CPU": 16,
-                "Price": 1.13,
-                "ChargeType": [
-                    "Postpay",
-                    "Spot"
-                ]
-            },
-            {
-                "GPUType": "4090",
-                "Memory": {
-                    "CPU": 64,
-                    "GPU": 24
-                },
-                "CPU": 16,
-                "Price": 1.88,
-                "ChargeType": [
-                    "Postpay",
-                    "Spot"
-                ]
-            },
-            {
-                "GPUType": "5090",
-                "Memory": {
-                    "CPU": 96,
-                    "GPU": 32
-                },
-                "CPU": 16,
-                "Price": 3.0,
-                "ChargeType": [
-                    "Postpay",
-                    "Spot"
-                ]
-            },
-            {
-                "GPUType": "4090_48G",
-                "Memory": {
-                    "CPU": 96,
-                    "GPU": 48
-                },
-                "CPU": 16,
-                "Price": 3.13,
-                "ChargeType": [
-                    "Postpay"
-                ]
-            },
-            {
-                "GPUType": "A800",
-                "Memory": {
-                    "CPU": 240,
-                    "GPU": 80
-                },
-                "CPU": 16,
-                "Price": 5.92,
-                "ChargeType": [
-                    "Postpay"
-                ]
-            },
-            {
-                "GPUType": "H20",
-                "Memory": {
-                    "CPU": 240,
-                    "GPU": 96
-                },
-                "CPU": 16,
-                "Price": 7.12,
-                "ChargeType": [
-                    "Postpay"
-                ]
-            },
-            {
-                "GPUType": "A100",
-                "Memory": {
-                    "CPU": 64,
-                    "GPU": 80
-                },
-                "CPU": 16,
-                "Price": 10.21,
-                "ChargeType": [
-                    "Postpay",
-                    "Spot"
-                ]
-            }
-        ]
-EOF
-    )"
-    compute_spec="$(jq 'sort_by(.Price)' <<< "${compute_spec}")"
-    echo "${compute_spec}"
-}
-
-get_action_template() {
-    # Get the specification template for a specific action
+add_region() {
+    # Extract the region from the zone in the arguments.
     #
     # Params:
-    # * API action name
-    local action="${1:-}"
-    [[ -z "${action}" ]] && return 1
+    # * a JSON object containing the arguments for the API with the
+    #   following keys required:
+    #   + Zone
+    local args="${1:-}"
 
-    local action_template
-    action_template="$(cat << 'EOF'
-        [
-            {
-                "Action": "CreateCompShareInstance",
-                "ChargeType": "Postpay",
-                "CompShareImageId": "compshareImage-12rjyhwynazd",
-                "Disks.0.IsBoot": true,
-                "Disks.0.Size": 100,
-                "Disks.0.Type": "CLOUD_SSD",
-                "GPU": 1,
-                "GPUType": "",
-                "MachineType": "G",
-                "Memory": 65536,
-                "Name": "",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "CPU": 8
-            },
-            {
-                "Action": "DescribeCompShareInstance"
-            },
-            {
-                "Action": "GetProjectList"
-            },
-            {
-                "Action": "StopCompShareInstance",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "UHostId": ""
-            },
-            {
-                "Action": "TerminateCompShareInstance",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "UHostId": "",
-                "ReleaseUDisk": true
-            },
-            {
-                "Action": "UpdateCompShareStopScheduler",
-                "Region": "cn-wlcb",
-                "Zone": "cn-wlcb-01",
-                "ProjectId": "org-hmgw4i",
-                "UHostId": "",
-                "SchedulerStopTime": 1779164372
-            }
-        ]
-EOF
-    )"
-    action_template="$(jq ".[] | select(.Action == \"${action}\")" \
-        <<< "${action_template}")"
+    [[ -z ${args} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
-    # COMPSHARE_PUBLIC_KEY is not set directly in the script
-    action_template="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
-        <<< "${action_template}")"
+    if jq -e 'has("Zone")
+        and ((has("Region") and (.Region | not))
+            or (has("Region") | not))' <<< "${args}" > /dev/null
+    then
+        local zone
+        zone="$(jq -r '.Zone' <<< "${args}")"
+        local region="{\"Region\": \"${zone%-*}\"}"
+        args="$(update_json "${args}" "${region}")"
+    fi
+    echo "${args}"
+}
 
-    echo "${action_template}"
+check_vm_requirement() {
+    # Check if the VM specification match the requirements.
+    #
+    # Params:
+    # * VM specification in JSON
+    # * requirements in JSON, for example
+    #   + {"GPUType":"!2080,P40","Memory":10240,"GraphicsMemory":10240}
+    #     - It means the GPUType should not be 2080 and P40,
+    #       GPU memory should >= 10240MB
+    #       and CPU 10240MB.
+    #   + {"GPUType":"2080,P40"}
+    #     - It means the GPUType should be 2080 or P40.
+    #   + {"GPUType":["2080","P40"],"ChargeType":"Spot"}
+    #     - It means the GPUType should be 2080 or P40,
+    #       ChargeType should be Spot.
+    local specs="${1:-}"
+    local requirements="${2:-}"
+
+    local match
+    match="$(jq -n --argjson specs "${specs}" \
+        --argjson reqs "${requirements}" \
+        'def equalstr($a; $b):
+            if ($a | startswith(" ")) then
+                equalstr(($a | ltrimstr(" ")); $b)
+            elif ($a | endswith(" ")) then
+                equalstr(($a | rtrimstr(" ")); $b)
+            else
+                $a == $b
+            end;
+        def compareitem($reqs; $specs; $p):
+            ($reqs | getpath($p)) as $r
+            | ($specs | getpath($p)) as $s
+            | ($r | type) as $r_type
+            | if $r_type == "string" and $s then
+                $r
+                | if startswith("!") then
+                    $r | ltrimstr("!") | split(",")
+                    | reduce .[] as $ri
+                        (true; . and (equalstr($ri; $s) | not))
+                else
+                    $r | split(",")
+                    | reduce .[] as $ri
+                        (false; . or equalstr($ri; $s))
+                end
+                | if . then . else
+                    debug("\($p[0]) requires \($r), but got \($s)")
+                end
+            elif $r_type == "number" and $s then
+                $r <= $s
+                | if . then . else
+                    debug("\($p[0]) must >= \($r), but got \($s)")
+                end
+            elif $r_type == "array" and $s then
+                reduce $r.[] as $ri (false; . or $ri == $s)
+                | if . then . else
+                    debug("\($p[0]) requires \($r), but got \($s)")
+                end
+            else
+                true
+            end;
+        $reqs
+        | [path(..) | select(length | . == 1)]
+        | reduce .[] as $p
+            (true; . and compareitem($reqs; $specs; $p))')"
+
+    echo "${match}"
 }
 
 gen_action_digest() {
-    # Generate the digest for the action requrest parameters
+    # Generate the digest for the action requrest arguments
     # See https://docs.ucloud.cn/api/summary/signature
     # 
     # Params:
     # * API action specification in JSON
-    # * (Optional) file containing the base64-encoded login password
     local action_spec="${1:-}"
-    local encoded_password_file="${2:-}"
-    [[ -z "${action_spec}" ]] && return 1
-
-    # Store the spec into a file to hide the password from being
-    # visible
-    local action_spec_file
-    action_spec_file="$(mktemp)"
-    echo "${action_spec}" > "${action_spec_file}"
-    if [[ -n "${encoded_password_file}" ]]; then
-        echo "${action_spec}" \
-            | jq --rawfile encoded_password "${encoded_password_file}" \
-                '.Password = $encoded_password' \
-                > "${action_spec_file}"
-    fi
+    [[ -z ${action_spec} ]] \
+        && { echo 'Parameter error!' >&2; return 1; }
 
     local reset_x=false
     [[ "$-" == *x* ]] && reset_x=true
@@ -250,14 +131,16 @@ gen_action_digest() {
     # not directly in the script
     local digest
     digest="$(\
-        jq -r 'to_entries | sort | map("\(.key)\(.value)") | join("")' \
-            "${action_spec_file}" \
+        jq -r '
+            to_entries
+            | sort
+            | map("\(.key)\(.value)")
+            | join("")' <<< "${action_spec}" \
         | tr -d '\n' \
         | cat - <(echo "${COMPSHARE_PRIVATE_KEY}") \
         | tr -d '\n' \
         | sha1sum \
         | head -c 40)"
-    rm -rf "${action_spec_file}"
 
     [[ "${reset_x}" == true ]] && set -x
 
@@ -266,192 +149,79 @@ gen_action_digest() {
 
 gen_request_url() {
     # Generate the API request URL using the action specification and
-    # the parameter digest
+    # the argument digest
     #
     # Params:
-    # * API action name
-    # * (Optional) updates for the parameters in JSON
-    # * (Optional) file containing the base64-encoded login password
-    local action="${1:-}"
-    local updates="${2:-}"
-    local encoded_password_file="${3:-}"
-    [[ -z "${action}" ]] && return 1
+    # * API action specification in JSON
+    local action_spec="${1:-}"
 
-    local action_spec
-    action_spec="$(get_action_template "${action}")"
+    [[ -z ${action_spec} ]] \
+        && { echo 'Parameter error!' >&2; return 1; }
 
-    if [[ -n "${updates}" ]]; then
-        action_spec="$(update_json "${action_spec}" "${updates}")"
-    fi
+    # COMPSHARE_PUBLIC_KEY is an environment variable.
+    action_spec="$(jq ".PublicKey = \"${COMPSHARE_PUBLIC_KEY}\"" \
+        <<< "${action_spec}")"
 
     local digest
-    digest="$(gen_action_digest "${action_spec}" "${encoded_password_file}")"
-    local params
-    params="$(jq -r 'to_entries | map("\(.key)=\(.value)") | join("&")' \
-        <<< "${action_spec}")"
-    echo "https://api.compshare.cn/?${params}&Signature=${digest}"
+    digest="$(gen_action_digest "${action_spec}")"
+    local args
+    args="$(jq -r '
+        to_entries
+        | map("\(.key)=\(.value | @uri)")
+        | join("&")' <<< "${action_spec}")"
+    echo "https://api.compshare.cn/?${args}&Signature=${digest}"
 }
 
 invoke_action() {
     # Call the API for the specified action
     #
     # Params:
-    # * API action name
-    # * (Optional) updates for the parameters in JSON
-    # * (Optional) file containing the base64-encoded login password
-    local action="${1:-}"
-    local updates="${2:-}"
-    local encoded_password_file="${3:-}"
-    [[ -z "${action}" ]] && return 1
+    # * action
+    # * a JSON object containing the arguments for the action API
+    # * the config.yml file containing the action specification
+    local config_yml="${1:-}"
+    local action="${2:-}"
+    local arguments="${3:-{\}}"
 
-    local request_url
-    request_url="$(gen_request_url \
-        "${action}" \
-        "${updates}" \
-        "${encoded_password_file}")"
-
-    local response
-    if [[ -n "${encoded_password_file}" ]]; then
-        response="$(curl -LsSf \
-            --retry 5 --retry-delay 5 --retry-all-errors \
-            --url-query "Password@${encoded_password_file}" \
-            "${request_url}")"
-    else
-        response="$(curl -LsSf \
-            --retry 5 --retry-delay 5 --retry-all-errors \
-            "${request_url}")"
-    fi
-
-    echo "${response}"
-}
-
-
-#---------------------------------------------------------------------
-# CompShare API wrappers
-#---------------------------------------------------------------------
-create_instance() {
-    # Create a VM instance
-    # See https://www.compshare.cn/docs/operation/api/createcompshareinstance
-    #
-    # Reponse:
-    #   {
-    #       "Action": "CreateCompShareInstanceResponse", 
-    #       "RetCode": 0, 
-    #       "UHostIds": [
-    #           "NIdfqvRv"
-    #       ]
-    #   }
-
-    # Params:
-    # * VM name
-    # * file containing the base64-encoded login password
-    # * GPU type, such as P40, 3090
-    # * CPU cores
-    # * memory in MB
-    # * charge type
-    local vm_name="${1:-}"
-    local encoded_password_file="${2:-}"
-    local gpu_type="${3:-}"
-    local cpu_cores="${4:-}"
-    local memory="${5:-}"
-    local charge_type="${6:-}"
-    [[ -z "${vm_name}" \
-      || -z "${encoded_password_file}" \
-      || -z "${gpu_type}" \
-      || -z "${cpu_cores}" \
-      || -z "${memory}" \
-      || -z "${charge_type}" ]] && return 1
-
-    local updates
-    updates="{\
-        \"Name\": \"${vm_name}\", \
-        \"GPUType\": \"${gpu_type}\", \
-        \"CPU\": ${cpu_cores}, \
-        \"Memory\": ${memory}, \
-        \"ChargeType\": \"${charge_type}\"}"
+    [[ -z ${action} \
+      || ! -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
     
-    local response
-    response="$(invoke_action \
-        'CreateCompShareInstance' \
-        "${updates}" \
-        "${encoded_password_file}")"
-    echo "${response}"
-}
+    local action_spec
+    action_spec="$(yq -o json < "${config_yml}" \
+        | jq -c ".action_specs.${action}")"
 
-describe_instance() {
-    # Get the list of VMs
-    # See https://www.compshare.cn/docs/operation/api/describecompshareinstance
+    action="{\"Action\": \"${action}\"}"
+    arguments="$(update_json "${arguments}" "${action}")"
+    arguments="$(add_region "${arguments}")"
 
-    local response
-    response="$(invoke_action 'DescribeCompShareInstance')"
+    local required_params
+    readarray -t required_params < \
+        <(jq -rc 'to_entries?
+            | map(select(.value | not))
+            | map(.key)
+            | .[]' <<< "${action_spec}")
 
-    echo "${response}"
-}
+    local index
+    for index in "${!required_params[@]}"; do
+        local param="${required_params[${index}]}"
+        if jq -e "has(\"${param}\") | not" <<< "${arguments}" \
+            > /dev/null; then
+            echo "Parameter '${param}' missing!" >&2
+            return 1
+        fi
+    done
 
-get_project_list() {
-    # Get the list of projects
-    # See https://docs.ucloud.cn/api/uaccount-api/get_project_list
-    local response
-    response="$(invoke_action 'GetProjectList')"
-
-    echo "${response}"
-}
-
-stop_instance() {
-    # Shutdown the specified VM
-    # See https://www.compshare.cn/docs/operation/api/stopcompshareinstance
-    #
-    # Params:
-    # * VM ID
-    local vm_id="${1:-}"
-    [[ -z "${vm_id}" ]] && return 1
-
-    local updates
-    updates="{\"UHostId\": \"${vm_id}\"}"
+    action_spec="$(update_json "${action_spec}" "${arguments}")"
+    
+    local request_url
+    request_url="$(gen_request_url "${action_spec}")"
 
     local response
-    response="$(invoke_action 'StopCompShareInstance' "${updates}")"
-    echo "${response}"
-}
+    response="$(curl -LsSf \
+        --retry 5 --retry-delay 5 --retry-all-errors \
+        "${request_url}")"
 
-terminate_instance() {
-    # Delete the specified VM
-    # See https://www.compshare.cn/docs/operation/api/terminatecompshareinstance
-    #
-    # NOTE: The VM must be shut down before deletion
-    #
-    # Params:
-    # * VM ID
-    local vm_id="${1:-}"
-    [[ -z "${vm_id}" ]] && return 1
-
-    local updates
-    updates="{\"UHostId\": \"${vm_id}\"}"
-
-    local response
-    response="$(invoke_action 'TerminateCompShareInstance' "${updates}")"
-    echo "${response}"
-}
-
-update_stop_scheduler() {
-    # Set/update scheduler to stop VM
-    # See https://www.compshare.cn/docs/gpus/instance/updatecompsharestopscheduler
-    #
-    # Params:
-    # * VM ID
-    # * Time to stop: seconds since the Epoch (1970-01-01 00:00 UTC), in 3 hours by default
-    local vm_id="${1:-}"
-    local stop_time="${2:-}"
-    [[ -z "${vm_id}" ]] && return 1
-    [[ -z "${stop_time}" ]] && stop_time="$(date --date='3 hours' '+%s')"
-
-    local updates
-    updates="{\
-        \"UHostId\": \"${vm_id}\", \
-        \"SchedulerStopTime\": ${stop_time}}"
-
-    local response
-    response="$(invoke_action 'UpdateCompShareStopScheduler' "${updates}")"
     echo "${response}"
 }
 
@@ -460,113 +230,80 @@ update_stop_scheduler() {
 # CompShare API utils
 #---------------------------------------------------------------------
 allocate_vm() {
-    # Create a VM with random names and password from available types
+    # Create a VM satisfying the requirements from available specs.
     #
     # Params:
     # * VM name
-    # * file containing the base64-encoded login password
     # * requirements in JSON, for example
-    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
+    #   + {"GPUType":"!2080,P40","Memory":10240,"GraphicsMemory":10240}
     #     - It means the GPUType should not be 2080 and P40,
-    #       GPU memory should be greater than or equal to 10GB
-    #       and CPU 9GB.
+    #       GPU memory should >= 10240MB
+    #       and CPU 10240MB.
     #   + {"GPUType":"2080,P40"}
     #     - It means the GPUType should be 2080 or P40.
-    local vm_name="${1:-}"
-    local encoded_password_file="${2:-}"
+    #   + {"GPUType":["2080","P40"],"ChargeType":"Spot"}
+    #     - It means the GPUType should be 2080 or P40,
+    #       ChargeType should be Spot.
+    # * a JSON object of specified arguments such as Zone and GpuType
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090",
+    #             "4090",
+    #             "5090",
+    #             "4090_48G"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay",
+    #             "Spot"
+    #         ]
+    #     }
+    # * path to config.yml
+    local config_yml="${1:-}"
+    local vm_name="${2:-}"
     local requirements="${3:-}"
-    [[ -z "${vm_name}" \
-      || -z "${encoded_password_file}" \
-      || ! -f "${encoded_password_file}" \
-      || -z "${requirements}" ]] && return 1
+    local specified_args="${4:-}"
 
-    echo "Allocating a new VM named ${vm_name} ..." >&2
-    local compute_spec
-    compute_spec="$(get_compute_spec)"
+    [[ -z ${vm_name} \
+      || -z ${requirements} \
+      || ! -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
 
-    local num_computes
-    num_computes="$(jq 'length' <<< "${compute_spec}")"
-    for ((i=0; i<"${num_computes}"; i++)); do
+    echo 'Getting available instance info ...'
+    local compute_list
+    readarray -t compute_list < \
+        <(get_available_required_computes \
+            "${config_yml}" "${specified_args}")
+
+    local compute_index
+    for compute_index in "${!compute_list[@]}"; do
         local compute
-        compute="$(jq -c ".[${i}]" <<< "${compute_spec}")"
-        echo "* Trying spec: ${compute}" >&2
+        compute="${compute_list[${compute_index}]}"
+        compute="$(jq -c 'del(.Price)' <<< "${compute}")"
+        echo "Trying to create a VM named ${vm_name} of ${compute%,\"GraphicsMemory*} ..."
 
-        # Check if the compute satisfy requirements
-        local reqt
-        reqt="$(jq -e 'del(.ChargeType)' <<< "${requirements}")"
-        if jq -e 'length != 0' <<< "${reqt}" > /dev/null; then
+        if jq -e 'length != 0' <<< "${requirements}" > /dev/null; then
             local match
-            match="$(check_vm_requirement "${compute}" "${reqt}")"
+            match="$(check_vm_requirement "${compute}" "${requirements}")"
             if [[ "${match}" != 'true' ]]; then
-                echo '  + Requirements mismatch.' >&2
                 continue
             fi
         fi
 
-        local gpu_type
-        gpu_type="$(jq -r '.GPUType' <<< "${compute}")"
-
-        local cpu_cores
-        cpu_cores="$(jq '.CPU' <<< "${compute}")"
-
-        local memory
-        memory="$(jq '.Memory.CPU * 1024' <<< "${compute}")"
-
-        local available_charge_type
-        available_charge_type="$(jq '.ChargeType' <<< "${compute}")"
-
-        local required_charge_types
-        mapfile -t required_charge_types < \
-            <(jq -rc '.ChargeType.[]' <<< "${requirements}")
-        for charge_type in "${required_charge_types[@]}"; do
-            if jq -e "map(. == \"${charge_type}\") 
-                | any" <<< "${available_charge_type}" > /dev/null
-            then
-                echo "  + Trying charge type: ${charge_type} ..." >&2
-                # Try to create the VM 2 times
-                api_call_retry 2 create_instance \
-                    "${vm_name}" \
-                    "${encoded_password_file}" \
-                    "${gpu_type}" \
-                    "${cpu_cores}" \
-                    "${memory}" \
-                    "${charge_type}" > /dev/null && return
-            fi
-        done
+        vm_name="{\"Name\": \"${vm_name}\"}"
+        compute="$(update_json "${compute}" "${vm_name}")"
+        api_call_retry 1 invoke_action "${config_yml}" \
+            'CreateCompShareInstance' "${compute}" > /dev/null \
+            && return
     done
+    echo 'No available required resources!' >&2
     return 1
-}
-
-get_vm_info() {
-    # Get VM info
-    #
-    # Returns:
-    # * VM ID
-    # * SSH destination, in the format like `user@ip_address`
-    #
-    # Params:
-    # * VM name
-    local vm_name="${1:-}"
-    [[ -z "${vm_name}" ]] && return 1
-
-    echo "Getting info of the VM ..." >&2
-    local response
-    response="$(api_call_retry describe_instance)"
-
-    local vm_info
-    vm_info="$(jq ".UHostSet.[] | select(.Name == \"${vm_name}\")" \
-        <<< "${response}")"
-    [[ -z "${vm_info}" ]] && return 1
-    
-    local vm_id
-    vm_id="$(jq -r '.UHostId' <<< "${vm_info}")"
-
-    local ssh_dest
-    ssh_dest="$(jq -r '.SshLoginCommand' <<< "${vm_info}" \
-        | cut -d ' ' -f 2)"
-
-    echo "${vm_id}"
-    echo "${ssh_dest}"
 }
 
 api_call_retry() {
@@ -605,207 +342,339 @@ api_call_retry() {
     echo "${response}"
 }
 
-
-######################################################################
-# Non Compshare API utils
-#
-# These utils do not require any preset environment variables.
-######################################################################
-update_json() {
-    # Update a JSON with another JSON
+get_available_required_computes() {
+    # Returns the infos of available required computes sorted by price
+    # in the following format including the prices:
+    #
+    # {"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"z","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":65536,"Price":1.5}
+    # {"ChargeType":"u","GpuType":"x","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":96256,"Price":1.6}
     #
     # Params:
-    # * the original JSON
-    # * the JSON with all updates
-    local original="${1:-}"
-    local updates="${2:-}"
-    [[ -z "${updates}" || -z "${original}" ]] && return 1
+    # * path to config.yml
+    # * a JSON object of specified arguments.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
+    #         ]
+    #     }
+    local config_yml="${1:-}"
+    local specified_args="${2:-}"
+    local compute_list='[]'
 
-    local res
-    res=$(jq -s '
-        def update($a; $b):
-            ($a | type) as $ta | ($b | type) as $tb |
-            if $ta == "object" and $tb == "object" then
-                reduce ([$a, $b] | add | keys_unsorted[]) as $k
-                    ({}; .[$k] = update($a[$k]; $b[$k]))
-            elif $ta == "array" and $tb == "array" then
-                $a + $b
-            else
-                $b // $a
-            end;
-        reduce .[] as $item (null; update(.; $item))' \
-        <(echo "${original}") <(echo "${updates}"))
-    echo "${res}"
+    # Get available zones
+    local zone_list
+    readarray -t zone_list < \
+        <(get_available_required_zones \
+            "${config_yml}" "${specified_args}")
+
+    local zone_index
+    for zone_index in "${!zone_list[@]}"; do
+        local zone="${zone_list[${zone_index}]}"
+
+        # Get available GPUs in the zone
+        local gpu_list
+        readarray -t gpu_list < \
+            <(get_available_required_gpu_types \
+                "${config_yml}" "${zone}" "${specified_args}")
+
+        local gpu_index
+        for gpu_index in "${!gpu_list[@]}"; do
+            local gpu="${gpu_list[${gpu_index}]}"
+
+            # Add the image ID.
+            local image_id='{
+                "CompShareImageId": "compshareImage-1b6bx62uvf70"
+            }'
+            gpu="$(update_json "${gpu}" "${image_id}")"
+
+            local spec_list
+            readarray -t spec_list < \
+                <(get_available_required_gpu_specs \
+                    "${config_yml}" "${gpu}" "${specified_args}")
+
+            local spec_index
+            for spec_index in "${!spec_list[@]}"; do
+                local spec="${spec_list[${spec_index}]}"
+
+                local compute
+                compute="$(get_gpu_spec_price "${config_yml}" "${spec}")"
+                compute_list="$(jq -nc \
+                    --argjson arr "${compute_list}" \
+                    --argjson obj "${compute}" \
+                    '$arr + [$obj]')"
+            done
+        done
+    done
+
+    jq -c 'sort_by(.Price) | .[]' <<< "${compute_list}"
 }
 
-check_vm_requirement() {
-    # Check if the VM specification match the requirements.
+get_available_required_gpu_specs() {
+    # Returns specifications of the available required GPUs in the
+    # following format:
+    #
+    #   {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
+    #   {"ChargeType":"Spot","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":128*1024}
     #
     # Params:
-    # * VM specification in JSON
-    # * requirements in JSON, for example
-    #   + {"GPUType":"!2080,P40","Memory":{"GPU":10,"CPU":9}}
-    #     - It means the GPUType should not be 2080 and P40,
-    #       GPU memory should be greater than or equal to 10GB
-    #       and CPU 9GB.
-    #   + {"GPUType":"2080,P40"}
-    #     - It means the GPUType should be 2080 or P40.
-    local spec="${1:-}"
-    local requirements="${2:-}"
+    # * path to config_yml
+    # * Arguments for querying the API
+    #   + For example,
+    #     {"GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w"}
+    # * a JSON object of arguments that may specified the
+    #   the required charge types.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
+    #         ]
+    #     }
+    local config_yml="${1:-}"
+    local args="${2:-}"
+    local specified_args="${3:-}"
 
-    local match
-    match=$(jq -s '
-        def equalstr($a; $b):
-            if ($a | startswith(" ")) then
-                equalstr(($a | ltrimstr(" ")); $b)
-            elif ($a | endswith(" ")) then
-                equalstr(($a | rtrimstr(" ")); $b)
-            else
-                $a == $b
-            end;
-        def compareitem($req; $spec; $i):
-            ($req | getpath($i)) as $a
-            | ($spec | getpath($i)) as $b
-            | ($a | type) as $ta
-            | if $ta == "string" then
-                $a | if startswith("!") then
-                    $a | ltrimstr("!") | split(",")
-                    | reduce .[] as $i (true; . and (equalstr($i; $b) | not))
-                    | if . then . else debug("Demand (\($b)) should not be any one of (\($i) - \($a))") end
-                else
-                    $a | split(",")
-                    | reduce .[] as $i (false; . or equalstr($i; $b))
-                    | if . then . else debug("Demand (\($b)) must be one of (\($i) - \($a))") end
-                end
-            elif $ta == "number" then
-                $a <= $b | if . then . else debug("Demand (\($b)) should be greater than or equal to (\($i) - \($a))") end
-            else
-                true
-            end;
-        .[0] as $req
-        | .[1] as $spec
-        | .[0] | [path(..)]
-        | reduce .[] as $i (true; . and compareitem($req; $spec; $i))' \
-        <(echo "${requirements}") <(echo "${spec}"))
+    [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
 
-    echo "${match}"
+    # Get the available required charge types.
+    local charge_type_list='["Spot", "Postpay"]'
+    charge_type_list="$(get_available_required_items \
+        "${charge_type_list}" "${specified_args}" 'ChargeType')"
+    readarray -t charge_type_list < \
+        <(jq -c '.[] | {"ChargeType": .}' <<< "${charge_type_list}")
+
+    local index
+    for index in "${!charge_type_list[@]}"; do
+        # Add charge type to args
+        local charge_type="${charge_type_list[${index}]}"
+        args="$(update_json "${args}" "${charge_type}")"
+
+        # Get the list of instance types with enough resources. 
+        local spec_list
+        spec_list="$(api_call_retry invoke_action "${config_yml}" \
+            'CheckCompShareResourceCapacity' "${args}")"
+        jq -c --argjson chargetype "${charge_type}" \
+            --argjson args "${args}" \
+            '.Specs[]
+            | select(.ResourceEnough and .Gpu == 1)
+            | $chargetype + $args
+              + {Cpu, Gpu, "Memory": (.Mem * 1024)}' \
+            <<< "${spec_list}"
+    done
 }
 
-wait_for_vm_to_be_available() {
-    # Check and wait for the VM being available.
-    # It will fail if the VM cannot be accessed after 300 seconds.
+get_available_required_gpu_types() {
+    # Returns available required GPU types in the following format:
+    #
+    #   {"GpuType":"5090","GraphicsMemory":32*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"GpuType":"4090","GraphicsMemory":24*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"GpuType":"4090_48G","GraphicsMemory":48*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"GpuType":"2080Ti","GraphicsMemory":11*1024,"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
     #
     # Params:
+    # * path to config.yml
+    # * Arguments for querying the API
+    #   + For example, {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    # * a JSON object of arguments that may specifiy the
+    #   required GPU Types.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
+    #         ]
+    #     }
+    #
+    local config_yml="${1:-}"
+    local args="${2:-}"
+    local specified_args="${3:-}"
+
+    [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
+
+    # Get the list of available GPU types in the format like
+    #
+    #   ["3080","4090","5090"]
+    local gpu_types
+    gpu_types="$(api_call_retry invoke_action "${config_yml}" \
+        'DescribeAvailableCompShareInstanceTypes' "${args}")"
+    gpu_types="$(jq -c '[.AvailableInstanceTypes[]
+        | select(.Status == "Normal")
+        | {"GpuType": .Name,
+           "GraphicsMemory": (.GraphicsMemory.Value * 1024)}]' \
+        <<< "${gpu_types}")"
+    local gpu_list
+    gpu_list="$(jq '[ .[].GpuType ]' <<< "${gpu_types}")"
+
+    # Get the available required GPU types.
+    gpu_list="$(get_available_required_items \
+        "${gpu_list}" "${specified_args}" 'GpuType')"
+
+    jq -c --argjson args "${args}" \
+        --argjson gpu_list "${gpu_list}" \
+        'map(select([.GpuType] - $gpu_list | length | . == 0))
+        | .[]
+        | . + $args' <<< "${gpu_types}"
+}
+
+get_gpu_spec_price() {
+    # Returns the price of the GPU specified in the argument in the
+    # following format:
+    #
+    #   {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024,"Price":1.30}
+    #
+    # Params:
+    # * path to config_yml
+    # * Arguments for querying the API
+    #   + For example,
+    #     {"ChargeType":"Postpay","GpuType":"z","GraphicsMemory":32*1024,"Zone":"y","Region":"x","CompShareImageId":"w","Cpu":16,"Gpu":1,"Memory":64*1024}
+    local config_yml="${1:-}"
+    local args="${2:-}"
+
+    [[ -z ${args} ]] && { echo 'Parameter error!' >&2; return 1; }
+
+    local price
+    price="$(api_call_retry invoke_action "${config_yml}" \
+        'GetCompShareInstancePrice' "${args}")"
+    jq -c --argjson args "${args}" \
+        '.PriceDetails[0]
+        | $args + {"Price": .Instance}' \
+        <<< "${price}"
+}
+
+get_available_required_zones() {
+    # Returns available requried zones in the following format:
+    #
+    #   {"Zone":"cn-wlcb-01","Region":"cn-wlcb"}
+    #   {"Zone":"cn-sh2-02","Region":"cn-sh2"}
+    #
+    # Params:
+    # * path to config.yml
+    # * a JSON object of arguments that may specifiy the
+    #   required zones.
+    #   + For example,
+    #
+    #     {
+    #         "GpuType": [
+    #             "3080Ti",
+    #             "3090"
+    #         ],
+    #         "Zone": [
+    #             "cn-wlcb-01",
+    #             "cn-sh2-02"
+    #         ],
+    #         "ChargeType": [
+    #             "Postpay"
+    #         ]
+    #     }
+    local config_yml="${1:-}"
+    local specified_args="${2:-}"
+
+    # Get the list of available zones in the format like
+    #
+    #   ["cn-wlcb-01","cn-sh2-02"]
+    local zone_list
+    zone_list="$(api_call_retry invoke_action "${config_yml}" \
+        'DescribeCompShareSupportZone')"
+    zone_list="$(jq -c '[ .ZoneInfo[]
+        | select(.IsPod | not)
+        | .Zone ]' <<< "${zone_list}")"
+    
+    # Get the available required zones.
+    zone_list="$(get_available_required_items \
+        "${zone_list}" "${specified_args}" 'Zone')"
+
+    jq -c '.[]
+        | {"Zone": ., "Region": (. | capture("(?<r>.*)-[^-]+").r)}' \
+          <<< "${zone_list}"
+}
+
+get_vm_info() {
+    # Get VM info
+    #
+    # Returns:
+    # * VM ID
     # * SSH destination, in the format like `user@ip_address`
-    local ssh_dest="${1:-}"
-    [[ -z "${ssh_dest}" ]] && return 1
+    #
+    # Params:
+    # * path to config.yml
+    # * VM name
+    local config_yml="${1:-}"
+    local vm_name="${2:-}"
 
-    echo 'Waiting for the VM to be available ...' >&2
+    [[ -z ${vm_name} \
+      || ! -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    local response
+    response="$(api_call_retry invoke_action "${config_yml}" \
+        'DescribeCompShareInstance')"
+
+    local vm_info
+    vm_info="$(jq "
+        .UHostSet.[]
+        | select(.Name == \"${vm_name}\")" \
+        <<< "${response}")"
+    [[ -z ${vm_info} ]] \
+        && { echo "No VM named ${vm_name}" >&2; return; }
+
+    vm_info="$(jq -c '{
+        UHostId, State, Zone, Region, SshLoginCommand, Password
+        }' <<< "${vm_info}")"
+    echo "${vm_info}"
+}
+
+wait_for_vm_to_stop() {
+    # Check and wait for the VM to stop.
+    #
+    # Params:
+    # * path to config.yml
+    # * VM name
+    local config_yml="${1:-}"
+    local vm_name="${2:-}"
+
+    [[ -z ${vm_name} \
+      || ! -f ${config_yml} ]] \
+      && { echo 'Parameter error!' >&2; return 1; }
+
+    echo 'Waiting for the VM to stop ...'
+    sleep 5
     local count=0
-    local ssh_response
-    until ssh_response=$(\
-        ssh -o BatchMode=yes \
-            -o ConnectTimeout=5 \
-            -o StrictHostKeyChecking=no \
-            -o UserKnownHostsFile=/dev/null \
-            "${ssh_dest}" true 2>&1) \
-        || grep -iq 'permission' <<< "${ssh_response}"
+    local vm_state
+    until vm_state="$(get_vm_info "${config_yml}" "${vm_name}" \
+        | jq -r '.State')" \
+        && [[ ${vm_state} == 'Stopped' ]]
     do
-        # Set timeout to (5 + 5) * 30 = 300 seconds
-        [[ "${count}" -gt 30 ]] && return 1
+        # Set timeout to 5 + 5 * 60 = 305 seconds
+        [[ "${count}" -gt 60 ]] \
+            && { echo 'Time out!' >&2; return 1; }
         count=$((count + 1))
-        echo '* Still waiting ...' >&2
-        sleep 5
-    done
-}
-
-setup_ssh_key() {
-    # Set up SSH key for connection
-    #
-    # Params:
-    # * SSH destination, in the format like `user@ip_address`
-    # * file containing the base64-encoded login password
-    local ssh_dest="${1:-}"
-    local encoded_password_file="${2:-}"
-    [[ -z "${ssh_dest}" \
-      || -z "${encoded_password_file}" \
-      || ! -f "${encoded_password_file}" ]] && return 1
-
-    local key_file="${HOME}/.ssh/id_ed25519"
-    local sshd_config="/etc/ssh/sshd_config"
-
-    echo 'Setting up SSH key for login ...' >&2
-    echo '* Generating SSH key ...' >&2
-    if [[ ! -f "${key_file}" || ! -f "${key_file}.pub" ]]; then
-        ssh-keygen -q -t ed25519 -N '' -f "${key_file}"
-    fi
-
-    echo '* Deplying SSH key ...' >&2
-    local -x SSHPASS
-    read -r SSHPASS < <(cat "${encoded_password_file}" | tr -d '\n' | base64 -d) || true
-    run_cmd_retry sshpass -e ssh-copy-id \
-        -i "${key_file}.pub" \
-        -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}"
-
-    echo '* Disabling SSH password authentication ...' >&2
-    ssh -t -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        "${ssh_dest}" "\
-            sudo sed -i -E 's/^[[:space:]#]*PasswordAuthentication.*/PasswordAuthentication no/' ${sshd_config}; \
-            sudo systemctl reload ssh"
-}
-
-apt_install_retry() {
-    # Run apt-get install "$@" and retry "$1" times
-    # (5 by default) on failure.
-    #
-    # Params:
-    # * (optional) number of attempts
-    local num_attempts=5
-    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
-        num_attempts="$1"
-        shift
-    fi
-
-    run_cmd_retry "${num_attempts}" \
-        sudo DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
-        apt-get install -y "$@"
-}
-
-run_cmd_retry() {
-    # Run the command in "$@" and retry "$1" times
-    # (5 by default) on failure.
-    #
-    # NOTE: This function is only for a single command without
-    #       redirection, not for multiple commands.
-    #
-    # Params:
-    # * (optional) number of attempts
-    local num_attempts=5
-    if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
-        num_attempts="$1"
-        shift
-    fi
-
-    local delay=5
-    local attempt=1
-    until "$@"; do
-        if ((attempt >= num_attempts)); then
-            echo "ERROR: Failed after ${num_attempts} attempts." >&2
-            return 1
-        fi
-        echo "Attempt ${attempt} failed! Retrying in ${delay} seconds ..." >&2
-        sleep "${delay}"
-        ((attempt++))
-    done
-}
-
-wait_for_apt_lock() {
-    # Wait for processes releasing /var/lib/apt/lists/lock
-    while sudo fuser /var/lib/apt/lists/lock 2>/dev/null; do
-        echo 'Waiting for processes releasing /var/lib/apt/lists/lock ...' >&2
+        echo '* Still waiting ...'
         sleep 5
     done
 }

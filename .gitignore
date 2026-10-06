@@ -177,7 +177,7 @@ examples/07_tutorials/KDD2020-tutorial/data_folder/
 *.vec
 *.tsv
 *.sh
-!.github/workflows/tools/compshare/*.sh
+!.github/workflows/tools/**/*.sh
 
 tests/**/resources/
 reports/
@@ -191,3 +191,11 @@ CLAUDE.md
 
 # Superpowers specs / design docs
 docs/superpowers/
+
+# Terraform files
+.terraform/
+*.hcl
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.*

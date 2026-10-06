@@ -72,6 +72,7 @@ Build Arg|Description|
 `JDK_VERSION`|OpenJDK version to use (defaults to `>=21`)|
 `PYTHON_VERSION`|Python version to use (defaults to `3.11`)|
 `RECO_DIR`|Path to the copy of Recommenders in the container when `GIT_REF` is empty (defaults to `/root/Recommenders`)|
+`VENV_DIR`|Path to the virtual environments in the container (defaults to `/root/.venvs/Recommenders`)|
 
 Examples:
 * Install Python 3.10 and the Recommenders package from the staging branch.
