@@ -147,7 +147,7 @@ if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     else
         echo "  ## Creating ${daemon_json} ..."
         mkdir -p "$(dirname "${daemon_json}")"
-        jq '.' <<< "${updates}" | sudo tee "${daemon_json}" > /dev/null
+        jq '.' > "${daemon_json}" <<< "${updates}"
     fi
 fi
 
