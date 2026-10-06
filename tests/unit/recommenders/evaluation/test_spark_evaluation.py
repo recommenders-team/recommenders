@@ -12,6 +12,7 @@ from recommenders.evaluation.python_evaluation import (
     recall_at_k,
     ndcg_at_k,
     map_at_k,
+    r_precision_at_k,
     map,
 )
 
@@ -515,3 +516,77 @@ def test_serendipity_item_feature_vector(spark_diversity_data):
         col_relevance="Relevance",
     )
     assert evaluator.serendipity() == pytest.approx(0.4028, TOL)
+
+
+@pytest.mark.spark
+def test_spark_r_precision(spark_data):
+    df_true, df_pred = spark_data
+
+    evaluator_perfect = SparkRankingEvaluation(
+        df_true, df_true, col_prediction="rating"
+    )
+    assert evaluator_perfect.r_precision() == pytest.approx(1.0, TOL)
+
+    expected_r_precision = (1 / 3 + 1 / 5 + 6 / 10) / 3
+    evaluator = SparkRankingEvaluation(df_true, df_pred)
+    assert evaluator.r_precision() == pytest.approx(expected_r_precision, TOL)
+
+    for k, expected in [
+        (3, (1 / 3 + 1 / 5 + 1 / 10) / 3),
+        (5, (1 / 3 + 1 / 5 + 2 / 10) / 3),
+        (10, expected_r_precision),
+    ]:
+        evaluator_k = SparkRankingEvaluation(df_true, df_pred, k=k)
+        assert evaluator_k.r_precision() == pytest.approx(expected, TOL)
+        assert evaluator_k.r_precision() == pytest.approx(
+            r_precision_at_k(df_true.toPandas(), df_pred.toPandas(), k=k), TOL
+        )
+
+    same_r_df_true = df_true.filter("userID = 1")
+    k_value = 3
+    r_precision_evaluator = SparkRankingEvaluation(same_r_df_true, df_pred, k=k_value)
+    precision_evaluator = SparkRankingEvaluation(same_r_df_true, df_pred, k=k_value)
+    assert r_precision_evaluator.r_precision() == pytest.approx(
+        precision_evaluator.precision_at_k(), TOL
+    )
+
+    spark = df_pred.sparkSession
+    new_pred_row = spark.createDataFrame([(4, 1, 9, 1), (4, 2, 8, 1)], df_pred.schema)
+    df_pred_extra_user = df_pred.union(new_pred_row)
+    evaluator_extra = SparkRankingEvaluation(df_true, df_pred_extra_user)
+    assert evaluator_extra.r_precision() == pytest.approx(expected_r_precision, TOL)
+
+
+@pytest.mark.spark
+@pytest.mark.parametrize(
+    "relevancy_method, k, expected",
+    [
+        ("top_k", 1, 0.0),
+        ("top_k", 2, 0.25),
+        ("top_k", 3, 0.25),
+        ("by_threshold", 3, 0.25),
+    ],
+)
+def test_spark_r_precision_zero_hits_and_custom_columns(
+    spark, relevancy_method, k, expected
+):
+    df_true = spark.createDataFrame(
+        [(1, 1, 1.0), (2, 3, 2.0), (2, 4, 3.0)],
+        "customer long, product long, actual double",
+    )
+    df_pred = spark.createDataFrame(
+        [(1, 2, 9.0), (2, 5, 8.0), (2, 3, 7.0), (2, 4, 6.0), (99, 1, 10.0)],
+        "customer long, product long, score double",
+    )
+    evaluator = SparkRankingEvaluation(
+        df_true,
+        df_pred,
+        col_user="customer",
+        col_item="product",
+        col_rating="actual",
+        col_prediction="score",
+        relevancy_method=relevancy_method,
+        threshold=6.5,
+        k=k,
+    )
+    assert evaluator.r_precision() == pytest.approx(expected)
