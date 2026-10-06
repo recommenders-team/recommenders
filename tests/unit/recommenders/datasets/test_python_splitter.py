@@ -13,6 +13,7 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
 )
 from recommenders.datasets.split_utils import (
+    filter_k_core,
     min_rating_filter_pandas,
     split_pandas_data_with_ratios,
 )
@@ -140,6 +141,20 @@ def test_min_rating_filter():
 
     assert all(u >= 3 for u in user_rating_counts)
     assert all(i >= 2 for i in item_rating_counts)
+
+
+def test_filter_k_core_custom_columns():
+    data = pd.DataFrame(
+        {
+            "uid": ["a", "a", "b", "b", "c", "c", "d", "e"],
+            "iid": ["p", "q", "p", "q", "q", "r", "r", "s"],
+            "rating": list(range(8)),
+        }
+    )
+    original = data.copy(deep=True)
+    result = filter_k_core(data, core_num=2, col_user="uid", col_item="iid")
+    pd.testing.assert_frame_equal(result, data.iloc[:4])
+    pd.testing.assert_frame_equal(data, original)
 
 
 def test_random_splitter(test_specs, python_dataset):
