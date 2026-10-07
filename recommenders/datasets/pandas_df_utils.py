@@ -201,6 +201,9 @@ class LibffmConverter:
                 "Not all columns in the input dataset appear in the fitting dataset"
             )
 
+        # Work on a copy so that the input dataframe is not modified.
+        df = df.copy()
+
         # Encode field-feature.
         idx = 1
         self.field_feature_dict = {}
