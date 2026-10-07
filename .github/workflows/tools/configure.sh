@@ -61,9 +61,12 @@ sudo apt-get update
 apt_install_retry ca-certificates curl git-all jq
 
 if ! yq --version 2>/dev/null; then
-    yq_url='https://gh-proxy.com/https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
+    yq_url='https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
+    proxied_yq_url="https://gh-proxy.com/${yq_url}"
     yq_path='/usr/local/bin/yq'
-    run_cmd_retry 10 sudo curl -fsSL "${yq_url}" -o "${yq_path}"
+    if ! run_cmd_retry 2 sudo curl -fsSL "${yq_url}" -o "${yq_path}"; then
+        run_cmd_retry 2 sudo curl -fsSL "${proxied_yq_url}" -o "${yq_path}"
+    fi
     sudo chmod a+x "${yq_path}"
 fi
 
