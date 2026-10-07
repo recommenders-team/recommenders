@@ -159,6 +159,25 @@ def test_filter_by():
     assert len(filtered_df.loc[(user_df["user_id"] == 1)]) == 0
 
 
+def test_libffm_transform_does_not_modify_input():
+    df_feature = pd.DataFrame(
+        {
+            "rating": [1, 0],
+            "field1": ["xxx1", "xxx2"],
+            "field2": [1.0, 2.0],
+        }
+    )
+    df_original = df_feature.copy()
+
+    converter = LibffmConverter().fit(df_feature)
+    df_feature_libffm = converter.transform(df_feature)
+
+    pd.testing.assert_frame_equal(df_feature, df_original)
+    assert df_feature_libffm["field1"].tolist() == ["1:1:1", "1:2:1"]
+    # Transforming the same data again gives the same result
+    pd.testing.assert_frame_equal(converter.transform(df_feature), df_feature_libffm)
+
+
 def test_csv_to_libffm():
     df_feature = pd.DataFrame(
         {
