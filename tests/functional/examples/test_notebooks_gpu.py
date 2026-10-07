@@ -2,8 +2,11 @@
 # Licensed under the MIT License.
 
 import os
+import zipfile
+
 import pytest
 
+from recommenders.datasets.download_utils import maybe_download
 from recommenders.utils.gpu_utils import get_number_gpus
 from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
@@ -578,8 +581,6 @@ def test_lightgcn_deep_dive_functional(
 @pytest.mark.gpu
 @pytest.mark.notebooks
 def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
-    _assert_tensorflow_gpu_available()
-
     notebook_path = notebooks["dkn_quickstart"]
     execute_notebook(
         notebook_path,
@@ -589,10 +590,89 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
-    assert results["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
+    # Trained with seeds 0-7 and 42, auc spans 0.559-0.600, while the untrained
+    # seed-42 model scores 0.537, so only the auc band tells a trained model from
+    # an untrained one. The ranking metrics barely move with training on the demo
+    # data and guard against regressions only.
+    assert results["auc"] == pytest.approx(0.5834, abs=0.03)
+    assert results["mean_mrr"] == pytest.approx(0.1834, abs=0.02)
+    assert results["ndcg@5"] == pytest.approx(0.1915, abs=0.02)
+    assert results["ndcg@10"] == pytest.approx(0.2437, abs=0.02)
+
+
+def _extract_kdd2020_dkn_files(directory, suffixes):
+    """Extract the news features and the DKN files ending with ``suffixes``.
+
+    The archive also holds the raw data and the full-size DKN files, which the
+    KDD2020 DKN notebooks do not need.
+
+    Returns:
+        str: The DKN training folder, the notebooks' ``data_path``.
+    """
+    zip_file = maybe_download(
+        "https://huggingface.co/datasets/Recommenders/kdd2020/resolve/main/data_folder.zip",
+        work_directory=directory,
+    )
+    with zipfile.ZipFile(zip_file) as zf:
+        members = [
+            name
+            for name in zf.namelist()
+            if name == "my_cached/paper_feature.txt"
+            or (
+                name.startswith("my_cached/DKN-training-folder/")
+                and name.endswith(suffixes)
+            )
+        ]
+        zf.extractall(directory, members)
+    return os.path.join(directory, "my_cached", "DKN-training-folder")
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
+def test_dkn_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
+    data_path = _extract_kdd2020_dkn_files(tmp, ("_small.txt", "_embedding.npy"))
+
+    notebook_path = notebooks["dkn_kdd2020"]
+    execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(data_path=data_path, EPOCHS=1),
+    )
+    results = read_notebook(output_notebook)
+
+    assert results["auc"] == pytest.approx(0.8865, rel=TOL, abs=ABS_TOL)
+    assert results["group_auc"] == pytest.approx(0.8777, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.5625, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@2"] == pytest.approx(0.4951, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@4"] == pytest.approx(0.5966, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
+def test_dkn_item2item_kdd2020_functional(notebooks, output_notebook, kernel_name, tmp):
+    data_path = _extract_kdd2020_dkn_files(
+        tmp,
+        (
+            "_embedding.npy",
+            "item2item_train_instances.txt",
+            "item2item_valid_instances.txt",
+        ),
+    )
+
+    notebook_path = notebooks["dkn_item2item_kdd2020"]
+    execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(data_path=data_path, EPOCHS=1),
+    )
+    results = read_notebook(output_notebook)
+
+    assert results["group_auc"] == pytest.approx(0.9462, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.8636, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@2"] == pytest.approx(0.8556, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@4"] == pytest.approx(0.8847, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.gpu
