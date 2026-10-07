@@ -161,7 +161,7 @@ ml-20m/
 *.mml
 nohup.out
 *.svg
-!tests/github-actions-tests.svg
+!tests/*.svg
 *.html
 *.js
 *.css

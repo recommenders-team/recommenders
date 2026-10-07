@@ -39,32 +39,30 @@ source "${utils_sh}"
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl gnupg
+apt_install_retry \
+    ca-certificates \
+    curl gnupg \
+    gcc \
+    "linux-headers-$(uname -r)"
+
+echo '* Installing cuda-keyring ...'
+os="$(. /etc/os-release \
+    && echo "${NAME}${VERSION_ID}" \
+        | tr -d '.' | tr '[:upper:]' '[:lower:]')"
+arch="$(uname -m)"
+cuda_repo="https://developer.download.nvidia.com/compute/cuda/repos"
+cuda_keyring="cuda-keyring_1.1-1_all.deb"
+cuda_keyring_url="${cuda_repo}/${os}/${arch}/${cuda_keyring}"
+run_cmd_retry curl -fsSL "${cuda_keyring_url}" -o "${cuda_keyring}"
+sudo dpkg -i "${cuda_keyring}"
+rm -f "${cuda_keyring}"
+run_cmd_retry sudo apt-get update
 
 
 #--------------------------------------------------------------------
 # Install CUDA driver if it is not installed.
 #--------------------------------------------------------------------
 if ! nvidia-smi 2>/dev/null; then
-    os="$(. /etc/os-release \
-        && echo "${NAME}${VERSION_ID}" \
-            | tr -d '.' | tr '[:upper:]' '[:lower:]')"
-    arch="$(uname -m)"
-    cuda_repo="https://developer.download.nvidia.com/compute/cuda/repos"
-    cuda_keyring="cuda-keyring_1.1-1_all.deb"
-    cuda_keyring_url="${cuda_repo}/${os}/${arch}/${cuda_keyring}"
-
-    echo '* Installing prerequisites ...'
-    wait_for_apt_lock
-    sudo apt-get update
-    apt_install_retry gcc "linux-headers-$(uname -r)"
-
-    echo '* Installing cuda-keyring ...'
-    run_cmd_retry curl -fsSL "${cuda_keyring_url}" -o "${cuda_keyring}"
-    sudo dpkg -i "${cuda_keyring}"
-    rm -f "${cuda_keyring}"
-    sudo apt-get update
-
     echo '* Installing CUDA driver ...'
     if lspci | grep -i nvidia | grep -Ei 'p40|v100s'; then
         # P40 can only install drivers of version up to 580

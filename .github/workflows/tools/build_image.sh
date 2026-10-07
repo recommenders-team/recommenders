@@ -119,13 +119,23 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
         --build-arg "NO_PROXY=${docker_no_proxy}" \
         --build-arg "no_proxy=${docker_no_proxy}")
 
-    if [[ -n ${VM_HTTP_PROXY:-} ]]; then
+    if [[ -n ${VM_HTTP_PROXY:-} ]] \
+        && ssh -t -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            "${ssh_dest}" "curl --connect-timeout 3 \
+            -Ix ${VM_HTTP_PROXY} https://www.bing.com \
+            > /dev/null"; then
         docker_args+=(\
             --build-arg "HTTP_PROXY=${VM_HTTP_PROXY}" \
             --build-arg "http_proxy=${VM_HTTP_PROXY}")
     fi
 
-    if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
+    if [[ -n ${VM_HTTPS_PROXY:-} ]] \
+        && ssh -t -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            "${ssh_dest}" "curl --connect-timeout 3 \
+            -Ikx ${VM_HTTP_PROXY} https://www.github.com \
+            > /dev/null"; then
         if [[ -z ${VM_PROXY_CERTIFICATE:-} ]]; then
             echo 'VM_HTTPS_PROXY set but VM_PROXY_CERTIFICATE not!' >&2
             exit 1
@@ -138,7 +148,11 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     fi
 fi
 
-if [[ -n ${VM_PIP_INDEX_URL:-} ]]; then
+if [[ -n ${VM_PIP_INDEX_URL:-} ]] \
+    && ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "curl -I --connect-timeout 3 \
+        ${VM_PIP_INDEX_URL}/simple/requests/ > /dev/null"; then
     docker_args+=(--build-arg "VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL}")
 fi
 

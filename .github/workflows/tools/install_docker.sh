@@ -55,9 +55,12 @@ sudo apt-get update
 apt_install_retry ca-certificates curl gnupg jq
 
 if ! yq --version 2>/dev/null; then
-    yq_url='https://gh-proxy.com/https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
+    yq_url='https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
+    proxied_yq_url="https://gh-proxy.com/${yq_url}"
     yq_path='/usr/local/bin/yq'
-    run_cmd_retry 10 sudo curl -fsSL "${yq_url}" -o "${yq_path}"
+    if ! run_cmd_retry 2 sudo curl -fsSL "${yq_url}" -o "${yq_path}"; then
+        run_cmd_retry 2 sudo curl -fsSL "${proxied_yq_url}" -o "${yq_path}"
+    fi
     sudo chmod a+x "${yq_path}"
 fi
 
@@ -129,7 +132,9 @@ fi
 #--------------------------------------------------------------------
 # Configure Docker mirrors if VM_DOCKER_MIRROR_URL is provided.
 #--------------------------------------------------------------------
-if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
+if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]] \
+    && curl -I --connect-timeout 3 "${VM_DOCKER_MIRROR_URL}/v2/" \
+        > /dev/null; then
     echo '* Setting Docker mirror URL ...'
     if [[ ${rootless} == 'true' ]]; then
         daemon_json="${HOME}/.config/docker/daemon.json"
@@ -147,7 +152,7 @@ if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
     else
         echo "  ## Creating ${daemon_json} ..."
         mkdir -p "$(dirname "${daemon_json}")"
-        jq '.' <<< "${updates}" | sudo tee "${daemon_json}" > /dev/null
+        jq '.' > "${daemon_json}" <<< "${updates}"
     fi
 fi
 
