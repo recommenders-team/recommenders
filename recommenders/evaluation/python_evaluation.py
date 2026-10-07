@@ -610,7 +610,13 @@ def r_precision_at_k(
     df_merged = df_hit.merge(df_hit_count[[col_user, 'actual']])
     df_merged = df_merged[df_merged['rank'] <= df_merged['actual']]
 
-    return (df_merged.groupby(col_user).size() / df_hit_count.set_index(col_user)['actual']).mean()
+    # Users without a hit within their first R items get a score of 0, and users
+    # missing from df_hit_count (no hit at all) are counted through n_users
+    r_precision = (
+        df_merged.groupby(col_user).size()
+        / df_hit_count.set_index(col_user)['actual']
+    ).fillna(0)
+    return r_precision.sum() / n_users
 
 
 def ndcg_at_k(

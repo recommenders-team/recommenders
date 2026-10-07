@@ -441,6 +441,28 @@ def test_python_r_precision(rating_true, rating_pred, rating_nohit):
     )
 
 
+def test_python_r_precision_counts_failing_users():
+    rating_true = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2, 3],
+            DEFAULT_ITEM_COL: [10, 20, 30],
+            DEFAULT_RATING_COL: [5, 5, 5],
+        }
+    )
+    # User 1 hits at rank 1 (R=1), user 2 hits only at rank 2 > R,
+    # user 3 has no hit at all
+    rating_pred = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 1, 2, 2, 3, 3],
+            DEFAULT_ITEM_COL: [10, 11, 21, 20, 31, 32],
+            DEFAULT_PREDICTION_COL: [0.9, 0.1, 0.9, 0.1, 0.9, 0.1],
+        }
+    )
+    assert r_precision_at_k(rating_true, rating_pred, k=2) == pytest.approx(
+        1 / 3, TOL
+    )
+
+
 def test_python_ranking_metrics_by_threshold(rating_true, rating_pred):
     metrics = [precision_at_k, recall_at_k, ndcg_at_k, map_at_k, map]
 
