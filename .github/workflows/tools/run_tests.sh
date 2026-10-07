@@ -79,7 +79,12 @@ else
     check_gpu='true'
 fi
 
-if [[ -n ${VM_HTTP_PROXY:-} ]]; then
+if [[ -n ${VM_HTTP_PROXY:-} ]]\
+    && ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "curl --connect-timeout 3 \
+        -Ix ${VM_HTTP_PROXY} https://www.bing.com \
+        > /dev/null"; then
     docker_args+=(\
         --env "HTTP_PROXY=${VM_HTTP_PROXY}" \
         --env "http_proxy=${VM_HTTP_PROXY}")

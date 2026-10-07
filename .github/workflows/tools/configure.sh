@@ -91,7 +91,10 @@ no_proxy="${apt_mirror}developer.download.nvidia.com"
 NO_PROXY="${apt_mirror}developer.download.nvidia.com"
 EOF
 
-    if [[ -n ${VM_HTTP_PROXY:-} ]]; then
+    if [[ -n ${VM_HTTP_PROXY:-} ]] \
+        && curl --connect-timeout 3 \
+            -Ix "${VM_HTTP_PROXY}" https://www.bing.com \
+            > /dev/null; then
         echo '  + Configuring HTTP proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
 http_proxy="${VM_HTTP_PROXY}"
@@ -99,7 +102,10 @@ HTTP_PROXY="${VM_HTTP_PROXY}"
 EOF
     fi
 
-    if [[ -n ${VM_HTTPS_PROXY:-} ]]; then
+    if [[ -n ${VM_HTTPS_PROXY:-} ]] \
+        && curl --connect-timeout 3 \
+            -Ikx "${VM_HTTPS_PROXY}" https://www.github.com \
+            > /dev/null; then
         echo '  + Configuring HTTPS proxy ...'
         sudo tee -a /etc/environment > /dev/null << EOF
 https_proxy="${VM_HTTPS_PROXY}"

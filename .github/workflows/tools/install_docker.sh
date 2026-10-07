@@ -129,7 +129,9 @@ fi
 #--------------------------------------------------------------------
 # Configure Docker mirrors if VM_DOCKER_MIRROR_URL is provided.
 #--------------------------------------------------------------------
-if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]]; then
+if [[ -n ${VM_DOCKER_MIRROR_URL:-} ]] \
+    && curl -I --connect-timeout 3 "${VM_DOCKER_MIRROR_URL}/v2/" \
+        > /dev/null; then
     echo '* Setting Docker mirror URL ...'
     if [[ ${rootless} == 'true' ]]; then
         daemon_json="${HOME}/.config/docker/daemon.json"

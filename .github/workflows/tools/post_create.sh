@@ -33,7 +33,6 @@
 #       * Semicolon separated URLs of docker mirrors
 #     - VM_HTTP_PROXY (optional)
 #     - VM_HTTPS_PROXY (optional)
-#     - VM_PIP_INDEX_URL (optional)
 #     - VM_PROXY_CERTIFICATE (optional)
 ######################################################################
 set -euo pipefail
