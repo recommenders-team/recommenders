@@ -56,7 +56,7 @@ cuda_keyring_url="${cuda_repo}/${os}/${arch}/${cuda_keyring}"
 run_cmd_retry curl -fsSL "${cuda_keyring_url}" -o "${cuda_keyring}"
 sudo dpkg -i "${cuda_keyring}"
 rm -f "${cuda_keyring}"
-sudo apt-get update
+run_cmd_retry sudo apt-get update
 
 
 #--------------------------------------------------------------------

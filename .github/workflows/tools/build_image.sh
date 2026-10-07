@@ -149,8 +149,10 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
 fi
 
 if [[ -n ${VM_PIP_INDEX_URL:-} ]] \
-    && curl -I --connect-timeout 5 \
-        "${VM_PIP_INDEX_URL}/simple/requests/" > /dev/null; then
+    && ssh -t -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        "${ssh_dest}" "curl -I --connect-timeout 3 \
+        ${VM_PIP_INDEX_URL}/simple/requests/ > /dev/null"; then
     docker_args+=(--build-arg "VM_PIP_INDEX_URL=${VM_PIP_INDEX_URL}")
 fi
 
