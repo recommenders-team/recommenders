@@ -128,15 +128,18 @@ if [[ -z ${requirements} ]]; then
     # * VMs with Spot ChargeType are cheaper but there is a risk of
     #   being deleted after 1 hour.
     if [[ ${test_type} == *nightly* ]]; then
+        # * NVIDIA driver cannot be properly installed on 3080Ti and 4090.
+        # * Docker GPG key download gets stuck on 4090.
+        # * P40 and 2080 are too old to be supported by TensorFlow.
         requirements='{
-            "GpgType": "!2080,P40",
+            "GpgType": "!2080,P40,3080Ti,4090",
             "Memory": 32,
             "GraphicsMemory": 12,
             "ChargeType": ["Postpay"]
         }'
     else
         requirements='{
-            "GpuType": "!P40",
+            "GpuType": "!P40,3080Ti,4090",
             "Memory": 32,
             "GraphicsMemory": 8,
             "ChargeType": ["Spot","Postpay"]

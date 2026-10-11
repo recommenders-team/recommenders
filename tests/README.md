@@ -70,7 +70,7 @@ parallel, and automatic logging of artifacts from test runs and more.
 How the tests are executed via GitHub Actions is shown in the
 following diagram:
 
-<img src="./github-actions-tests.svg">
+<img src="./testing-workflow-diagram.svg">
 
 Tests of different categories are run in the 4 GitHub workflows
 defined under [.github/workflows/](../.github/workflows/) where the
@@ -143,6 +143,9 @@ before taking any effects.  Except that, all other changes such as
 those made into [`recommenders/`](../recommenders/),
 [`tests/`](../tests/), and [`examples`](../examples/), can take effect
 immediately in PR gates without having to merge into `main`.
+
+<img src="./pull-request-target-explanation.svg">
+
 
 
 ## How to contribute tests to the repository
@@ -654,6 +657,12 @@ demand by the [Alibaba Cloud](https://www.alibabacloud.com) service.
      for how to set `CLOUD_SERVICE_ARGS`,
    * [`.github/workflows/tools/alicloud/tf/variables.tf`](../.github/workflows/tools/alicloud/tf/variables.tf)
      for what input variables to set.
+1. Make sure that the [repository
+   secret](https://github.com/recommenders-team/recommenders/settings/secrets/actions)
+   `ENCRYPT_PASSPHRASE` is set.
+   * It doesn't matter what value it is set to, because it is just
+     used for hiding the Terraform state that may contain some
+     sensitive info.
 1. Assign `alicloud` to the [repository
    variable](https://github.com/recommenders-team/recommenders/settings/variables/actions)
    `CLOUD_SERVICE`.
