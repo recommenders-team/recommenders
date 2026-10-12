@@ -89,7 +89,7 @@ apply_tf_config() {
     done
 
     readarray -t spec_list < \
-        <(jq 'sort_by(.price) | .[] | del(.price)' \
+        <(jq -c 'sort_by(.price) | .[] | del(.price)' \
             <<< "${spec_list}")
 
     local spec_index

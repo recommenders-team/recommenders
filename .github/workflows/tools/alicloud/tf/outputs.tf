@@ -10,6 +10,7 @@ output "ssh_dest" {
     ? "root@${alicloud_instance.reco.public_ip}"
     : ""
   )
+  sensitive = true
 }
 
 output "ssh_key" {
@@ -25,4 +26,5 @@ output "prices" {
       price = data.alicloud_cloud_control_prices.reco[i].prices[0].trade_price
     }
   ]
+  sensitive = true
 }

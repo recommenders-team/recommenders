@@ -75,7 +75,7 @@ locals {
     ? cidrsubnet(
       local.vpc.cidr_block,
       local.vpc_subnet_bits,
-      random_integer.vswitch_netnum
+      random_integer.vswitch_netnum.result
     )
     : null
   )
