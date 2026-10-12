@@ -128,12 +128,10 @@ get_env_exports() {
     # * JSON string
     local json_data="${1:-}"
 
-    local env_exports
-    env_exports="$(jq -r '
+    jq -r '
         [to_entries | .[] | "export \(.key)=\(.value | @sh);"]
         | join(" ")' \
-        <<< "${json_data}")"
-    echo "${env_exports}"
+        <<< "${json_data}"
 }
 
 get_input_var_combinations() {
@@ -172,8 +170,7 @@ get_input_var_combinations() {
     #     {"instance_type_family":"ecs.gn6i","region":"eu-central-1"}
     #     {"instance_type_family":"ecs.gn6i","region":"ap-southeast-1"}
     local specified_args="${1:-}"
-    local combination_list
-    combination_list="$(jq -c '
+    jq -c '
         to_entries
         | reduce .[] as $cur_var (
             [{}];
@@ -182,9 +179,8 @@ get_input_var_combinations() {
                 | $cur_var.value[] as $cur_var_val
                 | $combination + {($cur_var.key): $cur_var_val}
             ])
-        | .[]' <<< "${specified_args}")" \
+        | .[]' <<< "${specified_args}" \
         || { echo 'Incorrect input variables!' >&2; exit 1; }
-    echo "${combination_list}"
 }
 
 pre_image_build() {
@@ -485,8 +481,7 @@ update_json() {
     [[ -z ${updates} || -z ${original} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local res
-    res=$(jq -cs '
+    jq -cs '
         def update($a; $b):
             ($a | type) as $ta | ($b | type) as $tb |
             if $ta == "object" and $tb == "object" then
@@ -498,8 +493,7 @@ update_json() {
                 $b // $a
             end;
         reduce .[] as $item (null; update(.; $item))' \
-        <(echo "${original}") <(echo "${updates}"))
-    echo "${res}"
+        <(echo "${original}") <(echo "${updates}")
 }
 
 wait_for_apt_lock() {
