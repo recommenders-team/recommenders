@@ -60,12 +60,44 @@ apply_tf_config() {
 
     trap "store_tfstate_tfvars '${tf_config_dir}'; \
         trap - EXIT RETURN" EXIT RETURN
-    local index
-    for index in "${!combination_list[@]}"; do
-        local combination="${combination_list[${index}]}"
+    
+    echo "* Collecting prices ..."
+    local spec_list='[]'
+    local combination_index
+    for combination_index in "${!combination_list[@]}"; do
+        local combination="${combination_list[${combination_index}]}"
         echo "${combination}" > "${tf_config_dir}/terraform.tfvars.json"
 
-        echo "* Trying with ${combination} ..."
+        echo "  + Trying with ${combination} ..."
+        terraform -chdir="${tf_config_dir}" apply \
+            -refresh-only -auto-approve \
+            -var "unique_name=${unique_name}"
+
+        local price_list
+        readarray -t price_list < \
+            <(terraform -chdir="${tf_config_dir}" output \
+                -json prices | jq -c '.[]')
+        
+        local price_index
+        for price_index in "${!price_list[@]}"; do
+            local price="${price_list[${price_index}]}"
+
+            price="$(update_json "${combination}" "${price}")"
+            price="[${price}]"
+            spec_list="$(update_json "${spec_list}" "${price}")"
+        done
+    done
+
+    readarray -t spec_list < \
+        <(jq 'sort_by(.price) | .[] | del(.price)' \
+            <<< "${spec_list}")
+
+    local spec_index
+    for spec_index in "${!spec_list[@]}"; do
+        local spec="${spec_list[${spec_index}]}"
+        echo "${spec}" > "${tf_config_dir}/terraform.tfvars.json"
+
+        echo "* Trying with ${spec} ..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
             -var "unique_name=${unique_name}" && return
 
