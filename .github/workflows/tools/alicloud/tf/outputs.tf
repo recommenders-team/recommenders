@@ -20,9 +20,7 @@ output "ssh_key" {
 output "prices" {
   value = [
     for i, v in local.qualified_instance_types: {
-      instance_type = v.id,
-      instance_type_family = v.family,
-      region = var.region
+      instance_type = v.id
       price = data.alicloud_cloud_control_prices.reco[i].prices[0].trade_price
     }
   ]
