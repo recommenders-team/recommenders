@@ -12,23 +12,6 @@ data "alicloud_vpcs" "reco" {
   depends_on = [ alicloud_vpc.reco ]
 }
 
-data "alicloud_vswitches" "reco" {
-  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vswitches
-  vpc_id = (local.vpc != null ? local.vpc.id : null)
-  zone_id = local.instance_zone_id
-  vswitch_name = local.vswitch_name
-
-  depends_on = [ alicloud_vswitch.reco ]
-}
-
-data "alicloud_security_groups" "reco" {
-  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/security_groups
-  vpc_id = (local.vpc != null ? local.vpc.id : null)
-  name_regex = local.security_group_name
-
-  depends_on = [ alicloud_security_group.reco ]
-}
-
 data "alicloud_images" "ubuntu2404" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/images
   # https://ecs.console.aliyun.com/imageCatalog/region/cn-hangzhou?categoryType=system&osCategory%5B0%5D=linux&architecture%5B0%5D=x86_64&keyword=ubuntu

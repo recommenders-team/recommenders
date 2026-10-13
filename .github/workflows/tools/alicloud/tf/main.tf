@@ -35,7 +35,7 @@ resource "alicloud_vswitch" "reco" {
   count = local.instance_type != null ? 1 : 0
 
   vswitch_name = local.vswitch_name
-  vpc_id = local.vpc != null ? local.vpc.id : null
+  vpc_id = local.vpc_id
   zone_id = local.instance_zone_id
   cidr_block = local.vswitch_cidr_block
 }
@@ -47,7 +47,7 @@ resource "alicloud_security_group" "reco" {
   count = local.instance_type != null ? 1 : 0
 
   security_group_name = local.security_group_name
-  vpc_id = local.vpc != null ? local.vpc.id : null
+  vpc_id = local.vpc_id
 }
 
 resource "alicloud_security_group_rule" "ssh" {
@@ -104,7 +104,7 @@ resource "alicloud_instance" "reco" {
   internet_charge_type = "PayByTraffic"
   internet_max_bandwidth_out = 5
 
-  vpc_id = local.vpc != null ? local.vpc.id : null
+  vpc_id = local.vpc_id
   vswitch_id = local.vswitch_id
   security_groups = [ local.security_group_id ]
 

@@ -63,6 +63,7 @@ locals {
     ? data.alicloud_vpcs.reco.vpcs[0]
     : null
   )
+  vpc_id = local.vpc != null ? local.vpc.id : null
   vpc_subnet_bits = (
     local.vpc != null
     ? 29 - convert(split("/", local.vpc.cidr_block)[1], number)
@@ -80,15 +81,15 @@ locals {
     : null
   )
   vswitch_id = (
-    length(data.alicloud_vswitches.reco.ids) != 0
-    ? data.alicloud_vswitches.reco.ids[0]
+    length(alicloud_vswitch.reco) != 0
+    ? alicloud_vswitch.reco[0].id
     : null
   )
 
   security_group_name = var.unique_name
   security_group_id = (
-    length(data.alicloud_security_groups.reco.ids) != 0
-    ? data.alicloud_security_groups.reco.ids[0]
+    length(alicloud_security_group.reco) != 0
+    ? alicloud_security_group.reco[0].id
     : null
   )
 }
