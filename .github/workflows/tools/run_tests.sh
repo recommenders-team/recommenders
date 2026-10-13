@@ -50,6 +50,7 @@ utils_sh="${script_dir}/utils.sh"
 #--------------------------------------------------------------------
 # Get test list
 #--------------------------------------------------------------------
+# Use https://github.com/mikefarah/yq
 test_list="$(yq "
     .${test_type}.${test_group}
     | map(@sh)

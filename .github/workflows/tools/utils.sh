@@ -298,6 +298,7 @@ pre_image_build() {
 
     echo '* Configuring APT in Dockerfile ...'
     if [[ -f ${config_yml_rel_path} ]]; then
+        # Use https://github.com/mikefarah/yq
         apt_mirror="$(yq -o json < "${config_yml_rel_path}" \
             | jq -r '.apt_mirror // empty')"
         if [[ -n ${apt_mirror} ]]; then

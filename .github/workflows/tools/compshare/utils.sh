@@ -188,6 +188,7 @@ invoke_action() {
       && { echo 'Parameter error!' >&2; return 1; }
     
     local action_spec
+    # Use https://github.com/mikefarah/yq
     action_spec="$(yq -o json < "${config_yml}" \
         | jq -c ".action_specs.${action}")"
 
