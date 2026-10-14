@@ -18,7 +18,18 @@ data "alicloud_images" "ubuntu2404" {
   # For example, "ubuntu_24_04_x64_20G_alibase_20260615.vhd",
   # note that the image names end with a date 20260615,
   # so we need to use this data source to get the latest one.
-  name_regex = "^ubuntu_24_04_x64.*with_gpu_driver"
+  name_regex = (
+    (
+      var.instance_type_family != null
+      && length(regexall("^ecs.[sv]*gn.*", var.instance_type_family)) > 0
+    )
+    || (
+      var.instance_type != null
+      && length(regexall("^ecs.[sv]*gn.*", var.instance_type)) > 0
+    )
+    ? "^ubuntu_24_04_x64.*with_gpu_driver"
+    : "^ubuntu_24_04_x64_20G.*"
+  )
   os_type = "linux"
   architecture = "x86_64"
   most_recent = true
