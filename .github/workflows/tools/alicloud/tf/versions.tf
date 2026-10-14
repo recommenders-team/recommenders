@@ -9,7 +9,7 @@ terraform {
     alicloud = {
       # https://registry.terraform.io/providers/aliyun/alicloud/latest
       source = "aliyun/alicloud"
-      version = "2.0.0-beta5"
+      version = ">=2.0.0"
     }
 
     random = {
