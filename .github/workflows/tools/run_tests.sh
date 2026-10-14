@@ -56,6 +56,8 @@ test_list="$(yq "
     | map(@sh)
     | join(\" \")" \
     < "${test_groups_yml}")"
+[[ -z "${test_list}" ]] && { echo 'No tests specified!'; exit 1; }
+
 test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && source ${venv_dir}/bin/activate \
     && pytest --durations 0 --forked ${test_list}"
