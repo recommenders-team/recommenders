@@ -181,10 +181,18 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
     if core_num > 0:
         while True:
             df_inp = min_rating_filter_pandas(
-                df_inp, min_rating=core_num, filter_by="item"
+                df_inp,
+                min_rating=core_num,
+                filter_by="item",
+                col_user=col_user,
+                col_item=col_item,
             )
             df_inp = min_rating_filter_pandas(
-                df_inp, min_rating=core_num, filter_by="user"
+                df_inp,
+                min_rating=core_num,
+                filter_by="user",
+                col_user=col_user,
+                col_item=col_item,
             )
             count_u = df_inp.groupby(col_user)[col_item].count()
             count_i = df_inp.groupby(col_item)[col_user].count()
