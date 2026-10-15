@@ -543,11 +543,9 @@ def test_spark_r_precision(spark_data):
         )
 
     same_r_df_true = df_true.filter("userID = 1")
-    k_value = 3
-    r_precision_evaluator = SparkRankingEvaluation(same_r_df_true, df_pred, k=k_value)
-    precision_evaluator = SparkRankingEvaluation(same_r_df_true, df_pred, k=k_value)
-    assert r_precision_evaluator.r_precision() == pytest.approx(
-        precision_evaluator.precision_at_k(), TOL
+    evaluator_same_r = SparkRankingEvaluation(same_r_df_true, df_pred, k=3)
+    assert evaluator_same_r.r_precision() == pytest.approx(
+        evaluator_same_r.precision_at_k(), TOL
     )
 
     spark = df_pred.sparkSession
