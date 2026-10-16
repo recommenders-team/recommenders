@@ -135,6 +135,8 @@ echo 'Importing utility functions ...'
 source "${utils_sh}"
 
 echo 'Exporting environment variables ...'
+# Use the complex yq https://github.com/mikefarah/yq
+# instead of the simple jq wrapper yq https://github.com/kislyuk/yq
 secret_key_name="$(yq '.secret_key_name' < "${config_yml}")"
 export "${secret_key_name}"="${CLOUD_SERVICE_SECRET}"
 eval "$(get_env_exports "${cloud_service_envs}")"

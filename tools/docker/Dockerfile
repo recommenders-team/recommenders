@@ -71,19 +71,20 @@ RUN if [[ -n ${VM_PROXY_CERTIFICATE} ]]; then \
 # Upgrade libstdc++ required by cornac
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --only-upgrade libstdc++6
+    apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+        apt-get install -y software-properties-common \
+    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+        apt-get install -y --only-upgrade libstdc++6
 
 # curl, unzip and zip is required by SDKMAN!
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y curl git unzip zip
+    apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+        apt-get install -y curl git unzip zip
 
 # Install SDKMAN!
 RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
@@ -110,13 +111,14 @@ RUN curl -LsSf --retry 5 --retry-delay 10 --retry-all-errors \
 # Install python system-wide to avoid uv downloading from GitHub
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y software-properties-common \
+    apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+        apt-get install -y software-properties-common \
     && add-apt-repository -y ppa:deadsnakes/ppa \
-    && apt-get install -y \
-        python${PYTHON_VERSION}-dev \
-        python${PYTHON_VERSION}-distutils
+    && DEBIAN_FRONTEND=noninteractive \
+        apt-get install -y \
+            python${PYTHON_VERSION}-dev \
+            python${PYTHON_VERSION}-distutils
 
 # Create virtual environment with uv
 ENV UV_LINK_MODE=copy

@@ -747,12 +747,52 @@ directory under
   configurations
   + **must** accept an input variable called `unique_name` which can
     be used for the name of the VM, Docker image, and other resources.
-  + **must** output the following two values for subsequent steps in
+  + **must** output the following values for subsequent steps in
     [`template.yml`](../.github/workflows/template.yml) to access to
-    the VM.
-    - `ssh_dest` for the SSH destination in the format like
-      `username@IP_address`.
-    - `ssh_key` for the SSH key.
+    the VM and query the prices.
+    - `ssh_dest`
+      + It is the SSH destination of the VM in the format like
+        `username@IP_address`.
+    - `ssh_key`
+      + It is the SSH key to access the VM.
+    - `prices`
+      + It a list of JSON objects each of which has a `price` key
+        indicating price of the compute represented by the object.
+      + The prices will be obtained by querying with values of the
+        input variables.
+      + Except the `price` key, other keys in the objects of the list
+        `prices` must be a subset of the input variables.  For
+        example, if the input variables contain `instance_type`,
+        `instance_type_family`, and `region`, then the output `prices`
+        can be
+        
+        ```json
+        [
+            {"instance_type": "ecs.gn6i-c4g1.xlarge", "price": 8.38},
+            {"instance_type": "ecs.gn6i-c8g1.2xlarge", "price": 9.98}
+        ]
+        ```
+
+        or
+
+        ```json
+        [
+            {"instance_type": "ecs.gn6i-c4g1.xlarge", "instance_type_family": "ecs.gn6i", "price": 8.38},
+            {"instance_type": "ecs.gn6i-c8g1.2xlarge", "instance_type_family": "ecs.gn6i", "price": 9.98}
+        ]
+        ```
+
+        but not
+
+        ```json
+        [
+            {"instance_type": "ecs.gn6i-c4g1.xlarge", "cpu": 4, "memory": 15, "price": 8.38},
+            {"instance_type": "ecs.gn6i-c8g1.2xlarge", "cpu": 8, "memory": 31, "price": 9.98}
+        ]
+        ```
+        
+        because `cpu` and `memory` are not included in the input variables.
+
 * If the service does not support Terraform, two files with special
   names should be put into its service directory.
   + `create.sh`

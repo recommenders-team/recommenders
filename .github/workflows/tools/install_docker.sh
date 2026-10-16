@@ -52,17 +52,8 @@ source "${utils_sh}"
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl gnupg jq
-
-if ! yq --version 2>/dev/null; then
-    yq_url='https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
-    proxied_yq_url="https://gh-proxy.com/${yq_url}"
-    yq_path='/usr/local/bin/yq'
-    if ! run_cmd_retry 2 sudo curl -fsSL "${yq_url}" -o "${yq_path}"; then
-        run_cmd_retry 2 sudo curl -fsSL "${proxied_yq_url}" -o "${yq_path}"
-    fi
-    sudo chmod a+x "${yq_path}"
-fi
+# Use https://github.com/kislyuk/yq
+apt_install_retry ca-certificates curl gnupg jq yq
 
 if [[ $(whoami) == 'root' ]]; then
     rootless='false'
@@ -79,8 +70,8 @@ if ! docker --version 2>/dev/null; then
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
     if [[ -f ${config_yml} ]]; then
-        apt_url="$(yq -o json < "${config_yml}" \
-            | jq -r '.docker_download_mirror // empty')"
+        apt_url="$(yq -r '.docker_download_mirror // empty' \
+            "${config_yml}")"
     fi
     apt_url="${apt_url:-https://download.docker.com/linux/ubuntu}"
     apt_list="/etc/apt/sources.list.d/docker.list"

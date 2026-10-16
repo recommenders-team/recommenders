@@ -58,17 +58,9 @@ sudo systemctl mask apt-daily.service apt-daily-upgrade.service
 echo '* Installing prerequisites ...'
 wait_for_apt_lock
 sudo apt-get update
-apt_install_retry ca-certificates curl git-all jq
-
-if ! yq --version 2>/dev/null; then
-    yq_url='https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64'
-    proxied_yq_url="https://gh-proxy.com/${yq_url}"
-    yq_path='/usr/local/bin/yq'
-    if ! sudo curl -fsSL "${proxied_yq_url}" -o "${yq_path}"; then
-        sudo curl -fsSL "${yq_url}" -o "${yq_path}"
-    fi
-    sudo chmod a+x "${yq_path}"
-fi
+# Use the simple jq wrapper yq from https://github.com/kislyuk/yq
+# instead of https://github.com/mikefarah/yq
+apt_install_retry ca-certificates curl git-all jq yq
 
 
 #--------------------------------------------------------------------
@@ -85,8 +77,7 @@ if [[ -n ${VM_HTTP_PROXY:-} || -n ${VM_HTTPS_PROXY:-} ]]; then
     echo '* Configuring system-wide proxies ...'
     echo '  + Configuring no proxy ...'
     if [[ -f ${config_yml} ]]; then
-        apt_mirror="$(yq -o json < "${config_yml}" \
-            | jq -r '.apt_mirror // empty')"
+        apt_mirror="$(yq -r '.apt_mirror // empty' "${config_yml}")"
     fi
     apt_mirror="${apt_mirror:+$apt_mirror,}"
     sudo tee -a /etc/environment > /dev/null << EOF

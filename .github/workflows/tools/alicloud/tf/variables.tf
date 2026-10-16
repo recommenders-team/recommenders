@@ -25,7 +25,7 @@ variable "region" {
   #
   # If var.vpc_id is specified, it should be the same region as the
   # VPC.
-  default = ""
+  default = null
 }
 
 variable "instance_type_family" {
@@ -49,7 +49,7 @@ variable "instance_type_family" {
   #   + 'ecs.gn8is' - NVIDIA L20
   #     - '8' - Ada Lovelace
   #     - price: ~ 19CNY / 3CNY
-  default = ""
+  default = null
 }
 
 variable "vpc_id" {
@@ -61,5 +61,9 @@ variable "vpc_id" {
   # with 4 IP addresses.  For example, if CIDR of the VPC is
   # "10.0.0.0/8", then CIDR of the VSwitch where the special
   # services are should be "10.0.0.0/29".
-  default = ""
+  default = null
+}
+
+variable "instance_type" {
+  default = null
 }

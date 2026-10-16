@@ -6,27 +6,10 @@
 #####################################################################
 data "alicloud_vpcs" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vpcs
-  vpc_name = var.vpc_id == "" ? var.unique_name : null
-  ids = var.vpc_id == "" ? null : [ var.vpc_id ]
+  vpc_name = var.vpc_id == null ? var.unique_name : null
+  ids = var.vpc_id == null ? null : [ var.vpc_id ]
 
   depends_on = [ alicloud_vpc.reco ]
-}
-
-data "alicloud_vswitches" "reco" {
-  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/vswitches
-  vpc_id = local.vpc.id
-  zone_id = local.instance_zone_id
-  vswitch_name = local.vswitch_name
-
-  depends_on = [ alicloud_vswitch.reco ]
-}
-
-data "alicloud_security_groups" "reco" {
-  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/security_groups
-  vpc_id = local.vpc.id
-  name_regex = local.security_group_name
-
-  depends_on = [ alicloud_security_group.reco ]
 }
 
 data "alicloud_images" "ubuntu2404" {
@@ -35,7 +18,18 @@ data "alicloud_images" "ubuntu2404" {
   # For example, "ubuntu_24_04_x64_20G_alibase_20260615.vhd",
   # note that the image names end with a date 20260615,
   # so we need to use this data source to get the latest one.
-  name_regex = "^ubuntu_24_04_x64.*with_gpu_driver"
+  name_regex = (
+    (
+      var.instance_type_family != null
+      && length(regexall("^ecs.[sv]*gn.*", var.instance_type_family)) > 0
+    )
+    || (
+      var.instance_type != null
+      && length(regexall("^ecs.[sv]*gn.*", var.instance_type)) > 0
+    )
+    ? "^ubuntu_24_04_x64.*with_gpu_driver"
+    : "^ubuntu_24_04_x64_20G.*"
+  )
   os_type = "linux"
   architecture = "x86_64"
   most_recent = true
@@ -44,9 +38,26 @@ data "alicloud_images" "ubuntu2404" {
 
 data "alicloud_instance_types" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/instance_types
+  instance_type = var.instance_type
   instance_type_family = var.instance_type_family
   sorted_by = "Price"
   instance_charge_type = local.instance_charge_type
   spot_strategy = local.spot_strategy
   image_id = local.image_id
+}
+
+data "alicloud_cloud_control_prices" "reco" {
+  # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/cloud_control_prices
+  count = length(local.qualified_instance_types)
+
+  desire_attributes_json = jsonencode({
+    instance_type = local.qualified_instance_types[count.index].id
+    instance_charge_type = local.instance_charge_type
+    spot_strategy = local.spot_strategy
+    system_disk = {
+      category = "cloud_essd"
+    }
+  })
+  product = "ECS"
+  resource_code = "Instance"
 }

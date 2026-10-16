@@ -188,6 +188,7 @@ invoke_action() {
       && { echo 'Parameter error!' >&2; return 1; }
     
     local action_spec
+    # Use https://github.com/mikefarah/yq
     action_spec="$(yq -o json < "${config_yml}" \
         | jq -c ".action_specs.${action}")"
 
@@ -529,7 +530,7 @@ get_available_required_gpu_types() {
            "GraphicsMemory": (.GraphicsMemory.Value * 1024)}]' \
         <<< "${gpu_types}")"
     local gpu_list
-    gpu_list="$(jq '[ .[].GpuType ]' <<< "${gpu_types}")"
+    gpu_list="$(jq -c '[ .[].GpuType ]' <<< "${gpu_types}")"
 
     # Get the available required GPU types.
     gpu_list="$(get_available_required_items \
@@ -636,7 +637,7 @@ get_vm_info() {
         'DescribeCompShareInstance')"
 
     local vm_info
-    vm_info="$(jq "
+    vm_info="$(jq -c "
         .UHostSet.[]
         | select(.Name == \"${vm_name}\")" \
         <<< "${response}")"

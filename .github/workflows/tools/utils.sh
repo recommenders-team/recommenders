@@ -60,12 +60,44 @@ apply_tf_config() {
 
     trap "store_tfstate_tfvars '${tf_config_dir}'; \
         trap - EXIT RETURN" EXIT RETURN
-    local index
-    for index in "${!combination_list[@]}"; do
-        local combination="${combination_list[${index}]}"
+    
+    echo "* Collecting prices ..."
+    local spec_list='[]'
+    local combination_index
+    for combination_index in "${!combination_list[@]}"; do
+        local combination="${combination_list[${combination_index}]}"
         echo "${combination}" > "${tf_config_dir}/terraform.tfvars.json"
 
-        echo "* Trying with ${combination} ..."
+        echo "  + Trying with ${combination} ..."
+        terraform -chdir="${tf_config_dir}" apply \
+            -refresh-only -auto-approve \
+            -var "unique_name=${unique_name}"
+
+        local price_list
+        readarray -t price_list < \
+            <(terraform -chdir="${tf_config_dir}" output \
+                -json prices | jq -c '.[]')
+        
+        local price_index
+        for price_index in "${!price_list[@]}"; do
+            local price="${price_list[${price_index}]}"
+
+            price="$(update_json "${combination}" "${price}")"
+            price="[${price}]"
+            spec_list="$(update_json "${spec_list}" "${price}")"
+        done
+    done
+
+    readarray -t spec_list < \
+        <(jq -c 'sort_by(.price) | .[] | del(.price)' \
+            <<< "${spec_list}")
+
+    local spec_index
+    for spec_index in "${!spec_list[@]}"; do
+        local spec="${spec_list[${spec_index}]}"
+        echo "${spec}" > "${tf_config_dir}/terraform.tfvars.json"
+
+        echo "* Trying with ${spec} ..."
         terraform -chdir="${tf_config_dir}" apply -auto-approve \
             -var "unique_name=${unique_name}" && return
 
@@ -128,12 +160,10 @@ get_env_exports() {
     # * JSON string
     local json_data="${1:-}"
 
-    local env_exports
-    env_exports="$(jq -r '
+    jq -r '
         [to_entries | .[] | "export \(.key)=\(.value | @sh);"]
         | join(" ")' \
-        <<< "${json_data}")"
-    echo "${env_exports}"
+        <<< "${json_data}"
 }
 
 get_input_var_combinations() {
@@ -172,8 +202,7 @@ get_input_var_combinations() {
     #     {"instance_type_family":"ecs.gn6i","region":"eu-central-1"}
     #     {"instance_type_family":"ecs.gn6i","region":"ap-southeast-1"}
     local specified_args="${1:-}"
-    local combination_list
-    combination_list="$(jq -c '
+    jq -c '
         to_entries
         | reduce .[] as $cur_var (
             [{}];
@@ -182,9 +211,8 @@ get_input_var_combinations() {
                 | $cur_var.value[] as $cur_var_val
                 | $combination + {($cur_var.key): $cur_var_val}
             ])
-        | .[]' <<< "${specified_args}")" \
+        | .[]' <<< "${specified_args}" \
         || { echo 'Incorrect input variables!' >&2; exit 1; }
-    echo "${combination_list}"
 }
 
 pre_image_build() {
@@ -270,6 +298,7 @@ pre_image_build() {
 
     echo '* Configuring APT in Dockerfile ...'
     if [[ -f ${config_yml_rel_path} ]]; then
+        # Use https://github.com/mikefarah/yq
         apt_mirror="$(yq -o json < "${config_yml_rel_path}" \
             | jq -r '.apt_mirror // empty')"
         if [[ -n ${apt_mirror} ]]; then
@@ -485,8 +514,7 @@ update_json() {
     [[ -z ${updates} || -z ${original} ]] \
       && { echo 'Parameter error!' >&2; return 1; }
 
-    local res
-    res=$(jq -cs '
+    jq -cs '
         def update($a; $b):
             ($a | type) as $ta | ($b | type) as $tb |
             if $ta == "object" and $tb == "object" then
@@ -498,8 +526,7 @@ update_json() {
                 $b // $a
             end;
         reduce .[] as $item (null; update(.; $item))' \
-        <(echo "${original}") <(echo "${updates}"))
-    echo "${res}"
+        <(echo "${original}") <(echo "${updates}")
 }
 
 wait_for_apt_lock() {

@@ -50,11 +50,14 @@ utils_sh="${script_dir}/utils.sh"
 #--------------------------------------------------------------------
 # Get test list
 #--------------------------------------------------------------------
+# Use https://github.com/mikefarah/yq
 test_list="$(yq "
     .${test_type}.${test_group}
     | map(@sh)
     | join(\" \")" \
     < "${test_groups_yml}")"
+[[ -z "${test_list}" ]] && { echo 'No tests specified!'; exit 1; }
+
 test_cmd="source /root/.sdkman/bin/sdkman-init.sh \
     && source ${venv_dir}/bin/activate \
     && pytest --durations 0 --forked ${test_list}"
