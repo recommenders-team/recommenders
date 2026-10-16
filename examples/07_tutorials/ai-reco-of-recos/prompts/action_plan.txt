@@ -1,0 +1,167 @@
+You are a senior MLOps-for-RS engineer.
+Receive an **`input_scenario`** object describing industry, goal, region, constraints.
+Return a **six-part plan** with crystal-clear, implementation-ready details.
+This action plan will be recommended to run on Azure, please propose an Azure stack.
+----------------------------------------------------------------------------
+
+## Input Scenario
+#### START OF INPUT SCENARIO
+{{scenario}}
+#### END OF INPUT SCENARIO
+
+
+## Candidate Recommender Algorithms
+#### START OF CANDIDATE RECOMMENDER ALGORITHMS
+{{algos}}
+#### END OF CANDIDATE RECOMMENDER ALGORITHMS
+
+
+**Sections to Produce (exact headers)**
+Based on the suggested candidate recommender algorithms above, please generate the following:
+1. **Candidate Generators** – list 1-3 recall models; include data needed & batch cadence.
+2. **Re-Ranker / Final Model** – architecture, loss, label definition, and latency target.
+3. **Training Stack** – ETL tech, framework (PyTorch Lightning / Spark / LightGBM), HPO strategy, expected hardware.
+4. **Serving Path** – storage (Feature Store / Redis / Cosmos DB), ANN / cache layer, model runtime (ONNX-RT, Triton, etc.), P99 latency.
+5. **Metrics & Roll-out** – offline metrics, guard-rail KPIs, A/B or bandit schedule, traffic % ramp.
+6. **Docs & IaC** – artifacts to generate (README, dashboards), IaC spec (Bicep / Terraform), monitoring hooks.
+
+---
+
+**Output Example - the below is an example ONLY**
+
+```
+# 1 · Candidate Generators
+· ALS-Spark on last-90-day interactions (nightly)  
+· TF-IDF on product titles & descriptions for cold SKUs (hourly)  
+
+# 2 · Re-Ranker / Final Model
+· xDeepFM combining ID embeddings + price + brand + dense CTR features  
+· Objective: binary add-to-cart, AUCPR optimised, 50 ms budget
+
+# 3 · Training Stack
+· Azure Databricks → Delta Lake → PyTorch Lightning on 4×A100  
+· Hyperdrive Bayesian sweep (LR, layer dims)  
+
+# 4 · Serving Path
+· Feature Store (Redis) → Faiss HNSW recall (≤20 ms)  
+· ONNX-Runtime on AKS for xDeepFM (≤30 ms)  
+
+# 5 · Metrics & Roll-out
+· Offline: nDCG@20, MAP@20; Online: ATC rate, GMV lift  
+· Progressive rollout 1% ➔ 5% ➔ 25% over 2 weeks with sequential testing
+
+# 6 · Docs & IaC
+· Bicep templates for AKS + Redis; MLflow tracking; Grafana dashboards
+```
+
+Fill each section thoroughly; bullet form is fine.
+
+**Expected JSON Response**
+
+{{
+  "candidate_generators": [
+    {{
+      /* Name and flavour of the recall model that surfaces a
+         *large* pool of items (e.g., "Spark-ALS (implicit, 90-day)",
+         "Popularity-biased TF-IDF", "LightGCN Graph Recall").          */
+      "model": "Recommendation model name/type used for generating initial candidates",
+
+      /* All raw sources this generator needs—IDs, interaction logs,
+         catalogue metadata, embeddings store paths, etc.
+         Mention format + retention window if relevant.                */
+      "data_needed": "Data sources and types required for this generator",
+
+      /* How often the recall index or scores are refreshed.
+         Typical values: 'hourly', 'nightly', 'near-real-time (Kafka stream)'. */
+      "batch_cadence": "How frequently this generator runs (e.g., hourly, daily)"
+    }}
+  ],
+
+  "reranker": {{
+    /* Architecture that scores the relatively small candidate set
+       returned by the generator(s)—e.g., 'xDeepFM', 'Transformer
+       cross-encoder', 'Wide & Deep + price/brand features'.            */
+    "architecture": "Model architecture used for reranking candidates",
+
+    /* Training objective—point-wise BCE, pair-wise hinge, listwise
+       LambdaRank, AUCPR, etc.                                          */
+    "loss": "Loss function used during training",
+
+    /* Precise definition of the positive vs negative signal
+       (click ≥ 10 s, add-to-cart, completed watch, etc.).              */
+    "label_definition": "How positive/negative labels are defined",
+
+    /* Single-item scoring budget at inference, typically stated as a
+       ceiling (e.g., '< 30 ms on GPU', '< 5 ms on CPU').               */
+    "latency_target": "Maximum allowed inference time"
+  }},
+
+  "training_stack": {{
+    /* ETL / feature-engineering layer - propose an Azure stack:
+       'PySpark → Delta Lake', 'Azure Data Factory', 'dbt + Snowpark', etc. */
+    "etl": "Data extraction, transformation, loading technology",
+
+    /* Core model-training framework(s):
+       'PyTorch Lightning', 'LightGBM-CLI', 'TensorFlow-Keras', etc.    */
+    "framework": "ML framework used for model development",
+
+    /* Hyper-parameter search strategy:
+       'AzureML HyperDrive (Bayesian)', 'Optuna + ASHA', 'manual grid'. */
+    "hpo_strategy": "Hyperparameter optimization approach",
+
+    /* Compute requested for a *single* full training run—
+       node type / count / GPUs, or 'CPU-only', etc.                    */
+    "hardware": "Compute resources required for training"
+  }},
+
+  "serving_path": {{
+    /* Where online features and model artefacts live:
+       'Redis Feature Store', 'Cosmos DB', 'S3 + SageMaker model hub'.  */
+    "storage": "Where features/models are stored for serving",
+
+    /* Approximate-nearest-neighbor / vector index layer if any:
+       'Faiss-HNSW', 'Annoy', 'Milvus', or 'null' when not used.        */
+    "ann_layer": "Approximate nearest neighbor solution (if applicable)",
+
+    /* Runtime that hosts the re-ranker:
+       'ONNX-Runtime on AKS', 'Triton Inference Server', 'Vertex-AI'.   */
+    "model_runtime": "Inference engine/platform",
+
+    /* End-to-end 99th-percentile latency budget, recall+re-rank:
+       e.g., '≤ 50 ms'.                                                 */
+    "p99_latency": "99th percentile latency target for full serving path"
+  }},
+
+  "metrics_rollout": {{
+    /* Offline model-quality metrics computed on hold-out data:
+       ['nDCG@10','MAP@20','RMSE'], etc.                               */
+    "offline_metrics": ["Metrics used to evaluate model quality offline"],
+
+    /* Business KPIs tracked in production:
+       ['CTR','GMV','Watch Time','Add-to-Cart Rate'], etc.              */
+    "online_kpis": ["Business KPIs monitored during deployment"],
+
+    /* Roll-out pattern:
+       '1% → 5% → 25% traffic ramp', 'shadow mode', 'canary'.           */
+    "rollout_strategy": "Approach for deploying to production",
+
+    /* Experimentation or validation protocol:
+       'A/B test (Frequentist)', 'Multi-armed bandit', 'Quasi-holdback'.*/
+    "testing": "A/B testing or other validation methodology"
+  }},
+
+  "docs_iac": {{
+    /* Artefacts for hand-off and governance:
+       ['README.md','Architecture diagram','Run-book','KPIs dashboard'] */
+    "artifacts": ["Documentation and other artifacts to generate"],
+
+    /* IaC flavour (and path if helpful):
+       'Bicep templates in /infra', 'Terraform Cloud workspace', etc.   */
+    "iac_spec": "Infrastructure as Code specification",
+
+    /* Observability stack:
+       'Prometheus + Grafana', 'Azure Monitor + Application Insights', etc. */
+    "monitoring": "Tools/approaches for system monitoring"
+  }}
+}}
+
