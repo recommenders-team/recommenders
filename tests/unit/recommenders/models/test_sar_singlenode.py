@@ -78,6 +78,19 @@ def test_predict_all_items(train_test_dummy_timestamp, header):
     assert preds[DEFAULT_PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
+def _expected_lexicographers_mi(sar_settings, threshold):
+    """Element-wise C_ij * log2(n_items * C_ij / (C_ii * C_jj)) from the stored
+    co-occurrence counts, with 0 for item pairs that never co-occur."""
+    counts = pd.read_csv(
+        sar_settings["FILE_DIR"] + "sim_count" + str(threshold) + ".csv", index_col=0
+    ).astype("float64")
+    c = counts.values
+    diag = np.diag(c)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        lmi = np.where(c > 0, c * np.log2(c.shape[0] * c / np.outer(diag, diag)), 0.0)
+    return pd.DataFrame(lmi, index=counts.index, columns=counts.columns)
+
+
 @pytest.mark.parametrize(
     "threshold,similarity_type,file",
     [
@@ -122,6 +135,10 @@ def test_sar_item_similarity(
     true_item_similarity = pd.read_csv(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv", index_col=0
     )
+    if similarity_type == "lexicographers mutual information":
+        # The stored sim_lex files hold the matrix product of the co-occurrence and
+        # mutual information matrices, so derive the expected values instead
+        true_item_similarity = _expected_lexicographers_mi(sar_settings, threshold)
     item2index = pd.Series(model.item2index)
     index = item2index[true_item_similarity.index]
     columns = item2index[true_item_similarity.columns]
@@ -243,7 +260,31 @@ def test_recommend_k_items(
         remove_seen=True,
     )
 
-    if true_userpred.shape[0] == 0:
+    if similarity_type == "lexicographers mutual information":
+        # userpred_lex3.csv is empty: with the matrix-product similarity every
+        # score was -inf. Check the scores against the expected similarity instead.
+        similarity = _expected_lexicographers_mi(sar_settings, threshold)
+        affinity = model.user_affinity[
+            model.user2index[sar_settings["TEST_USER_ID"]],
+            pd.Series(model.item2index)[similarity.index],
+        ].toarray()
+        scores = pd.Series(affinity.dot(similarity.values).ravel(), similarity.columns)
+        seen = demo_usage_data.loc[
+            demo_usage_data[header["col_user"]] == sar_settings["TEST_USER_ID"],
+            header["col_item"],
+        ]
+        scores = scores.drop(seen)
+        assert np.allclose(
+            test_results[DEFAULT_PREDICTION_COL],
+            scores[test_results[header["col_item"]]],
+            atol=sar_settings["ATOL"],
+        )
+        assert np.allclose(
+            test_results[DEFAULT_PREDICTION_COL],
+            scores.sort_values(ascending=False).iloc[:10],
+            atol=sar_settings["ATOL"],
+        )
+    elif true_userpred.shape[0] == 0:
         assert test_results.shape[0] == 0
     else:
         pd.testing.assert_frame_equal(
