@@ -363,6 +363,28 @@ class SparkRankingEvaluation:
         """
         return self._metrics.meanAveragePrecisionAt(self.k)
 
+    def r_precision(self):
+        """Calculate R-Precision.
+
+        R-Precision is the fraction of the top R recommended items that are relevant,
+        where R is the total number of relevant items for the user.
+        Recommendations are limited by the evaluator's relevancy method and k.
+
+        Returns:
+            float: Mean R-Precision across all users.
+        """
+        df = self._items_for_user_all.withColumn("R", F.size("ground_truth"))
+        return df.select(
+            F.mean(
+                F.size(
+                    F.array_intersect(
+                        F.slice(DEFAULT_PREDICTION_COL, 1, F.col("R")), "ground_truth"
+                    )
+                )
+                / F.col("R")
+            )
+        ).first()[0]
+
 
 def _get_top_k_items(
     dataframe,
