@@ -14,9 +14,9 @@ try:
         prepare_hparams,
         download_deeprec_resources,
     )
-    from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
-    from recommenders.models.deeprec.io.dkn_item2item_iterator import (
-        DKNItem2itemTextIterator,
+    from recommenders.models.deeprec.io.dkn_dataset import (
+        DKNDataset,
+        DKNItem2ItemDataset,
     )
     from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
 except ImportError:
@@ -24,61 +24,40 @@ except ImportError:
 
 
 @pytest.mark.gpu
-def test_DKN_iterator(deeprec_resource_path):
+def test_dkn_dataset(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
-    data_file = os.path.join(data_path, r"train_mind_demo.txt")
-    news_feature_file = os.path.join(data_path, r"doc_feature.txt")
-    user_history_file = os.path.join(data_path, r"user_history.txt")
-    wordEmb_file = os.path.join(data_path, "word_embeddings_100.npy")
-    entityEmb_file = os.path.join(data_path, "TransE_entity2vec_100.npy")
-    contextEmb_file = os.path.join(data_path, "TransE_context2vec_100.npy")
-    yaml_file = os.path.join(data_path, "dkn.yaml")
+    data_file = os.path.join(data_path, "train_mind_demo.txt")
+    news_feature_file = os.path.join(data_path, "doc_feature.txt")
     download_deeprec_resources(
         "https://raw.githubusercontent.com/recommenders-team/resources/main/deeprec/",
         data_path,
         "mind-demo.zip",
     )
 
-    hparams = prepare_hparams(
-        yaml_file,
-        news_feature_file=news_feature_file,
-        user_history_file=user_history_file,
-        wordEmb_file="",
-        entityEmb_file="",
-        contextEmb_file="",
+    dataset = DKNDataset(
+        news_feature_file, os.path.join(data_path, "user_history.txt"), 50
     )
-    iterator = DKNTextIterator(hparams, tf.Graph())
-    assert iterator is not None
-    for res, impression, data_size in iterator.load_data_from_file(data_file):
-        assert isinstance(res, dict)
+    n_instances = 0
+    for batch, impression_ids in dataset.load_data_from_file(data_file, 100):
+        size = len(impression_ids)
+        assert batch["labels"].shape == (size, 1)
+        assert batch["candidate_words"].shape == (size, 10)
+        assert batch["candidate_entities"].shape == (size, 10)
+        assert batch["clicked_words"].shape == (size, 50, 10)
+        assert batch["clicked_entities"].shape == (size, 50, 10)
+        n_instances += size
+    with open(data_file) as rd:
+        assert n_instances == sum(1 for _ in rd)
 
-    # test DKN item2item iterator
-    hparams = prepare_hparams(
-        yaml_file,
-        news_feature_file=news_feature_file,
-        wordEmb_file=wordEmb_file,
-        entityEmb_file=entityEmb_file,
-        contextEmb_file=contextEmb_file,
-        epochs=1,
-        is_clip_norm=True,
-        max_grad_norm=0.5,
-        his_size=20,
-        MODEL_DIR=os.path.join(data_path, "save_models"),
-        use_entity=True,
-        use_context=True,
+    # doc_list.txt holds 20 news IDs: 4 groups of neg_num + 2 = 5.
+    dataset_item2item = DKNItem2ItemDataset(news_feature_file, neg_num=3)
+    batches = list(
+        dataset_item2item.load_data_from_file(
+            os.path.join(data_path, "doc_list.txt"), 3
+        )
     )
-    hparams.neg_num = 9
-
-    iterator_item2item = DKNItem2itemTextIterator(hparams, tf.Graph())
-    assert iterator_item2item is not None
-    test_round = 3
-    for res, impression, data_size in iterator_item2item.load_data_from_file(
-        os.path.join(data_path, "doc_list.txt")
-    ):
-        assert isinstance(res, dict)
-        test_round -= 1
-        if test_round <= 0:
-            break
+    assert [batch["words"].shape for batch, _ in batches] == [(3, 5, 10), (1, 5, 10)]
+    assert [len(news_ids) for _, news_ids in batches] == [15, 5]
 
 
 @pytest.mark.gpu
