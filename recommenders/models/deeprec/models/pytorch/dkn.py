@@ -35,9 +35,7 @@ from recommenders.models.deeprec.models.pytorch.fcn_net import FcnNet
 
 __all__ = ["KCNN", "DKNBase", "DKN"]
 
-# Std of a standard normal truncated at two stds, scipy.stats.truncnorm.std(-2, 2).
-# TensorFlow's VarianceScaling divides by the same constant, so the PyTorch init
-# matches the TF DKN.
+# scipy.stats.truncnorm.std(-2, 2), as in TensorFlow's VarianceScaling.
 TRUNCATED_NORMAL_STD = 0.87962566103423978
 
 
