@@ -7,6 +7,7 @@ import pytest
 from recommenders.utils.gpu_utils import get_number_gpus
 from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
+
 TOL = 0.1
 ABS_TOL = 0.05
 
