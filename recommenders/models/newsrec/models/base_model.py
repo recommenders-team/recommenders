@@ -1,429 +1,328 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import abc
+"""Training and evaluation shared by the news recommendation models.
+
+A model scores a candidate article by the dot product of its news vector with the
+user vector. It is trained on samples of one clicked and ``npratio`` non-clicked
+candidates with a softmax cross-entropy loss, and evaluated by ranking the
+candidates of every impression.
+"""
+
+from __future__ import annotations
+
+import pickle
 import time
+
 import numpy as np
-from tqdm import tqdm
-import tensorflow as tf
-from tensorflow.compat.v1 import keras
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 from recommenders.models.deeprec.deeprec_utils import cal_metric
+from recommenders.models.newsrec.io.mind_dataset import MINDDataset
 
-tf.compat.v1.disable_eager_execution()
-tf.compat.v1.experimental.output_all_intermediates(True)
-__all__ = ["BaseModel"]
+__all__ = ["NewsRecModel"]
 
 
-class BaseModel:
-    """Basic class of models
+def _load_dict(file_path: str) -> dict:
+    with open(file_path, "rb") as f:
+        return pickle.load(f)
 
-    Attributes:
-        hparams (HParams): A HParams object, holds the entire set of hyperparameters.
-        train_iterator (object): An iterator to load the data in training steps.
-        test_iterator (object): An iterator to load the data in testing steps.
-        graph (object): An optional graph.
-        seed (int): Random seed.
+
+class NewsRecModel(nn.Module):
+    """Base of NRMS, NAML, LSTUR and NPA.
+
+    A subclass builds its layers after calling ``__init__`` and implements
+    ``encode_news(news, users)``, mapping article features to news vectors, and
+    ``encode_user(clicked, users)``, mapping the news vectors of the clicked
+    articles ``[N, his_size, D]`` to user vectors ``[N, D]``.
     """
+
+    # Whether encode_news depends on the user, which rules out embedding every
+    # article once per evaluation.
+    personalized_news = False
 
     def __init__(
         self,
-        hparams,
-        iterator_creator,
-        seed=None,
-    ):
-        """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function,
-        parameter set.
+        word_embedding_file: str,
+        word_dict_file: str,
+        title_size: int,
+        his_size: int,
+        dropout: float,
+        seed: int | None,
+        user_dict_file: str | None = None,
+        body_size: int | None = None,
+        vert_dict_file: str | None = None,
+        subvert_dict_file: str | None = None,
+    ) -> None:
+        """Load the dictionaries and the pre-trained word embeddings.
 
         Args:
-            hparams (HParams): A HParams object, holds the entire set of hyperparameters.
-            iterator_creator (object): An iterator to load the data.
-            graph (object): An optional graph.
-            seed (int): Random seed.
+            word_embedding_file (str): ``.npy`` file of pre-trained
+                ``[word_count + 1, word_dim]`` word embeddings, fine-tuned during
+                training.
+            word_dict_file (str): Pickled word to word index dictionary.
+            title_size (int): Title words kept per article.
+            his_size (int): Clicked articles kept per user.
+            dropout (float): Dropout rate on the word embeddings and on the
+                convolution or self-attention outputs.
+            seed (int): Random seed of the weights and of the negative sampling.
+            user_dict_file (str): Pickled user ID to user index dictionary, for the
+                models with user embeddings.
+            body_size (int): Abstract words kept per article, for NAML.
+            vert_dict_file, subvert_dict_file (str): Pickled category and
+                subcategory to index dictionaries, for NAML.
         """
-        self.seed = seed
-        tf.compat.v1.set_random_seed(seed)
-        np.random.seed(seed)
-
-        self.train_iterator = iterator_creator(
-            hparams,
-            hparams.npratio,
-            col_spliter="\t",
+        super().__init__()
+        if seed is not None:
+            torch.manual_seed(seed)
+        self.rng = np.random.default_rng(seed)
+        self.title_size = title_size
+        self.his_size = his_size
+        self.body_size = body_size
+        self.word_dict = _load_dict(word_dict_file)
+        self.uid2index = None if user_dict_file is None else _load_dict(user_dict_file)
+        self.vert_dict = None if vert_dict_file is None else _load_dict(vert_dict_file)
+        self.subvert_dict = (
+            None if subvert_dict_file is None else _load_dict(subvert_dict_file)
         )
-        self.test_iterator = iterator_creator(
-            hparams,
-            col_spliter="\t",
+        self.word_embedding = nn.Embedding.from_pretrained(
+            torch.as_tensor(np.load(word_embedding_file), dtype=torch.float32),
+            freeze=False,
+        )
+        self.dropout = nn.Dropout(dropout)
+
+    @property
+    def device(self) -> torch.device:
+        """Device the model's parameters live on."""
+        return self.word_embedding.weight.device
+
+    def load_dataset(self, news_file: str, behaviors_file: str) -> MINDDataset:
+        """Read a MIND split with the model's dictionaries and sizes."""
+        return MINDDataset(
+            news_file,
+            behaviors_file,
+            self.word_dict,
+            self.title_size,
+            self.his_size,
+            uid2index=self.uid2index,
+            body_size=self.body_size,
+            vert_dict=self.vert_dict,
+            subvert_dict=self.subvert_dict,
         )
 
-        self.hparams = hparams
-        self.support_quick_scoring = hparams.support_quick_scoring
+    def _news_tensors(self, dataset: MINDDataset) -> dict:
+        return {
+            name: torch.as_tensor(value, device=self.device)
+            for name, value in dataset.news.items()
+        }
 
-        # set GPU use with on demand growth
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        sess = tf.compat.v1.Session(
-            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
+    def forward(self, news: dict, batch: dict) -> torch.Tensor:
+        """Score logits ``[N, C]`` of the candidates of every sample.
+
+        Args:
+            news (dict): Article features of the split, as tensors.
+            batch (dict): ``candidate_rows`` ``[N, C]``, ``clicked_rows``
+                ``[N, his_size]`` and ``users`` ``[N]`` tensors.
+        """
+        users = batch["users"]
+        candidates = self._encode_rows(news, batch["candidate_rows"], users)
+        user = self.encode_user(
+            self._encode_rows(news, batch["clicked_rows"], users), users
         )
+        return (candidates * user.unsqueeze(1)).sum(dim=-1)
 
-        # set this TensorFlow session as the default session for Keras
-        tf.compat.v1.keras.backend.set_session(sess)
-
-        # IMPORTANT: models have to be loaded AFTER SETTING THE SESSION for keras!
-        # Otherwise, their weights will be unavailable in the threads after the session there has been set
-        self.model, self.scorer = self._build_graph()
-
-        self.loss = self._get_loss()
-        self.train_optimizer = self._get_opt()
-
-        self.model.compile(loss=self.loss, optimizer=self.train_optimizer)
-
-    def _init_embedding(self, file_path):
-        """Load pre-trained embeddings as a constant tensor.
-
-        Args:
-            file_path (str): the pre-trained glove embeddings file path.
-
-        Returns:
-            numpy.ndarray: A constant numpy array.
-        """
-
-        return np.load(file_path)
-
-    @abc.abstractmethod
-    def _build_graph(self):
-        """Subclass will implement this."""
-        pass
-
-    @abc.abstractmethod
-    def _get_input_label_from_iter(self, batch_data):
-        """Subclass will implement this"""
-        pass
-
-    def _get_loss(self):
-        """Make loss function, consists of data loss and regularization loss
-
-        Returns:
-            object: Loss function or loss function name
-        """
-        if self.hparams.loss == "cross_entropy_loss":
-            data_loss = "categorical_crossentropy"
-        elif self.hparams.loss == "log_loss":
-            data_loss = "binary_crossentropy"
-        else:
-            raise ValueError("this loss not defined {0}".format(self.hparams.loss))
-        return data_loss
-
-    def _get_opt(self):
-        """Get the optimizer according to configuration. Usually we will use Adam.
-        Returns:
-            object: An optimizer.
-        """
-        lr = self.hparams.learning_rate
-        optimizer = self.hparams.optimizer
-
-        if optimizer == "adam":
-            train_opt = keras.optimizers.Adam(lr=lr)
-
-        return train_opt
-
-    def _get_pred(self, logit, task):
-        """Make final output as prediction score, according to different tasks.
-
-        Args:
-            logit (object): Base prediction value.
-            task (str): A task (values: regression/classification)
-
-        Returns:
-            object: Transformed score
-        """
-        if task == "regression":
-            pred = tf.identity(logit)
-        elif task == "classification":
-            pred = tf.sigmoid(logit)
-        else:
-            raise ValueError(
-                "method must be regression or classification, but now is {0}".format(
-                    task
-                )
-            )
-        return pred
-
-    def train(self, train_batch_data):
-        """Go through the optimization step once with training data in feed_dict.
-
-        Args:
-            sess (object): The model session object.
-            feed_dict (dict): Feed values to train the model. This is a dictionary that maps graph elements to values.
-
-        Returns:
-            list: A list of values, including update operation, total loss, data loss, and merged summary.
-        """
-        train_input, train_label = self._get_input_label_from_iter(train_batch_data)
-        rslt = self.model.train_on_batch(train_input, train_label)
-        return rslt
-
-    def eval(self, eval_batch_data):
-        """Evaluate the data in feed_dict with current model.
-
-        Args:
-            sess (object): The model session object.
-            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
-
-        Returns:
-            list: A list of evaluated results, including total loss value, data loss value, predicted scores, and ground-truth labels.
-        """
-        eval_input, eval_label = self._get_input_label_from_iter(eval_batch_data)
-        imp_index = eval_batch_data["impression_index_batch"]
-
-        pred_rslt = self.scorer.predict_on_batch(eval_input)
-
-        return pred_rslt, eval_label, imp_index
+    def _encode_rows(
+        self, news: dict, rows: torch.Tensor, users: torch.Tensor
+    ) -> torch.Tensor:
+        """News vectors ``[N, K, D]`` of the articles at ``rows`` ``[N, K]``."""
+        features = {name: value[rows.flatten()] for name, value in news.items()}
+        vectors = self.encode_news(features, users.repeat_interleave(rows.shape[1]))
+        return vectors.view(*rows.shape, -1)
 
     def fit(
         self,
-        train_news_file,
-        train_behaviors_file,
-        valid_news_file,
-        valid_behaviors_file,
-        test_news_file=None,
-        test_behaviors_file=None,
-        step_limit=None,
-
+        train_news_file: str,
+        train_behaviors_file: str,
+        valid_news_file: str,
+        valid_behaviors_file: str,
+        test_news_file: str | None = None,
+        test_behaviors_file: str | None = None,
+        epochs: int = 10,
+        batch_size: int = 32,
+        learning_rate: float = 0.0001,
+        npratio: int = 4,
+        metrics: list[str] | None = None,
+        step_limit: int | None = None,
     ):
-        """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
-        If test_news_file is not None, evaluate it too.
+        """Train on the train split, evaluating on the valid split after every epoch.
 
         Args:
-            train_file (str): training data set.
-            valid_file (str): validation set.
-            test_news_file (str): test set.
+            test_news_file, test_behaviors_file (str): Optional test split, also
+                evaluated after every epoch.
+            batch_size (int): Training samples per mini-batch.
+            learning_rate (float): Adam learning rate.
+            npratio (int): Non-clicked candidates per training sample.
+            metrics (list[str]): Passed to :meth:`run_eval`.
+            step_limit (int): Training steps per epoch. ``None`` goes through the
+                whole train split.
 
         Returns:
             object: An instance of self.
         """
-
-        for epoch in range(1, self.hparams.epochs + 1):
-            step = 0
-            self.hparams.current_epoch = epoch
-            epoch_loss = 0
-            train_start = time.time()
-
-            tqdm_util = tqdm(
-                self.train_iterator.load_data_from_file(
-                    train_news_file, train_behaviors_file
-                )
+        train = self.load_dataset(train_news_file, train_behaviors_file)
+        evaluated = [("eval", self.load_dataset(valid_news_file, valid_behaviors_file))]
+        if test_news_file is not None:
+            evaluated.append(
+                ("test", self.load_dataset(test_news_file, test_behaviors_file))
             )
-
-            for batch_data_input in tqdm_util:
-                if step_limit is not None and step>=step_limit:
+        news = self._news_tensors(train)
+        optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
+        for epoch in range(1, epochs + 1):
+            train_start = time.time()
+            self.train()
+            epoch_loss = 0.0
+            step = 0
+            for np_batch in train.load_train_batches(batch_size, npratio, self.rng):
+                if step_limit is not None and step >= step_limit:
                     break
-
-                step_result = self.train(batch_data_input)
-                step_data_loss = step_result
-
-                epoch_loss += step_data_loss
+                batch = {
+                    name: torch.as_tensor(value, device=self.device)
+                    for name, value in np_batch.items()
+                }
+                logits = self.forward(news, batch)
+                # The clicked article is always the first candidate.
+                loss = F.cross_entropy(
+                    logits, logits.new_zeros(len(logits), dtype=torch.long)
+                )
+                optimizer.zero_grad(set_to_none=True)
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item()
                 step += 1
-                if step % self.hparams.show_step == 0:
-                    tqdm_util.set_description(
-                        "step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(
-                            step, epoch_loss / step, step_data_loss
-                        )
-                    )
-
-            train_end = time.time()
-            train_time = train_end - train_start
+            train_time = time.time() - train_start
 
             eval_start = time.time()
-
-            train_info = ",".join(
-                [
-                    str(item[0]) + ":" + str(item[1])
-                    for item in [("logloss loss", epoch_loss / step)]
-                ]
+            message = "at epoch {0:d}\ntrain info: logloss loss:{1}".format(
+                epoch, epoch_loss / step
             )
-
-            eval_res = self.run_eval(valid_news_file, valid_behaviors_file)
-            eval_info = ", ".join(
-                [
-                    str(item[0]) + ":" + str(item[1])
-                    for item in sorted(eval_res.items(), key=lambda x: x[0])
-                ]
-            )
-            if test_news_file is not None:
-                test_res = self.run_eval(test_news_file, test_behaviors_file)
-                test_info = ", ".join(
-                    [
-                        str(item[0]) + ":" + str(item[1])
-                        for item in sorted(test_res.items(), key=lambda x: x[0])
-                    ]
+            for name, dataset in evaluated:
+                res = self._evaluate(dataset, metrics)
+                message += "\n{0} info: {1}".format(
+                    name,
+                    ", ".join(
+                        "{0}:{1}".format(metric, value)
+                        for metric, value in sorted(res.items())
+                    ),
                 )
-            eval_end = time.time()
-            eval_time = eval_end - eval_start
-
-            if test_news_file is not None:
-                print(
-                    "at epoch {0:d}".format(epoch)
-                    + "\ntrain info: "
-                    + train_info
-                    + "\neval info: "
-                    + eval_info
-                    + "\ntest info: "
-                    + test_info
-                )
-            else:
-                print(
-                    "at epoch {0:d}".format(epoch)
-                    + "\ntrain info: "
-                    + train_info
-                    + "\neval info: "
-                    + eval_info
-                )
+            print(message)
             print(
                 "at epoch {0:d} , train time: {1:.1f} eval time: {2:.1f}".format(
-                    epoch, train_time, eval_time
+                    epoch, train_time, time.time() - eval_start
                 )
             )
-
         return self
 
-    def group_labels(self, labels, preds, group_keys):
-        """Devide labels and preds into several group according to values in group keys.
+    def run_eval(
+        self,
+        news_file: str,
+        behaviors_file: str,
+        metrics: list[str] | None = None,
+        batch_size: int = 1024,
+    ) -> dict:
+        """Evaluate the ranking of the candidates of every impression.
 
         Args:
-            labels (list): ground truth label list.
-            preds (list): prediction score list.
-            group_keys (list): group key list.
-
-        Returns:
-            list, list, list:
-            - Keys after group.
-            - Labels after group.
-            - Preds after group.
-
-        """
-
-        all_keys = list(set(group_keys))
-        all_keys.sort()
-        group_labels = {k: [] for k in all_keys}
-        group_preds = {k: [] for k in all_keys}
-
-        for label, p, k in zip(labels, preds, group_keys):
-            group_labels[k].append(label)
-            group_preds[k].append(p)
-
-        all_labels = []
-        all_preds = []
-        for k in all_keys:
-            all_labels.append(group_labels[k])
-            all_preds.append(group_preds[k])
-
-        return all_keys, all_labels, all_preds
-
-    def run_eval(self, news_filename, behaviors_file):
-        """Evaluate the given file and returns some evaluation metrics.
-
-        Args:
-            filename (str): A file name that will be evaluated.
+            metrics (list[str]): Metrics averaged over the impressions. Defaults to
+                ``["group_auc", "mean_mrr", "ndcg@5;10"]``.
+            batch_size (int): Articles or impressions per encoder pass.
 
         Returns:
             dict: A dictionary that contains evaluation metrics.
         """
-
-        if self.support_quick_scoring:
-            _, group_labels, group_preds = self.run_fast_eval(
-                news_filename, behaviors_file
-            )
-        else:
-            _, group_labels, group_preds = self.run_slow_eval(
-                news_filename, behaviors_file
-            )
-        res = cal_metric(group_labels, group_preds, self.hparams.metrics)
-        return res
-
-    def user(self, batch_user_input):
-        user_input = self._get_user_feature_from_iter(batch_user_input)
-        user_vec = self.userencoder.predict_on_batch(user_input)
-        user_index = batch_user_input["impr_index_batch"]
-
-        return user_index, user_vec
-
-    def news(self, batch_news_input):
-        news_input = self._get_news_feature_from_iter(batch_news_input)
-        news_vec = self.newsencoder.predict_on_batch(news_input)
-        news_index = batch_news_input["news_index_batch"]
-
-        return news_index, news_vec
-
-    def run_user(self, news_filename, behaviors_file):
-        if not hasattr(self, "userencoder"):
-            raise ValueError("model must have attribute userencoder")
-
-        user_indexes = []
-        user_vecs = []
-        for batch_data_input in tqdm(
-            self.test_iterator.load_user_from_file(news_filename, behaviors_file)
-        ):
-            user_index, user_vec = self.user(batch_data_input)
-            user_indexes.extend(np.reshape(user_index, -1))
-            user_vecs.extend(user_vec)
-
-        return dict(zip(user_indexes, user_vecs))
-
-    def run_news(self, news_filename):
-        if not hasattr(self, "newsencoder"):
-            raise ValueError("model must have attribute newsencoder")
-
-        news_indexes = []
-        news_vecs = []
-        for batch_data_input in tqdm(
-            self.test_iterator.load_news_from_file(news_filename)
-        ):
-            news_index, news_vec = self.news(batch_data_input)
-            news_indexes.extend(np.reshape(news_index, -1))
-            news_vecs.extend(news_vec)
-
-        return dict(zip(news_indexes, news_vecs))
-
-    def run_slow_eval(self, news_filename, behaviors_file):
-        preds = []
-        labels = []
-        imp_indexes = []
-
-        for batch_data_input in tqdm(
-            self.test_iterator.load_data_from_file(news_filename, behaviors_file)
-        ):
-            step_pred, step_labels, step_imp_index = self.eval(batch_data_input)
-            preds.extend(np.reshape(step_pred, -1))
-            labels.extend(np.reshape(step_labels, -1))
-            imp_indexes.extend(np.reshape(step_imp_index, -1))
-
-        group_impr_indexes, group_labels, group_preds = self.group_labels(
-            labels, preds, imp_indexes
+        return self._evaluate(
+            self.load_dataset(news_file, behaviors_file), metrics, batch_size
         )
-        return group_impr_indexes, group_labels, group_preds
 
-    def run_fast_eval(self, news_filename, behaviors_file):
-        news_vecs = self.run_news(news_filename)
-        user_vecs = self.run_user(news_filename, behaviors_file)
+    def _evaluate(
+        self, dataset: MINDDataset, metrics: list[str] | None, batch_size: int = 1024
+    ) -> dict:
+        metrics = (
+            metrics if metrics is not None else ["group_auc", "mean_mrr", "ndcg@5;10"]
+        )
+        return cal_metric(dataset.labels, self._score(dataset, batch_size), metrics)
 
-        self.news_vecs = news_vecs
-        self.user_vecs = user_vecs
+    def predict(
+        self, news_file: str, behaviors_file: str, batch_size: int = 1024
+    ) -> list[np.ndarray]:
+        """Score logits of the candidates of every impression, in file order.
 
-        group_impr_indexes = []
-        group_labels = []
-        group_preds = []
+        Args:
+            batch_size (int): Articles or impressions per encoder pass.
 
-        for (
-            impr_index,
-            news_index,
-            user_index,
-            label,
-        ) in tqdm(self.test_iterator.load_impression_from_file(behaviors_file)):
-            pred = np.dot(
-                np.stack([news_vecs[i] for i in news_index], axis=0),
-                user_vecs[impr_index],
+        Returns:
+            list: One array per impression, in the order of its candidates.
+        """
+        return self._score(self.load_dataset(news_file, behaviors_file), batch_size)
+
+    @torch.no_grad()
+    def _score(self, dataset: MINDDataset, batch_size: int) -> list[np.ndarray]:
+        self.eval()
+        news = self._news_tensors(dataset)
+        histories = torch.as_tensor(dataset.histories, device=self.device)
+        users = torch.as_tensor(dataset.users, device=self.device)
+        candidates = torch.as_tensor(
+            np.concatenate(dataset.impressions), device=self.device
+        )
+        sizes = [len(impression) for impression in dataset.impressions]
+        owners = torch.repeat_interleave(
+            torch.arange(len(sizes), device=self.device),
+            torch.as_tensor(sizes, device=self.device),
+        )
+        if self.personalized_news:
+            offsets = np.cumsum([0] + sizes)
+            step = max(1, batch_size // self.his_size)
+            scores = []
+            for start in range(0, len(sizes), step):
+                stop = min(start + step, len(sizes))
+                chunk_users = users[start:stop]
+                user_vectors = self.encode_user(
+                    self._encode_rows(news, histories[start:stop], chunk_users),
+                    chunk_users,
+                )
+                rows = candidates[offsets[start] : offsets[stop]]
+                impressions = owners[offsets[start] : offsets[stop]]
+                news_vectors = self.encode_news(
+                    {name: value[rows] for name, value in news.items()},
+                    users[impressions],
+                )
+                scores.append(
+                    (news_vectors * user_vectors[impressions - start]).sum(dim=-1)
+                )
+            scores = torch.cat(scores)
+        else:
+            news_count = len(news["title"])
+            news_vectors = torch.cat(
+                [
+                    self.encode_news(
+                        {
+                            name: value[start : start + batch_size]
+                            for name, value in news.items()
+                        },
+                        None,
+                    )
+                    for start in range(0, news_count, batch_size)
+                ]
             )
-            group_impr_indexes.append(impr_index)
-            group_labels.append(label)
-            group_preds.append(pred)
-
-        return group_impr_indexes, group_labels, group_preds
+            user_vectors = torch.cat(
+                [
+                    self.encode_user(
+                        news_vectors[histories[start : start + batch_size]],
+                        users[start : start + batch_size],
+                    )
+                    for start in range(0, len(histories), batch_size)
+                ]
+            )
+            scores = (news_vectors[candidates] * user_vectors[owners]).sum(dim=-1)
+        return list(np.split(scores.cpu().numpy(), np.cumsum(sizes)[:-1]))
