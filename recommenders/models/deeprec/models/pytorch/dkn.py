@@ -488,6 +488,12 @@ class DKN(DKNBase):
             seed,
         )
         self.iterator = DKNDataset(news_feature_file, user_history_file, history_size)
+        self.register_buffer(
+            "news_words", torch.as_tensor(self.iterator.words), persistent=False
+        )
+        self.register_buffer(
+            "news_entities", torch.as_tensor(self.iterator.entities), persistent=False
+        )
 
         news_dim = self.kcnn.output_dim
         self.attention = _fcn_net(
@@ -517,22 +523,10 @@ class DKN(DKNBase):
 
     def forward(self, batch: dict) -> torch.Tensor:
         """Click logit ``[B, 1]`` of every (user, candidate article) pair."""
-        batch_size, history_size, doc_size = batch["clicked_words"].shape
+        batch_size, history_size = batch["clicked_rows"].shape
         # One KCNN pass embeds the candidates and all the clicked articles.
-        news = self.kcnn(
-            torch.cat(
-                [
-                    batch["candidate_words"],
-                    batch["clicked_words"].reshape(-1, doc_size),
-                ]
-            ),
-            torch.cat(
-                [
-                    batch["candidate_entities"],
-                    batch["clicked_entities"].reshape(-1, doc_size),
-                ]
-            ),
-        )
+        rows = torch.cat([batch["candidate_rows"], batch["clicked_rows"].flatten()])
+        news = self.kcnn(self.news_words[rows], self.news_entities[rows])
         candidate = news[:batch_size]
         clicked = news[batch_size:].view(batch_size, history_size, -1)
         user = self._attend(clicked, candidate)

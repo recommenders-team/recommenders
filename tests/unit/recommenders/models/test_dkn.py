@@ -261,10 +261,13 @@ def test_forward_scores_the_user_vector_then_the_candidate(
     _, batch = first_batch(model, synthetic_dkn["train"], 8)
 
     with torch.no_grad():
-        candidate = model.kcnn(batch["candidate_words"], batch["candidate_entities"])
+        candidates = batch["candidate_rows"]
+        clicked_rows = batch["clicked_rows"].flatten()
+        candidate = model.kcnn(
+            model.news_words[candidates], model.news_entities[candidates]
+        )
         clicked = model.kcnn(
-            batch["clicked_words"].reshape(-1, DOC_SIZE),
-            batch["clicked_entities"].reshape(-1, DOC_SIZE),
+            model.news_words[clicked_rows], model.news_entities[clicked_rows]
         ).view(8, HISTORY_SIZE, NEWS_DIM)
         user = model._attend(clicked, candidate)
         expected = model.scorer(torch.cat([user, candidate], dim=1))
