@@ -333,10 +333,12 @@ def test_inserts_batch_norm_only_when_enabled(build_model, enable_BN, expected):
     ],
 )
 def test_biases_follow_the_init_method(build_model, layer):
-    bias = build_model(init_value=0.2).get_submodule(layer).bias
+    bias = build_model(init_value=0.1).get_submodule(layer).bias
+    doubled = build_model(init_value=0.2).get_submodule(layer).bias
 
-    assert bias.abs().max().item() <= 0.2
-    assert bias.abs().max().item() > 0.0
+    # uniform_(-c, c) draws c * (2U - 1), so the same seed scales with init_value
+    assert torch.allclose(doubled, 2 * bias)
+    assert bias.abs().max().item() <= 0.1
 
 
 def test_layer_params_leave_out_batch_norm_and_knowledge_transforms(build_model):
