@@ -1,359 +1,103 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import tensorflow.compat.v1.keras as keras
-from tensorflow.compat.v1.linalg import einsum
-from tensorflow.compat.v1.keras import layers
-from tensorflow.compat.v1.keras import backend as K
+"""Attention layers shared by the news recommendation models."""
+
+from __future__ import annotations
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+__all__ = [
+    "AdditiveAttention",
+    "SelfAttention",
+    "PersonalizedAttentivePooling",
+    "dense",
+    "conv1d",
+]
 
 
-class AttLayer2(layers.Layer):
-    """Soft alignment attention implement.
+def dense(in_dim: int, out_dim: int, bias: bool = True) -> nn.Linear:
+    """Linear layer with a Glorot uniform weight and a zero bias."""
+    linear = nn.Linear(in_dim, out_dim, bias=bias)
+    nn.init.xavier_uniform_(linear.weight)
+    if bias:
+        nn.init.zeros_(linear.bias)
+    return linear
 
-    Attributes:
-        dim (int): attention hidden dim
-    """
 
-    def __init__(self, dim=200, seed=0, **kwargs):
-        """Initialization steps for AttLayer2.
+def conv1d(in_dim: int, filter_num: int, window_size: int) -> nn.Conv1d:
+    """Length-preserving convolution with a Glorot uniform kernel and a zero bias."""
+    conv = nn.Conv1d(in_dim, filter_num, window_size, padding="same")
+    nn.init.xavier_uniform_(conv.weight)
+    nn.init.zeros_(conv.bias)
+    return conv
 
-        Args:
-            dim (int): attention hidden dim
-        """
 
-        self.dim = dim
-        self.seed = seed
-        super(AttLayer2, self).__init__(**kwargs)
+class AdditiveAttention(nn.Module):
+    """Pool ``[N, L, D]`` into ``[N, D]`` with a learned query vector."""
 
-    def build(self, input_shape):
-        """Initialization for variables in AttLayer2
-        There are there variables in AttLayer2, i.e. W, b and q.
+    def __init__(self, in_dim: int, hidden_dim: int) -> None:
+        super().__init__()
+        self.projection = dense(in_dim, hidden_dim)
+        self.query = dense(hidden_dim, 1, bias=False)
 
-        Args:
-            input_shape (object): shape of input tensor.
-        """
-
-        assert len(input_shape) == 3
-        dim = self.dim
-        self.W = self.add_weight(
-            name="W",
-            shape=(int(input_shape[-1]), dim),
-            initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            trainable=True,
-        )
-        self.b = self.add_weight(
-            name="b",
-            shape=(dim,),
-            initializer=keras.initializers.Zeros(),
-            trainable=True,
-        )
-        self.q = self.add_weight(
-            name="q",
-            shape=(dim, 1),
-            initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            trainable=True,
-        )
-        super(AttLayer2, self).build(input_shape)  # be sure you call this somewhere!
-
-    def call(self, inputs, mask=None, **kwargs):
-        """Core implementation of soft attention.
+    def forward(
+        self, x: torch.Tensor, mask: torch.Tensor | None = None
+    ) -> torch.Tensor:
+        """Weighted sum of ``x`` over its second axis.
 
         Args:
-            inputs (object): input tensor.
-
-        Returns:
-            object: weighted sum of input tensors.
+            mask (torch.Tensor): ``[N, L]`` boolean, False for the positions left
+                out. A row with every position left out pools to zeros.
         """
-
-        attention = K.tanh(K.dot(inputs, self.W) + self.b)
-        attention = K.dot(attention, self.q)
-
-        attention = K.squeeze(attention, axis=2)
-
-        if mask is None:
-            attention = K.exp(attention)
-        else:
-            attention = K.exp(attention) * K.cast(mask, dtype="float32")
-
-        attention_weight = attention / (
-            K.sum(attention, axis=-1, keepdims=True) + K.epsilon()
-        )
-
-        attention_weight = K.expand_dims(attention_weight)
-        weighted_input = inputs * attention_weight
-        return K.sum(weighted_input, axis=1)
-
-    def compute_mask(self, input, input_mask=None):
-        """Compte output mask value.
-
-        Args:
-            input (object): input tensor.
-            input_mask: input mask
-
-        Returns:
-            object: output mask.
-        """
-        return None
-
-    def compute_output_shape(self, input_shape):
-        """Compute shape of output tensor.
-
-        Args:
-            input_shape (tuple): shape of input tensor.
-
-        Returns:
-            tuple: shape of output tensor.
-        """
-        return input_shape[0], input_shape[-1]
+        scores = self.query(torch.tanh(self.projection(x))).squeeze(-1)
+        # The shift keeps exp finite; it is detached because it cancels out.
+        weights = torch.exp(scores - scores.amax(dim=1, keepdim=True).detach())
+        if mask is not None:
+            weights = weights * mask
+        weights = weights / (weights.sum(dim=1, keepdim=True) + 1e-7)
+        return (x * weights.unsqueeze(-1)).sum(dim=1)
 
 
-class SelfAttention(layers.Layer):
-    """Multi-head self attention implement.
+class SelfAttention(nn.Module):
+    """Multi-head scaled dot-product self-attention, without an output projection."""
 
-    Args:
-        multiheads (int): The number of heads.
-        head_dim (object): Dimension of each head.
-        mask_right (boolean): whether to mask right words.
-
-    Returns:
-        object: Weighted sum after attention.
-    """
-
-    def __init__(self, multiheads, head_dim, seed=0, mask_right=False, **kwargs):
-        """Initialization steps for AttLayer2.
-
-        Args:
-            multiheads (int): The number of heads.
-            head_dim (object): Dimension of each head.
-            mask_right (boolean): Whether to mask right words.
-        """
-
-        self.multiheads = multiheads
+    def __init__(self, in_dim: int, head_num: int, head_dim: int) -> None:
+        super().__init__()
+        self.head_num = head_num
         self.head_dim = head_dim
-        self.output_dim = multiheads * head_dim
-        self.mask_right = mask_right
-        self.seed = seed
-        super(SelfAttention, self).__init__(**kwargs)
+        self.query = dense(in_dim, head_num * head_dim, bias=False)
+        self.key = dense(in_dim, head_num * head_dim, bias=False)
+        self.value = dense(in_dim, head_num * head_dim, bias=False)
 
-    def compute_output_shape(self, input_shape):
-        """Compute shape of output tensor.
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """``[N, L, in_dim]`` -> ``[N, L, head_num * head_dim]``."""
 
-        Returns:
-            tuple: output shape tuple.
-        """
+        def heads(linear: nn.Linear) -> torch.Tensor:
+            return (
+                linear(x)
+                .view(*x.shape[:2], self.head_num, self.head_dim)
+                .transpose(1, 2)
+            )
 
-        return (input_shape[0][0], input_shape[0][1], self.output_dim)
-
-    def build(self, input_shape):
-        """Initialization for variables in SelfAttention.
-        There are three variables in SelfAttention, i.e. WQ, WK ans WV.
-        WQ is used for linear transformation of query.
-        WK is used for linear transformation of key.
-        WV is used for linear transformation of value.
-
-        Args:
-            input_shape (object): shape of input tensor.
-        """
-
-        self.WQ = self.add_weight(
-            name="WQ",
-            shape=(int(input_shape[0][-1]), self.output_dim),
-            initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            trainable=True,
+        out = F.scaled_dot_product_attention(
+            heads(self.query), heads(self.key), heads(self.value)
         )
-        self.WK = self.add_weight(
-            name="WK",
-            shape=(int(input_shape[1][-1]), self.output_dim),
-            initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            trainable=True,
-        )
-        self.WV = self.add_weight(
-            name="WV",
-            shape=(int(input_shape[2][-1]), self.output_dim),
-            initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            trainable=True,
-        )
-        super(SelfAttention, self).build(input_shape)
-
-    def Mask(self, inputs, seq_len, mode="add"):
-        """Mask operation used in multi-head self attention
-
-        Args:
-            seq_len (object): sequence length of inputs.
-            mode (str): mode of mask.
-
-        Returns:
-            object: tensors after masking.
-        """
-
-        if seq_len is None:
-            return inputs
-        else:
-            mask = K.one_hot(indices=seq_len[:, 0], num_classes=K.shape(inputs)[1])
-            mask = 1 - K.cumsum(mask, axis=1)
-
-            for _ in range(len(inputs.shape) - 2):
-                mask = K.expand_dims(mask, 2)
-
-            if mode == "mul":
-                return inputs * mask
-            elif mode == "add":
-                return inputs - (1 - mask) * 1e12
-
-    def call(self, QKVs):
-        """Core logic of multi-head self attention.
-
-        Args:
-            QKVs (list): inputs of multi-head self attention i.e. query, key and value.
-
-        Returns:
-            object: ouput tensors.
-        """
-        if len(QKVs) == 3:
-            Q_seq, K_seq, V_seq = QKVs
-            Q_len, V_len = None, None
-        elif len(QKVs) == 5:
-            Q_seq, K_seq, V_seq, Q_len, V_len = QKVs
-        Q_seq = K.dot(Q_seq, self.WQ)
-        Q_seq = K.reshape(
-            Q_seq, shape=(-1, K.shape(Q_seq)[1], self.multiheads, self.head_dim)
-        )
-        Q_seq = K.permute_dimensions(Q_seq, pattern=(0, 2, 1, 3))
-
-        K_seq = K.dot(K_seq, self.WK)
-        K_seq = K.reshape(
-            K_seq, shape=(-1, K.shape(K_seq)[1], self.multiheads, self.head_dim)
-        )
-        K_seq = K.permute_dimensions(K_seq, pattern=(0, 2, 1, 3))
-
-        V_seq = K.dot(V_seq, self.WV)
-        V_seq = K.reshape(
-            V_seq, shape=(-1, K.shape(V_seq)[1], self.multiheads, self.head_dim)
-        )
-        V_seq = K.permute_dimensions(V_seq, pattern=(0, 2, 1, 3))
-
-        A = einsum("abij, abkj -> abik", Q_seq, K_seq) / K.sqrt(
-            K.cast(self.head_dim, dtype="float32")
-        )
-        A = K.permute_dimensions(
-            A, pattern=(0, 3, 2, 1)
-        )  # A.shape=[batch_size,K_sequence_length,Q_sequence_length,self.multiheads]
-
-        A = self.Mask(A, V_len, "add")
-        A = K.permute_dimensions(A, pattern=(0, 3, 2, 1))
-
-        if self.mask_right:
-            ones = K.ones_like(A[:1, :1])
-            lower_triangular = K.tf.matrix_band_part(ones, num_lower=-1, num_upper=0)
-            mask = (ones - lower_triangular) * 1e12
-            A = A - mask
-        A = K.softmax(A)
-
-        O_seq = einsum("abij, abjk -> abik", A, V_seq)
-        O_seq = K.permute_dimensions(O_seq, pattern=(0, 2, 1, 3))
-
-        O_seq = K.reshape(O_seq, shape=(-1, K.shape(O_seq)[1], self.output_dim))
-        O_seq = self.Mask(O_seq, Q_len, "mul")
-        return O_seq
-
-    def get_config(self):
-        """add multiheads, multiheads and mask_right into layer config.
-
-        Returns:
-            dict: config of SelfAttention layer.
-        """
-        config = super(SelfAttention, self).get_config()
-        config.update(
-            {
-                "multiheads": self.multiheads,
-                "head_dim": self.head_dim,
-                "mask_right": self.mask_right,
-            }
-        )
-        return config
+        return out.transpose(1, 2).flatten(2)
 
 
-def PersonalizedAttentivePooling(dim1, dim2, dim3, seed=0):
-    """Soft alignment attention implement.
+class PersonalizedAttentivePooling(nn.Module):
+    """Pool ``[N, L, D]`` into ``[N, D]`` with a query given per row."""
 
-    Attributes:
-        dim1 (int): first dimention of value shape.
-        dim2 (int): second dimention of value shape.
-        dim3 (int): shape of query
+    def __init__(self, in_dim: int, query_dim: int, dropout: float = 0.2) -> None:
+        super().__init__()
+        self.dropout = nn.Dropout(dropout)
+        self.projection = dense(in_dim, query_dim)
 
-    Returns:
-        object: weighted summary of inputs value.
-    """
-    vecs_input = keras.Input(shape=(dim1, dim2), dtype="float32")
-    query_input = keras.Input(shape=(dim3,), dtype="float32")
-
-    user_vecs = layers.Dropout(0.2)(vecs_input)
-    user_att = layers.Dense(
-        dim3,
-        activation="tanh",
-        kernel_initializer=keras.initializers.glorot_uniform(seed=seed),
-        bias_initializer=keras.initializers.Zeros(),
-    )(user_vecs)
-    user_att2 = layers.Dot(axes=-1)([query_input, user_att])
-    user_att2 = layers.Activation("softmax")(user_att2)
-    user_vec = layers.Dot((1, 1))([user_vecs, user_att2])
-
-    model = keras.Model([vecs_input, query_input], user_vec)
-    return model
-
-
-class ComputeMasking(layers.Layer):
-    """Compute if inputs contains zero value.
-
-    Returns:
-        bool tensor: True for values not equal to zero.
-    """
-
-    def __init__(self, **kwargs):
-        super(ComputeMasking, self).__init__(**kwargs)
-
-    def call(self, inputs, **kwargs):
-        """Call method for ComputeMasking.
-
-        Args:
-            inputs (object): input tensor.
-
-        Returns:
-            bool tensor: True for values not equal to zero.
-        """
-        mask = K.not_equal(inputs, 0)
-        return K.cast(mask, K.floatx())
-
-    def compute_output_shape(self, input_shape):
-        return input_shape
-
-
-class OverwriteMasking(layers.Layer):
-    """Set values at specific positions to zero.
-
-    Args:
-        inputs (list): value tensor and mask tensor.
-
-    Returns:
-        object: tensor after setting values to zero.
-    """
-
-    def __init__(self, **kwargs):
-        super(OverwriteMasking, self).__init__(**kwargs)
-
-    def build(self, input_shape):
-        super(OverwriteMasking, self).build(input_shape)
-
-    def call(self, inputs, **kwargs):
-        """Call method for OverwriteMasking.
-
-        Args:
-            inputs (list): value tensor and mask tensor.
-
-        Returns:
-            object: tensor after setting values to zero.
-        """
-        return inputs[0] * K.expand_dims(inputs[1])
-
-    def compute_output_shape(self, input_shape):
-        return input_shape[0]
+    def forward(self, x: torch.Tensor, query: torch.Tensor) -> torch.Tensor:
+        """Weighted sum of ``x`` with attention from ``query`` ``[N, query_dim]``."""
+        x = self.dropout(x)
+        scores = torch.einsum("nlq,nq->nl", torch.tanh(self.projection(x)), query)
+        return (x * torch.softmax(scores, dim=1).unsqueeze(-1)).sum(dim=1)
