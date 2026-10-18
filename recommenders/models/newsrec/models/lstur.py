@@ -1,212 +1,118 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import tensorflow.compat.v1.keras as keras
-from tensorflow.compat.v1.keras import layers
+"""LSTUR (Neural News Recommendation with Long- and Short-term User Representations).
 
+The news encoder runs a CNN over the title words and pools the non-padding ones
+with additive attention. A GRU over the clicked articles gives the short-term user
+representation and a user embedding the long-term one. ``ini`` starts the GRU from
+the long-term representation; ``con`` concatenates both and projects them back.
 
-from recommenders.models.newsrec.models.base_model import BaseModel
-from recommenders.models.newsrec.models.layers import (
-    AttLayer2,
-    ComputeMasking,
-    OverwriteMasking,
-)
+:Citation:
+
+    M. An, F. Wu, C. Wu, K. Zhang, Z. Liu and X. Xie, "Neural News Recommendation
+    with Long- and Short-term User Representations", in Proceedings of the 57th
+    Annual Meeting of the Association for Computational Linguistics, ACL 2019.
+"""
+
+from __future__ import annotations
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from recommenders.models.newsrec.models.base_model import NewsRecModel
+from recommenders.models.newsrec.models.layers import AdditiveAttention, conv1d, dense
 
 __all__ = ["LSTURModel"]
 
 
-class LSTURModel(BaseModel):
-    """LSTUR model(Neural News Recommendation with Multi-Head Self-Attention)
+class LSTURModel(NewsRecModel):
+    """LSTUR model.
 
-    Mingxiao An, Fangzhao Wu, Chuhan Wu, Kun Zhang, Zheng Liu and Xing Xie:
-    Neural News Recommendation with Long- and Short-term User Representations, ACL 2019
+    :Citation:
 
-    Attributes:
-        word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
-        hparam (object): Global hyper-parameters.
+        M. An, F. Wu, C. Wu, K. Zhang, Z. Liu and X. Xie, "Neural News Recommendation
+        with Long- and Short-term User Representations", ACL 2019.
     """
 
-    def __init__(self, hparams, iterator_creator, seed=None):
-        """Initialization steps for LSTUR.
-        Compared with the BaseModel, LSTUR need word embedding.
-        After creating word embedding matrix, BaseModel's __init__ method will be called.
+    def __init__(
+        self,
+        word_embedding_file: str,
+        word_dict_file: str,
+        user_dict_file: str,
+        title_size: int = 30,
+        his_size: int = 50,
+        filter_num: int = 400,
+        window_size: int = 3,
+        combine: str = "ini",
+        attention_hidden_dim: int = 200,
+        dropout: float = 0.2,
+        seed: int | None = None,
+    ) -> None:
+        """Build the LSTUR model.
 
         Args:
-            hparams (object): Global hyper-parameters. Some key setttings such as type and gru_unit are there.
-            iterator_creator_train (object): LSTUR data loader class for train data.
-            iterator_creator_test (object): LSTUR data loader class for test and validation data
+            filter_num (int): CNN filters, also the GRU and user embedding size,
+                since the news and user vectors meet in a dot product.
+            window_size (int): CNN window size.
+            combine (str): ``ini`` or ``con``, how the long- and short-term user
+                representations are combined.
+            attention_hidden_dim (int): Hidden size of the additive attention.
+
+        See :class:`NewsRecModel` for the other arguments.
         """
-
-        self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
-        self.hparam = hparams
-
-        super().__init__(hparams, iterator_creator, seed=seed)
-
-    def _get_input_label_from_iter(self, batch_data):
-        input_feat = [
-            batch_data["user_index_batch"],
-            batch_data["clicked_title_batch"],
-            batch_data["candidate_title_batch"],
-        ]
-        input_label = batch_data["labels"]
-        return input_feat, input_label
-
-    def _get_user_feature_from_iter(self, batch_data):
-        return [batch_data["clicked_title_batch"], batch_data["user_index_batch"]]
-
-    def _get_news_feature_from_iter(self, batch_data):
-        return batch_data["candidate_title_batch"]
-
-    def _build_graph(self):
-        """Build LSTUR model and scorer.
-
-        Returns:
-            object: a model used to train.
-            object: a model used to evaluate and inference.
-        """
-
-        model, scorer = self._build_lstur()
-        return model, scorer
-
-    def _build_userencoder(self, titleencoder, type="ini"):
-        """The main function to create user encoder of LSTUR.
-
-        Args:
-            titleencoder (object): the news encoder of LSTUR.
-
-        Return:
-            object: the user encoder of LSTUR.
-        """
-        hparams = self.hparams
-        his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.title_size), dtype="int32"
-        )
-        user_indexes = keras.Input(shape=(1,), dtype="int32")
-
-        user_embedding_layer = layers.Embedding(
-            len(self.train_iterator.uid2index),
-            hparams.gru_unit,
-            trainable=True,
-            embeddings_initializer="zeros",
-        )
-
-        long_u_emb = layers.Reshape((hparams.gru_unit,))(
-            user_embedding_layer(user_indexes)
-        )
-        click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
-
-        if type == "ini":
-            user_present = layers.GRU(
-                hparams.gru_unit,
-                kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-                recurrent_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-                bias_initializer=keras.initializers.Zeros(),
-            )(
-                layers.Masking(mask_value=0.0)(click_title_presents),
-                initial_state=[long_u_emb],
+        if combine not in ("ini", "con"):
+            raise ValueError(
+                "combine must be ini or con, but now is {0}".format(combine)
             )
-        elif type == "con":
-            short_uemb = layers.GRU(
-                hparams.gru_unit,
-                kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-                recurrent_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-                bias_initializer=keras.initializers.Zeros(),
-            )(layers.Masking(mask_value=0.0)(click_title_presents))
-
-            user_present = layers.Concatenate()([short_uemb, long_u_emb])
-            user_present = layers.Dense(
-                hparams.gru_unit,
-                bias_initializer=keras.initializers.Zeros(),
-                kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            )(user_present)
-
-        model = keras.Model(
-            [his_input_title, user_indexes], user_present, name="user_encoder"
+        super().__init__(
+            word_embedding_file,
+            word_dict_file,
+            title_size,
+            his_size,
+            dropout,
+            seed,
+            user_dict_file=user_dict_file,
         )
-        return model
+        self.combine = combine
+        self.title_conv = conv1d(
+            self.word_embedding.embedding_dim, filter_num, window_size
+        )
+        self.title_pooling = AdditiveAttention(filter_num, attention_hidden_dim)
+        # User indices start at 1, so the table keeps row 0 for unknown users.
+        self.user_embedding = nn.Embedding(len(self.uid2index) + 1, filter_num)
+        nn.init.zeros_(self.user_embedding.weight)
+        self.gru = nn.GRUCell(filter_num, filter_num)
+        nn.init.xavier_uniform_(self.gru.weight_ih)
+        nn.init.xavier_uniform_(self.gru.weight_hh)
+        nn.init.zeros_(self.gru.bias_ih)
+        nn.init.zeros_(self.gru.bias_hh)
+        if combine == "con":
+            self.combine_dense = dense(2 * filter_num, filter_num)
+        self.to("cuda" if torch.cuda.is_available() else "cpu")
 
-    def _build_newsencoder(self, embedding_layer):
-        """The main function to create news encoder of LSTUR.
+    def encode_news(self, news: dict, users: torch.Tensor | None) -> torch.Tensor:
+        """Title words ``[N, title_size]`` -> news vectors ``[N, filter_num]``.
 
-        Args:
-            embedding_layer (object): a word embedding layer.
-
-        Return:
-            object: the news encoder of LSTUR.
+        An article without a known title word gets a zero vector.
         """
-        hparams = self.hparams
-        sequences_input_title = keras.Input(shape=(hparams.title_size,), dtype="int32")
-        embedded_sequences_title = embedding_layer(sequences_input_title)
+        words = news["title"]
+        x = self.dropout(self.word_embedding(words))
+        x = self.dropout(F.relu(self.title_conv(x.transpose(1, 2))).transpose(1, 2))
+        return self.title_pooling(x, mask=words != 0)
 
-        y = layers.Dropout(hparams.dropout)(embedded_sequences_title)
-        y = layers.Conv1D(
-            hparams.filter_num,
-            hparams.window_size,
-            activation=hparams.cnn_activation,
-            padding="same",
-            bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-        )(y)
-        print(y)
-        y = layers.Dropout(hparams.dropout)(y)
-        y = layers.Masking()(
-            OverwriteMasking()([y, ComputeMasking()(sequences_input_title)])
-        )
-        pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
-        print(pred_title)
-        model = keras.Model(sequences_input_title, pred_title, name="news_encoder")
-        return model
-
-    def _build_lstur(self):
-        """The main function to create LSTUR's logic. The core of LSTUR
-        is a user encoder and a news encoder.
-
-        Returns:
-            object: a model used to train.
-            object: a model used to evaluate and inference.
-        """
-        hparams = self.hparams
-
-        his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.title_size), dtype="int32"
-        )
-        pred_input_title = keras.Input(
-            shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
-        )
-        pred_input_title_one = keras.Input(
-            shape=(
-                1,
-                hparams.title_size,
-            ),
-            dtype="int32",
-        )
-        pred_title_reshape = layers.Reshape((hparams.title_size,))(pred_input_title_one)
-        user_indexes = keras.Input(shape=(1,), dtype="int32")
-
-        embedding_layer = layers.Embedding(
-            self.word2vec_embedding.shape[0],
-            hparams.word_emb_dim,
-            weights=[self.word2vec_embedding],
-            trainable=True,
-        )
-
-        titleencoder = self._build_newsencoder(embedding_layer)
-        self.userencoder = self._build_userencoder(titleencoder, type=hparams.type)
-        self.newsencoder = titleencoder
-
-        user_present = self.userencoder([his_input_title, user_indexes])
-        news_present = layers.TimeDistributed(self.newsencoder)(pred_input_title)
-        news_present_one = self.newsencoder(pred_title_reshape)
-
-        preds = layers.Dot(axes=-1)([news_present, user_present])
-        preds = layers.Activation(activation="softmax")(preds)
-
-        pred_one = layers.Dot(axes=-1)([news_present_one, user_present])
-        pred_one = layers.Activation(activation="sigmoid")(pred_one)
-
-        model = keras.Model([user_indexes, his_input_title, pred_input_title], preds)
-        scorer = keras.Model(
-            [user_indexes, his_input_title, pred_input_title_one], pred_one
-        )
-
-        return model, scorer
+    def encode_user(self, clicked: torch.Tensor, users: torch.Tensor) -> torch.Tensor:
+        """Run the GRU over the clicked articles, skipping the zero news vectors."""
+        long_term = self.user_embedding(users)
+        state = long_term if self.combine == "ini" else torch.zeros_like(long_term)
+        steps = clicked.ne(0).any(dim=-1)
+        for position in range(clicked.shape[1]):
+            state = torch.where(
+                steps[:, position : position + 1],
+                self.gru(clicked[:, position], state),
+                state,
+            )
+        if self.combine == "ini":
+            return state
+        return self.combine_dense(torch.cat([state, long_term], dim=-1))
