@@ -120,30 +120,33 @@ def training_loss(model, path):
     [((200, 300), 250.0), ((5000,), 5000.0)],
 )
 def test_xavier_normal_keeps_the_glorot_variance(shape, fan_avg):
+    torch.manual_seed(42)
     weight = torch.empty(shape)
     init_weight_(weight, "xavier_normal", init_value=0.1)
 
     # The truncation at two standard deviations is compensated, so the drawn
     # values keep the Glorot variance 1 / fan_avg; a bias counts its size as both
     # fans.
-    assert weight.std().item() == pytest.approx(np.sqrt(1.0 / fan_avg), rel=0.05)
+    assert weight.std().item() == pytest.approx(np.sqrt(1.0 / fan_avg), rel=0.03)
     bound = 2 * np.sqrt(1.0 / fan_avg) / TRUNCATED_NORMAL_STD
     assert weight.abs().max().item() <= bound
 
 
 def test_glorot_truncated_normal_takes_the_fan_average():
+    torch.manual_seed(42)
     weight = torch.empty(100, 400)
     glorot_truncated_normal_(weight, fan_avg=1000.0)
 
-    assert weight.std().item() == pytest.approx(np.sqrt(1.0 / 1000.0), rel=0.05)
+    assert weight.std().item() == pytest.approx(np.sqrt(1.0 / 1000.0), rel=0.03)
 
 
 def test_uniform_init_stays_within_the_init_value():
+    torch.manual_seed(42)
     weight = torch.empty(50, 50)
     init_weight_(weight, "uniform", init_value=0.3)
 
     assert weight.abs().max().item() <= 0.3
-    assert weight.abs().max().item() > 0.25
+    assert weight.abs().max().item() > 0.299
 
 
 def test_init_weight_rejects_an_unknown_method():
