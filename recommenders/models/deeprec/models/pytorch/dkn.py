@@ -524,9 +524,14 @@ class DKN(DKNBase):
     def forward(self, batch: dict) -> torch.Tensor:
         """Click logit ``[B, 1]`` of every (user, candidate article) pair."""
         batch_size, history_size = batch["clicked_rows"].shape
-        # One KCNN pass embeds the candidates and all the clicked articles.
         rows = torch.cat([batch["candidate_rows"], batch["clicked_rows"].flatten()])
-        news = self.kcnn(self.news_words[rows], self.news_entities[rows])
+        # A user's history repeats in every row of an impression, so one KCNN pass
+        # over the distinct articles replaces one per history slot.
+        unique_rows, inverse = torch.unique(rows, return_inverse=True)
+        unique_news = self.kcnn(
+            self.news_words[unique_rows], self.news_entities[unique_rows]
+        )
+        news = unique_news[inverse]
         candidate = news[:batch_size]
         clicked = news[batch_size:].view(batch_size, history_size, -1)
         user = self._attend(clicked, candidate)
