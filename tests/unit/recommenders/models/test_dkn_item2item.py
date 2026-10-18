@@ -27,7 +27,7 @@ NEWS_DIM = NUM_FILTERS * len(FILTER_SIZES)
 
 @pytest.fixture
 def build_model(synthetic_dkn):
-    """Build a small seeded DKNItem2Item, on CPU whatever the machine offers."""
+    """Build a small seeded DKNItem2Item on the GPU when there is one."""
 
     def build(**overrides):
         kwargs = dict(
@@ -41,7 +41,7 @@ def build_model(synthetic_dkn):
             seed=42,
         )
         kwargs.update(overrides)
-        return DKNItem2Item(**kwargs).to("cpu")
+        return DKNItem2Item(**kwargs)
 
     return build
 
@@ -103,7 +103,9 @@ def test_article_embeddings_are_unit_norm(build_model, first_batch, synthetic_dk
         )
 
     assert news.shape == (4 * (NEG_NUM + 2), NEWS_DIM)
-    assert torch.allclose(news.norm(dim=-1), torch.ones(len(news)), atol=1e-5)
+    assert torch.allclose(
+        news.norm(dim=-1), torch.ones(len(news), device=news.device), atol=1e-5
+    )
 
 
 def test_a_zero_embedding_stays_zero(build_model, first_batch, synthetic_dkn):
@@ -135,7 +137,7 @@ def test_scores_are_cosine_similarities_to_the_source(
     expected = torch.einsum("bd,btd->bt", news[:, 0], news[:, 1:])
     assert torch.allclose(scores, expected, atol=1e-6)
     # the source article is its own related target
-    assert torch.allclose(scores[:, 0], torch.ones(5), atol=1e-5)
+    assert torch.allclose(scores[:, 0], torch.ones(5, device=scores.device), atol=1e-5)
 
 
 def test_data_loss_sums_the_negative_log_softmax_of_the_related_target(
@@ -146,7 +148,7 @@ def test_data_loss_sums_the_negative_log_softmax_of_the_related_target(
 
     with torch.no_grad():
         loss = model._data_loss(batch).item()
-        scores = model(batch).numpy()
+        scores = model(batch).cpu().numpy()
 
     softmax = np.exp(scores) / np.exp(scores).sum(axis=1, keepdims=True)
     assert loss == pytest.approx(-np.log(softmax[:, 0] + 1e-10).sum(), rel=1e-5)
