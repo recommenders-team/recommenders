@@ -126,10 +126,8 @@ def test_batches_the_file(synthetic_dkn, batch_size, expected_sizes):
     assert [len(ids) for _, ids in batches] == expected_sizes
     for (np_batch, _), size in zip(batches, expected_sizes):
         assert np_batch["labels"].shape == (size, 1)
-        assert np_batch["candidate_words"].shape == (size, DOC_SIZE)
-        assert np_batch["candidate_entities"].shape == (size, DOC_SIZE)
-        assert np_batch["clicked_words"].shape == (size, HISTORY_SIZE, DOC_SIZE)
-        assert np_batch["clicked_entities"].shape == (size, HISTORY_SIZE, DOC_SIZE)
+        assert np_batch["candidate_rows"].shape == (size,)
+        assert np_batch["clicked_rows"].shape == (size, HISTORY_SIZE)
 
 
 def test_looks_up_the_candidate_and_the_clicked_articles(small_news, write_file):
@@ -141,14 +139,15 @@ def test_looks_up_the_candidate_and_the_clicked_articles(small_news, write_file)
 
     assert impression_ids == ["5", "5"]
     assert np.array_equal(np_batch["labels"], [[1.0], [0.0]])
-    assert np.array_equal(np_batch["candidate_words"], [[21, 22, 23], [31, 32, 33]])
-    assert np.array_equal(np_batch["candidate_entities"], [[0, 3, 0], [4, 4, 0]])
+    candidates, clicked = np_batch["candidate_rows"], np_batch["clicked_rows"]
+    assert np.array_equal(dataset.words[candidates], [[21, 22, 23], [31, 32, 33]])
+    assert np.array_equal(dataset.entities[candidates], [[0, 3, 0], [4, 4, 0]])
     assert np.array_equal(
-        np_batch["clicked_words"],
+        dataset.words[clicked],
         [[[11, 12, 13], [31, 32, 33]], [[0, 0, 0], [0, 0, 0]]],
     )
     assert np.array_equal(
-        np_batch["clicked_entities"], [[[1, 0, 2], [4, 4, 0]], [[0, 0, 0], [0, 0, 0]]]
+        dataset.entities[clicked], [[[1, 0, 2], [4, 4, 0]], [[0, 0, 0], [0, 0, 0]]]
     )
 
 
@@ -156,10 +155,8 @@ def test_looks_up_the_candidate_and_the_clicked_articles(small_news, write_file)
     "key, dtype",
     [
         ("labels", np.float32),
-        ("candidate_words", np.int64),
-        ("candidate_entities", np.int64),
-        ("clicked_words", np.int64),
-        ("clicked_entities", np.int64),
+        ("candidate_rows", np.int64),
+        ("clicked_rows", np.int64),
     ],
 )
 def test_emits_the_dtypes_the_model_consumes(synthetic_dkn, key, dtype):

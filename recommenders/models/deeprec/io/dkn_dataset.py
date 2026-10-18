@@ -157,9 +157,9 @@ class DKNDataset(NewsDataset):
 
         Yields:
             dict, list:
-            - ``labels`` ``[batch_size, 1]``; ``candidate_words`` and
-              ``candidate_entities`` ``[batch_size, doc_size]``; ``clicked_words``
-              and ``clicked_entities`` ``[batch_size, history_size, doc_size]``.
+            - ``labels`` ``[batch_size, 1]``; ``candidate_rows`` ``[batch_size]``
+              and ``clicked_rows`` ``[batch_size, history_size]``, rows of
+              ``words`` and ``entities``.
             - The impression IDs of the batch.
         """
         labels, candidates, histories, impression_ids = [], [], [], []
@@ -180,13 +180,10 @@ class DKNDataset(NewsDataset):
                 yield self._convert_data(labels, candidates, histories), impression_ids
 
     def _convert_data(self, labels: list, candidates: list, histories: list) -> dict:
-        histories = np.stack(histories)
         return {
             "labels": np.asarray(labels, dtype=np.float32).reshape(-1, 1),
-            "candidate_words": self.words[candidates],
-            "candidate_entities": self.entities[candidates],
-            "clicked_words": self.words[histories],
-            "clicked_entities": self.entities[histories],
+            "candidate_rows": np.asarray(candidates, dtype=np.int64),
+            "clicked_rows": np.stack(histories),
         }
 
 

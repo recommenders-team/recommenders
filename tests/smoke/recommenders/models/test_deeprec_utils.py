@@ -41,10 +41,8 @@ def test_dkn_dataset(deeprec_resource_path):
     for batch, impression_ids in dataset.load_data_from_file(data_file, 100):
         size = len(impression_ids)
         assert batch["labels"].shape == (size, 1)
-        assert batch["candidate_words"].shape == (size, 10)
-        assert batch["candidate_entities"].shape == (size, 10)
-        assert batch["clicked_words"].shape == (size, 50, 10)
-        assert batch["clicked_entities"].shape == (size, 50, 10)
+        assert batch["candidate_rows"].shape == (size,)
+        assert batch["clicked_rows"].shape == (size, 50)
         n_instances += size
     with open(data_file) as rd:
         assert n_instances == sum(1 for _ in rd)

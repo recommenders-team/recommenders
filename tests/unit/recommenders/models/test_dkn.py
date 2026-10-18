@@ -261,15 +261,31 @@ def test_forward_scores_the_user_vector_then_the_candidate(
     _, batch = first_batch(model, synthetic_dkn["train"], 8)
 
     with torch.no_grad():
-        candidate = model.kcnn(batch["candidate_words"], batch["candidate_entities"])
+        candidates = batch["candidate_rows"]
+        clicked_rows = batch["clicked_rows"].flatten()
+        candidate = model.kcnn(
+            model.news_words[candidates], model.news_entities[candidates]
+        )
         clicked = model.kcnn(
-            batch["clicked_words"].reshape(-1, DOC_SIZE),
-            batch["clicked_entities"].reshape(-1, DOC_SIZE),
+            model.news_words[clicked_rows], model.news_entities[clicked_rows]
         ).view(8, HISTORY_SIZE, NEWS_DIM)
         user = model._attend(clicked, candidate)
         expected = model.scorer(torch.cat([user, candidate], dim=1))
 
         assert torch.allclose(model(batch), expected, atol=1e-6)
+
+
+def test_forward_takes_the_articles_from_a_precomputed_table(
+    build_model, first_batch, synthetic_dkn
+):
+    model = build_model().eval()
+    _, batch = first_batch(model, synthetic_dkn["train"], 8)
+
+    with torch.no_grad():
+        news_table = model._embed_all_news(batch_size=7)
+
+        assert news_table.shape == (NEWS_COUNT + 1, NEWS_DIM)
+        assert torch.allclose(model(batch, news_table), model(batch), atol=1e-6)
 
 
 def test_attention_returns_the_article_when_all_clicks_are_equal(build_model):
