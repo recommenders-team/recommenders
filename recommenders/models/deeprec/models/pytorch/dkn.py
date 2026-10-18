@@ -35,6 +35,11 @@ from recommenders.models.deeprec.models.pytorch.fcn_net import FcnNet
 
 __all__ = ["KCNN", "DKNBase", "DKN"]
 
+# Std of a standard normal truncated at two stds, scipy.stats.truncnorm.std(-2, 2).
+# TensorFlow's VarianceScaling divides by the same constant, so the PyTorch init
+# matches the TF DKN.
+TRUNCATED_NORMAL_STD = 0.87962566103423978
+
 
 def glorot_truncated_normal_(tensor: torch.Tensor, fan_avg: float) -> None:
     """Glorot normal init, truncated at two standard deviations.
@@ -42,7 +47,7 @@ def glorot_truncated_normal_(tensor: torch.Tensor, fan_avg: float) -> None:
     The standard deviation is rescaled so that the truncated distribution keeps
     the Glorot variance ``1 / fan_avg``.
     """
-    std = math.sqrt(1.0 / fan_avg) / 0.87962566103423978
+    std = math.sqrt(1.0 / fan_avg) / TRUNCATED_NORMAL_STD
     nn.init.trunc_normal_(tensor, std=std, a=-2 * std, b=2 * std)
 
 

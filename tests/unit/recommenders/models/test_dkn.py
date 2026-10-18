@@ -13,6 +13,7 @@ try:
     from recommenders.models.deeprec.models.pytorch.dkn import (
         DKN,
         KCNN,
+        TRUNCATED_NORMAL_STD,
         _group_by_key,
         glorot_truncated_normal_,
         init_weight_,
@@ -126,7 +127,7 @@ def test_xavier_normal_keeps_the_glorot_variance(shape, fan_avg):
     # values keep the Glorot variance 1 / fan_avg; a bias counts its size as both
     # fans.
     assert weight.std().item() == pytest.approx(np.sqrt(1.0 / fan_avg), rel=0.05)
-    bound = 2 * np.sqrt(1.0 / fan_avg) / 0.87962566103423978
+    bound = 2 * np.sqrt(1.0 / fan_avg) / TRUNCATED_NORMAL_STD
     assert weight.abs().max().item() <= bound
 
 
