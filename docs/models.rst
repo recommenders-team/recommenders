@@ -188,12 +188,9 @@ Base model
     :members:
     :special-members: __init__
 
-Iterators
+Dataset
 ==============================
-.. automodule:: recommenders.models.newsrec.io.mind_iterator
-    :members:
-    :special-members: __init__
-.. automodule:: recommenders.models.newsrec.io.mind_all_iterator
+.. automodule:: recommenders.models.newsrec.io.mind_dataset
     :members:
     :special-members: __init__
 
