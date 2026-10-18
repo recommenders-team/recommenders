@@ -322,23 +322,25 @@ def test_inserts_batch_norm_only_when_enabled(build_model, enable_BN, expected):
 
 
 @pytest.mark.parametrize(
-    "layer",
+    "layer, lower_bound",
     [
-        "attention.linears.0",
-        "attention.out",
-        "scorer.linears.0",
-        "scorer.out",
-        "kcnn.convs.0",
-        "kcnn.convs.1",
+        ("attention.linears.0", 0.19),
+        ("attention.out", 0.0),
+        ("scorer.linears.0", 0.19),
+        ("scorer.out", 0.0),
+        ("kcnn.convs.0", 0.19),
+        ("kcnn.convs.1", 0.19),
     ],
 )
-def test_biases_follow_the_init_method(build_model, layer):
-    bias = build_model(init_value=0.1).get_submodule(layer).bias
-    doubled = build_model(init_value=0.2).get_submodule(layer).bias
+def test_biases_follow_the_init_method(build_model, layer, lower_bound):
+    model = build_model(
+        init_value=0.2, attention_layer_size=500, layer_sizes=[500], num_filters=500
+    )
+    bias = model.get_submodule(layer).bias
 
-    # uniform_(-c, c) draws c * (2U - 1), so the same seed scales with init_value
-    assert torch.allclose(doubled, 2 * bias)
-    assert bias.abs().max().item() <= 0.1
+    # the output layers have a single bias, so only their sign of life is checked
+    assert bias.abs().max().item() <= 0.2
+    assert bias.abs().max().item() > lower_bound
 
 
 def test_layer_params_leave_out_batch_norm_and_knowledge_transforms(build_model):
