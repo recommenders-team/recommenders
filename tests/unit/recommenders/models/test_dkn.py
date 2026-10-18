@@ -275,6 +275,19 @@ def test_forward_scores_the_user_vector_then_the_candidate(
         assert torch.allclose(model(batch), expected, atol=1e-6)
 
 
+def test_forward_takes_the_articles_from_a_precomputed_table(
+    build_model, first_batch, synthetic_dkn
+):
+    model = build_model().eval()
+    _, batch = first_batch(model, synthetic_dkn["train"], 8)
+
+    with torch.no_grad():
+        news_table = model._embed_all_news(batch_size=7)
+
+        assert news_table.shape == (NEWS_COUNT + 1, NEWS_DIM)
+        assert torch.allclose(model(batch, news_table), model(batch), atol=1e-6)
+
+
 def test_attention_returns_the_article_when_all_clicks_are_equal(build_model):
     model = build_model().eval()
     article = torch.randn(3, 1, NEWS_DIM)

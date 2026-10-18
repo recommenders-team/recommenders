@@ -521,21 +521,43 @@ class DKN(DKNBase):
 
         self.to("cuda" if torch.cuda.is_available() else "cpu")
 
-    def forward(self, batch: dict) -> torch.Tensor:
-        """Click logit ``[B, 1]`` of every (user, candidate article) pair."""
+    def forward(
+        self, batch: dict, news_table: torch.Tensor | None = None
+    ) -> torch.Tensor:
+        """Click logit ``[B, 1]`` of every (user, candidate article) pair.
+
+        Args:
+            news_table (torch.Tensor): The output of :meth:`_embed_all_news`, which
+                evaluation computes once instead of embedding every batch.
+        """
         batch_size, history_size = batch["clicked_rows"].shape
         rows = torch.cat([batch["candidate_rows"], batch["clicked_rows"].flatten()])
-        # A user's history repeats in every row of an impression, so one KCNN pass
-        # over the distinct articles replaces one per history slot.
-        unique_rows, inverse = torch.unique(rows, return_inverse=True)
-        unique_news = self.kcnn(
-            self.news_words[unique_rows], self.news_entities[unique_rows]
-        )
-        news = unique_news[inverse]
+        if news_table is not None:
+            news = news_table[rows]
+        else:
+            # A user's history repeats in every row of an impression, so one KCNN
+            # pass over the distinct articles replaces one per history slot.
+            unique_rows, inverse = torch.unique(rows, return_inverse=True)
+            unique_news = self.kcnn(
+                self.news_words[unique_rows], self.news_entities[unique_rows]
+            )
+            news = unique_news[inverse]
         candidate = news[:batch_size]
         clicked = news[batch_size:].view(batch_size, history_size, -1)
         user = self._attend(clicked, candidate)
         return self.scorer(torch.cat([user, candidate], dim=1))
+
+    def _embed_all_news(self, batch_size: int) -> torch.Tensor:
+        """KCNN embedding of every article, the padding row included."""
+        return torch.cat(
+            [
+                self.kcnn(
+                    self.news_words[start : start + batch_size],
+                    self.news_entities[start : start + batch_size],
+                )
+                for start in range(0, len(self.news_words), batch_size)
+            ]
+        )
 
     def _attend(self, clicked: torch.Tensor, candidate: torch.Tensor) -> torch.Tensor:
         """Pool clicked ``[B, H, D]`` into a user vector ``[B, D]``.
@@ -587,11 +609,12 @@ class DKN(DKNBase):
             else ["group_auc", "mean_mrr", "ndcg@5;10"]
         )
         self.eval()
+        news_table = self._embed_all_news(batch_size)
         preds, labels, impression_ids = [], [], []
         for np_batch, batch_ids in self.iterator.load_data_from_file(
             filename, batch_size
         ):
-            pred = torch.sigmoid(self.forward(self._to_tensors(np_batch)))
+            pred = torch.sigmoid(self.forward(self._to_tensors(np_batch), news_table))
             preds.extend(pred.cpu().numpy().reshape(-1))
             labels.extend(np_batch["labels"].reshape(-1))
             impression_ids.extend(batch_ids)
@@ -615,11 +638,13 @@ class DKN(DKNBase):
             object: An instance of self.
         """
         self.eval()
+        news_table = self._embed_all_news(batch_size)
         with open(outfile_name, "w") as wt:
             for np_batch, _ in self.iterator.load_data_from_file(
                 infile_name, batch_size
             ):
-                pred = torch.sigmoid(self.forward(self._to_tensors(np_batch)))
+                batch = self._to_tensors(np_batch)
+                pred = torch.sigmoid(self.forward(batch, news_table))
                 wt.write("\n".join(map(str, pred.cpu().numpy().reshape(-1))))
                 wt.write("\n")
         return self
