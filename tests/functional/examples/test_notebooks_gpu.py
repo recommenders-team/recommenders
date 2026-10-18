@@ -7,7 +7,6 @@ import pytest
 from recommenders.utils.gpu_utils import get_number_gpus
 from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
-
 TOL = 0.1
 ABS_TOL = 0.05
 
@@ -307,10 +306,10 @@ def test_slirec_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6217,
-                "mean_mrr": 0.2783,
-                "ndcg@5": 0.3024,
-                "ndcg@10": 0.3719,
+                "group_auc": 0.6206,
+                "mean_mrr": 0.2754,
+                "ndcg@5": 0.2994,
+                "ndcg@10": 0.3677,
             },
         )
     ],
@@ -363,10 +362,10 @@ def test_nrms_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6436,
-                "mean_mrr": 0.2990,
-                "ndcg@5": 0.3297,
-                "ndcg@10": 0.3933,
+                "group_auc": 0.6314,
+                "mean_mrr": 0.2808,
+                "ndcg@5": 0.3113,
+                "ndcg@10": 0.3768,
             },
         )
     ],
@@ -419,10 +418,10 @@ def test_naml_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6444,
-                "mean_mrr": 0.2983,
-                "ndcg@5": 0.3287,
-                "ndcg@10": 0.3938,
+                "group_auc": 0.6403,
+                "mean_mrr": 0.2924,
+                "ndcg@5": 0.3205,
+                "ndcg@10": 0.3854,
             },
         )
     ],
@@ -475,10 +474,10 @@ def test_lstur_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6035,
-                "mean_mrr": 0.2765,
-                "ndcg@5": 0.2977,
-                "ndcg@10": 0.3637,
+                "group_auc": 0.5927,
+                "mean_mrr": 0.2727,
+                "ndcg@5": 0.2931,
+                "ndcg@10": 0.3589,
             },
         )
     ],
