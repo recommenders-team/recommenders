@@ -38,7 +38,7 @@ NEWS_DIM = NUM_FILTERS * len(FILTER_SIZES)
 
 @pytest.fixture
 def build_model(synthetic_dkn):
-    """Build a small seeded DKN, on CPU whatever the machine offers."""
+    """Build a small seeded DKN on the GPU when there is one."""
 
     def build(**overrides):
         kwargs = dict(
@@ -56,7 +56,7 @@ def build_model(synthetic_dkn):
             seed=42,
         )
         kwargs.update(overrides)
-        return DKN(**kwargs).to("cpu")
+        return DKN(**kwargs)
 
     return build
 
@@ -274,11 +274,12 @@ def test_forward_scores_the_user_vector_then_the_candidate(
 
 def test_attention_returns_the_article_when_all_clicks_are_equal(build_model):
     model = build_model().eval()
-    article = torch.randn(3, 1, NEWS_DIM)
+    article = torch.randn(3, 1, NEWS_DIM, device=model.device)
 
     with torch.no_grad():
         user = model._attend(
-            article.expand(3, HISTORY_SIZE, NEWS_DIM), torch.randn(3, NEWS_DIM)
+            article.expand(3, HISTORY_SIZE, NEWS_DIM),
+            torch.randn(3, NEWS_DIM, device=model.device),
         )
 
     # the attention weights sum to 1 over the history
@@ -291,10 +292,10 @@ def test_attention_averages_every_history_slot_padding_included(build_model):
         for linear in (*model.attention.linears, model.attention.out):
             linear.weight.zero_()
             linear.bias.zero_()
-    clicked = torch.randn(2, HISTORY_SIZE, NEWS_DIM)
+    clicked = torch.randn(2, HISTORY_SIZE, NEWS_DIM, device=model.device)
 
     with torch.no_grad():
-        user = model._attend(clicked, torch.randn(2, NEWS_DIM))
+        user = model._attend(clicked, torch.randn(2, NEWS_DIM, device=model.device))
 
     # equal attention logits give every slot, padded or not, weight 1 / HISTORY_SIZE
     assert torch.allclose(user, clicked.mean(dim=1), atol=1e-6)
@@ -370,7 +371,7 @@ def test_data_loss_is_the_log_loss(build_model, first_batch, synthetic_dkn):
 
     with torch.no_grad():
         loss = model._data_loss(batch).item()
-        pred = torch.sigmoid(model(batch)).numpy().reshape(-1)
+        pred = torch.sigmoid(model(batch)).cpu().numpy().reshape(-1)
 
     labels = np_batch["labels"].reshape(-1)
     expected = np.mean(
@@ -386,8 +387,8 @@ def test_regular_loss_matches_the_closed_form(build_model):
         reg = model._regular_loss(
             embed_l2=0.1, embed_l1=0.2, layer_l2=0.3, layer_l1=0.4
         ).item()
-        tables = [table.numpy() for table in model.kcnn.embedding_tables()]
-    params = [param.detach().numpy() for param in model.layer_params]
+        tables = [table.cpu().numpy() for table in model.kcnn.embedding_tables()]
+    params = [param.detach().cpu().numpy() for param in model.layer_params]
 
     # the L2 terms carry a factor 0.5; the transformed entity and context tables
     # count as embeddings
@@ -516,10 +517,18 @@ def test_run_get_embedding_writes_the_kcnn_embedding_of_every_article(
     news_id, values = lines[0]
     row = model.iterator.news_rows[news_id]
     with torch.no_grad():
-        expected = model.kcnn(
-            torch.as_tensor(model.iterator.words[row : row + 1]),
-            torch.as_tensor(model.iterator.entities[row : row + 1]),
-        ).numpy()[0]
+        expected = (
+            model.kcnn(
+                torch.as_tensor(
+                    model.iterator.words[row : row + 1], device=model.device
+                ),
+                torch.as_tensor(
+                    model.iterator.entities[row : row + 1], device=model.device
+                ),
+            )
+            .cpu()
+            .numpy()[0]
+        )
     assert np.allclose(np.array(values.split(","), dtype=np.float32), expected)
 
 
