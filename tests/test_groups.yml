@@ -58,7 +58,7 @@ nightly:
   group_gpu_001:                                                                                                                                     # Total: 1498.26s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm                                                                                         #    2.42s (Always the first test to check the GPU works)
     - tests/smoke/recommenders/models/test_deeprec_utils.py                                                                                          #  127.60s
-    - tests/smoke/recommenders/models/test_newsrec_utils.py::test_news_iterator                                                                      #    6.87s
+    - tests/smoke/recommenders/models/test_newsrec_utils.py::test_mind_dataset_titles                                                                #    6.87s
     - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_lightgcn                                                                     #    5.38s
     - tests/functional/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_functional                                                            #   19.12s
     # - tests/smoke/recommenders/models/test_deeprec_model.py::test_model_sum  # 27.23s  # FIXME: Disabled due to the issue with TF version > 2.10.1 See #2018
@@ -85,9 +85,8 @@ nightly:
     - tests/functional/examples/test_notebooks_gpu.py::test_ncf_functional                                                                           #  636.64s
     - tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke                                                                           #   62.93s
     - tests/functional/examples/test_notebooks_gpu.py::test_ncf_deep_dive_functional                                                                 #  146.81s
-    - tests/smoke/recommenders/models/test_newsrec_utils.py::test_naml_iterator                                                                      #    8.18s
-    # FIXME: https://github.com/microsoft/recommenders/issues/1883
-    # - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_naml  # 450.65s
+    - tests/smoke/recommenders/models/test_newsrec_utils.py::test_mind_dataset_all_views                                                             #    8.18s
+    - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_naml
 
   group_gpu_004:                                                                                                                                     # Total: 3038.6s
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm                                                                                         #    2.42s (Always the first test to check the GPU works)
@@ -403,12 +402,8 @@ pr_gate:
     - tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model                                                                        #    1.02s
     - tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model                                                                        #    1.81s
     - tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model                                                                   #    2.22s
-    - tests/unit/recommenders/models/test_newsrec_model.py::test_naml_component_definition
-    - tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_component_definition                                                          #    4.08s
-    - tests/unit/recommenders/models/test_newsrec_model.py::test_nrms_component_definition                                                           #    3.83s
-    - tests/unit/recommenders/models/test_newsrec_model.py::test_npa_component_definition                                                            #    1.59s
-    - tests/unit/recommenders/models/test_newsrec_utils.py::test_prepare_hparams                                                                     #    2.83s
-    - tests/unit/recommenders/models/test_newsrec_utils.py::test_load_yaml_file
+    - tests/unit/recommenders/models/test_newsrec_model.py
+    - tests/unit/recommenders/models/test_newsrec_utils.py
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sampler # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec # FIXME: it takes too long to run
