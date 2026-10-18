@@ -27,6 +27,7 @@ from recommenders.utils.constants import (
 )
 from recommenders.datasets.python_splitters import numpy_stratified_split
 from recommenders.datasets.python_splitters import python_chrono_split
+from recommenders.models.deeprec.deeprec_utils import download_deeprec_resources
 from recommenders.utils.spark_utils import start_or_get_spark
 
 
@@ -533,6 +534,40 @@ def deeprec_resource_path():
 @pytest.fixture(scope="session")
 def mind_resource_path(deeprec_resource_path):
     return Path(__file__).absolute().parent.joinpath("resources", "mind")
+
+
+@pytest.fixture(scope="session")
+def mind_demo(mind_resource_path):
+    """Paths of the MIND demo split, downloaded on first use."""
+    for folder, zip_name, check in [
+        ("train", "MINDdemo_train.zip", "news.tsv"),
+        ("valid", "MINDdemo_dev.zip", "news.tsv"),
+        ("utils", "MINDdemo_utils.zip", "embedding_all.npy"),
+    ]:
+        if not os.path.exists(os.path.join(mind_resource_path, folder, check)):
+            download_deeprec_resources(
+                "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
+                os.path.join(mind_resource_path, folder),
+                zip_name,
+            )
+    utils = os.path.join(mind_resource_path, "utils")
+    return {
+        "train": (
+            os.path.join(mind_resource_path, "train", "news.tsv"),
+            os.path.join(mind_resource_path, "train", "behaviors.tsv"),
+        ),
+        "valid": (
+            os.path.join(mind_resource_path, "valid", "news.tsv"),
+            os.path.join(mind_resource_path, "valid", "behaviors.tsv"),
+        ),
+        "embedding": os.path.join(utils, "embedding.npy"),
+        "word_dict": os.path.join(utils, "word_dict.pkl"),
+        "embedding_all": os.path.join(utils, "embedding_all.npy"),
+        "word_dict_all": os.path.join(utils, "word_dict_all.pkl"),
+        "uid2index": os.path.join(utils, "uid2index.pkl"),
+        "vert_dict": os.path.join(utils, "vert_dict.pkl"),
+        "subvert_dict": os.path.join(utils, "subvert_dict.pkl"),
+    }
 
 
 @pytest.fixture(scope="module")
