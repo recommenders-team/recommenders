@@ -60,7 +60,7 @@ class NRMSModel(NewsRecModel):
         self.to("cuda" if torch.cuda.is_available() else "cpu")
 
     def encode_news(self, news: dict, users: torch.Tensor | None) -> torch.Tensor:
-        """Title words ``[N, title_size]`` -> news vectors ``[N, head_num * head_dim]``."""
+        """Title words ``[N, title_size]`` -> ``[N, head_num * head_dim]``."""
         x = self.dropout(self.word_embedding(news["title"]))
         x = self.dropout(self.news_attention(x))
         return self.news_pooling(x)

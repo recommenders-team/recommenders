@@ -85,7 +85,7 @@ class NPAModel(NewsRecModel):
         self.to("cuda" if torch.cuda.is_available() else "cpu")
 
     def encode_news(self, news: dict, users: torch.Tensor | None) -> torch.Tensor:
-        """Title words ``[N, title_size]`` read by users ``[N]`` -> ``[N, filter_num]``."""
+        """Title words ``[N, title_size]`` of users ``[N]`` -> ``[N, filter_num]``."""
         x = self.dropout(self.word_embedding(news["title"]))
         x = self.dropout(F.relu(self.title_conv(x.transpose(1, 2))).transpose(1, 2))
         return self.word_pooling(x, self.word_query(self.user_embedding(users)))
