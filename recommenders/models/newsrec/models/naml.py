@@ -35,13 +35,7 @@ def _category_embedding(count: int, dim: int) -> nn.Embedding:
 
 
 class NAMLModel(NewsRecModel):
-    """NAML model.
-
-    :Citation:
-
-        C. Wu, F. Wu, M. An, J. Huang, Y. Huang and X. Xie, "Neural News
-        Recommendation with Attentive Multi-View Learning", IJCAI 2019.
-    """
+    """NAML model."""
 
     def __init__(
         self,

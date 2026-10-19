@@ -31,13 +31,7 @@ __all__ = ["NPAModel"]
 
 
 class NPAModel(NewsRecModel):
-    """NPA model.
-
-    :Citation:
-
-        C. Wu, F. Wu, M. An, J. Huang, Y. Huang and X. Xie, "NPA: Neural News
-        Recommendation with Personalized Attention", KDD 2019.
-    """
+    """NPA model."""
 
     personalized_news = True
 

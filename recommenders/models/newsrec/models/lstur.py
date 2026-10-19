@@ -28,13 +28,7 @@ __all__ = ["LSTURModel"]
 
 
 class LSTURModel(NewsRecModel):
-    """LSTUR model.
-
-    :Citation:
-
-        M. An, F. Wu, C. Wu, K. Zhang, Z. Liu and X. Xie, "Neural News Recommendation
-        with Long- and Short-term User Representations", ACL 2019.
-    """
+    """LSTUR model."""
 
     def __init__(
         self,

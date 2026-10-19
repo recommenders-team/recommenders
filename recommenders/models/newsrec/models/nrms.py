@@ -26,13 +26,7 @@ __all__ = ["NRMSModel"]
 
 
 class NRMSModel(NewsRecModel):
-    """NRMS model.
-
-    :Citation:
-
-        C. Wu, F. Wu, S. Ge, T. Qi, Y. Huang and X. Xie, "Neural News Recommendation
-        with Multi-Head Self-Attention", EMNLP-IJCNLP 2019.
-    """
+    """NRMS model."""
 
     def __init__(
         self,
