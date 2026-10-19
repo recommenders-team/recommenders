@@ -302,7 +302,6 @@ class NewsRecModel(nn.Module):
                 )
             scores = torch.cat(scores)
         else:
-            news_count = len(news["title"])
             news_vectors = torch.cat(
                 [
                     self.encode_news(
@@ -312,7 +311,7 @@ class NewsRecModel(nn.Module):
                         },
                         None,
                     )
-                    for start in range(0, news_count, batch_size)
+                    for start in range(0, len(news["title"]), batch_size)
                 ]
             )
             user_vectors = torch.cat(
