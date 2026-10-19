@@ -7,7 +7,6 @@ import pytest
 from recommenders.utils.gpu_utils import get_number_gpus
 from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
-
 TOL = 0.5
 ABS_TOL = 0.05
 
@@ -134,14 +133,12 @@ def test_naml_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=64, seed=42, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=64, RANDOM_SEED=42, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["group_auc"] == pytest.approx(
-        0.5801, rel=TOL, abs=ABS_TOL
-    )
-    assert results["mean_mrr"] == pytest.approx(0.2512, rel=TOL, abs=ABS_TOL)
+    assert results["group_auc"] == pytest.approx(0.5848, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.255, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -152,14 +149,12 @@ def test_nrms_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, RANDOM_SEED=42, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["group_auc"] == pytest.approx(
-        0.5768, rel=TOL, abs=ABS_TOL
-    )
-    assert results["mean_mrr"] == pytest.approx(0.2457, rel=TOL, abs=ABS_TOL)
+    assert results["group_auc"] == pytest.approx(0.5782, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.2459, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -170,14 +165,12 @@ def test_npa_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=64, seed=42, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=64, RANDOM_SEED=42, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["group_auc"] == pytest.approx(
-        0.5861, rel=TOL, abs=ABS_TOL
-    )
-    assert results["mean_mrr"] == pytest.approx(0.255, rel=TOL, abs=ABS_TOL)
+    assert results["group_auc"] == pytest.approx(0.5691, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.2468, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -188,14 +181,12 @@ def test_lstur_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=64, seed=40, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=64, RANDOM_SEED=40, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["group_auc"] == pytest.approx(
-        0.5977, rel=TOL, abs=ABS_TOL
-    )
-    assert results["mean_mrr"] == pytest.approx(0.2618, rel=TOL, abs=ABS_TOL)
+    assert results["group_auc"] == pytest.approx(0.5949, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.2576, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks

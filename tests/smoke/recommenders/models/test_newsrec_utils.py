@@ -1,129 +1,42 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+import pickle
 
-import os
+import numpy as np
 import pytest
 
-try:
-    from recommenders.models.newsrec.newsrec_utils import prepare_hparams
-    from recommenders.models.deeprec.deeprec_utils import download_deeprec_resources
-    from recommenders.models.newsrec.io.mind_iterator import MINDIterator
-    from recommenders.models.newsrec.io.mind_all_iterator import MINDAllIterator
-except ImportError:
-    pass  # disable error while collecting tests for non-gpu environments
+from recommenders.models.newsrec.io.mind_dataset import MINDDataset
+
+
+def load(path):
+    with open(path, "rb") as f:
+        return pickle.load(f)
 
 
 @pytest.mark.gpu
-def test_news_iterator(mind_resource_path):
-    train_news_file = os.path.join(mind_resource_path, "train", "news.tsv")
-    train_behaviors_file = os.path.join(mind_resource_path, "train", "behaviors.tsv")
-    valid_news_file = os.path.join(mind_resource_path, "valid", "news.tsv")
-    valid_behaviors_file = os.path.join(mind_resource_path, "valid", "behaviors.tsv")
-    wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
-    userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", "nrms.yaml")
-
-    if not os.path.exists(train_news_file):
-        download_deeprec_resources(
-            "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
-            os.path.join(mind_resource_path, "train"),
-            "MINDdemo_train.zip",
-        )
-    if not os.path.exists(valid_news_file):
-        download_deeprec_resources(
-            "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
-            os.path.join(mind_resource_path, "valid"),
-            "MINDdemo_dev.zip",
-        )
-    if not os.path.exists(yaml_file):
-        download_deeprec_resources(
-            "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
-            os.path.join(mind_resource_path, "utils"),
-            "MINDdemo_utils.zip",
-        )
-
-    hparams = prepare_hparams(
-        yaml_file,
-        wordEmb_file=wordEmb_file,
-        wordDict_file=wordDict_file,
-        userDict_file=userDict_file,
-        epochs=1,
-    )
-    train_iterator = MINDIterator(hparams, hparams.npratio)
-    test_iterator = MINDIterator(hparams, -1)
-
-    assert train_iterator is not None
-    for res in train_iterator.load_data_from_file(
-        train_news_file, train_behaviors_file
-    ):
-        assert isinstance(res, dict)
-        assert len(res) == 5
-        break
-
-    assert test_iterator is not None
-    for res in test_iterator.load_data_from_file(valid_news_file, valid_behaviors_file):
-        assert isinstance(res, dict)
-        assert len(res) == 5
-        break
+def test_mind_dataset_titles(mind_demo):
+    dataset = MINDDataset(*mind_demo["train"], load(mind_demo["word_dict"]), 30, 50)
+    batch = next(dataset.load_train_batches(32, 4, np.random.default_rng(0)))
+    assert dataset.news["title"].shape[1] == 30
+    assert batch["candidate_rows"].shape == (32, 5)
+    assert batch["clicked_rows"].shape == (32, 50)
+    assert batch["users"].shape == (32,)
 
 
 @pytest.mark.gpu
-def test_naml_iterator(mind_resource_path):
-    train_news_file = os.path.join(mind_resource_path, "train", "news.tsv")
-    train_behaviors_file = os.path.join(mind_resource_path, "train", "behaviors.tsv")
-    valid_news_file = os.path.join(mind_resource_path, "valid", "news.tsv")
-    valid_behaviors_file = os.path.join(mind_resource_path, "valid", "behaviors.tsv")
-    wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding_all.npy")
-    userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict_all.pkl")
-    vertDict_file = os.path.join(mind_resource_path, "utils", "vert_dict.pkl")
-    subvertDict_file = os.path.join(mind_resource_path, "utils", "subvert_dict.pkl")
-    yaml_file = os.path.join(mind_resource_path, "utils", "naml.yaml")
-
-    if not os.path.exists(train_news_file):
-        download_deeprec_resources(
-            "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
-            os.path.join(mind_resource_path, "train"),
-            "MINDdemo_train.zip",
-        )
-    if not os.path.exists(valid_news_file):
-        download_deeprec_resources(
-            "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
-            os.path.join(mind_resource_path, "valid"),
-            "MINDdemo_dev.zip",
-        )
-    if not os.path.exists(yaml_file):
-        download_deeprec_resources(
-            "https://huggingface.co/datasets/Recommenders/MIND/resolve/main/",
-            os.path.join(mind_resource_path, "utils"),
-            "MINDdemo_utils.zip",
-        )
-
-    hparams = prepare_hparams(
-        yaml_file,
-        wordEmb_file=wordEmb_file,
-        wordDict_file=wordDict_file,
-        userDict_file=userDict_file,
-        vertDict_file=vertDict_file,
-        subvertDict_file=subvertDict_file,
-        epochs=1,
-        batch_size=1024,
+def test_mind_dataset_all_views(mind_demo):
+    dataset = MINDDataset(
+        *mind_demo["valid"],
+        load(mind_demo["word_dict_all"]),
+        30,
+        50,
+        uid2index=load(mind_demo["uid2index"]),
+        body_size=50,
+        vert_dict=load(mind_demo["vert_dict"]),
+        subvert_dict=load(mind_demo["subvert_dict"]),
     )
-    train_iterator = MINDAllIterator(hparams, hparams.npratio)
-    test_iterator = MINDAllIterator(hparams, -1)
-
-    assert train_iterator is not None
-    for res in train_iterator.load_data_from_file(
-        train_news_file, train_behaviors_file
-    ):
-        assert isinstance(res, dict)
-        assert len(res) == 11
-        break
-
-    assert test_iterator is not None
-    for res in test_iterator.load_data_from_file(valid_news_file, valid_behaviors_file):
-        assert isinstance(res, dict)
-        assert len(res) == 11
-        break
+    news_count = len(dataset.news["title"])
+    assert dataset.news["body"].shape == (news_count, 50)
+    assert dataset.news["vert"].shape == dataset.news["subvert"].shape == (news_count,)
+    assert len(dataset.impressions) == len(dataset.labels) == len(dataset.users)
