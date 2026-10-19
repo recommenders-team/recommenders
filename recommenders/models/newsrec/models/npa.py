@@ -76,11 +76,11 @@ class NPAModel(NewsRecModel):
         )
         self.word_query = dense(user_emb_dim, attention_hidden_dim)
         self.word_pooling = PersonalizedAttentivePooling(
-            filter_num, attention_hidden_dim
+            filter_num, attention_hidden_dim, dropout
         )
         self.news_query = dense(user_emb_dim, attention_hidden_dim)
         self.news_pooling = PersonalizedAttentivePooling(
-            filter_num, attention_hidden_dim
+            filter_num, attention_hidden_dim, dropout
         )
         self.to("cuda" if torch.cuda.is_available() else "cpu")
 

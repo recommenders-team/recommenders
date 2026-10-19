@@ -91,7 +91,7 @@ class SelfAttention(nn.Module):
 class PersonalizedAttentivePooling(nn.Module):
     """Pool ``[N, L, D]`` into ``[N, D]`` with a query given per row."""
 
-    def __init__(self, in_dim: int, query_dim: int, dropout: float = 0.2) -> None:
+    def __init__(self, in_dim: int, query_dim: int, dropout: float) -> None:
         super().__init__()
         self.dropout = nn.Dropout(dropout)
         self.projection = dense(in_dim, query_dim)
