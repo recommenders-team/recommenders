@@ -39,7 +39,7 @@ class BPR(CBPR):
             col_prediction (str): Name of the prediction column.
 
         Returns:
-            pandas.DataFrame: Dataframe with col_user, col_item, col_rating for top-k items per user.
+            pandas.DataFrame: DataFrame with col_user, col_item, col_prediction for top-k items per user.
         """
         # Get user and item mappings
         items = np.array(list(self.train_set.iid_map.keys()))
