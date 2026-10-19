@@ -293,7 +293,7 @@ def test_forward_scores_every_candidate(model, mind_files):
     dataset = model.load_dataset(mind_files["news"], mind_files["behaviors"])
     batch = next(dataset.load_train_batches(3, NPRATIO, np.random.default_rng(0)))
     batch = {name: torch.as_tensor(value) for name, value in batch.items()}
-    logits = model.forward(model._news_tensors(dataset), batch)
+    logits = model.forward(model._to_device(dataset.news), batch)
     assert logits.shape == (3, NPRATIO + 1)
 
 
@@ -304,7 +304,7 @@ def test_predict_matches_forward(model, mind_files, batch_size):
         mind_files["news"], mind_files["behaviors"], batch_size=batch_size
     )
     dataset = model.load_dataset(mind_files["news"], mind_files["behaviors"])
-    news = model._news_tensors(dataset)
+    news = model._to_device(dataset.news)
     model.eval()
     assert [len(score) for score in scores] == [len(i) for i in dataset.impressions]
     for i, impression in enumerate(dataset.impressions):

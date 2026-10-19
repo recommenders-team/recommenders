@@ -112,10 +112,10 @@ class NewsRecModel(nn.Module):
             subvert_dict=self.subvert_dict,
         )
 
-    def _news_tensors(self, dataset: MINDDataset) -> dict:
+    def _to_device(self, arrays: dict) -> dict:
         return {
             name: torch.as_tensor(value, device=self.device)
-            for name, value in dataset.news.items()
+            for name, value in arrays.items()
         }
 
     def forward(self, news: dict, batch: dict) -> torch.Tensor:
@@ -177,21 +177,17 @@ class NewsRecModel(nn.Module):
             evaluated.append(
                 ("test", self.load_dataset(test_news_file, test_behaviors_file))
             )
-        news = self._news_tensors(train)
+        news = self._to_device(train.news)
         optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
         for epoch in range(1, epochs + 1):
             train_start = time.time()
             self.train()
             epoch_loss = 0.0
             step = 0
-            for np_batch in train.load_train_batches(batch_size, npratio, self.rng):
+            for batch in train.load_train_batches(batch_size, npratio, self.rng):
                 if step_limit is not None and step >= step_limit:
                     break
-                batch = {
-                    name: torch.as_tensor(value, device=self.device)
-                    for name, value in np_batch.items()
-                }
-                logits = self.forward(news, batch)
+                logits = self.forward(news, self._to_device(batch))
                 # The clicked article is always the first candidate.
                 loss = F.cross_entropy(
                     logits, logits.new_zeros(len(logits), dtype=torch.long)
@@ -269,7 +265,7 @@ class NewsRecModel(nn.Module):
     @torch.no_grad()
     def _score(self, dataset: MINDDataset, batch_size: int) -> list[np.ndarray]:
         self.eval()
-        news = self._news_tensors(dataset)
+        news = self._to_device(dataset.news)
         histories = torch.as_tensor(dataset.histories, device=self.device)
         users = torch.as_tensor(dataset.users, device=self.device)
         candidates = torch.as_tensor(
