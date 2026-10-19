@@ -85,7 +85,7 @@ nightly:
     - tests/functional/examples/test_notebooks_gpu.py::test_ncf_functional                                                                           #  636.64s
     - tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke                                                                           #   62.93s
     - tests/functional/examples/test_notebooks_gpu.py::test_ncf_deep_dive_functional                                                                 #  146.81s
-    - tests/smoke/recommenders/models/test_newsrec_utils.py::test_mind_dataset_all_views                                                             #    8.18s
+    - tests/smoke/recommenders/models/test_newsrec_utils.py::test_mind_dataset_all_views
     - tests/smoke/recommenders/models/test_newsrec_model.py::test_model_naml
 
   group_gpu_004:                                                                                                                                     # Total: 3038.6s
