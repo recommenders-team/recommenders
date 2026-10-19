@@ -96,26 +96,23 @@ def mind_files(tmp_path_factory):
     return paths
 
 
+def load(path):
+    with open(path, "rb") as f:
+        return pickle.load(f)
+
+
 @pytest.fixture
 def dataset(mind_files):
-    with open(mind_files["word_dict"], "rb") as f:
-        word_dict = pickle.load(f)
-    with open(mind_files["uid2index"], "rb") as f:
-        uid2index = pickle.load(f)
-    with open(mind_files["vert_dict"], "rb") as f:
-        vert_dict = pickle.load(f)
-    with open(mind_files["subvert_dict"], "rb") as f:
-        subvert_dict = pickle.load(f)
     return MINDDataset(
         mind_files["news"],
         mind_files["behaviors"],
-        word_dict,
+        load(mind_files["word_dict"]),
         TITLE_SIZE,
         HIS_SIZE,
-        uid2index=uid2index,
+        uid2index=load(mind_files["uid2index"]),
         body_size=BODY_SIZE,
-        vert_dict=vert_dict,
-        subvert_dict=subvert_dict,
+        vert_dict=load(mind_files["vert_dict"]),
+        subvert_dict=load(mind_files["subvert_dict"]),
     )
 
 
@@ -198,10 +195,12 @@ def test_dataset_reads_articles_into_rows(dataset):
 
 
 def test_dataset_reads_titles_only_without_body_size(mind_files):
-    with open(mind_files["word_dict"], "rb") as f:
-        word_dict = pickle.load(f)
     dataset = MINDDataset(
-        mind_files["news"], mind_files["behaviors"], word_dict, TITLE_SIZE, HIS_SIZE
+        mind_files["news"],
+        mind_files["behaviors"],
+        load(mind_files["word_dict"]),
+        TITLE_SIZE,
+        HIS_SIZE,
     )
     assert list(dataset.news) == ["title"]
     assert dataset.users.tolist() == [0] * len(BEHAVIORS)
