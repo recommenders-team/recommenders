@@ -201,6 +201,15 @@ pr_gate:
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations_scalar_index
     - tests/unit/recommenders/models/test_tfidf_utils.py::test_recommend_top_k_items_excludes_self_on_tied_similarity
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_dataset_reads_articles_into_rows
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_dataset_reads_titles_only_without_body_size
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_dataset_keeps_the_last_clicks_left_padded
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_dataset_reads_impressions
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_train_batches_put_the_click_first
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_train_batches_pad_missing_negatives_with_row_0
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_train_batches_follow_the_generator
+    - tests/unit/recommenders/models/test_newsrec_utils.py::test_word_tokenize_lowercases_and_keeps_punctuation
+    - tests/unit/recommenders/models/test_newsrec_utils.py::test_get_mind_data_set
     - tests/unit/recommenders/models/test_cornac_utils.py::test_predict
     - tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_init
@@ -387,8 +396,16 @@ pr_gate:
     - tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model
     - tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model
     - tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model
-    - tests/unit/recommenders/models/test_newsrec_model.py
-    - tests/unit/recommenders/models/test_newsrec_utils.py
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_additive_attention_leaves_out_masked_positions
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_self_attention_matches_the_formula
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_forward_scores_every_candidate
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_predict_matches_forward
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_fit_and_run_eval
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_fit_stops_at_the_step_limit
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_seed_fixes_the_initial_scores
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_skips_padded_history_slots
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_rejects_an_unknown_combine
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_user_tables_keep_a_row_for_the_last_user
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sampler # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec # FIXME: it takes too long to run
