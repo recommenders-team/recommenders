@@ -133,7 +133,7 @@ def test_naml_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=64, seed=42, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=64, RANDOM_SEED=42, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
@@ -149,7 +149,7 @@ def test_nrms_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, RANDOM_SEED=42, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
@@ -165,7 +165,7 @@ def test_npa_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=64, seed=42, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=64, RANDOM_SEED=42, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 
@@ -181,7 +181,7 @@ def test_lstur_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=64, seed=40, MIND_type="demo"),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=64, RANDOM_SEED=40, MIND_TYPE="demo"),
     )
     results = read_notebook(output_notebook)
 

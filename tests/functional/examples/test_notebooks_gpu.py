@@ -328,10 +328,10 @@ def test_nrms_quickstart_functional(
     notebook_path = notebooks["nrms_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
@@ -384,10 +384,10 @@ def test_naml_quickstart_functional(
     notebook_path = notebooks["naml_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
@@ -440,10 +440,10 @@ def test_lstur_quickstart_functional(
     notebook_path = notebooks["lstur_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
@@ -496,10 +496,10 @@ def test_npa_quickstart_functional(
     notebook_path = notebooks["npa_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
