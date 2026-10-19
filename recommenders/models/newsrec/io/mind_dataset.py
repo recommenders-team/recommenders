@@ -127,9 +127,7 @@ class MINDDataset:
             negatives = self.impressions[index][labels == 0]
             for positive in self.impressions[index][labels == 1]:
                 if len(negatives) < npratio:
-                    sampled = np.concatenate(
-                        [negatives, np.zeros(npratio - len(negatives), dtype=np.int64)]
-                    )
+                    sampled = np.pad(negatives, (0, npratio - len(negatives)))
                 else:
                     sampled = rng.choice(negatives, npratio, replace=False)
                 candidates.append(np.concatenate([[positive], sampled]))
