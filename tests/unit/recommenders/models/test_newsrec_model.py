@@ -7,10 +7,11 @@ import pickle
 import numpy as np
 import pytest
 
+from recommenders.models.newsrec.io.mind_dataset import MINDDataset
+
 try:
     import torch
 
-    from recommenders.models.newsrec.io.mind_dataset import MINDDataset
     from recommenders.models.newsrec.models.layers import (
         AdditiveAttention,
         SelfAttention,
@@ -260,6 +261,7 @@ def test_train_batches_follow_the_generator(dataset):
     assert not np.array_equal(first(1)["candidate_rows"], first(2)["candidate_rows"])
 
 
+@pytest.mark.gpu
 def test_additive_attention_leaves_out_masked_positions():
     torch.manual_seed(0)
     attention = AdditiveAttention(3, 4)
@@ -274,6 +276,7 @@ def test_additive_attention_leaves_out_masked_positions():
     assert out[1].abs().sum() == 0
 
 
+@pytest.mark.gpu
 def test_self_attention_matches_the_formula():
     torch.manual_seed(0)
     attention = SelfAttention(3, 2, 4)
@@ -292,6 +295,7 @@ def test_self_attention_matches_the_formula():
     )
 
 
+@pytest.mark.gpu
 def test_forward_scores_every_candidate(model, mind_files):
     dataset = model.load_dataset(mind_files["news"], mind_files["behaviors"])
     batch = next(dataset.load_train_batches(3, NPRATIO, np.random.default_rng(0)))
@@ -301,6 +305,7 @@ def test_forward_scores_every_candidate(model, mind_files):
 
 
 # NPA encodes batch_size // HIS_SIZE impressions at a time: one, then two.
+@pytest.mark.gpu
 @pytest.mark.parametrize("batch_size", [HIS_SIZE + 1, 2 * HIS_SIZE + 1])
 def test_predict_matches_forward(model, mind_files, batch_size):
     scores = model.predict(
@@ -321,6 +326,7 @@ def test_predict_matches_forward(model, mind_files, batch_size):
         np.testing.assert_allclose(scores[i], expected, rtol=1e-4, atol=1e-6)
 
 
+@pytest.mark.gpu
 def test_fit_and_run_eval(model, mind_files, capsys):
     files = (mind_files["news"], mind_files["behaviors"])
     before = model.run_eval(*files)
@@ -333,6 +339,7 @@ def test_fit_and_run_eval(model, mind_files, capsys):
     assert "at epoch 2" in capsys.readouterr().out
 
 
+@pytest.mark.gpu
 def test_fit_stops_at_the_step_limit(model, mind_files, capsys):
     files = (mind_files["news"], mind_files["behaviors"])
     model.fit(*files, *files, *files, epochs=1, batch_size=2, step_limit=1)
@@ -340,6 +347,7 @@ def test_fit_stops_at_the_step_limit(model, mind_files, capsys):
     assert "eval info" in out and "test info" in out
 
 
+@pytest.mark.gpu
 def test_seed_fixes_the_initial_scores(mind_files):
     files = (mind_files["news"], mind_files["behaviors"])
     first, second = (MODELS["nrms"](mind_files).to("cpu") for _ in range(2))
@@ -347,6 +355,7 @@ def test_seed_fixes_the_initial_scores(mind_files):
         np.testing.assert_array_equal(a, b)
 
 
+@pytest.mark.gpu
 def test_lstur_skips_padded_history_slots(mind_files):
     model = MODELS["lstur_ini"](mind_files).to("cpu").eval()
     clicked = torch.randn(2, 3, 6)
@@ -359,6 +368,7 @@ def test_lstur_skips_padded_history_slots(mind_files):
     )
 
 
+@pytest.mark.gpu
 def test_lstur_rejects_an_unknown_combine(mind_files):
     with pytest.raises(ValueError, match="combine"):
         LSTURModel(
@@ -369,6 +379,7 @@ def test_lstur_rejects_an_unknown_combine(mind_files):
         )
 
 
+@pytest.mark.gpu
 def test_user_tables_keep_a_row_for_the_last_user(mind_files):
     for name in ("lstur_ini", "npa"):
         model = MODELS[name](mind_files)
