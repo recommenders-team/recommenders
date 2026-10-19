@@ -243,7 +243,9 @@ def test_train_batches_put_the_click_first(dataset):
 
 
 def test_train_batches_pad_missing_negatives_with_row_0(dataset):
-    batch = next(dataset.load_train_batches(100, 3, np.random.default_rng(0)))
+    clicks = sum(int(labels.sum()) for labels in dataset.labels)
+    batch = next(dataset.load_train_batches(clicks, 3, np.random.default_rng(0)))
+    # U3 clicked N7 and skipped only N8, so 2 of the 3 negatives are padding.
     padded = batch["candidate_rows"][batch["candidate_rows"][:, 0] == 7]
     assert padded.tolist() == [[7, 8, 0, 0]]
 
@@ -255,6 +257,7 @@ def test_train_batches_follow_the_generator(dataset):
     np.testing.assert_array_equal(
         first(1)["candidate_rows"], first(1)["candidate_rows"]
     )
+    assert not np.array_equal(first(1)["candidate_rows"], first(2)["candidate_rows"])
 
 
 def test_additive_attention_leaves_out_masked_positions():
@@ -297,8 +300,8 @@ def test_forward_scores_every_candidate(model, mind_files):
     assert logits.shape == (3, NPRATIO + 1)
 
 
-# 5 encodes NPA one impression at a time, 9 two at a time.
-@pytest.mark.parametrize("batch_size", [5, 9])
+# NPA encodes batch_size // HIS_SIZE impressions at a time: one, then two.
+@pytest.mark.parametrize("batch_size", [HIS_SIZE + 1, 2 * HIS_SIZE + 1])
 def test_predict_matches_forward(model, mind_files, batch_size):
     scores = model.predict(
         mind_files["news"], mind_files["behaviors"], batch_size=batch_size
@@ -321,7 +324,9 @@ def test_predict_matches_forward(model, mind_files, batch_size):
 def test_fit_and_run_eval(model, mind_files, capsys):
     files = (mind_files["news"], mind_files["behaviors"])
     before = model.run_eval(*files)
+    weights = [p.detach().clone() for p in model.parameters()]
     assert model.fit(*files, *files, epochs=2, batch_size=3, npratio=NPRATIO) is model
+    assert any(not torch.equal(w, p) for w, p in zip(weights, model.parameters()))
     after = model.run_eval(*files, metrics=["group_auc", "mean_mrr"])
     assert set(before) == {"group_auc", "mean_mrr", "ndcg@5", "ndcg@10"}
     assert set(after) == {"group_auc", "mean_mrr"}
@@ -367,7 +372,7 @@ def test_lstur_rejects_an_unknown_combine(mind_files):
 def test_user_tables_keep_a_row_for_the_last_user(mind_files):
     for name in ("lstur_ini", "npa"):
         model = MODELS[name](mind_files)
-        assert model.user_embedding.num_embeddings == 7
+        assert model.user_embedding.num_embeddings == len(model.uid2index) + 1
     naml = MODELS["naml"](mind_files)
-    assert naml.vert_embedding.num_embeddings == 4
-    assert naml.subvert_embedding.num_embeddings == 5
+    assert naml.vert_embedding.num_embeddings == len(naml.vert_dict) + 1
+    assert naml.subvert_embedding.num_embeddings == len(naml.subvert_dict) + 1
