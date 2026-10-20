@@ -104,6 +104,16 @@ def test_get_top_k_scored_items(scores):
     assert np.array_equal(top_scores, np.array([[5, 4, 3], [5, 4, 3], [5, 4, 3]]))
 
 
+def test_get_top_k_scored_items_zero_k(scores):
+    top_items, top_scores = get_top_k_scored_items(
+        scores=scores, top_k=0, sort_top_k=True
+    )
+
+    assert top_items.shape == (3, 0)
+    assert top_scores.shape == (3, 0)
+    assert top_scores.dtype == scores.dtype
+
+
 def test_binarize():
     data = np.array([[2, 7, 0], [8, 2, 9], [9, 9, 4]])
     threshold = 3
