@@ -342,6 +342,18 @@ def notebooks():
         "benchmark_movielens": os.path.join(
             folder_notebooks, "06_benchmarks", "movielens.ipynb"
         ),
+        "dkn_kdd2020": os.path.join(
+            folder_notebooks,
+            "07_tutorials",
+            "KDD2020-tutorial",
+            "step3_run_dkn.ipynb",
+        ),
+        "dkn_item2item_kdd2020": os.path.join(
+            folder_notebooks,
+            "07_tutorials",
+            "KDD2020-tutorial",
+            "step4_run_dkn_item2item.ipynb",
+        ),
     }
     return paths
 

@@ -39,10 +39,10 @@ concurrency:
 
 jobs:
   run-tests:
-    uses: ./.github/workflows/compshare-vm.yml
+    uses: ./.github/workflows/template.yml
     if: github.event.pull_request.draft == false
     with:
       timeout-minutes: 180  # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
       type: pr_gate
     secrets:
-      COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+      CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}

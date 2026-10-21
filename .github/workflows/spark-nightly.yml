@@ -44,10 +44,10 @@ concurrency:
 
 jobs:
   run-tests:
-    uses: ./.github/workflows/compshare-vm.yml
+    uses: ./.github/workflows/template.yml
     with:
       compute: spark
       timeout-minutes: 240  # Timeout for all the processes, not each VMs (not all VMs are deployed at the same time)
       type: nightly
     secrets:
-      COMPSHARE_PRIVATE_KEY: ${{ secrets.COMPSHARE_PRIVATE_KEY }}
+      CLOUD_SERVICE_SECRET: ${{ secrets.CLOUD_SERVICE_SECRET }}

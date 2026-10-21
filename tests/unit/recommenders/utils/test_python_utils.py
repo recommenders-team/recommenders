@@ -4,6 +4,7 @@
 
 import pytest
 import numpy as np
+from scipy import sparse
 
 from recommenders.utils.python_utils import (
     exponential_decay,
@@ -13,7 +14,6 @@ from recommenders.utils.python_utils import (
     binarize,
     rescale,
 )
-
 
 TOL = 0.0001
 
@@ -102,6 +102,34 @@ def test_get_top_k_scored_items(scores):
 
     assert np.array_equal(top_items, np.array([[4, 3, 2], [0, 1, 2], [1, 3, 2]]))
     assert np.array_equal(top_scores, np.array([[5, 4, 3], [5, 4, 3], [5, 4, 3]]))
+
+
+@pytest.mark.parametrize("top_k", [0, -1])
+@pytest.mark.parametrize("sparse_input", [False, True])
+@pytest.mark.parametrize("sort_top_k", [False, True])
+def test_get_top_k_scored_items_invalid_k(scores, top_k, sparse_input, sort_top_k):
+    if sparse_input:
+        scores = sparse.csr_matrix(scores)
+    with pytest.raises(ValueError, match=f"top_k must be at least 1, got {top_k}"):
+        get_top_k_scored_items(scores, top_k, sort_top_k)
+
+
+@pytest.mark.parametrize("top_k", [1, 2, 5, 7])
+def test_get_top_k_scored_items_positive_k(scores, top_k):
+    indices, values = get_top_k_scored_items(scores, top_k, sort_top_k=True)
+    expected = np.argsort(-scores, axis=1)[:, : min(top_k, scores.shape[1])]
+    np.testing.assert_array_equal(indices, expected)
+    np.testing.assert_array_equal(values, np.take_along_axis(scores, expected, axis=1))
+
+
+@pytest.mark.parametrize("shape", [(2, 0), (0, 3), (0, 0)])
+@pytest.mark.parametrize("sort_top_k", [False, True])
+def test_get_top_k_scored_items_empty_axes(shape, sort_top_k):
+    scores = np.empty(shape, dtype=np.float32)
+    indices, values = get_top_k_scored_items(scores, top_k=2, sort_top_k=sort_top_k)
+    assert indices.shape == values.shape == (shape[0], min(2, shape[1]))
+    assert indices.dtype.kind in "iu"
+    assert values.dtype == scores.dtype
 
 
 def test_binarize():

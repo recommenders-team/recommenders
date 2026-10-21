@@ -37,7 +37,7 @@ install_requires = [
     "notebook>=6.5.5,<8",  # requires ipykernel, jinja2, jupyter, nbconvert, nbformat, packaging, requests
     "numpy<2.0.0",  # See https://github.com/recommenders-team/recommenders/issues/2224
     "pandas>2.0.0,<3.0.0",  # requires numpy
-    "pyarrow>=10.0.1",
+    "pyarrow>=10.0.1,<26.0.0",  # <26.0.0 can be removed when numpy>2.0
     "retrying>=1.3.4,<2",
     "scikit-learn>=1.2.0,<2",  # requires scipy, and introduce breaking change affects feature_extraction.text.TfidfVectorizer.min_df
     "seaborn>=0.13.0,<1",  # requires matplotlib, packaging
@@ -61,6 +61,8 @@ extras_require = {
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
+        # run each test in a new process to completely release GPU memory
+        "pytest-forked>=1.6.0",
     ],
 }
 # For the brave of heart
