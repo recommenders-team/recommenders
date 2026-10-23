@@ -442,6 +442,7 @@ pr_gate:
     - tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition                                                       #    3.06s
     - tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams                                                                     #    0.49s
     - tests/unit/recommenders/models/test_deeprec_utils.py::test_load_yaml_file                                                                      #    0.01s
+    - tests/unit/recommenders/models/test_deeprec_utils.py::test_load_dict
     - tests/security/test_dependency_security.py::test_tensorflow
     - tests/security/test_dependency_security.py::test_torch
     - tests/regression/test_compatibility_tf.py
