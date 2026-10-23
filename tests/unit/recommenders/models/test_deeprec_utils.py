@@ -3,6 +3,7 @@
 
 
 import os
+import pickle
 import pytest
 
 try:
@@ -10,6 +11,7 @@ try:
         prepare_hparams,
         download_deeprec_resources,
         load_yaml,
+        load_dict,
     )
 except ImportError:
     pass  # skip this import if we are in cpu environment
@@ -47,3 +49,23 @@ def test_load_yaml_file(deeprec_resource_path):
     config = load_yaml(yaml_file)
 
     assert config is not None
+
+
+class _Exploit:
+    def __reduce__(self):
+        return (os.system, ("echo pwned",))
+
+
+@pytest.mark.gpu
+def test_load_dict(tmp_path):
+    vocab = {"default_mid": 0, "item1": 1, "item2": 2}
+    vocab_file = tmp_path / "vocab.pkl"
+    with open(vocab_file, "wb") as f:
+        pickle.dump(vocab, f)
+    assert load_dict(vocab_file) == vocab
+
+    malicious_file = tmp_path / "malicious.pkl"
+    with open(malicious_file, "wb") as f:
+        pickle.dump(_Exploit(), f)
+    with pytest.raises(pickle.UnpicklingError):
+        load_dict(malicious_file)
