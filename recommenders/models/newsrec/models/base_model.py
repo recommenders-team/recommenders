@@ -11,7 +11,6 @@ candidates of every impression.
 
 from __future__ import annotations
 
-import pickle
 import time
 
 import numpy as np
@@ -19,15 +18,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from recommenders.models.deeprec.deeprec_utils import cal_metric
+from recommenders.models.deeprec.deeprec_utils import cal_metric, load_dict
 from recommenders.models.newsrec.io.mind_dataset import MINDDataset
 
 __all__ = ["NewsRecModel"]
 
 
 def _load_dict(file_path: str) -> dict:
-    with open(file_path, "rb") as f:
-        return pickle.load(f)
+    return load_dict(file_path)
 
 
 class NewsRecModel(nn.Module):
