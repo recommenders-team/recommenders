@@ -672,8 +672,14 @@ def ndcg_at_k(
     if df_hit.shape[0] == 0:
         return 0.0
 
+    # Only users present in both rating_true and rating_pred are evaluated, which is
+    # consistent with the other ranking metrics (see merge_ranking_true_pred).
+    rating_true_common = rating_true[rating_true[col_user].isin(rating_pred[col_user])]
     df_dcg = df_hit.merge(rating_pred, on=[col_user, col_item]).merge(
-        rating_true, on=[col_user, col_item], how="outer", suffixes=("_left", None)
+        rating_true_common,
+        on=[col_user, col_item],
+        how="outer",
+        suffixes=("_left", None),
     )
 
     if score_type == "binary":
