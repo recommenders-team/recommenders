@@ -363,7 +363,7 @@ restore_tfstate_tfvars() {
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
-        gpg -d --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
+        gpg -d --passphrase "${ENCRYPT_PASSPHRASE:-abc}" --batch \
             -o - <(echo "${VM_TFSTATE:-}" | base64 -d) > "${tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
@@ -436,7 +436,7 @@ store_tfstate_tfvars() {
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
-        gpg -ac --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
+        gpg -ac --passphrase "${ENCRYPT_PASSPHRASE:-abc}" --batch \
             -o - "${tfstate}" > "${encrypted_tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
