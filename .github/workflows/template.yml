@@ -136,6 +136,9 @@ jobs:
               name_template="reco-${commit}-XXXXXX"
           fi
           unique_name="$(mktemp -u ${name_template})"
+          # Docker image tags must be lowercase, but mktemp also
+          # generates uppercase letters.
+          unique_name="${unique_name@L}"
 
           # Export UNIQUE_NAME for subsequent steps.
           # The name serves as
