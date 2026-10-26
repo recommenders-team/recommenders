@@ -58,9 +58,14 @@ apply_tf_config() {
     readarray -t combination_list < \
         <(get_input_var_combinations "${specified_args}")
 
+    if [[ ${#combination_list[@]} -eq 0 ]]; then
+        echo 'No input variables provided!'
+        return 1
+    fi
+
     trap "store_tfstate_tfvars '${tf_config_dir}'; \
         trap - EXIT RETURN" EXIT RETURN
-    
+
     echo "* Collecting prices ..."
     local spec_list='[]'
     local combination_index
@@ -91,6 +96,11 @@ apply_tf_config() {
     readarray -t spec_list < \
         <(jq -c 'sort_by(.price) | .[] | del(.price)' \
             <<< "${spec_list}")
+
+    if [[ ${#spec_list[@]} -eq 0 ]]; then
+        echo 'No qualified resources!'
+        return 1
+    fi
 
     local spec_index
     for spec_index in "${!spec_list[@]}"; do
