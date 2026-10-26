@@ -468,6 +468,7 @@ setup_ssh_key() {
         ssh_key_type="$(echo "${ssh_key_type}" \
             | cut -d '(' -f 2 \
             | cut -d ')' -f 1)"
+        mkdir -p "${HOME}/.ssh"
         mv -f "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
     else
         local encoded_password="${sshkey_or_password}"
