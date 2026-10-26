@@ -117,6 +117,7 @@ jobs:
         group: ${{ fromJSON(needs.get-test-groups.outputs.groups) }}
     env:
       CLOUD_SERVICE: ${{ vars.CLOUD_SERVICE }}
+      CLOUD_SERVICE_ARGS: ${{ vars.CLOUD_SERVICE_ARGS }}
       CLOUD_SERVICE_ENVS: ${{ vars.CLOUD_SERVICE_ENVS }}
       # * GPU tests should run on GPUs.
       # * cpu-nightly needs to run on larger CPU runner with 32GB memory.
@@ -129,10 +130,10 @@ jobs:
           then
               commit="$(echo ${{ github.event.pull_request.head.sha }} | head -c 5)"
               # Underscores (_) is not allowed in AliCloud!
-              name_template="reco-${{ github.event.number }}-${commit}_XXXXXX"
+              name_template="reco-${commit}-XXXXXX-${{ github.run_attempt }}-${{ github.event.number }}"
           else
               commit="$(echo ${{ github.sha }} | head -c 5)"
-              name_template="reco-${commit}-XXXXXX"
+              name_template="reco-${commit}-XXXXXX-${{ github.run_attempt }}"
           fi
           unique_name="$(mktemp -u ${name_template})"
           # Docker image tags must be lowercase, but mktemp also
