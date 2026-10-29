@@ -86,28 +86,28 @@ def _do_stratification(
 
     if is_random:
         np.random.seed(seed)
-        data["random"] = np.random.rand(data.shape[0])
-        order_by = "random"
+        order = pd.DataFrame(
+            {
+                "group": data[split_by_column].array,
+                "random": np.random.rand(data.shape[0]),
+            }
+        )
+        data = data.iloc[order.sort_values(["group", "random"]).index]
     else:
-        order_by = col_timestamp
-
-    data = data.sort_values([split_by_column, order_by])
+        data = data.sort_values([split_by_column, col_timestamp])
 
     groups = data.groupby(split_by_column)
 
-    data["count"] = groups[split_by_column].transform("count")
-    data["rank"] = groups.cumcount() + 1
-
-    if is_random:
-        data = data.drop("random", axis=1)
+    counts = groups[split_by_column].transform("count")
+    ranks = groups.cumcount() + 1
 
     splits = []
     prev_threshold = None
     for threshold in np.cumsum(ratio):
-        condition = data["rank"] <= round(threshold * data["count"])
+        condition = ranks <= round(threshold * counts)
         if prev_threshold is not None:
-            condition &= data["rank"] > round(prev_threshold * data["count"])
-        splits.append(data[condition].drop(["rank", "count"], axis=1))
+            condition &= ranks > round(prev_threshold * counts)
+        splits.append(data[condition])
         prev_threshold = threshold
 
     return splits
