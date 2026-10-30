@@ -58,7 +58,7 @@ extras_require = {
     ],
     "dev": [
         "black>=23.3.0",
-        "pytest>=7.2.1",
+        "pytest>=7.2.1,<9.2",  # pytest-forked cannot serialize pytest 9.2 NodeId reports
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
         # run each test in a new process to completely release GPU memory
