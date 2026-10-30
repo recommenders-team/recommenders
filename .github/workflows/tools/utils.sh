@@ -58,9 +58,14 @@ apply_tf_config() {
     readarray -t combination_list < \
         <(get_input_var_combinations "${specified_args}")
 
+    if [[ ${#combination_list[@]} -eq 0 ]]; then
+        echo 'No input variables provided!'
+        return 1
+    fi
+
     trap "store_tfstate_tfvars '${tf_config_dir}'; \
         trap - EXIT RETURN" EXIT RETURN
-    
+
     echo "* Collecting prices ..."
     local spec_list='[]'
     local combination_index
@@ -91,6 +96,11 @@ apply_tf_config() {
     readarray -t spec_list < \
         <(jq -c 'sort_by(.price) | .[] | del(.price)' \
             <<< "${spec_list}")
+
+    if [[ ${#spec_list[@]} -eq 0 ]]; then
+        echo 'No qualified resources!'
+        return 1
+    fi
 
     local spec_index
     for spec_index in "${!spec_list[@]}"; do
@@ -353,7 +363,7 @@ restore_tfstate_tfvars() {
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
-        gpg -d --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
+        gpg -d --passphrase "${ENCRYPT_PASSPHRASE:-abc}" --batch \
             -o - <(echo "${VM_TFSTATE:-}" | base64 -d) > "${tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
@@ -426,7 +436,7 @@ store_tfstate_tfvars() {
         [[ "$-" == *x* ]] && reset_x=true
         set +x
 
-        gpg -ac --passphrase "${ENCRYPT_PASSPHRASE}" --batch \
+        gpg -ac --passphrase "${ENCRYPT_PASSPHRASE:-abc}" --batch \
             -o - "${tfstate}" > "${encrypted_tfstate}"
 
         [[ "${reset_x}" == true ]] && set -x
@@ -458,6 +468,7 @@ setup_ssh_key() {
         ssh_key_type="$(echo "${ssh_key_type}" \
             | cut -d '(' -f 2 \
             | cut -d ')' -f 1)"
+        mkdir -p "${HOME}/.ssh"
         mv -f "${ssh_key}" "${HOME}/.ssh/id_${ssh_key_type@L}"
     else
         local encoded_password="${sshkey_or_password}"
