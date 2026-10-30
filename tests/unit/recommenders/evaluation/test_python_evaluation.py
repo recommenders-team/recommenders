@@ -266,6 +266,27 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
     ) == pytest.approx(0.785, TOL)
 
 
+def test_python_ndcg_at_k_ignores_users_without_predictions():
+    # User 3 is in the ground truth but has no predictions. Like the other ranking
+    # metrics, nDCG must be averaged over the users present in both data frames.
+    rating_true = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 1, 2, 2, 3],
+            DEFAULT_ITEM_COL: [1, 2, 1, 3, 5],
+            DEFAULT_RATING_COL: [5, 4, 3, 5, 4],
+        }
+    )
+    rating_pred = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 1, 2, 2],
+            DEFAULT_ITEM_COL: [1, 2, 1, 3],
+            DEFAULT_PREDICTION_COL: [0.9, 0.8, 0.7, 0.6],
+        }
+    )
+    assert precision_at_k(rating_true, rating_pred, k=2) == pytest.approx(1.0, TOL)
+    assert ndcg_at_k(rating_true, rating_pred, k=2) == pytest.approx(1.0, TOL)
+
+
 def test_python_map(rating_true, rating_pred, rating_nohit):
     assert (
         map(
