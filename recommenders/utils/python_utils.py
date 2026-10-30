@@ -33,6 +33,8 @@ def _get_row_and_column_matrix(array):
     Returns:
         (numpy.ndarray, numpy.ndarray): (row matrix, column matrix)
     """
+    if np.issubdtype(array.dtype, np.integer):
+        array = array.astype(np.float64)
     row_matrix = np.expand_dims(array, axis=0)
     column_matrix = np.expand_dims(array, axis=1)
     return row_matrix, column_matrix
