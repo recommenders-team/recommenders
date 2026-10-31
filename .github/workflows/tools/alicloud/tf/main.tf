@@ -92,7 +92,7 @@ resource "alicloud_ecs_key_pair_attachment" "reco" {
 
 resource "alicloud_instance" "reco" {
   # https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/instance
-  auto_release_time = timeadd(timestamp(), "2h")
+  auto_release_time = timeadd(timestamp(), "4h")
   instance_name = local.vm_name
   instance_type = local.instance_type_id
   image_id = local.image_id
