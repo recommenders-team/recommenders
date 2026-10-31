@@ -3,9 +3,9 @@
 
 import tensorflow as tf
 import numpy as np
-import pickle
 
 from recommenders.models.deeprec.io.iterator import BaseIterator
+from recommenders.models.deeprec.deeprec_utils import load_dict
 from recommenders.models.newsrec.newsrec_utils import word_tokenize, newsample
 
 __all__ = ["MINDAllIterator"]
@@ -67,8 +67,7 @@ class MINDAllIterator(BaseIterator):
         Returns:
             object: pickle load obj
         """
-        with open(file_path, "rb") as f:
-            return pickle.load(f)
+        return load_dict(file_path)
 
     def init_news(self, news_file):
         """Init news information given news file, such as `news_title_index`, `news_abstract_index`.
