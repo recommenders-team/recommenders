@@ -59,3 +59,37 @@ def test_score_remove_seen_does_not_change_later_scores(fitted_sar):
     np.testing.assert_array_equal(model.score(users), before)
     assert (model.user_affinity != affinity).nnz == 0
     np.testing.assert_array_equal(model.item_similarity, similarity)
+
+
+@pytest.mark.parametrize("top_k", [1, 3, 10])
+@pytest.mark.parametrize("sort_top_k", [False, True])
+def test_recommend_remove_seen_returns_only_available_candidates(
+    fitted_sar, top_k, sort_top_k
+):
+    model = fitted_sar
+    users = pd.DataFrame({"userID": ["second", "complete", "first", "second"]})
+    unseen = {"first": {7, 93, 18}, "second": {93, 18}, "complete": set()}
+
+    recommendations = model.recommend_k_items(
+        users, top_k=top_k, sort_top_k=sort_top_k, remove_seen=True
+    )
+
+    assert np.isfinite(recommendations["prediction"]).all()
+    assert not recommendations.duplicated(["userID", "itemID"]).any()
+    for user, candidates in unseen.items():
+        rows = recommendations[recommendations["userID"] == user]
+        assert len(rows) == min(top_k, len(candidates))
+        assert set(rows["itemID"]) <= candidates
+        if top_k >= len(candidates):
+            assert set(rows["itemID"]) == candidates
+        if sort_top_k:
+            assert rows["prediction"].is_monotonic_decreasing
+
+
+def test_recommend_remove_seen_returns_empty_for_fully_seen_catalog(fitted_sar):
+    users = pd.DataFrame({"userID": ["complete"]})
+
+    recommendations = fitted_sar.recommend_k_items(users, top_k=10, remove_seen=True)
+
+    assert recommendations.empty
+    assert list(recommendations.columns) == ["userID", "itemID", "prediction"]
