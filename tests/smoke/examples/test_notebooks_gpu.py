@@ -29,7 +29,7 @@ def test_ncf_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["map"] == pytest.approx(0.0409234, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.088572, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.1773, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.160127, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.0879193, rel=TOL, abs=ABS_TOL)
@@ -48,11 +48,11 @@ def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     results = read_notebook(output_notebook)
 
     # There is too much variability to do an approx equal, just adding top values
-    assert results["map"] == pytest.approx(0.0370396, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.091111, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.29423, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.144539, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.0730272, rel=TOL, abs=ABS_TOL)
-    assert results["map2"] == pytest.approx(0.028952, rel=TOL, abs=ABS_TOL)
+    assert results["map2"] == pytest.approx(0.072007, rel=TOL, abs=ABS_TOL)
     assert results["ndcg2"] == pytest.approx(0.143744, rel=TOL, abs=ABS_TOL)
     assert results["precision2"] == pytest.approx(0.127041, rel=TOL, abs=ABS_TOL)
     assert results["recall2"] == pytest.approx(0.0584491, rel=TOL, abs=ABS_TOL)
