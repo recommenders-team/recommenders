@@ -334,6 +334,8 @@ class Dataset(object):
             col_rating (str): Rating column name.
             binary (bool): If true, set rating > 0 to rating = 1.
             seed (int): Seed for negative sampling and training-row shuffling.
+                Test-file generation uses a separate random state so cached test
+                files do not change the training samples.
             sample_with_replacement (bool): If true, sample negative examples with replacement,
                 otherwise without replacement.
             print_warnings (bool): If true, prints warnings if sampling without replacement and
@@ -352,7 +354,8 @@ class Dataset(object):
         self.sample_with_replacement = sample_with_replacement
         self.print_warnings = print_warnings
         self._random = random.Random(seed)
-        self._np_random = np.random.RandomState(seed)
+        self._test_random = random.Random(seed)
+        self._np_random = np.random.RandomState(random.Random(seed).getrandbits(32))
 
         self.col_test_batch = "test_batch"
 
@@ -436,7 +439,7 @@ class Dataset(object):
                             self.sample_with_replacement,
                             self.print_warnings,
                             training=False,
-                            rng=self._random,
+                            rng=self._test_random,
                         )
 
                         user_examples_dfs = []

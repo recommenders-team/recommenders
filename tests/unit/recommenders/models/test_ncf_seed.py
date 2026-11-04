@@ -52,7 +52,7 @@ def test_seed_reproduces_generated_test_negatives(tmp_path, ncf_files, replaceme
     assert outputs[0] == outputs[1]
 
 
-@pytest.mark.parametrize("seed", [0, 17])
+@pytest.mark.parametrize("seed", [0, 17, -1, 2**64])
 def test_seed_reproduces_training_shuffle(ncf_files, seed):
     train, _ = ncf_files
     outputs = []
@@ -91,3 +91,34 @@ def test_dataset_construction_preserves_global_random_state(ncf_files):
 
     assert random.getstate() == expected_python_state
     np.testing.assert_array_equal(np.random.random_sample(5), expected_numpy_draw)
+
+
+@pytest.mark.parametrize("replacement", [False, True])
+def test_cached_test_file_preserves_training_samples(tmp_path, ncf_files, replacement):
+    train, test = ncf_files
+    cached_file = tmp_path / "test_full.csv"
+    python_state = random.getstate()
+    numpy_state = np.random.get_state()
+    options = {
+        "test_file": test,
+        "test_file_full": cached_file,
+        "n_neg": 1,
+        "n_neg_test": 4,
+        "seed": 24,
+        "sample_with_replacement": replacement,
+    }
+    generated = Dataset(train, **options)
+    expected = list(generated.train_loader(batch_size=5, shuffle_size=10))
+    cached_contents = cached_file.read_bytes()
+
+    reused = Dataset(train, **options)
+    actual = list(reused.train_loader(batch_size=5, shuffle_size=10))
+
+    assert actual == expected
+    assert len(actual) == 4
+    assert cached_file.read_bytes() == cached_contents
+    assert random.getstate() == python_state
+    actual_numpy_state = np.random.get_state()
+    assert actual_numpy_state[0] == numpy_state[0]
+    np.testing.assert_array_equal(actual_numpy_state[1], numpy_state[1])
+    assert actual_numpy_state[2:] == numpy_state[2:]
