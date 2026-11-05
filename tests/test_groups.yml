@@ -274,6 +274,8 @@ pr_gate:
     - tests/unit/recommenders/utils/test_plot.py::test_line_graph                                                                                    #    0.03s
     - tests/unit/recommenders/utils/test_python_utils.py::test_python_jaccard
     - tests/unit/recommenders/utils/test_python_utils.py::test_python_lift
+    - tests/unit/recommenders/utils/test_python_utils.py::test_similarity_normalization_does_not_overflow_integer_counts
+    - tests/unit/recommenders/utils/test_python_utils.py::test_floating_count_precision_is_unchanged
     - tests/unit/recommenders/utils/test_python_utils.py::test_exponential_decay
     - tests/unit/recommenders/utils/test_python_utils.py::test_get_top_k_scored_items
     - tests/unit/recommenders/utils/test_python_utils.py::test_get_top_k_scored_items_invalid_k
