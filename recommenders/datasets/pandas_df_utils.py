@@ -130,7 +130,7 @@ class LibffmConverter:
                 'field4': ['1', '2', '3', '4', '5']
             })
         >>> converter = LibffmConverter().fit(df_feature, col_rating='rating')
-        >>> df_out = converter.transform(df_feature)
+        >>> df_out = converter.transform(df_feature, copy=True)
         >>> df_out
             rating field1 field2   field3 field4
         0       1  1:1:1  2:4:3  3:5:1.0  4:6:1
