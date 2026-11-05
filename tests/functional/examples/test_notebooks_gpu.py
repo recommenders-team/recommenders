@@ -45,7 +45,7 @@ def test_tensorflow_gpu_vm():
             "1m",
             10,
             {
-                "map": 0.0255283,
+                "map": 0.077369,
                 "ndcg": 0.15656,
                 "precision": 0.145646,
                 "recall": 0.0557367,
@@ -84,11 +84,11 @@ def test_ncf_functional(
             10,
             512,
             {
-                "map": 0.0435856,
+                "map": 0.095872,
                 "ndcg": 0.37586,
                 "precision": 0.169353,
                 "recall": 0.0923963,
-                "map2": 0.0510391,
+                "map2": 0.106422,
                 "ndcg2": 0.202186,
                 "precision2": 0.179533,
                 "recall2": 0.106434,
