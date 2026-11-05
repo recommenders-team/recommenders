@@ -467,3 +467,38 @@ def test_user_frequencies(header):
     # run this method once so that user frequencies are calculated
     model.get_popularity_based_topk(items=False)
     assert model.user_frequencies[0] == 2
+
+
+def test_refit_rebuilds_index(header):
+    first = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2],
+            header["col_item"]: [1, 2, 1],
+            header["col_rating"]: [1.0, 1.0, 1.0],
+        }
+    )
+    replacement = pd.DataFrame(
+        {
+            header["col_user"]: [3, 3],
+            header["col_item"]: [3, 4],
+            header["col_rating"]: [1.0, 1.0],
+        }
+    )
+
+    model = SAR(**header)
+    model.fit(first)
+    model.get_popularity_based_topk(items=False)
+
+    # new users and items
+    model.fit(replacement)
+    assert model.user2index == {3: 0}
+    assert model.item2index == {3: 0, 4: 1}
+    assert model.user_affinity.shape == (1, 2)
+    assert model.item_similarity.shape == (2, 2)
+    assert model.user_frequencies is None
+
+    # shrinking catalog
+    model.fit(first.iloc[:1])
+    assert model.user2index == {1: 0}
+    assert model.item2index == {1: 0}
+    assert model.user_affinity.shape == (1, 1)
