@@ -30,7 +30,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -q --upgrade pip setuptools wheel
-          pip install -q --no-use-pep517 lightfm
           pip install -q .[all]
           pip install -q -r docs/requirements-doc.txt
       
