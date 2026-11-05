@@ -12,6 +12,7 @@ from recommenders.utils.python_utils import (
     inclusion_index,
     jaccard,
     lift,
+    lexicographers_mutual_information,
     get_top_k_scored_items,
     binarize,
     rescale,
@@ -120,6 +121,21 @@ def test_floating_count_precision_is_unchanged(dtype, metric):
     values = np.array([[4, 2], [2, 4]], dtype=dtype)
     result = metric(values)
     assert result.dtype == values.dtype
+
+
+def test_python_lexicographers_mutual_information(cooccurrence1):
+    # C_ij * log2(n_items * C_ij / (C_ii * C_jj)), and 0 for pairs that never co-occur
+    expected = np.array(
+        [
+            [1.58496, 0.0, 0.58496],
+            [0.0, 1.16993, -0.41504],
+            [0.58496, -0.41504, 1.16993],
+        ]
+    )
+    for cooccurrence in (cooccurrence1, sparse.csr_matrix(cooccurrence1)):
+        lmi = lexicographers_mutual_information(cooccurrence)
+        assert type(lmi) == np.ndarray
+        assert lmi == pytest.approx(expected, TOL)
 
 
 def test_exponential_decay():

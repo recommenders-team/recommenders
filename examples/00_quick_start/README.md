@@ -8,11 +8,11 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [dkn](dkn_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Deep Knowledge-Aware Network (DKN) [2] algorithm for news recommendations using information from a knowledge graph, in a Python+GPU (PyTorch) environment.
 | [embdotbias](embdotbias_movielens.ipynb) | MovieLens | Python CPU, GPU | Utilizing embdotbias recommender to predict movie ratings in a Python+GPU (PyTorch) environment.
 | [lightgbm](lightgbm_tinycriteo.ipynb) | Criteo | Python CPU | Utilizing LightGBM Boosting Tree to predict whether or not a user has clicked on an e-commerce ad |
-| [lstur](lstur_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Long- and Short-term User Representations (LSTUR) [9] for news recommendation, in a Python+GPU (Tensorflow) enviroment.
-| [naml](naml_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Attentive Multi-View Learning (NAML) [7] to algorithm for news recommendation using news verticle, subverticle, title and body information, in a Python+GPU (Tensorflow) environment.  
+| [lstur](lstur_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Long- and Short-term User Representations (LSTUR) [9] for news recommendation, in a Python+GPU (PyTorch) enviroment.
+| [naml](naml_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Attentive Multi-View Learning (NAML) [7] to algorithm for news recommendation using news verticle, subverticle, title and body information, in a Python+GPU (PyTorch) environment.  
 | [ncf](ncf_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Neural Collaborative Filtering (NCF) [1] to predict movie ratings in a Python+GPU (TensorFlow) environment.
-| [npa](npa_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Personalized Attention (NPA) [10] for news recommendation, in a Python+GPU (Tensorflow) environment.  
-| [nrms](nrms_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Multi-Head Self-Attention (NRMS) [8] for news recommendation, in a Python+GPU (Tensorflow) environment.  
+| [npa](npa_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Personalized Attention (NPA) [10] for news recommendation, in a Python+GPU (PyTorch) environment.  
+| [nrms](nrms_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Multi-Head Self-Attention (NRMS) [8] for news recommendation, in a Python+GPU (PyTorch) environment.  
 | [rbm](rbm_movielens.ipynb)| MovieLens | Python CPU, GPU | Utilizing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in a Python+GPU (PyTorch) environment.
 | [rlrmc](rlrmc_movielens.ipynb) | Movielens | Python CPU | Utilizing the Riemannian Low-rank Matrix Completion (RLRMC) [6] to predict movie rating in a Python+CPU environment
 | [sar](sar_movielens.ipynb) | MovieLens | Python CPU | Utilizing Simple Algorithm for Recommendation (SAR) algorithm to predict movie ratings in a Python+CPU environment.
