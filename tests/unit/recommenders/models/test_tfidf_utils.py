@@ -8,7 +8,6 @@ import pandas as pd
 
 from recommenders.models.tfidf.tfidf_utils import TfidfRecommender
 
-
 CLEAN_COL = "cleaned_text"
 K = 2
 
@@ -114,6 +113,8 @@ def test_recommend_top_k_items(model_fit, df_clean):
 
 
 def test_get_top_k_recommendations(model_fit, df_clean):
+    # Populate recommendations here so this test also passes alone or with --forked.
+    model_fit.recommend_top_k_items(df_clean, k=K)
     query_id = "ej795nks"
     displayed_top_k = model_fit.get_top_k_recommendations(df_clean, query_id=query_id)
     assert len(displayed_top_k.data) == K
