@@ -125,14 +125,11 @@ def lexicographers_mutual_information(cooccurrence):
 
     """
 
-    # Element-wise product. For a scipy sparse matrix ``*`` is a matrix product, so use
-    # ``multiply``, which also keeps item pairs without co-occurrence at 0
-    with np.errstate(invalid="ignore", divide="ignore"):
-        result = sparse.csr_matrix(cooccurrence).multiply(
-            mutual_information(cooccurrence)
-        )
-
-    return result.toarray()
+    c = sparse.coo_matrix(cooccurrence)
+    c.eliminate_zeros()
+    diag = c.diagonal()
+    data = c.data * np.log2(c.shape[0] * c.data / (diag[c.row] * diag[c.col]))
+    return sparse.csr_matrix((data, (c.row, c.col)), shape=c.shape).toarray()
 
 
 def cosine_similarity(cooccurrence):
