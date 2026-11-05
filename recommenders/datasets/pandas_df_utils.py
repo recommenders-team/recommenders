@@ -201,21 +201,20 @@ class LibffmConverter:
                 "Not all columns in the input dataset appear in the fitting dataset"
             )
 
-        # Work on a copy so that the input dataframe is not modified.
-        df = df.copy()
+        df_new = df.copy()
 
         # Encode field-feature.
         idx = 1
         self.field_feature_dict = {}
         for field in self.field_names:
-            for feature in df[field].values:
+            for feature in df_new[field].values:
                 # Check whether (field, feature) tuple exists in the dict or not.
                 # If not, put them into the key-values of the dict and count the index.
                 if (field, feature) not in self.field_feature_dict:
                     self.field_feature_dict[(field, feature)] = idx
-                    if df[field].dtype == object:
+                    if df_new[field].dtype == object:
                         idx += 1
-            if df[field].dtype != object:
+            if df_new[field].dtype != object:
                 idx += 1
 
         self.field_count = len(self.field_names)
@@ -228,19 +227,19 @@ class LibffmConverter:
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
         for col_index, col in enumerate(self.field_names):
-            df[col] = df[col].apply(
+            df_new[col] = df_new[col].apply(
                 lambda x: _convert(col, x, col_index + 1, self.field_feature_dict)
             )
 
         # Move rating column to the first.
         column_names = self.field_names[:]
         column_names.insert(0, self.col_rating)
-        df = df[column_names]
+        df_new = df_new[column_names]
 
         if self.filepath is not None:
-            np.savetxt(self.filepath, df.values, delimiter=" ", fmt="%s")
+            np.savetxt(self.filepath, df_new.values, delimiter=" ", fmt="%s")
 
-        return df
+        return df_new
 
     def get_params(self):
         """Get parameters (attributes) of the libffm converter
