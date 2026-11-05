@@ -179,12 +179,13 @@ class LibffmConverter:
 
         return self
 
-    def transform(self, df):
+    def transform(self, df, copy=True):
         """Tranform an input dataset with the same schema (column names and dtypes) to libffm format
         by using the fitted converter.
 
         Args:
             df (pandas.DataFrame): input Pandas dataframe.
+            copy (bool): If False, overwrite the input dataframe instead of copying it.
 
         Return:
             pandas.DataFrame: Output libffm format dataframe.
@@ -201,7 +202,7 @@ class LibffmConverter:
                 "Not all columns in the input dataset appear in the fitting dataset"
             )
 
-        df_new = df.copy()
+        df_new = df.copy() if copy else df
 
         # Encode field-feature.
         idx = 1
