@@ -242,18 +242,6 @@ class LibffmConverter:
 
         return df
 
-    def fit_transform(self, df, col_rating=DEFAULT_RATING_COL):
-        """Do fit and transform in a row
-
-        Args:
-            df (pandas.DataFrame): input Pandas dataframe.
-            col_rating (str): rating of the data.
-
-        Return:
-            pandas.DataFrame: Output libffm format dataframe.
-        """
-        return self.fit(df, col_rating=col_rating).transform(df)
-
     def get_params(self):
         """Get parameters (attributes) of the libffm converter
 
