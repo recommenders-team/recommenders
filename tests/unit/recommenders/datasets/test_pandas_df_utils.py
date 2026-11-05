@@ -178,6 +178,22 @@ def test_libffm_transform_does_not_modify_input():
     pd.testing.assert_frame_equal(converter.transform(df_feature), df_feature_libffm)
 
 
+def test_libffm_transform_without_copy_overwrites_input():
+    df_feature = pd.DataFrame(
+        {
+            "rating": [1, 0],
+            "field1": ["xxx1", "xxx2"],
+            "field2": [1.0, 2.0],
+        }
+    )
+
+    converter = LibffmConverter().fit(df_feature)
+    df_feature_libffm = converter.transform(df_feature, copy=False)
+
+    assert df_feature_libffm["field1"].tolist() == ["1:1:1", "1:2:1"]
+    assert df_feature["field1"].tolist() == ["1:1:1", "1:2:1"]
+
+
 def test_csv_to_libffm():
     df_feature = pd.DataFrame(
         {
