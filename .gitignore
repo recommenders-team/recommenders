@@ -185,9 +185,10 @@ reports/
 ### pip folders
 pip-wheel*
 
-# Claude Code
+# AI agents
 CLAUDE.md
 .claude/
+AGENTS.md
 
 # Superpowers specs / design docs
 docs/superpowers/
