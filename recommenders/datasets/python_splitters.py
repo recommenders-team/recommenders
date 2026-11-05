@@ -245,7 +245,7 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
     """
 
     np.random.seed(seed)  # set the random seed
-    test_cut = int((1 - ratio) * 100)  # percentage of ratings to go in the test set
+    test_ratio = 1 - ratio
 
     # initialize train and test set matrices
     Xtr = X.copy()
@@ -255,7 +255,7 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
     rated = np.sum(Xtr != 0, axis=1)
 
     # for each user, cut down a test_size% for the test set
-    tst = np.around((rated * test_cut) / 100).astype(int)
+    tst = np.around(rated * test_ratio).astype(int)
 
     for u in range(X.shape[0]):
         # For each user obtain the index of rated movies
