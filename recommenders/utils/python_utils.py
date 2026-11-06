@@ -124,10 +124,11 @@ def lexicographers_mutual_information(cooccurrence):
 
     """
 
-    with np.errstate(invalid="ignore", divide="ignore"):
-        result = cooccurrence * mutual_information(cooccurrence)
-
-    return np.array(result) if isinstance(result, np.ndarray) else result.toarray()
+    c = sparse.coo_matrix(cooccurrence)
+    c.eliminate_zeros()
+    diag = c.diagonal()
+    data = c.data * np.log2(c.shape[0] * c.data / (diag[c.row] * diag[c.col]))
+    return sparse.csr_matrix((data, (c.row, c.col)), shape=c.shape).toarray()
 
 
 def cosine_similarity(cooccurrence):

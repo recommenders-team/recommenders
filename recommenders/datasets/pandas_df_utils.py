@@ -130,7 +130,7 @@ class LibffmConverter:
                 'field4': ['1', '2', '3', '4', '5']
             })
         >>> converter = LibffmConverter().fit(df_feature, col_rating='rating')
-        >>> df_out = converter.transform(df_feature)
+        >>> df_out = converter.transform(df_feature, copy=True)
         >>> df_out
             rating field1 field2   field3 field4
         0       1  1:1:1  2:4:3  3:5:1.0  4:6:1
@@ -179,12 +179,13 @@ class LibffmConverter:
 
         return self
 
-    def transform(self, df):
+    def transform(self, df, copy=True):
         """Tranform an input dataset with the same schema (column names and dtypes) to libffm format
         by using the fitted converter.
 
         Args:
             df (pandas.DataFrame): input Pandas dataframe.
+            copy (bool): If False, overwrite the input dataframe instead of copying it.
 
         Return:
             pandas.DataFrame: Output libffm format dataframe.
@@ -201,18 +202,20 @@ class LibffmConverter:
                 "Not all columns in the input dataset appear in the fitting dataset"
             )
 
+        df_new = df.copy() if copy else df
+
         # Encode field-feature.
         idx = 1
         self.field_feature_dict = {}
         for field in self.field_names:
-            for feature in df[field].values:
+            for feature in df_new[field].values:
                 # Check whether (field, feature) tuple exists in the dict or not.
                 # If not, put them into the key-values of the dict and count the index.
                 if (field, feature) not in self.field_feature_dict:
                     self.field_feature_dict[(field, feature)] = idx
-                    if df[field].dtype == object:
+                    if df_new[field].dtype == object:
                         idx += 1
-            if df[field].dtype != object:
+            if df_new[field].dtype != object:
                 idx += 1
 
         self.field_count = len(self.field_names)
@@ -225,31 +228,19 @@ class LibffmConverter:
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
         for col_index, col in enumerate(self.field_names):
-            df[col] = df[col].apply(
+            df_new[col] = df_new[col].apply(
                 lambda x: _convert(col, x, col_index + 1, self.field_feature_dict)
             )
 
         # Move rating column to the first.
         column_names = self.field_names[:]
         column_names.insert(0, self.col_rating)
-        df = df[column_names]
+        df_new = df_new[column_names]
 
         if self.filepath is not None:
-            np.savetxt(self.filepath, df.values, delimiter=" ", fmt="%s")
+            np.savetxt(self.filepath, df_new.values, delimiter=" ", fmt="%s")
 
-        return df
-
-    def fit_transform(self, df, col_rating=DEFAULT_RATING_COL):
-        """Do fit and transform in a row
-
-        Args:
-            df (pandas.DataFrame): input Pandas dataframe.
-            col_rating (str): rating of the data.
-
-        Return:
-            pandas.DataFrame: Output libffm format dataframe.
-        """
-        return self.fit(df, col_rating=col_rating).transform(df)
+        return df_new
 
     def get_params(self):
         """Get parameters (attributes) of the libffm converter
