@@ -387,3 +387,31 @@ def test_user_tables_keep_a_row_for_the_last_user(mind_files):
     naml = MODELS["naml"](mind_files)
     assert naml.vert_embedding.num_embeddings == len(naml.vert_dict) + 1
     assert naml.subvert_embedding.num_embeddings == len(naml.subvert_dict) + 1
+
+
+class _Exploit:
+    def __init__(self, marker):
+        self.marker = marker
+
+    def __reduce__(self):
+        return (open, (self.marker, "w"))
+
+
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "name, key",
+    [
+        ("naml", "word_dict"),
+        ("npa", "uid2index"),
+        ("naml", "vert_dict"),
+        ("naml", "subvert_dict"),
+    ],
+)
+def test_model_rejects_a_malicious_dictionary(mind_files, tmp_path, name, key):
+    marker = tmp_path / "pwned"
+    files = dict(mind_files, **{key: str(tmp_path / "malicious.pkl")})
+    with open(files[key], "wb") as f:
+        pickle.dump(_Exploit(str(marker)), f)
+    with pytest.raises(pickle.UnpicklingError):
+        MODELS[name](files)
+    assert not marker.exists()
