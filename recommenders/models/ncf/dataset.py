@@ -158,7 +158,7 @@ class DataFile:
                     self.item2id[item] = len(self.item2id)
                 user_items.append(item)
 
-                if (next_user != user) or self.next_row is None:
+                if self.next_row is None or next_user != user:
                     if not self.end_of_file:
                         if next_user in self.users:
                             raise FileNotSortedException(
@@ -166,7 +166,7 @@ class DataFile:
                             )
                     self.user2id[user] = len(self.user2id)
                 if self.col_test_batch:
-                    if (next_test_batch != test_batch) or self.next_row is None:
+                    if self.next_row is None or next_test_batch != test_batch:
                         if not self.end_of_file:
                             if next_test_batch < batch_index:
                                 raise FileNotSortedException(
