@@ -217,6 +217,7 @@ pr_gate:
     - tests/unit/recommenders/models/test_newsrec_utils.py::test_get_mind_data_set
     - tests/unit/recommenders/models/test_cornac_utils.py::test_predict
     - tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items
+    - tests/unit/recommenders/models/test_sar_remove_seen.py
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_init
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_fit
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_predict
