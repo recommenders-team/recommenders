@@ -474,6 +474,8 @@ class Dataset(object):
     def _release_shuffle_buffer(
         self, shuffle_buffer, batch_size, yield_id, write_to=None
     ):
+        if not shuffle_buffer:
+            return
         prepare_batch = (
             self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
         )
