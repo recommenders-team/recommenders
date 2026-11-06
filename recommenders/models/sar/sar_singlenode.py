@@ -239,9 +239,9 @@ class SARSingleNode:
         if df[select_columns].duplicated().any():
             raise ValueError("There should not be duplicates in the dataframe")
 
-        # generate continuous indices if this hasn't been done
-        if self.index2item is None:
-            self.set_index(df)
+        # rebuild continuous indices so a refit does not reuse stale mappings
+        self.set_index(df)
+        self.user_frequencies = None
 
         logger.info("Collecting user affinity matrix")
         if not np.issubdtype(df[self.col_rating].dtype, np.number):
