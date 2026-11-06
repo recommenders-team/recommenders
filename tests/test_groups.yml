@@ -215,6 +215,7 @@ pr_gate:
     - tests/unit/recommenders/models/test_newsrec_model.py::test_train_batches_follow_the_generator
     - tests/unit/recommenders/models/test_newsrec_utils.py::test_word_tokenize_lowercases_and_keeps_punctuation
     - tests/unit/recommenders/models/test_newsrec_utils.py::test_get_mind_data_set
+    - tests/unit/recommenders/models/test_deeprec_utils.py::test_load_dict
     - tests/unit/recommenders/models/test_cornac_utils.py::test_predict
     - tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items
     - tests/unit/recommenders/models/test_sar_singlenode.py::test_init
@@ -411,6 +412,7 @@ pr_gate:
     - tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_skips_padded_history_slots
     - tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_rejects_an_unknown_combine
     - tests/unit/recommenders/models/test_newsrec_model.py::test_user_tables_keep_a_row_for_the_last_user
+    - tests/unit/recommenders/models/test_newsrec_model.py::test_model_rejects_a_malicious_dictionary
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sampler # FIXME: it takes too long to run
     # - tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec # FIXME: it takes too long to run

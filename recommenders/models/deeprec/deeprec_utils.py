@@ -560,8 +560,25 @@ def cal_metric(labels, preds, metrics):
     return res
 
 
+class _RestrictedUnpickler(pkl.Unpickler):
+    """Unpickler that only loads built-in containers and literals.
+
+    Pickled callables and classes are rejected, so a malicious file cannot run
+    code when it is loaded.
+    """
+
+    def find_class(self, module, name):
+        raise pkl.UnpicklingError(
+            "Global '{0}.{1}' is not allowed in a vocabulary file".format(module, name)
+        )
+
+
 def load_dict(filename):
     """Load the vocabularies.
+
+    Only plain Python objects (e.g. a ``dict`` mapping ``str`` to ``int``) are
+    accepted. Files that reference any class or function raise
+    ``pickle.UnpicklingError``.
 
     Args:
         filename (str): Filename of user, item or category vocabulary.
@@ -570,5 +587,4 @@ def load_dict(filename):
         dict: A saved vocabulary.
     """
     with open(filename, "rb") as f:
-        f_pkl = pkl.load(f)
-        return f_pkl
+        return _RestrictedUnpickler(f).load()
