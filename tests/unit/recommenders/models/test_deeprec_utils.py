@@ -56,7 +56,6 @@ class _Exploit:
         return (os.system, ("echo pwned",))
 
 
-@pytest.mark.gpu
 def test_load_dict(tmp_path):
     vocab = {"default_mid": 0, "item1": 1, "item2": 2}
     vocab_file = tmp_path / "vocab.pkl"
