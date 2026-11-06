@@ -223,6 +223,7 @@ class NegativeSampler:
         sample_with_replacement,
         print_warnings=True,
         training=True,
+        rng=None,
     ):
         """Constructor
 
@@ -236,6 +237,7 @@ class NegativeSampler:
             print_warnings (bool): If true, prints warnings if sampling without replacement and
                 there are not enough items to sample from to satisfy n_neg or n_neg_test.
             training (bool): Set to true if sampling for the training set or false if for the test set.
+            rng (random.Random): Optional random generator. Defaults to Python's global generator.
         """
         self.user = user
         self.n_samples = n_samples
@@ -244,6 +246,7 @@ class NegativeSampler:
         self.sample_with_replacement = sample_with_replacement
         self.print_warnings = print_warnings
         self.training = training
+        self.rng = random if rng is None else rng
 
         self.user_negative_item_pool = self._get_user_negatives_pool()
         self.population_size = len(self.user_negative_item_pool)
@@ -267,10 +270,10 @@ class NegativeSampler:
         return list(set(self.item_pool) - self.user_positive_item_pool)
 
     def _sample_negatives_with_replacement(self):
-        return random.choices(self.user_negative_item_pool, k=self.n_samples)
+        return self.rng.choices(self.user_negative_item_pool, k=self.n_samples)
 
     def _sample_negatives_without_replacement(self):
-        return random.sample(self.user_negative_item_pool, k=self.n_samples)
+        return self.rng.sample(self.user_negative_item_pool, k=self.n_samples)
 
     def _check_sample_size(self):
         # if sampling without replacement, check sample population is sufficient and reduce
@@ -330,7 +333,9 @@ class Dataset(object):
             col_item (str): Item column name.
             col_rating (str): Rating column name.
             binary (bool): If true, set rating > 0 to rating = 1.
-            seed (int): Seed.
+            seed (int): Seed for negative sampling and training-row shuffling.
+                Test-file generation uses a separate random state so cached test
+                files do not change the training samples.
             sample_with_replacement (bool): If true, sample negative examples with replacement,
                 otherwise without replacement.
             print_warnings (bool): If true, prints warnings if sampling without replacement and
@@ -348,6 +353,9 @@ class Dataset(object):
         self.binary = binary
         self.sample_with_replacement = sample_with_replacement
         self.print_warnings = print_warnings
+        self._random = random.Random(seed)
+        self._test_random = random.Random(seed)
+        self._np_random = np.random.RandomState(random.Random(seed).getrandbits(32))
 
         self.col_test_batch = "test_batch"
 
@@ -387,8 +395,6 @@ class Dataset(object):
                 col_test_batch=self.col_test_batch,
                 binary=self.binary,
             )
-        # set random seed
-        random.seed(seed)
 
     def _create_negative_examples_df(self, user, user_negative_samples):
         # create dataframe containing negative examples for user assigned zero rating
@@ -433,6 +439,7 @@ class Dataset(object):
                             self.sample_with_replacement,
                             self.print_warnings,
                             training=False,
+                            rng=self._test_random,
                         )
 
                         user_examples_dfs = []
@@ -479,7 +486,7 @@ class Dataset(object):
         )
         shuffle_buffer_df = pd.concat(shuffle_buffer)
         shuffle_buffer_df = shuffle_buffer_df.sample(
-            shuffle_buffer_df.shape[0]
+            shuffle_buffer_df.shape[0], random_state=self._np_random
         )  # shuffle the buffer
         for batch in self._split_into_batches(shuffle_buffer_df, batch_size):
             if batch.shape[0] == batch_size:
@@ -531,6 +538,7 @@ class Dataset(object):
                     self.train_datafile.items,
                     self.sample_with_replacement,
                     self.print_warnings,
+                    rng=self._random,
                 )
                 user_negative_examples = self._create_negative_examples_df(
                     user, sampler.sample()
