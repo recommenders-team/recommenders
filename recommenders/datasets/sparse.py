@@ -4,6 +4,7 @@
 import pandas as pd
 import numpy as np
 import itertools
+from pathlib import Path
 
 from scipy.sparse import coo_matrix
 import logging
@@ -90,21 +91,26 @@ class AffinityMatrix:
         self.map_users = {x: i for i, x in enumerate(unique_users)}
         self.map_items = {x: i for i, x in enumerate(unique_items)}
 
+        if len(self.map_items) != self.Nitems:
+            raise ValueError("items_list must contain unique item IDs")
+
         # map back functions used to get back the original dataframe
         self.map_back_users = {i: x for i, x in enumerate(unique_users)}
         self.map_back_items = {i: x for i, x in enumerate(unique_items)}
 
         self.df_.loc[:, "hashedItems"] = self.df_[self.col_item].map(self.map_items)
+        if self.items_list is not None and self.df_["hashedItems"].isna().any():
+            raise ValueError("Observed item IDs are missing from items_list")
         self.df_.loc[:, "hashedUsers"] = self.df_[self.col_user].map(self.map_users)
 
         # optionally save the inverse dictionary to work with trained models
         if self.save_path is not None:
 
-            np.save(self.save_path + "/user_dict", self.map_users)
-            np.save(self.save_path + "/item_dict", self.map_items)
+            np.save(Path(self.save_path) / "user_dict", self.map_users)
+            np.save(Path(self.save_path) / "item_dict", self.map_items)
 
-            np.save(self.save_path + "/user_back_dict", self.map_back_users)
-            np.save(self.save_path + "/item_back_dict", self.map_back_items)
+            np.save(Path(self.save_path) / "user_back_dict", self.map_back_users)
+            np.save(Path(self.save_path) / "item_back_dict", self.map_back_items)
 
     def gen_affinity_matrix(self):
         """Generate the user/item affinity matrix.
@@ -136,7 +142,7 @@ class AffinityMatrix:
 
         zero = (self.AM == 0).sum()  # number of unrated items
         total = self.AM.shape[0] * self.AM.shape[1]  # number of elements in the matrix
-        sparsness = zero / total * 100  # Percentage of zeros in the matrix
+        sparsness = zero / total * 100 if total else 0.0  # Percentage of zeros in the matrix
 
         log.info("Matrix generated, sparseness percentage: %d" % sparsness)
 
@@ -151,6 +157,8 @@ class AffinityMatrix:
         Returns:
             pandas.DataFrame: the generated pandas dataframe
         """
+        if X.shape != (self.Nusers, self.Nitems):
+            raise ValueError(f"Expected affinity matrix shape {(self.Nusers, self.Nitems)}, got {X.shape}")
         m, n = X.shape
 
         # 1) Create a DF from a sparse matrix
