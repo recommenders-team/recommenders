@@ -508,3 +508,65 @@ def test_user_frequencies(header):
     # run this method once so that user frequencies are calculated
     model.get_popularity_based_topk(items=False)
     assert model.user_frequencies[0] == 2
+
+
+def _make_frame(header, users, items):
+    return pd.DataFrame(
+        {
+            header["col_user"]: users,
+            header["col_item"]: items,
+            header["col_rating"]: [1.0] * len(users),
+        }
+    )
+
+
+@pytest.mark.parametrize(
+    "replacement_users, replacement_items",
+    [
+        (["u2", "u2"], ["c", "d"]),  # new users and new items
+        (["u1", "u1"], ["c", "d"]),  # new items only
+        (["u2", "u2"], ["a", "b"]),  # new users only
+        (["u1"], ["a"]),  # shrinking catalog
+        (["u1", "u1"], ["a", "b"]),  # same catalog
+    ],
+)
+def test_refit_matches_fresh_model(header, replacement_users, replacement_items):
+    first = _make_frame(header, ["u1", "u1"], ["a", "b"])
+    replacement = _make_frame(header, replacement_users, replacement_items)
+
+    model = SAR(**header)
+    model.fit(first)
+    model.fit(replacement)
+
+    fresh = SAR(**header)
+    fresh.fit(replacement)
+
+    assert model.user2index == fresh.user2index
+    assert model.item2index == fresh.item2index
+    assert model.index2user == fresh.index2user
+    assert model.index2item == fresh.index2item
+    assert model.n_users == fresh.n_users
+    assert model.n_items == fresh.n_items
+    assert model.user_affinity.shape == fresh.user_affinity.shape
+    np.testing.assert_array_equal(
+        model.user_affinity.toarray(), fresh.user_affinity.toarray()
+    )
+    np.testing.assert_array_equal(
+        np.asarray(model.item_similarity), np.asarray(fresh.item_similarity)
+    )
+
+
+def test_set_index_is_kept_across_fits(header):
+    # an index explicitly set by the user (e.g. covering train and test data)
+    # must not be overwritten by `fit`
+    catalog = _make_frame(header, ["u1", "u1", "u2"], ["a", "b", "c"])
+    train = _make_frame(header, ["u1", "u1"], ["a", "b"])
+
+    model = SAR(**header)
+    model.set_index(catalog)
+    model.fit(train)
+    model.fit(train)
+
+    assert model.n_users == 2
+    assert model.n_items == 3
+    assert model.user_affinity.shape == (2, 3)
