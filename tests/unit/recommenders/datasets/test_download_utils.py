@@ -2,13 +2,14 @@
 # Licensed under the MIT License.
 
 import os
+import io
 import time
 import zipfile
 import pytest
 import requests
 import logging
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from recommenders.datasets.download_utils import (
     maybe_download,
@@ -80,6 +81,12 @@ def test_maybe_download_sets_default_timeout(tmp_path, monkeypatch):
         status_code = 200
         headers = {"content-length": "4"}
 
+        def raise_for_status(self):
+            pass
+
+        def close(self):
+            pass
+
         def iter_content(self, block_size):
             yield b"done"
 
@@ -119,13 +126,16 @@ def test_maybe_download_redownloads_corrupt_zip(tmp, caplog):
         f.write(b"truncated content")
     assert os.path.exists(corrupt_zip)
 
-    url = (
-        "https://raw.githubusercontent.com/recommenders-team/recommenders/main/LICENSE"
-    )
-    downloaded = maybe_download(url, "ml-100k.zip", work_directory=tmp)
+    archive = io.BytesIO()
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr("train.csv", "example")
+    response = Mock(headers={})
+    response.iter_content.return_value = [archive.getvalue()]
+    with patch("recommenders.datasets.download_utils.requests.get", return_value=response):
+        downloaded = maybe_download("https://example.org/ml-100k.zip", work_directory=tmp)
     assert "corrupt, re-downloading" in caplog.text
     assert os.path.exists(downloaded)
-    assert os.path.getsize(downloaded) > 17
+    assert is_valid_zip(downloaded)
 
 
 def test_download_path():
@@ -180,3 +190,17 @@ def test_maybe_download_wait_between_attempts(tmp):
 
     # Two waits of 200-300ms between the three attempts
     assert 0.4 <= elapsed < 1.0
+
+
+def test_interrupted_response_leaves_no_cache_file(tmp_path):
+    def interrupted():
+        yield b"partial"
+        raise IOError("connection lost")
+
+    response = Mock(headers={})
+    response.iter_content.return_value = interrupted()
+    with patch("recommenders.datasets.download_utils.requests.get", return_value=response):
+        with pytest.raises(IOError, match="connection lost"):
+            maybe_download("https://example.org/data.bin", work_directory=tmp_path, num_attempts=1)
+    assert not list(tmp_path.iterdir())
+    response.close.assert_called_once()

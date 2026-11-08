@@ -7,7 +7,8 @@ import requests
 import math
 import zipfile
 from contextlib import contextmanager
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+from urllib.parse import urlsplit
 from tqdm import tqdm
 from retrying import retry
 
@@ -54,7 +55,7 @@ def maybe_download(
 def _download(url, filename, work_directory, expected_bytes, timeout):
     """Download a file. See :func:`maybe_download` for the argument description."""
     if filename is None:
-        filename = url.split("/")[-1]
+        filename = os.path.basename(urlsplit(url).path)
     os.makedirs(work_directory, exist_ok=True)
     filepath = os.path.join(work_directory, filename)
     if os.path.exists(filepath):
@@ -65,22 +66,31 @@ def _download(url, filename, work_directory, expected_bytes, timeout):
             log.info(f"File {filepath} already downloaded")
     if not os.path.exists(filepath):
         r = requests.get(url, stream=True, timeout=timeout)
-        if r.status_code == 200:
+        temp_path = None
+        try:
+            r.raise_for_status()
             log.info(f"Downloading {url}")
             total_size = int(r.headers.get("content-length", 0))
             block_size = 1024
-            num_iterables = math.ceil(total_size / block_size)
-            with open(filepath, "wb") as file:
+            with NamedTemporaryFile(dir=os.path.dirname(filepath) or ".", delete=False) as file:
+                temp_path = file.name
                 for data in tqdm(
                     r.iter_content(block_size),
-                    total=num_iterables,
+                    total=math.ceil(total_size / block_size),
                     unit="KB",
                     unit_scale=True,
                 ):
                     file.write(data)
-        else:
-            log.error(f"Problem downloading {url}")
-            r.raise_for_status()
+            if expected_bytes is not None and os.path.getsize(temp_path) != expected_bytes:
+                raise IOError(f"Failed to verify {filepath}")
+            if filepath.endswith(".zip") and not is_valid_zip(temp_path):
+                raise IOError(f"Invalid ZIP archive: {filepath}")
+            os.replace(temp_path, filepath)
+            temp_path = None
+        finally:
+            r.close()
+            if temp_path is not None:
+                os.remove(temp_path)
     if expected_bytes is not None:
         statinfo = os.stat(filepath)
         if statinfo.st_size != expected_bytes:
@@ -101,8 +111,7 @@ def is_valid_zip(filepath):
     """
     try:
         with zipfile.ZipFile(filepath, "r") as z:
-            z.testzip()
-        return True
+            return z.testzip() is None
     except (zipfile.BadZipFile, OSError):
         return False
 
@@ -142,8 +151,7 @@ def unzip_file(zip_src, dst_dir, clean_zip_file=False):
         dst_dir (str): Destination folder.
         clean_zip_file (bool): Whether or not to clean the zip file.
     """
-    fz = zipfile.ZipFile(zip_src, "r")
-    for file in fz.namelist():
-        fz.extract(file, dst_dir)
+    with zipfile.ZipFile(zip_src, "r") as fz:
+        fz.extractall(dst_dir)
     if clean_zip_file:
         os.remove(zip_src)
