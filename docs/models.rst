@@ -101,6 +101,9 @@ Caser
 .. automodule:: recommenders.models.deeprec.models.sequential.caser
     :members:
     :special-members: __init__
+.. automodule:: recommenders.models.deeprec.models.sequential.pytorch.caser
+    :members:
+    :special-members: __init__
 
 
 GRU

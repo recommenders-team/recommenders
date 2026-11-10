@@ -431,6 +431,7 @@ pr_gate:
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm  # Always the first test to check the GPU works
     - tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition
     - tests/unit/recommenders/models/test_sli_rec.py
+    - tests/unit/recommenders/models/test_caser.py
     - tests/unit/recommenders/models/test_xdeepfm.py
     - tests/unit/recommenders/models/test_fcn_net.py
     - tests/unit/recommenders/models/test_ffm_dataset.py
