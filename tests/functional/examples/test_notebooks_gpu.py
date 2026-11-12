@@ -310,10 +310,10 @@ def test_slirec_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6217,
-                "mean_mrr": 0.2783,
-                "ndcg@5": 0.3024,
-                "ndcg@10": 0.3719,
+                "group_auc": 0.6206,
+                "mean_mrr": 0.2754,
+                "ndcg@5": 0.2994,
+                "ndcg@10": 0.3677,
             },
         )
     ],
@@ -331,10 +331,10 @@ def test_nrms_quickstart_functional(
     notebook_path = notebooks["nrms_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
@@ -366,10 +366,10 @@ def test_nrms_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6436,
-                "mean_mrr": 0.2990,
-                "ndcg@5": 0.3297,
-                "ndcg@10": 0.3933,
+                "group_auc": 0.6314,
+                "mean_mrr": 0.2808,
+                "ndcg@5": 0.3113,
+                "ndcg@10": 0.3768,
             },
         )
     ],
@@ -387,10 +387,10 @@ def test_naml_quickstart_functional(
     notebook_path = notebooks["naml_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
@@ -422,10 +422,10 @@ def test_naml_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6444,
-                "mean_mrr": 0.2983,
-                "ndcg@5": 0.3287,
-                "ndcg@10": 0.3938,
+                "group_auc": 0.6403,
+                "mean_mrr": 0.2924,
+                "ndcg@5": 0.3205,
+                "ndcg@10": 0.3854,
             },
         )
     ],
@@ -443,10 +443,10 @@ def test_lstur_quickstart_functional(
     notebook_path = notebooks["lstur_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
@@ -478,10 +478,10 @@ def test_lstur_quickstart_functional(
             42,
             "demo",
             {
-                "group_auc": 0.6035,
-                "mean_mrr": 0.2765,
-                "ndcg@5": 0.2977,
-                "ndcg@10": 0.3637,
+                "group_auc": 0.5927,
+                "mean_mrr": 0.2727,
+                "ndcg@5": 0.2931,
+                "ndcg@10": 0.3589,
             },
         )
     ],
@@ -499,10 +499,10 @@ def test_npa_quickstart_functional(
     notebook_path = notebooks["npa_quickstart"]
 
     params = {
-        "epochs": epochs,
-        "batch_size": batch_size,
-        "seed": seed,
-        "MIND_type": MIND_type,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+        "MIND_TYPE": MIND_type,
     }
     execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
