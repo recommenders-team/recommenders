@@ -29,7 +29,7 @@ def generate_param_grid(params):
        ]
 
     Args:
-        param_dict (dict): dictionary of parameters and values (in a list).
+        params (dict): dictionary of parameters and values (in a list).
 
     Return:
         list: A list of parameter dictionary string that can be fed directly into
