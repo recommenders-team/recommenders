@@ -150,7 +150,7 @@ def get_train_input(session, train_file_path, npratio=4):
     Args:
         session (list): List of user session with user_id, clicks, positive and negative interactions.
         train_file_path (str): Path to file.
-        npration (int): Ratio for negative sampling.
+        npratio (int): Ratio for negative sampling.
     """
     fp_train = open(train_file_path, "w", encoding="utf-8")
     for sess_id in range(len(session)):

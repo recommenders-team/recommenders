@@ -292,7 +292,6 @@ def negative_feedback_sampler(
             it will be reduced to the number of all the possible samples.
         pos_value (float): value of positive feedback.
         neg_value (float): value of negative feedback.
-        inplace (bool):
         seed (int): seed for the random state of the sampling function.
 
     Returns:

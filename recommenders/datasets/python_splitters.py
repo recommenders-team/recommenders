@@ -135,7 +135,6 @@ def python_chrono_split(
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
-        seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to
             filter with min_rating.
