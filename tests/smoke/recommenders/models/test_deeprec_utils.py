@@ -2,14 +2,13 @@
 # Licensed under the MIT License.
 
 import os
+import pickle
+
+import numpy as np
 import pytest
 
 try:
     import tensorflow as tf
-    from recommenders.datasets.amazon_reviews import (
-        download_and_extract,
-        data_preprocessing,
-    )
     from recommenders.models.deeprec.deeprec_utils import (
         prepare_hparams,
         download_deeprec_resources,
@@ -58,54 +57,65 @@ def test_dkn_dataset(deeprec_resource_path):
     assert [len(news_ids) for _, news_ids in batches] == [15, 5]
 
 
+@pytest.fixture
+def sequential_data(tmp_path):
+    paths = {}
+    for name, vocab in [
+        ("user_vocab", {"U1": 1, "U2": 2}),
+        ("item_vocab", {"I1": 1, "I2": 2, "I3": 3, "I4": 4}),
+        ("cate_vocab", {"C1": 1, "C2": 2}),
+    ]:
+        path = os.path.join(tmp_path, name + ".pkl")
+        with open(path, "wb") as f:
+            pickle.dump(vocab, f)
+        paths[name] = path
+
+    train_file = os.path.join(tmp_path, "train_data")
+    with open(train_file, "w") as f:
+        f.write("1\tU1\tI2\tC2\t172800\tI1\tC1\t86400\n")
+        f.write("0\tU2\tI4\tC2\t345600\tI1,I2,I3\tC1,C2,C1\t86400,172800,259200\n")
+        f.write(
+            "1\tunknown\tunknown\tunknown\t432000\tI1,I2,I3,I4"
+            "\tC1,C2,C1,C2\t86400,172800,259200,345600\n"
+        )
+    return train_file, paths
+
+
 @pytest.mark.gpu
-def test_Sequential_Iterator(deeprec_resource_path, deeprec_config_path):
-    data_path = os.path.join(deeprec_resource_path, "slirec")
+@pytest.mark.parametrize("batch_size", [1, 2, 3, 4])
+def test_Sequential_Iterator(sequential_data, deeprec_config_path, batch_size):
+    train_file, paths = sequential_data
     yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
-    train_file = os.path.join(data_path, r"train_data")
-
-    if not os.path.exists(train_file):
-        valid_file = os.path.join(data_path, r"valid_data")
-        test_file = os.path.join(data_path, r"test_data")
-        user_vocab = os.path.join(data_path, r"user_vocab.pkl")
-        item_vocab = os.path.join(data_path, r"item_vocab.pkl")
-        cate_vocab = os.path.join(data_path, r"category_vocab.pkl")
-
-        reviews_name = "reviews_Movies_and_TV_5.json"
-        meta_name = "meta_Movies_and_TV.json"
-        reviews_file = os.path.join(data_path, reviews_name)
-        meta_file = os.path.join(data_path, meta_name)
-        valid_num_ngs = (
-            4  # number of negative instances with a positive instance for validation
-        )
-        test_num_ngs = (
-            9  # number of negative instances with a positive instance for testing
-        )
-        sample_rate = (
-            0.01  # sample a small item set for training and testing here for example
-        )
-
-        input_files = [
-            reviews_file,
-            meta_file,
-            train_file,
-            valid_file,
-            test_file,
-            user_vocab,
-            item_vocab,
-            cate_vocab,
-        ]
-        download_and_extract(reviews_name, reviews_file)
-        download_and_extract(meta_name, meta_file)
-        data_preprocessing(
-            *input_files,
-            sample_rate=sample_rate,
-            valid_num_ngs=valid_num_ngs,
-            test_num_ngs=test_num_ngs
-        )
-
-    hparams = prepare_hparams(yaml_file)
+    hparams = prepare_hparams(
+        yaml_file, **paths, batch_size=batch_size, max_seq_length=3
+    )
     iterator = SequentialIterator(hparams, tf.Graph())
     assert iterator is not None
-    for res in iterator.load_data_from_file(train_file):
+    batches = list(iterator.load_data_from_file(train_file))
+    assert len(batches) == (3 + batch_size - 1) // batch_size
+    for i, res in enumerate(batches):
         assert isinstance(res, dict)
+        assert res[iterator.labels].shape == (min(batch_size, 3 - i * batch_size), 1)
+
+    for tensor, expected in [
+        (iterator.labels, [[1], [0], [1]]),
+        (iterator.users, [1, 2, 0]),
+        (iterator.items, [2, 4, 0]),
+        (iterator.cates, [2, 2, 0]),
+        (iterator.item_history, [[1, 0, 0], [1, 2, 3], [2, 3, 4]]),
+        (iterator.item_cate_history, [[1, 0, 0], [1, 2, 1], [2, 1, 2]]),
+        (iterator.mask, [[1, 0, 0], [1, 1, 1], [1, 1, 1]]),
+        (iterator.time, [172800, 345600, 432000]),
+    ]:
+        np.testing.assert_array_equal(
+            np.concatenate([res[tensor] for res in batches]), expected
+        )
+
+    for tensor, expected in [
+        (iterator.time_diff, [[1, 1, 1], [1, 1, 1], [1, 1, 1]]),
+        (iterator.time_from_first_action, [[1, 1, 1], [1, 2, 3], [2, 3, 4]]),
+        (iterator.time_to_now, [[1, 1, 1], [3, 2, 1], [3, 2, 1]]),
+    ]:
+        np.testing.assert_allclose(
+            np.concatenate([res[tensor] for res in batches]), np.log(expected)
+        )
