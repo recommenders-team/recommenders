@@ -72,11 +72,11 @@ def sequential_data(tmp_path):
 
     train_file = os.path.join(tmp_path, "train_data")
     with open(train_file, "w") as f:
-        f.write("1\tU1\tI2\tC2\t172800\tI1\tC1\t86400\n")
-        f.write("0\tU2\tI4\tC2\t345600\tI1,I2,I3\tC1,C2,C1\t86400,172800,259200\n")
+        f.write("1\tU1\tI2\tC2\t259200\tI1\tC1\t86400\n")
+        f.write("0\tU2\tI4\tC2\t864000\tI1,I2,I3\tC1,C2,C1\t86400,259200,518400\n")
         f.write(
-            "1\tunknown\tunknown\tunknown\t432000\tI1,I2,I3,I4"
-            "\tC1,C2,C1,C2\t86400,172800,259200,345600\n"
+            "1\tunknown\tunknown\tunknown\t1296000\tI1,I2,I3,I4"
+            "\tC1,C2,C1,C2\t86400,259200,518400,864000\n"
         )
     return train_file, paths
 
@@ -105,16 +105,16 @@ def test_Sequential_Iterator(sequential_data, deeprec_config_path, batch_size):
         (iterator.item_history, [[1, 0, 0], [1, 2, 3], [2, 3, 4]]),
         (iterator.item_cate_history, [[1, 0, 0], [1, 2, 1], [2, 1, 2]]),
         (iterator.mask, [[1, 0, 0], [1, 1, 1], [1, 1, 1]]),
-        (iterator.time, [172800, 345600, 432000]),
+        (iterator.time, [259200, 864000, 1296000]),
     ]:
         np.testing.assert_array_equal(
             np.concatenate([res[tensor] for res in batches]), expected
         )
 
     for tensor, expected in [
-        (iterator.time_diff, [[1, 1, 1], [1, 1, 1], [1, 1, 1]]),
-        (iterator.time_from_first_action, [[1, 1, 1], [1, 2, 3], [2, 3, 4]]),
-        (iterator.time_to_now, [[1, 1, 1], [3, 2, 1], [3, 2, 1]]),
+        (iterator.time_diff, [[2, 1, 1], [2, 3, 4], [3, 4, 5]]),
+        (iterator.time_from_first_action, [[2, 1, 1], [2, 5, 9], [5, 9, 14]]),
+        (iterator.time_to_now, [[2, 1, 1], [9, 7, 4], [12, 9, 5]]),
     ]:
         np.testing.assert_allclose(
             np.concatenate([res[tensor] for res in batches]), np.log(expected)
