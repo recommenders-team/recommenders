@@ -656,7 +656,7 @@ def ndcg_at_k(
         discfun_type (str): type of discount function ['loge', 'log2'] used to calculate DCG.
 
     Returns:
-        float: nDCG at k (min=0, max=1).
+        float: nDCG at k (min=0, max=1). Users with zero ideal DCG contribute 0.
     """
     df_hit, _, _ = merge_ranking_true_pred(
         rating_true=rating_true,
@@ -714,9 +714,9 @@ def ndcg_at_k(
         on=col_user,
     )
 
-    # DCG over IDCG is the normalized DCG
-    df_user["ndcg"] = df_user["dcg"] / df_user["idcg"]
-    return df_user["ndcg"].mean()
+    # Count users with zero ideal gain in the mean with a score of zero.
+    ideal_gain = df_user["idcg"]
+    return df_user["dcg"].div(ideal_gain).mask(ideal_gain.eq(0), 0.0).mean()
 
 
 @lru_cache_df(maxsize=1)

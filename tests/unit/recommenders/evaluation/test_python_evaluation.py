@@ -266,6 +266,29 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
     ) == pytest.approx(0.785, TOL)
 
 
+@pytest.mark.parametrize("score_type", ["raw", "exp"])
+def test_python_ndcg_at_k_counts_users_with_zero_ideal_gain(score_type):
+    rating_true = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2],
+            DEFAULT_ITEM_COL: [10, 20],
+            DEFAULT_RATING_COL: [3, 0],
+        }
+    )
+    rating_pred = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2],
+            DEFAULT_ITEM_COL: [10, 20],
+            DEFAULT_PREDICTION_COL: [0.9, 0.8],
+        }
+    )
+
+    assert ndcg_at_k(rating_true, rating_pred, k=1, score_type=score_type) == 0.5
+    assert ndcg_at_k(
+        rating_true.iloc[1:], rating_pred.iloc[1:], k=1, score_type=score_type
+    ) == 0.0
+
+
 def test_python_map(rating_true, rating_pred, rating_nohit):
     assert (
         map(
