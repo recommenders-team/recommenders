@@ -159,12 +159,30 @@ class KCNN(nn.Module):
             tables.append(torch.tanh(self.context_transform(self.context_embedding)))
         return tables
 
+    @staticmethod
+    def _embed_knowledge(
+        entities: torch.Tensor, table: torch.Tensor, transform: nn.Linear
+    ) -> torch.Tensor:
+        """Project the smaller of the batch's entity positions and the full table."""
+        if entities.numel() < table.shape[0]:
+            return torch.tanh(transform(F.embedding(entities, table)))
+        return F.embedding(entities, torch.tanh(transform(table)))
+
     def forward(self, words: torch.Tensor, entities: torch.Tensor) -> torch.Tensor:
         """words, entities ``[N, doc_size]`` -> title embeddings ``[N, output_dim]``."""
-        word_table, *knowledge_tables = self.embedding_tables()
-        channels = [F.embedding(words, word_table)] + [
-            F.embedding(entities, table) for table in knowledge_tables
-        ]
+        channels = [F.embedding(words, self.word_embedding)]
+        if self.use_entity:
+            channels.append(
+                self._embed_knowledge(
+                    entities, self.entity_embedding, self.entity_transform
+                )
+            )
+        if self.use_context:
+            channels.append(
+                self._embed_knowledge(
+                    entities, self.context_embedding, self.context_transform
+                )
+            )
         x = torch.cat(channels, dim=-1).transpose(1, 2)
         return torch.cat([F.relu(conv(x)).amax(dim=-1) for conv in self.convs], dim=1)
 
