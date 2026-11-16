@@ -146,8 +146,9 @@ def similar_users(user_id, user_features, model, N=10):
     scores /= user_norms
 
     best = np.argpartition(scores, -(N + 1))[-(N + 1) :]
+    best = best[best != user_id]
     return pd.DataFrame(
-        sorted(zip(best, scores[best] / user_norms[user_id]), key=lambda x: -x[1])[1:],
+        sorted(zip(best, scores[best] / user_norms[user_id]), key=lambda x: -x[1])[:N],
         columns=["userID", "score"],
     )
 
@@ -174,8 +175,9 @@ def similar_items(item_id, item_features, model, N=10):
     scores /= item_norms
 
     best = np.argpartition(scores, -(N + 1))[-(N + 1) :]
+    best = best[best != item_id]
     return pd.DataFrame(
-        sorted(zip(best, scores[best] / item_norms[item_id]), key=lambda x: -x[1])[1:],
+        sorted(zip(best, scores[best] / item_norms[item_id]), key=lambda x: -x[1])[:N],
         columns=["itemID", "score"],
     )
 
@@ -203,15 +205,15 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
     csr_weights = weights.tocsr()
     ratings = np.array(csr_weights[test_uids, test_iids]).flatten()
 
-    test_df = pd.DataFrame({
-        "userID": uid_map_keys[test_uids],
-        "itemID": iid_map_keys[test_iids],
-        "rating": ratings
-
-    })
+    test_df = pd.DataFrame(
+        {
+            "userID": uid_map_keys[test_uids],
+            "itemID": iid_map_keys[test_iids],
+            "rating": ratings,
+        }
+    )
 
     return test_df
-
 
 
 def prepare_all_predictions(
