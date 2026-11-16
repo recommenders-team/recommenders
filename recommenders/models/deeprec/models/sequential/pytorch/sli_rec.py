@@ -225,13 +225,19 @@ class SLiRecModel(SequentialBaseModel):
             self.target_item_embedding, rnn_outputs, mask
         ).sum(dim=1)
 
+        # The loader left-aligns history, so its final column may be padding.
+        latest_time = batch["time_to_now"].gather(
+            1, (seq_len - 1).clamp_min(0).unsqueeze(1)
+        )
+        latest_time = torch.where(seq_len.unsqueeze(1) > 0, latest_time, 0.0)
+
         # Alpha ensemble.
         concat_all = torch.cat(
             [
                 self.target_item_embedding,
                 att_fea1,
                 att_fea2,
-                batch["time_to_now"][:, -1:],
+                latest_time,
             ],
             dim=1,
         )
