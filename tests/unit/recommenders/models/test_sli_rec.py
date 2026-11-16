@@ -257,6 +257,7 @@ def test_slirec_cpu_autocast_forward_and_training_step(synthetic_slirec, dtype):
     model = _build_model(synthetic_slirec, enable_BN=False, user_dropout=False).to(
         "cpu"
     )
+    model.device = torch.device("cpu")  # The loader keeps its device separately.
     np_batch = next(
         batch
         for batch in model.iterator.load_data_from_file(
