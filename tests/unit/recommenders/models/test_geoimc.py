@@ -121,6 +121,60 @@ def test_imcproblem(dataPtr, rank):
 
 
 # `geoimc_predict` tests
+def _inference_factors(dtype):
+    rng = np.random.default_rng(42)
+    x = rng.normal(size=(4, 8)).astype(dtype)
+    z = rng.normal(size=(6, 9)).astype(dtype)
+    u = np.linalg.qr(rng.normal(size=(8, 3)))[0].astype(dtype)
+    v = np.linalg.qr(rng.normal(size=(9, 3)))[0].astype(dtype)
+    q = np.linalg.qr(rng.normal(size=(3, 3)))[0]
+    b = ((q * [0.1, 1.0, 4.0]) @ q.T).astype(dtype)
+    return DataPtr(csr_matrix((4, 6)), [x, z]), [u, b, v]
+
+
+@pytest.mark.experimental
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize("transformation", ["", "mean", "topk"])
+@pytest.mark.parametrize("filtered", [False, True])
+def test_inferer_factorized_reference(dtype, transformation, filtered):
+    data, weights = _inference_factors(dtype)
+    if filtered:
+        data.entity_indices = [np.array([3, 1]), np.array([4, 0, 2])]
+    saved_weights = [weight.copy() for weight in weights]
+    x, z = data.get_entity("row"), data.get_entity("col")
+    # The trained middle factor is symmetric positive definite. The product of
+    # its two square roots recovers it, giving an independent score reference.
+    expected = (x @ weights[0]) @ weights[1] @ (z @ weights[2]).T
+    if transformation == "mean":
+        expected = (expected > expected.mean()).astype(expected.dtype)
+    elif transformation == "topk":
+        indices = np.argsort(expected, axis=1)[:, -2:]
+        expected = np.zeros_like(expected)
+        np.put_along_axis(expected, indices, 1, axis=1)
+    actual = Inferer(k=2, transformation=transformation).infer(data, weights)
+    np.testing.assert_allclose(actual, expected, rtol=3e-5, atol=3e-5)
+    for weight, saved in zip(weights, saved_weights):
+        np.testing.assert_array_equal(weight, saved)
+
+
+@pytest.mark.experimental
+def test_inferer_uses_updated_middle_factor():
+    data, weights = _inference_factors(np.float64)
+    inferer = Inferer()
+    original = inferer.infer(data, weights)
+    weights[1] *= 4
+    np.testing.assert_allclose(inferer.infer(data, weights), 4 * original)
+
+
+@pytest.mark.experimental
+def test_inferer_accepts_direct_embeddings():
+    rows = np.array([[1.0, 2.0], [3.0, -1.0]])
+    columns = np.array([[0.0, 1.0], [2.0, 3.0], [-1.0, 0.5]])
+    np.testing.assert_array_equal(
+        Inferer().infer([rows, columns], None), rows @ columns.T
+    )
+
+
 @pytest.mark.experimental
 def test_inferer_init():
     assert Inferer(method="dot").method.__name__ == "PlainScalarProduct"

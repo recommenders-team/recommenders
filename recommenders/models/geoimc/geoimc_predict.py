@@ -78,8 +78,10 @@ class Inferer:
             a = dataPtr[0]
             b = dataPtr[1]
         else:
-            a = dataPtr.get_entity("row").dot(W[0]).dot(sqrtm(W[1]))
-            b = dataPtr.get_entity("col").dot(W[2]).dot(sqrtm(W[1]))
+            # Both entity projections use the same factor in this inference.
+            root = sqrtm(W[1])
+            a = dataPtr.get_entity("row").dot(W[0]).dot(root)
+            b = dataPtr.get_entity("col").dot(W[2]).dot(root)
 
         sim_score = self.method(a, b).sim(**kwargs)
 

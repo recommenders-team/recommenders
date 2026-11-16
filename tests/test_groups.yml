@@ -472,4 +472,7 @@ experimental:
     - tests/unit/recommenders/models/test_geoimc.py::test_imcproblem
     - tests/unit/recommenders/models/test_geoimc.py::test_inferer_init
     - tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer
+    - tests/unit/recommenders/models/test_geoimc.py::test_inferer_factorized_reference
+    - tests/unit/recommenders/models/test_geoimc.py::test_inferer_uses_updated_middle_factor
+    - tests/unit/recommenders/models/test_geoimc.py::test_inferer_accepts_direct_embeddings
     - tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs
