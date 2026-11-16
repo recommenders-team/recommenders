@@ -373,12 +373,12 @@ def test_slirec_fusion_ignores_padding_with_empty_and_mixed_histories(
     )
     lengths = [0, 1, 3, 5]
     batch["mask"].zero_()
-    times = torch.full((4, 10), 123.0)
+    times = torch.full((4, 10), 123.0, device=model.device)
     batch["time_to_now"] = times[:, ::2]  # a noncontiguous time-feature view
     for row, length in enumerate(lengths):
         batch["mask"][row, :length] = 1
         batch["time_to_now"][row, :length] = torch.arange(
-            length, 0, -1, dtype=torch.float32
+            length, 0, -1, dtype=torch.float32, device=model.device
         )
     observed = []
     hook = model.fcn_alpha.register_forward_pre_hook(
@@ -388,7 +388,9 @@ def test_slirec_fusion_ignores_padding_with_empty_and_mixed_histories(
         output = model(batch)
     hook.remove()
     assert torch.isfinite(output).all()
-    torch.testing.assert_close(observed[0][:, -1], torch.tensor([0.0, 1.0, 1.0, 1.0]))
+    torch.testing.assert_close(
+        observed[0][:, -1], torch.tensor([0.0, 1.0, 1.0, 1.0], device=model.device)
+    )
 
 
 @pytest.mark.parametrize("dtype", ["float32", "float64"])
