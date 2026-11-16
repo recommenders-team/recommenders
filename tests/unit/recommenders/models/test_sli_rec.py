@@ -211,6 +211,14 @@ def test_attention_fcn_masks_padded_positions():
 @pytest.mark.parametrize("dtype", ["float16", "bfloat16", "float32", "float64"])
 @pytest.mark.parametrize("valid_steps", [0, 3, 5])
 def test_attention_mask_is_representable_in_score_dtype(dtype, valid_steps):
+    if dtype == "float16":
+        try:
+            probe = torch.ones(2, 2, dtype=torch.float16, requires_grad=True)
+            torch.nn.functional.linear(probe, probe).sum().backward()
+        except RuntimeError:
+            pytest.skip(
+                "This PyTorch version has no CPU float16 linear/backward kernel"
+            )
     torch.manual_seed(19)
     attention = AttentionFcn(
         4, 4, [8, 4], ["relu", "relu"], [0.0, 0.0], False, False, "tnormal", 0.01
@@ -235,6 +243,17 @@ def test_attention_mask_is_representable_in_score_dtype(dtype, valid_steps):
 
 @pytest.mark.parametrize("dtype", ["float16", "bfloat16"])
 def test_slirec_cpu_autocast_forward_and_training_step(synthetic_slirec, dtype):
+    try:
+        with torch.autocast("cpu", dtype=getattr(torch, dtype)):
+            probe = torch.nn.functional.linear(torch.ones(2, 2), torch.ones(2, 2))
+    except RuntimeError:
+        pytest.skip(
+            "This PyTorch version does not support the requested CPU autocast dtype"
+        )
+    if probe.dtype != getattr(torch, dtype):
+        pytest.skip(
+            "This PyTorch version does not enable the requested CPU autocast dtype"
+        )
     model = _build_model(synthetic_slirec, enable_BN=False, user_dropout=False).to(
         "cpu"
     )
