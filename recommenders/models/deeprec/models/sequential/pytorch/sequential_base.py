@@ -391,6 +391,7 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             is_clip_norm (bool): Enable per-parameter gradient-norm clipping.
             max_grad_norm (float): Clip value when ``is_clip_norm`` is set.
             eval_metric (str): Validation metric driving early stopping / best model.
+                ``logloss`` and ``rmse`` are minimized; other metrics are maximized.
             metrics (list[str]): Pointwise metrics. Defaults to ``["auc", "logloss"]``.
             pairwise_metrics (list[str]): Group metrics. Defaults to
                 ``["mean_mrr", "ndcg@2;4;6", "group_auc"]``.
@@ -409,7 +410,9 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             self.pairwise_metrics = pairwise_metrics
 
         self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
-        best_metric, self.best_epoch = 0, 0
+        lower_is_better = eval_metric in ("logloss", "rmse")
+        best_metric = float("inf") if lower_is_better else -float("inf")
+        self.best_epoch = 0
 
         for epoch in range(1, epochs + 1):
             self.train()
@@ -444,8 +447,10 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             valid_res = self.run_eval(valid_file, valid_num_ngs, batch_size=batch_size)
             print("eval valid at epoch {0}: {1}".format(epoch, valid_res))
 
-            if valid_res[eval_metric] > best_metric:
-                best_metric = valid_res[eval_metric]
+            score = valid_res[eval_metric]
+            improved = score < best_metric if lower_is_better else score > best_metric
+            if improved:
+                best_metric = score
                 self.best_epoch = epoch
                 if save_model and model_dir:
                     os.makedirs(model_dir, exist_ok=True)
