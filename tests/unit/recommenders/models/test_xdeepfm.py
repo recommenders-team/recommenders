@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import os
+import copy
 
 import numpy as np
 import pytest
@@ -19,6 +20,64 @@ DIM = 4
 # match the files written by the synthetic_ffm fixture in conftest.py
 FIELD_COUNT = 6
 N_TEST = 20
+
+
+@pytest.mark.parametrize("bad_row,bad_field", [(0, 5), (1, 0)])
+def test_training_rejects_cross_instance_fields(
+    build_model, tmp_path, bad_row, bad_field
+):
+    lines = ["1 1:1:1", "0 2:2:1"]
+    lines[bad_row] += f" {bad_field}:3:10"
+    path = tmp_path / "invalid_training_fields"
+    path.write_text("\n".join(lines) + "\n")
+    model = build_model(field_count=4, use_cin_part=False, use_linear_part=True)
+    before = {key: value.clone() for key, value in model.state_dict().items()}
+    with pytest.raises(ValueError, match="field index"):
+        model.fit(
+            str(path),
+            str(path),
+            epochs=1,
+            batch_size=2,
+            metrics=["rmse"],
+            show_step=1000,
+        )
+    for key, value in model.state_dict().items():
+        torch.testing.assert_close(value, before[key], rtol=0, atol=0)
+
+
+@pytest.mark.parametrize("part", ["linear", "fm", "cin", "dnn", "all"])
+def test_valid_sparse_fields_preserve_batched_predictions_and_gradients(
+    build_model, tmp_path, part
+):
+    path = tmp_path / "valid_sparse_fields"
+    path.write_text("1 6:8:2 1:1:1 1:2:-0.5\n" "0\n" "1 2:3:1 6:4:0.25 3:5:-1\n")
+    options = {
+        f"use_{name}_part": part in (name, "all")
+        for name in ["linear", "fm", "cin", "dnn"]
+    }
+    model = build_model(**options)
+    single = copy.deepcopy(model)
+    arrays, _ = next(model.iterator.load_data_from_file(str(path), batch_size=3))
+    batch = model._to_tensors(arrays)
+    output = model(batch)
+    reference = torch.cat(
+        [
+            single(single._to_tensors(arrays))
+            for arrays, _ in single.iterator.load_data_from_file(
+                str(path), batch_size=1
+            )
+        ]
+    )
+    torch.testing.assert_close(output, reference, rtol=1e-5, atol=1e-6)
+    for logits, network in [(output, model), (reference, single)]:
+        torch.nn.functional.binary_cross_entropy_with_logits(
+            logits, batch["labels"]
+        ).backward()
+    for actual, expected in zip(model.parameters(), single.parameters()):
+        if actual.grad is None or expected.grad is None:
+            assert actual.grad is expected.grad is None
+        else:
+            torch.testing.assert_close(actual.grad, expected.grad, rtol=2e-5, atol=1e-6)
 
 
 @pytest.fixture

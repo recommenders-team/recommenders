@@ -92,3 +92,17 @@ def test_rejects_field_index_beyond_field_count(tmp_path):
     dataset = FFMDataset(field_count=4)
     with pytest.raises(ValueError, match="field index"):
         next(dataset.load_data_from_file(path, batch_size=1))
+
+
+@pytest.mark.parametrize(
+    "bad_row,bad_field", [(0, 5), (0, 9), (1, 0), (1, 5), (2, 0), (2, -3)]
+)
+def test_rejects_fields_that_alias_another_instance(tmp_path, bad_row, bad_field):
+    lines = ["1 1:1:1", "0 2:2:2", "1 4:3:3"]
+    lines[bad_row] += f" {bad_field}:4:10"
+    path = tmp_path / "cross_instance_fields"
+    path.write_text("\n".join(lines) + "\n")
+    # All six invalid indices land inside the flattened batch's global bounds.
+    # They must still be rejected before they become another sample's features.
+    with pytest.raises(ValueError, match="field index"):
+        next(FFMDataset(4).load_data_from_file(str(path), batch_size=3))
