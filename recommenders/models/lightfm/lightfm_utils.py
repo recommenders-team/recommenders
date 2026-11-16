@@ -187,8 +187,8 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
         test_idx (slice): slice of test indices
         uids (numpy.ndarray): Array of internal user indices
         iids (numpy.ndarray): Array of internal item indices
-        uid_map (dict): Keys to map internal user indices to external ids.
-        iid_map (dict): Keys to map internal item indices to external ids.
+        uid_map (dict): Mapping from external user ids to internal user indices.
+        iid_map (dict): Mapping from external item ids to internal item indices.
         weights (numpy.float32 coo_matrix): user-item interaction
 
     Returns:
@@ -197,21 +197,25 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
     test_uids = uids[test_idx]
     test_iids = iids[test_idx]
 
-    uid_map_keys = np.array(list(uid_map.keys()))
-    iid_map_keys = np.array(list(iid_map.keys()))
+    users_by_index = {index: user for user, index in uid_map.items()}
+    items_by_index = {index: item for item, index in iid_map.items()}
 
     csr_weights = weights.tocsr()
-    ratings = np.array(csr_weights[test_uids, test_iids]).flatten()
+    ratings = (
+        np.asarray(csr_weights[test_uids, test_iids]).ravel()
+        if test_uids.size
+        else np.empty(0, dtype=weights.dtype)
+    )
 
-    test_df = pd.DataFrame({
-        "userID": uid_map_keys[test_uids],
-        "itemID": iid_map_keys[test_iids],
-        "rating": ratings
-
-    })
+    test_df = pd.DataFrame(
+        {
+            "userID": pd.Series(test_uids).map(users_by_index),
+            "itemID": pd.Series(test_iids).map(items_by_index),
+            "rating": ratings,
+        }
+    )
 
     return test_df
-
 
 
 def prepare_all_predictions(

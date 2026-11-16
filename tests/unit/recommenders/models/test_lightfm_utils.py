@@ -83,7 +83,7 @@ def interactions(df):
         (x, [y]) for x, y in zip(df.userID, df["occupation"])
     )
 
-    (interactions, _) = dataset.build_interactions(df.iloc[:, 0:3].values)
+    interactions, _ = dataset.build_interactions(df.iloc[:, 0:3].values)
 
     train_interactions, test_interactions = cross_validation.random_train_test_split(
         interactions,
@@ -180,18 +180,75 @@ def test_prepare_test_df():
     iids = np.array([0, 1, 2, 1, 0])
     uid_map = {"user_a": 0, "user_b": 1, "user_c": 2}
     iid_map = {"item_x": 0, "item_y": 1, "item_z": 2}
-    
+
     weights_data = [1.0, 2.0, 3.0, 4.0, 5.0]
-    weights = sparse.coo_matrix(
-        (weights_data, (uids, iids)),
-        shape=(3, 3)
-    )
-    
+    weights = sparse.coo_matrix((weights_data, (uids, iids)), shape=(3, 3))
+
     test_idx = slice(0, 3)
     result = prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights)
-    
+
     assert result.shape[0] == 3, "Should have 3 rows"
-    assert list(result.columns) == ["userID", "itemID", "rating"], "Should have correct columns"
-    assert result["userID"].tolist() == ["user_a", "user_b", "user_c"], "User IDs should be mapped correctly"
-    assert result["itemID"].tolist() == ["item_x", "item_y", "item_z"], "Item IDs should be mapped correctly"
+    assert list(result.columns) == [
+        "userID",
+        "itemID",
+        "rating",
+    ], "Should have correct columns"
+    assert result["userID"].tolist() == [
+        "user_a",
+        "user_b",
+        "user_c",
+    ], "User IDs should be mapped correctly"
+    assert result["itemID"].tolist() == [
+        "item_x",
+        "item_y",
+        "item_z",
+    ], "Item IDs should be mapped correctly"
     assert result["rating"].tolist() == [1.0, 2.0, 3.0], "Ratings should be correct"
+
+
+@pytest.mark.experimental
+@pytest.mark.parametrize("id_kind", ["string", "integer", "mixed"])
+@pytest.mark.parametrize("reordered", [False, True])
+@pytest.mark.parametrize("selection", ["all", "slice", "repeated", "boolean", "empty"])
+def test_prepare_test_df_explicit_mapping_values(id_kind, reordered, selection):
+    """External evaluation IDs depend on mapping values, not insertion order."""
+    from recommenders.models.lightfm.lightfm_utils import prepare_test_df
+
+    if id_kind == "string":
+        users, items = ["user_z", "user_a", "user_m"], ["item_q", "item_c", "item_n"]
+    elif id_kind == "integer":
+        users, items = [23, 5, 17], [2**60 + 7, 2**60 + 1, 2**60 + 3]
+    else:
+        users, items = [42, "42", 2**60 + 7], ["item_q", 29, "item_n"]
+
+    records = [
+        (users[0], items[0], 1.0),
+        (users[1], items[1], 2.0),
+        (users[2], items[2], 3.0),
+        (users[0], items[1], 4.0),
+        (users[2], items[0], 5.0),
+    ]
+    dataset = Dataset()
+    dataset.fit(users, items)
+    _, weights = dataset.build_interactions(records)
+    uid_map, _, iid_map, _ = dataset.mapping()
+    if reordered:
+        uid_map = dict(reversed(list(uid_map.items())))
+        iid_map = {items[index]: iid_map[items[index]] for index in [1, 2, 0]}
+    original_users, original_items = list(uid_map.items()), list(iid_map.items())
+    test_idx = {
+        "all": slice(None),
+        "slice": slice(1, 5, 2),
+        "repeated": np.array([4, 1, 4, 0]),
+        "boolean": np.array([True, False, True, False, True]),
+        "empty": slice(0, 0),
+    }[selection]
+    expected = pd.DataFrame(records, columns=["userID", "itemID", "rating"])
+    expected["rating"] = expected["rating"].astype(np.float32)
+    expected = expected.iloc[np.arange(len(records))[test_idx]].reset_index(drop=True)
+    result = prepare_test_df(
+        test_idx, weights.row, weights.col, uid_map, iid_map, weights
+    )
+    pd.testing.assert_frame_equal(result, expected, check_exact=True)
+    assert list(uid_map.items()) == original_users
+    assert list(iid_map.items()) == original_items
