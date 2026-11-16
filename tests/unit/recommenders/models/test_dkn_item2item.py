@@ -120,6 +120,98 @@ def test_a_zero_embedding_stays_zero(build_model, first_batch, synthetic_dkn):
     assert torch.equal(news, torch.zeros_like(news))
 
 
+def _require_cpu_embedding_dtype(dtype, autocast=False):
+    """Skip only native operator capabilities absent from older CPU Torch."""
+    try:
+        if autocast:
+            with torch.autocast("cpu", dtype=dtype):
+                result = torch.nn.functional.linear(torch.ones(1, 2), torch.ones(2, 2))
+            assert result.dtype == dtype
+        else:
+            torch.nn.functional.linear(
+                torch.ones(1, 2, dtype=dtype), torch.ones(2, 2, dtype=dtype)
+            )
+            torch.nn.functional.conv2d(
+                torch.ones(1, 1, 2, 2, dtype=dtype),
+                torch.ones(1, 1, 1, 1, dtype=dtype),
+            )
+    except RuntimeError as error:
+        if "not implemented for" in str(error) or "AutocastCPU only support" in str(
+            error
+        ):
+            pytest.skip(f"CPU {dtype} operator capability: {error}")
+        raise
+
+
+@pytest.mark.parametrize("dtype_name", ["float16", "bfloat16", "float32", "float64"])
+@pytest.mark.parametrize("scale", [0.0, 0.001, 1.0])
+def test_normalization_precision(
+    build_model, first_batch, synthetic_dkn, dtype_name, scale
+):
+    dtype = getattr(torch, dtype_name)
+    _require_cpu_embedding_dtype(dtype)
+    model = build_model().to(dtype=dtype)
+    with torch.no_grad():
+        model.doc_transform.weight.mul_(scale)
+    batch = first_batch(model, synthetic_dkn["item2item_train"], 4)
+    words, entities = batch["words"].flatten(0, 1), batch["entities"].flatten(0, 1)
+
+    with torch.no_grad():
+        raw = torch.tanh(model.doc_transform(model.kcnn(words, entities)))
+        reference = raw.double()
+        reference = reference / torch.linalg.vector_norm(
+            reference, dim=-1, keepdim=True
+        ).clamp_min(1e-6)
+        actual = model._embed_news(words, entities)
+
+    assert actual.dtype == dtype
+    assert torch.isfinite(actual).all()
+    tolerance = {"float16": 1e-3, "bfloat16": 1e-2, "float32": 1e-6, "float64": 1e-12}
+    torch.testing.assert_close(
+        actual.double(),
+        reference,
+        rtol=tolerance[dtype_name],
+        atol=tolerance[dtype_name],
+    )
+    if dtype in (torch.float32, torch.float64):
+        legacy = raw * torch.rsqrt(raw.square().sum(-1, keepdim=True).clamp_min(1e-12))
+        assert torch.equal(actual, legacy)
+
+
+@pytest.mark.parametrize("autocast", [False, True])
+@pytest.mark.parametrize("scale", [0.0, 0.001])
+def test_normalization_precision_optimizer_step(
+    build_model, first_batch, synthetic_dkn, autocast, scale
+):
+    _require_cpu_embedding_dtype(torch.float16, autocast=autocast)
+    model = build_model()
+    if not autocast:
+        model.half()
+    with torch.no_grad():
+        model.doc_transform.weight.mul_(scale)
+    batch = first_batch(model, synthetic_dkn["item2item_train"], 4)
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
+    optimizer.zero_grad()
+    with torch.autocast("cpu", dtype=torch.float16, enabled=autocast):
+        scores = model(batch)
+        loss = model._data_loss(batch)
+    assert torch.isfinite(scores).all()
+    assert torch.isfinite(loss)
+    loss.backward()
+    gradients = [
+        parameter.grad for parameter in model.parameters() if parameter.grad is not None
+    ]
+    assert gradients
+    assert all(torch.isfinite(gradient).all() for gradient in gradients)
+    before = model.doc_transform.weight.detach().clone()
+    optimizer.step()
+    assert all(torch.isfinite(parameter).all() for parameter in model.parameters())
+    if scale:
+        assert not torch.equal(model.doc_transform.weight, before)
+    with torch.no_grad(), torch.autocast("cpu", dtype=torch.float16, enabled=autocast):
+        assert torch.isfinite(model(batch)).all()
+
+
 def test_scores_are_cosine_similarities_to_the_source(
     build_model, first_batch, self_related_file
 ):
