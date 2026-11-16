@@ -220,6 +220,14 @@ def test_fcn_net_output_shape_2d_and_3d():
 @pytest.mark.parametrize("gap", [20.0, 1000.0])
 def test_pairwise_loss_and_gradients_remain_finite(dtype, gap):
     dtype = getattr(torch, dtype)
+    if dtype == torch.float16:
+        try:
+            probe = torch.ones(1, 2, dtype=dtype, requires_grad=True)
+            torch.log_softmax(probe, dim=-1).sum().backward()
+        except RuntimeError:
+            pytest.skip(
+                "This PyTorch version has no CPU float16 log-softmax/backward kernel"
+            )
     logits = torch.tensor(
         [[-gap, gap, 0.0], [gap, 0.0, -gap]], dtype=dtype, requires_grad=True
     )
