@@ -104,6 +104,86 @@ def test_cin_rejects_odd_size_on_a_split_layer():
         CIN(FIELD_COUNT, [5, 4], False, 0.1)
 
 
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+@pytest.mark.parametrize("method", ["regression", "classification"])
+def test_square_loss_at_exact_fit_has_zero_gradient(build_model, dtype, method):
+    dtype = getattr(torch, dtype)
+    model = build_model(method=method).to(dtype=dtype)
+    prediction = torch.tensor([1.0, 2.0, -1.0], dtype=dtype, requires_grad=True)
+    labels = model._get_pred(prediction.detach())
+    loss = model._data_loss(prediction, labels, "square_loss")
+    assert loss.item() == 0.0
+    loss.backward()
+    torch.testing.assert_close(prediction.grad, torch.zeros_like(prediction))
+
+
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_square_loss_keeps_nonzero_rmse_and_gradient(build_model, dtype):
+    dtype = getattr(torch, dtype)
+    model = build_model(method="regression").to(dtype=dtype)
+    prediction = torch.tensor([1.0, 2.0, -1.0], dtype=dtype, requires_grad=True)
+    labels = torch.tensor([0.0, 4.0, 1.0], dtype=dtype)
+    loss = model._data_loss(prediction, labels, "square_loss")
+    expected_loss = prediction.new_tensor(3.0).sqrt()  # residual squares 1 + 4 + 4
+    torch.testing.assert_close(loss, expected_loss)
+    loss.backward()
+    expected_gradient = (prediction.detach() - labels) / (3 * expected_loss)
+    torch.testing.assert_close(prediction.grad, expected_gradient)
+
+
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+@pytest.mark.parametrize("layer_sizes", [[4], [4, 2]])
+def test_zero_cin_filters_have_finite_regularization_gradient(
+    build_model, dtype, layer_sizes
+):
+    model = build_model(cross_layer_sizes=layer_sizes).to(dtype=getattr(torch, dtype))
+    with torch.no_grad():
+        for parameter in model.cin.filters:
+            parameter.zero_()
+    loss = model._regular_loss(0.0, 0.0, 0.0, 0.0, 0.1, 0.0)
+    assert loss.item() == 0.0
+    loss.backward()
+    for parameter in model.cin.filters:
+        torch.testing.assert_close(parameter.grad, torch.zeros_like(parameter))
+
+
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_cin_frobenius_norm_keeps_nonzero_gradient(build_model, dtype):
+    model = build_model().to(dtype=getattr(torch, dtype))
+    parameter = model.cin.filters[0]
+    with torch.no_grad():
+        parameter.zero_()
+        parameter.view(-1)[:2] = parameter.new_tensor([3.0, 4.0])
+    loss = model._regular_loss(0.0, 0.0, 0.0, 0.0, 0.2, 0.0)
+    torch.testing.assert_close(loss, loss.new_tensor(1.0))
+    loss.backward()
+    torch.testing.assert_close(parameter.grad, parameter.detach() * 0.04)
+
+
+@pytest.mark.parametrize("zero_term", ["exact_fit", "cin_filters"])
+def test_zero_norm_terms_keep_real_xdeepfm_optimizer_step_finite(
+    build_model, first_batch, synthetic_ffm, zero_term
+):
+    model = build_model(method="regression", use_linear_part=True)
+    _, batch = first_batch(model, synthetic_ffm["train"], 8)
+    if zero_term == "cin_filters":
+        with torch.no_grad():
+            model.cin.filters[0].zero_()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    prediction = model(batch)
+    labels = prediction.detach() if zero_term == "exact_fit" else batch["labels"]
+    loss = model._data_loss(prediction, labels, "square_loss")
+    loss = loss + model._regular_loss(0.0, 0.0, 0.0, 0.0, 0.1, 0.0)
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert all(
+        parameter.grad is None or torch.isfinite(parameter.grad).all()
+        for parameter in model.parameters()
+    )
+    optimizer.step()
+    assert all(torch.isfinite(parameter).all() for parameter in model.parameters())
+
+
 # --------------------------- components ---------------------------
 
 

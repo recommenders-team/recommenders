@@ -324,7 +324,9 @@ class XDeepFMModel(nn.Module):
         if loss == "cross_entropy_loss":
             return F.binary_cross_entropy_with_logits(logit, labels)
         elif loss == "square_loss":
-            return torch.sqrt(F.mse_loss(self._get_pred(logit), labels))
+            residual = self._get_pred(logit) - labels
+            # The norm primitive has a finite zero subgradient at an exact fit.
+            return torch.linalg.vector_norm(residual) / residual.numel() ** 0.5
         elif loss == "log_loss":
             epsilon = 1e-7
             pred = self._get_pred(logit)
@@ -358,7 +360,7 @@ class XDeepFMModel(nn.Module):
                 reg = reg + cross_l1 * param.abs().sum()
             if cross_l2 > 0:
                 # The CIN filters use the Frobenius norm, not the squared one.
-                reg = reg + cross_l2 * param.pow(2).sum().sqrt()
+                reg = reg + cross_l2 * torch.linalg.vector_norm(param)
         return reg
 
     def fit(
