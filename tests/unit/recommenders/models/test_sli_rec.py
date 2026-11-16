@@ -333,3 +333,111 @@ def test_slirec_fit_and_eval_smoke(synthetic_slirec):
         "group_auc",
     ]:
         assert key in res
+
+
+@pytest.mark.parametrize(
+    "metric, scores, best_epoch, epochs_seen",
+    [
+        ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+        ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+        ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+        ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+        ("f1", [0.0, 0.0, 0.0], 1, 2),
+        ("logloss", [0.0, 0.0, 0.0], 1, 2),
+        ("auc", [0.5, float("nan"), 0.8], 1, 2),
+        ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+    ],
+)
+def test_slirec_checkpoint_direction_and_patience(
+    synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+):
+    model = _build_model(
+        synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+    )
+    observed_states = []
+
+    def evaluate(*args, **kwargs):
+        observed_states.append(
+            {name: value.detach().clone() for name, value in model.state_dict().items()}
+        )
+        return {metric: scores[len(observed_states) - 1]}
+
+    # Prescribed metric trajectories isolate checkpoint and patience semantics;
+    # the public training loop still performs real forward/backward/Adam steps.
+    monkeypatch.setattr(model, "run_eval", evaluate)
+    model.fit(
+        os.path.join(synthetic_slirec["dir"], "train_data"),
+        os.path.join(synthetic_slirec["dir"], "valid_data"),
+        epochs=len(scores),
+        batch_size=60,
+        train_num_ngs=4,
+        valid_num_ngs=4,
+        eval_metric=metric,
+        early_stop=1,
+        save_model=True,
+        model_dir=str(tmp_path),
+    )
+    assert model.best_epoch == best_epoch
+    assert len(observed_states) == epochs_seen
+    saved = torch.load(tmp_path / "best_model", weights_only=True)
+    for name, expected in observed_states[best_epoch - 1].items():
+        torch.testing.assert_close(saved[name], expected)
+
+
+@pytest.mark.parametrize("metric", ["logloss", "rmse", "auc"])
+def test_slirec_checkpoint_matches_actual_validation_optimum(
+    synthetic_slirec, tmp_path, monkeypatch, metric
+):
+    model = _build_model(
+        synthetic_slirec,
+        max_seq_length=8,
+        init_value=0.1,
+        enable_BN=False,
+        user_dropout=False,
+    )
+    observed = []
+    states = []
+    original_eval = model.run_eval
+
+    def record_actual_evaluation(*args, **kwargs):
+        result = original_eval(*args, **kwargs)
+        observed.append(result[metric])
+        states.append(
+            {name: value.detach().clone() for name, value in model.state_dict().items()}
+        )
+        return result
+
+    monkeypatch.setattr(model, "run_eval", record_actual_evaluation)
+    model.fit(
+        os.path.join(synthetic_slirec["dir"], "train_data"),
+        os.path.join(synthetic_slirec["dir"], "valid_data"),
+        epochs=3,
+        batch_size=60,
+        learning_rate=0.005,
+        train_num_ngs=4,
+        valid_num_ngs=4,
+        eval_metric=metric,
+        metrics=["auc", "logloss", "rmse"],
+        early_stop=0,
+        save_model=True,
+        model_dir=str(tmp_path),
+    )
+    assert len(set(observed)) > 1  # exercise an actual choice between checkpoints
+    optimum = np.argmax(observed) if metric == "auc" else np.argmin(observed)
+    assert model.best_epoch == optimum + 1
+    restored = _build_model(
+        synthetic_slirec,
+        max_seq_length=8,
+        init_value=0.1,
+        enable_BN=False,
+        user_dropout=False,
+    ).load_model(str(tmp_path))
+    for name, expected in states[optimum].items():
+        torch.testing.assert_close(restored.state_dict()[name], expected)
+    result = restored.run_eval(
+        os.path.join(synthetic_slirec["dir"], "valid_data"),
+        num_ngs=4,
+        batch_size=60,
+        metrics=["auc", "logloss", "rmse"],
+    )
+    assert result[metric] == observed[optimum]
