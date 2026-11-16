@@ -70,6 +70,8 @@ class NumEncoder:
     def fit_transform(self, df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         """Input a training set and return the converted 2 numpy.ndarray (x, y).
 
+        Fitting again rebuilds the generated target-encoding feature columns.
+
         Args:
             df: Input dataframe.
 
@@ -78,6 +80,7 @@ class NumEncoder:
         """
         df = df.astype(dtype=self.dtype_dict)
         self.samples = df.shape[0]
+        self.tgt_nume_cols = []
         logging.info("Filtering and fillna features")
         for item in tqdm(self.cate_cols):
             value_counts = df[item].value_counts()
