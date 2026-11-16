@@ -1,6 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+import copy
 import os
 import pickle
 
@@ -333,3 +334,140 @@ def test_slirec_fit_and_eval_smoke(synthetic_slirec):
         "group_auc",
     ]:
         assert key in res
+
+
+def _full_time4lstm_scan(cell, inputs, sequence_length):
+    """Reference the original full-width unroll, including padded state updates."""
+    b, t, _ = inputs.shape
+    c = inputs.new_zeros(b, cell.num_units)
+    m = inputs.new_zeros(b, cell.num_units)
+    lengths = sequence_length.to(inputs.device).view(b, 1)
+    outputs = []
+    for step in range(t):
+        next_m, (next_c, _) = cell(inputs[:, step], (c, m))
+        valid = (step < lengths).to(inputs.dtype)
+        m = valid * next_m + (1 - valid) * m
+        c = valid * next_c + (1 - valid) * c
+        outputs.append(valid * next_m)
+    return torch.stack(outputs, dim=1)
+
+
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+@pytest.mark.parametrize(
+    "lengths,expected_calls",
+    [
+        ([0, 0, 0], 1),
+        ([0, 2, 4], 4),
+        ([1, 1, 1], 1),
+        ([6, 6, 6], 6),
+        ([9, -2, 2], 6),
+        ([], 6),
+    ],
+)
+def test_time4lstm_bounded_scan_preserves_outputs_and_gradients(
+    dtype, lengths, expected_calls
+):
+    dtype = getattr(torch, dtype)
+    torch.manual_seed(31)
+    cell = Time4LSTMCell(4, 5).to(dtype=dtype)
+    reference = copy.deepcopy(cell)
+    # Exercise strided input and length views, including an empty batch.
+    inputs = torch.randn(len(lengths), 6, 12, dtype=dtype)[:, :, ::2]
+    inputs.requires_grad_()
+    ref_inputs = inputs.detach().clone().requires_grad_()
+    seq_len = torch.tensor(lengths, dtype=torch.long).repeat_interleave(2)[::2]
+    calls = []
+    hook = cell.register_forward_hook(lambda module, args, out: calls.append(1))
+    actual = time4lstm_scan(cell, inputs, seq_len)
+    hook.remove()
+    expected = _full_time4lstm_scan(reference, ref_inputs, seq_len)
+    torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+    assert actual.shape == (len(lengths), 6, 5)
+    weights = torch.randn_like(expected)
+    (actual * weights).sum().backward()
+    (expected * weights).sum().backward()
+    torch.testing.assert_close(inputs.grad, ref_inputs.grad)
+    for parameter, ref_parameter in zip(cell.parameters(), reference.parameters()):
+        # All-padding batches must still produce zero gradients, not detach the
+        # result or leave the cell parameters without a gradient tensor.
+        assert parameter.grad is not None
+        torch.testing.assert_close(parameter.grad, ref_parameter.grad)
+    assert len(calls) == expected_calls
+
+
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+@pytest.mark.parametrize("empty_history", [False, True])
+def test_slirec_bounded_scan_preserves_optimizer_step(
+    synthetic_slirec, monkeypatch, dtype, empty_history
+):
+    dtype = getattr(torch, dtype)
+    model = _build_model(
+        synthetic_slirec, init_value=0.2, enable_BN=False, user_dropout=False
+    ).to(dtype=dtype)
+    reference = copy.deepcopy(model)
+    batch = model._to_tensors(
+        next(
+            model.iterator.load_data_from_file(
+                os.path.join(synthetic_slirec["dir"], "test_data"), batch_size=8
+            )
+        )
+    )
+    batch = {
+        key: value.to(dtype=dtype) if value.is_floating_point() else value
+        for key, value in batch.items()
+    }
+    if empty_history:
+        for key in [
+            "mask",
+            "item_history",
+            "item_cate_history",
+            "time_from_first_action",
+            "time_to_now",
+        ]:
+            batch[key].zero_()
+    calls = []
+    hook = model.cell.register_forward_hook(lambda module, args, out: calls.append(1))
+    actual = model(batch)
+    hook.remove()
+    with monkeypatch.context() as context:
+        context.setattr(
+            "recommenders.models.deeprec.models.sequential.pytorch.sli_rec.time4lstm_scan",
+            _full_time4lstm_scan,
+        )
+        expected = reference(batch)
+    torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+    optimizers = [
+        torch.optim.Adam(m.parameters(), lr=0.001) for m in (model, reference)
+    ]
+    for prediction in [actual, expected]:
+        torch.nn.functional.binary_cross_entropy_with_logits(
+            prediction, batch["labels"]
+        ).backward()
+    for parameter, ref_parameter in zip(model.parameters(), reference.parameters()):
+        if ref_parameter.grad is None:
+            assert parameter.grad is None
+        else:
+            assert torch.isfinite(parameter.grad).all()
+            torch.testing.assert_close(parameter.grad, ref_parameter.grad)
+    for optimizer in optimizers:
+        optimizer.step()
+    for parameter, ref_parameter in zip(model.parameters(), reference.parameters()):
+        torch.testing.assert_close(parameter, ref_parameter)
+    assert len(calls) == max(1, int(batch["mask"].sum(dim=1).max()))
+
+
+def test_slirec_bounded_scan_preserves_file_evaluation(synthetic_slirec, monkeypatch):
+    model = _build_model(synthetic_slirec, init_value=0.2)
+    filename = os.path.join(synthetic_slirec["dir"], "test_data")
+    calls = []
+    hook = model.cell.register_forward_hook(lambda module, args, out: calls.append(1))
+    actual = model.run_eval(filename, num_ngs=4, batch_size=100)
+    hook.remove()
+    with monkeypatch.context() as context:
+        context.setattr(
+            "recommenders.models.deeprec.models.sequential.pytorch.sli_rec.time4lstm_scan",
+            _full_time4lstm_scan,
+        )
+        expected = model.run_eval(filename, num_ngs=4, batch_size=100)
+    assert actual == expected
+    assert len(calls) == 7  # All 40 examples have at most seven observed steps.

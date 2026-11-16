@@ -193,6 +193,7 @@ def time4lstm_scan(
 
     For steps ``t >= sequence_length[b]`` the output is exactly zero and the carried
     state is frozen (copied forward), reproducing ``dynamic_rnn``'s padding semantics.
+    The shared padding tail is filled without running the cell.
 
     Args:
         cell (Time4LSTMCell): The cell to run.
@@ -210,12 +211,19 @@ def time4lstm_scan(
     m = torch.zeros(b, h, device=device, dtype=inputs.dtype)
     seq_len = sequence_length.to(device).view(b, 1)
 
+    # Keep one step for all-padding batches so backward still produces zero
+    # input and parameter gradients. Empty batches retain the full-width path.
+    steps = min(t, max(1, int(seq_len.max().item()))) if b else t
+
     outputs = []
-    for step in range(t):
+    for step in range(steps):
         m_t, (c_t, _) = cell(inputs[:, step, :], (c, m))
         valid = (step < seq_len).to(inputs.dtype)  # [B, 1]
         m = valid * m_t + (1.0 - valid) * m
         c = valid * c_t + (1.0 - valid) * c
         outputs.append(valid * m_t)  # zero output on padded steps
 
-    return torch.stack(outputs, dim=1)
+    result = torch.stack(outputs, dim=1)
+    if steps < t:
+        result = torch.cat([result, inputs.new_zeros(b, t - steps, h)], dim=1)
+    return result
