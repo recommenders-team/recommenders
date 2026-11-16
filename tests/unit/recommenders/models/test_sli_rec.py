@@ -1,6 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+import copy
 import os
 import pickle
 
@@ -205,6 +206,86 @@ def test_attention_fcn_masks_padded_positions():
     # weights on padded positions must be ~0, so those rows contribute ~0
     assert out.shape == (b, t, h)
     assert torch.allclose(out[:, 3:], torch.zeros(b, t - 3, h), atol=1e-5)
+
+
+@pytest.mark.parametrize("dtype", ["float16", "bfloat16", "float32", "float64"])
+@pytest.mark.parametrize("valid_steps", [0, 3, 5])
+def test_attention_mask_is_representable_in_score_dtype(dtype, valid_steps):
+    if dtype == "float16":
+        try:
+            probe = torch.ones(2, 2, dtype=torch.float16, requires_grad=True)
+            torch.nn.functional.linear(probe, probe).sum().backward()
+        except RuntimeError:
+            pytest.skip(
+                "This PyTorch version has no CPU float16 linear/backward kernel"
+            )
+    torch.manual_seed(19)
+    attention = AttentionFcn(
+        4, 4, [8, 4], ["relu", "relu"], [0.0, 0.0], False, False, "tnormal", 0.01
+    ).eval()
+    reference = copy.deepcopy(attention)
+    dtype = getattr(torch, dtype)
+    attention.to(dtype=dtype)
+    query = torch.randn(2, 4).to(dtype).requires_grad_()
+    history = torch.randn(2, 5, 4).to(dtype).requires_grad_()
+    mask = torch.arange(5).unsqueeze(0).expand(2, -1) < valid_steps
+
+    output = attention(query, history, mask)
+    expected = reference(query.detach().float(), history.detach().float(), mask)
+    torch.testing.assert_close(output.float(), expected, rtol=0.02, atol=0.002)
+    assert torch.isfinite(output).all()
+    if 0 < valid_steps < 5:
+        assert torch.count_nonzero(output[:, valid_steps:]) == 0
+    output.square().sum().backward()
+    for value in [query, history, *attention.parameters()]:
+        assert value.grad is not None and torch.isfinite(value.grad).all()
+
+
+@pytest.mark.parametrize("dtype", ["float16", "bfloat16"])
+def test_slirec_cpu_autocast_forward_and_training_step(synthetic_slirec, dtype):
+    try:
+        with torch.autocast("cpu", dtype=getattr(torch, dtype)):
+            probe = torch.nn.functional.linear(torch.ones(2, 2), torch.ones(2, 2))
+    except RuntimeError:
+        pytest.skip(
+            "This PyTorch version does not support the requested CPU autocast dtype"
+        )
+    if probe.dtype != getattr(torch, dtype):
+        pytest.skip(
+            "This PyTorch version does not enable the requested CPU autocast dtype"
+        )
+    model = _build_model(synthetic_slirec, enable_BN=False, user_dropout=False).to(
+        "cpu"
+    )
+    np_batch = next(
+        batch
+        for batch in model.iterator.load_data_from_file(
+            os.path.join(synthetic_slirec["dir"], "test_data"),
+            batch_size=10,
+            batch_num_ngs=0,
+        )
+        if batch
+    )
+    batch = {key: value.cpu() for key, value in model._to_tensors(np_batch).items()}
+    with torch.no_grad():
+        expected = model(batch)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+    before = model.logit_fcn.out.bias.detach().clone()
+    with torch.autocast("cpu", dtype=getattr(torch, dtype)):
+        output = model(batch)
+        loss = torch.nn.functional.binary_cross_entropy_with_logits(
+            output, batch["labels"]
+        )
+    torch.testing.assert_close(output.float(), expected, rtol=0.02, atol=0.002)
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert all(
+        parameter.grad is None or torch.isfinite(parameter.grad).all()
+        for parameter in model.parameters()
+    )
+    optimizer.step()
+    assert not torch.equal(model.logit_fcn.out.bias, before)
+    assert all(torch.isfinite(parameter).all() for parameter in model.parameters())
 
 
 def test_fcn_net_output_shape_2d_and_3d():

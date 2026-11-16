@@ -72,9 +72,9 @@ class AttentionFcn(nn.Module):
             [att_inputs, queries, att_inputs - queries, att_inputs * queries], dim=-1
         )
         scores = self.fcn(feat).squeeze(-1)
-        scores = torch.where(
-            mask == 1.0, scores, torch.full_like(scores, _MASK_PADDING)
-        )
+        # Preserve the finite TF sentinel, bounded by the score dtype (e.g. fp16).
+        padding = max(_MASK_PADDING, torch.finfo(scores.dtype).min)
+        scores = torch.where(mask == 1.0, scores, torch.full_like(scores, padding))
         att_weights = torch.softmax(scores, dim=-1)
         return user_embedding * att_weights.unsqueeze(-1)
 
