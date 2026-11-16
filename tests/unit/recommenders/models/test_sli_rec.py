@@ -333,3 +333,69 @@ def test_slirec_fit_and_eval_smoke(synthetic_slirec):
         "group_auc",
     ]:
         assert key in res
+
+
+@pytest.mark.parametrize("num_ngs", [1, 2, 4])
+@pytest.mark.parametrize("batch_size", [1, 3, 8, 16, 32, 100])
+def test_slirec_cross_batch_ranking_groups(
+    synthetic_slirec, tmp_path, num_ngs, batch_size
+):
+    # Keep the positive and the requested number of negatives from every group.
+    # In particular, the last inference batch need not contain a complete group.
+    with open(os.path.join(synthetic_slirec["dir"], "test_data")) as source:
+        lines = source.readlines()
+    filename = tmp_path / "groups.tsv"
+    filename.write_text(
+        "".join(line for index, line in enumerate(lines) if index % 5 <= num_ngs)
+    )
+    model = _build_model(synthetic_slirec, max_seq_length=8, init_value=0.2)
+    expected = model.run_eval(str(filename), num_ngs=num_ngs, batch_size=100)
+    actual = model.run_eval(str(filename), num_ngs=num_ngs, batch_size=batch_size)
+    assert actual == expected
+    assert len(actual) == 7  # Pointwise metrics and all five ranking metrics.
+
+
+@pytest.mark.parametrize("batch_size", [8, 16])
+def test_slirec_cross_batch_validation_during_fit(synthetic_slirec, batch_size):
+    model = _build_model(
+        synthetic_slirec,
+        max_seq_length=8,
+        init_value=0.1,
+        enable_BN=False,
+        user_dropout=False,
+    )
+    original = model.item_lookup.weight.detach().clone()
+    model.fit(
+        os.path.join(synthetic_slirec["dir"], "train_data"),
+        os.path.join(synthetic_slirec["dir"], "valid_data"),
+        epochs=1,
+        batch_size=batch_size,
+        train_num_ngs=4,
+        valid_num_ngs=4,
+    )
+    assert not torch.equal(model.item_lookup.weight, original)
+    assert model.best_epoch == 1
+    filename = os.path.join(synthetic_slirec["dir"], "test_data")
+    assert model.run_eval(filename, num_ngs=4) == model.run_eval(
+        filename, num_ngs=4, batch_size=100
+    )
+
+
+def test_slirec_cross_batch_groups_after_history_filter(synthetic_slirec):
+    model = _build_model(synthetic_slirec, max_seq_length=8, init_value=0.2)
+    model.min_seq_length = 4
+    filename = os.path.join(synthetic_slirec["dir"], "test_data")
+    # The fixture assigns the same history length to every member of a group,
+    # so filtering removes complete groups without changing their boundaries.
+    expected = model.run_eval(filename, num_ngs=4, batch_size=100)
+    assert model.run_eval(filename, num_ngs=4, batch_size=8) == expected
+
+
+def test_slirec_cross_batch_incomplete_file_still_rejected(synthetic_slirec, tmp_path):
+    with open(os.path.join(synthetic_slirec["dir"], "test_data")) as source:
+        lines = source.readlines()
+    filename = tmp_path / "incomplete.tsv"
+    filename.write_text("".join(lines[:-1]))
+    model = _build_model(synthetic_slirec, max_seq_length=8)
+    with pytest.raises(ValueError, match="reshape"):
+        model.run_eval(str(filename), num_ngs=4, batch_size=8)
