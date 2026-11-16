@@ -80,9 +80,15 @@ class DKNItem2Item(DKNBase):
         """Unit-norm article embeddings ``[N, output_dim]``."""
         news = torch.tanh(self.doc_transform(self.kcnn(words, entities)))
         # The epsilon bounds the squared norm, so a zero vector stays zero.
-        return news * torch.rsqrt(
-            news.pow(2).sum(dim=-1, keepdim=True).clamp_min(1e-12)
+        # Accumulate low-precision norms in float32 so the floor and small
+        # squared components remain representable, including under autocast.
+        norm_news = (
+            news.float() if news.dtype in (torch.float16, torch.bfloat16) else news
         )
+        normalized = norm_news * torch.rsqrt(
+            norm_news.pow(2).sum(dim=-1, keepdim=True).clamp_min(1e-12)
+        )
+        return normalized.to(dtype=news.dtype)
 
     def forward(self, batch: dict) -> torch.Tensor:
         """Relation scores ``[B, neg_num + 1]`` of each source to its targets."""
