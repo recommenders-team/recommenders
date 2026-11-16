@@ -387,3 +387,126 @@ def test_user_tables_keep_a_row_for_the_last_user(mind_files):
     naml = MODELS["naml"](mind_files)
     assert naml.vert_embedding.num_embeddings == len(naml.vert_dict) + 1
     assert naml.subvert_embedding.num_embeddings == len(naml.subvert_dict) + 1
+
+
+@pytest.mark.gpu
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+@pytest.mark.parametrize("query_scale", [10.0, 100.0])
+def test_additive_attention_masked_shift_matches_removed_positions(dtype, query_scale):
+    """Padding cannot attenuate valid content or its backward signal."""
+    import copy
+
+    attention = AdditiveAttention(1, 1).to(dtype=dtype)
+    with torch.no_grad():
+        attention.projection.weight.fill_(1)
+        attention.projection.bias.zero_()
+        attention.query.weight.fill_(query_scale)
+    reference = copy.deepcopy(attention)
+    x = torch.tensor([[[2.0], [-1.0], [-2.0], [2.0]]], dtype=dtype, requires_grad=True)
+    valid = x.detach()[:, 1:3].clone().requires_grad_()
+    mask = torch.tensor([[False, True, True, False]])
+    actual = attention(x, mask)
+    expected = reference(valid)
+    torch.testing.assert_close(actual, expected)
+    actual.sum().backward()
+    expected.sum().backward()
+    torch.testing.assert_close(x.grad[:, 1:3], valid.grad)
+    assert torch.count_nonzero(x.grad[:, [0, 3]]) == 0
+    for parameter, oracle in zip(attention.parameters(), reference.parameters()):
+        torch.testing.assert_close(parameter.grad, oracle.grad)
+
+
+@pytest.mark.gpu
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+@pytest.mark.parametrize("all_valid", [False, True])
+def test_additive_attention_masked_shift_preserves_uniform_masks(dtype, all_valid):
+    torch.manual_seed(7)
+    attention = AdditiveAttention(3, 4).to(dtype=dtype)
+    x = torch.randn(2, 5, 3, dtype=dtype, requires_grad=True)
+    mask = torch.full((2, 5), all_valid, dtype=torch.bool)
+    actual = attention(x, mask)
+    expected = attention(x) if all_valid else torch.zeros_like(actual)
+    torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+    actual.sum().backward()
+    assert torch.isfinite(x.grad).all()
+    for parameter in attention.parameters():
+        assert torch.isfinite(parameter.grad).all()
+        if not all_valid:
+            assert torch.count_nonzero(parameter.grad) == 0
+    if not all_valid:
+        assert torch.count_nonzero(x.grad) == 0
+
+
+@pytest.mark.gpu
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+@pytest.mark.parametrize("combine", ["ini", "con"])
+def test_lstur_masked_shift_matches_unpadded_training(mind_files, dtype, combine):
+    """Native LSTUR updates agree when only masked title padding is removed."""
+    import copy
+
+    model = LSTURModel(
+        mind_files["embedding"],
+        mind_files["word_dict"],
+        mind_files["uid2index"],
+        title_size=5,
+        his_size=3,
+        filter_num=2,
+        window_size=1,
+        combine=combine,
+        attention_hidden_dim=1,
+        dropout=0.0,
+        seed=17,
+    ).to(device="cpu", dtype=dtype)
+    with torch.no_grad():
+        model.word_embedding.weight.zero_()
+        model.word_embedding.weight[0, 0] = 2.0
+        model.word_embedding.weight[1, 0] = 1.0
+        model.word_embedding.weight[2, 0] = 0.5
+        model.title_conv.weight.zero_()
+        model.title_conv.weight[:, 0, 0] = 1.0
+        model.title_conv.bias.zero_()
+        model.title_pooling.projection.weight.fill_(0.5)
+        model.title_pooling.projection.bias.fill_(-1.5)
+        model.title_pooling.query.weight.fill_(200)
+    reference = copy.deepcopy(model)
+    padded_news = {
+        "title": torch.tensor(
+            [
+                [0, 0, 0, 0, 0],
+                [1, 2, 0, 0, 0],
+                [2, 2, 0, 0, 0],
+            ]
+        )
+    }
+    # A width-one convolution leaves valid word features identical. This
+    # reference removes padding at the public model input, without replacing
+    # attention, convolution, recurrence, loss or optimizer operators.
+    unpadded_news = {"title": padded_news["title"][:, :2]}
+    batch = {
+        "candidate_rows": torch.tensor([[1, 2], [2, 1]]),
+        "clicked_rows": torch.tensor([[0, 1, 2], [1, 0, 2]]),
+        "users": torch.tensor([1, 2]),
+    }
+    optimizers = [torch.optim.SGD(m.parameters(), lr=0.01) for m in (model, reference)]
+    initial = model.word_embedding.weight.detach().clone()
+    for _ in range(2):
+        for optimizer in optimizers:
+            optimizer.zero_grad()
+        actual = model(padded_news, batch)
+        expected = reference(unpadded_news, batch)
+        torch.testing.assert_close(actual, expected)
+        losses = [
+            torch.nn.functional.cross_entropy(logits, torch.zeros(2, dtype=torch.long))
+            for logits in (actual, expected)
+        ]
+        torch.testing.assert_close(losses[0], losses[1])
+        for loss in losses:
+            loss.backward()
+        for parameter, oracle in zip(model.parameters(), reference.parameters()):
+            assert torch.isfinite(parameter.grad).all()
+            torch.testing.assert_close(parameter.grad, oracle.grad)
+        for optimizer in optimizers:
+            optimizer.step()
+        for parameter, oracle in zip(model.parameters(), reference.parameters()):
+            torch.testing.assert_close(parameter, oracle)
+    assert not torch.equal(initial[1:3], model.word_embedding.weight[1:3])
