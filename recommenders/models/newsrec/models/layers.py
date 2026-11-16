@@ -53,6 +53,9 @@ class AdditiveAttention(nn.Module):
                 out. A row with every position left out pools to zeros.
         """
         scores = self.query(torch.tanh(self.projection(x))).squeeze(-1)
+        if mask is not None:
+            # A masked maximum must not suppress the valid weights below epsilon.
+            scores = scores.masked_fill(~mask, torch.finfo(scores.dtype).min)
         # The shift keeps exp finite; it is detached because it cancels out.
         weights = torch.exp(scores - scores.amax(dim=1, keepdim=True).detach())
         if mask is not None:
