@@ -231,8 +231,6 @@ class SequentialBaseModel(nn.Module, abc.ABC):
         self.iterator = SequentialDataset(
             user_vocab, item_vocab, cate_vocab, max_seq_length
         )
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
         self._build_embedding()
 
         # Training/eval defaults; fit()/run_eval() override these.
@@ -264,7 +262,12 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             self.init_method,
             self.init_value,
         )
-        self.to(self.device)
+        self.to("cuda" if torch.cuda.is_available() else "cpu")
+
+    @property
+    def device(self) -> torch.device:
+        """Device of the model parameters, including after native module moves."""
+        return self.item_lookup.weight.device
 
     def _build_embedding(self) -> None:
         self.user_vocab_length = len(load_dict(self.user_vocab))

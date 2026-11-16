@@ -333,3 +333,105 @@ def test_slirec_fit_and_eval_smoke(synthetic_slirec):
         "group_auc",
     ]:
         assert key in res
+
+
+def _device_batch(model, paths):
+    return next(
+        batch
+        for batch in model.iterator.load_data_from_file(
+            os.path.join(paths["dir"], "test_data"),
+            batch_size=10,
+            batch_num_ngs=0,
+        )
+        if batch
+    )
+
+
+@pytest.mark.parametrize("move", ["to", "to_empty"])
+def test_slirec_device_follows_native_moves(synthetic_slirec, move):
+    model = _build_model(synthetic_slirec)
+    getattr(model, move)(device="meta")
+    assert model.device == model.item_lookup.weight.device == torch.device("meta")
+
+
+def test_slirec_migrated_batch_runs_native_forward(synthetic_slirec):
+    model = _build_model(synthetic_slirec, enable_BN=False, user_dropout=False)
+    arrays = _device_batch(model, synthetic_slirec)
+    model.to("meta")
+    batch = model._to_tensors(arrays)
+    # Meta executes the real operators and detects mixed-device inputs without
+    # requiring CUDA. It checks placement and shapes, not numerical values.
+    output = model(batch)
+    assert output.shape == (len(arrays["labels"]), 1)
+    assert output.device == torch.device("meta")
+    assert all(tensor.device == output.device for tensor in batch.values())
+    assert batch["items"].dtype == torch.long
+    assert batch["labels"].dtype == torch.float32
+
+
+def test_slirec_migrated_regularizer_uses_model_device(synthetic_slirec):
+    model = _build_model(synthetic_slirec).to("meta")
+    assert model._regular_loss({}).device == torch.device("meta")
+    model.layer_l2 = 0.01
+    assert model._regular_loss({}).device == torch.device("meta")
+
+
+def _check_cpu_inference_and_training(model, paths, checkpoint, prediction_path):
+    model.load_model(str(checkpoint))
+    model.eval()
+    batch = model._to_tensors(_device_batch(model, paths))
+    assert model.device == torch.device("cpu")
+    assert all(tensor.device.type == "cpu" for tensor in batch.values())
+    with torch.no_grad():
+        expected = torch.sigmoid(model(batch)).numpy().reshape(-1)
+    model.predict(
+        os.path.join(paths["dir"], "test_data"), str(prediction_path), batch_size=10
+    )
+    actual = np.loadtxt(prediction_path)
+    np.testing.assert_allclose(actual[: len(expected)], expected, rtol=1e-6)
+    assert np.isfinite(actual).all()
+    model.embed_l2 = model.layer_l2 = 0.01
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+    optimizer.zero_grad(set_to_none=True)
+    before = model.logit_fcn.out.bias.detach().clone()
+    loss = torch.nn.functional.binary_cross_entropy_with_logits(
+        model(batch), batch["labels"]
+    ) + model._regular_loss(batch)
+    loss.backward()
+    assert torch.isfinite(loss)
+    assert all(
+        parameter.grad is None or torch.isfinite(parameter.grad).all()
+        for parameter in model.parameters()
+    )
+    optimizer.step()
+    assert not torch.equal(model.logit_fcn.out.bias, before)
+    return actual
+
+
+def test_slirec_device_round_trip_restores_cpu_predictions(synthetic_slirec, tmp_path):
+    model = _build_model(synthetic_slirec, enable_BN=False, user_dropout=False).cpu()
+    checkpoint = tmp_path / "model.pt"
+    torch.save(model.state_dict(), checkpoint)
+    expected = _check_cpu_inference_and_training(
+        model, synthetic_slirec, checkpoint, tmp_path / "before.txt"
+    )
+    keys = tuple(model.state_dict())
+    model.to("meta").to_empty(device="cpu")
+    actual = _check_cpu_inference_and_training(
+        model, synthetic_slirec, checkpoint, tmp_path / "after.txt"
+    )
+    np.testing.assert_array_equal(actual, expected)
+    assert tuple(model.state_dict()) == keys
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="Requires a CUDA device")
+@pytest.mark.parametrize("move", ["cpu", "to"])
+def test_slirec_device_cuda_to_cpu(synthetic_slirec, tmp_path, move):
+    model = _build_model(synthetic_slirec, enable_BN=False, user_dropout=False)
+    assert model.item_lookup.weight.device.type == "cuda"
+    checkpoint = tmp_path / "model.pt"
+    torch.save(model.state_dict(), checkpoint)
+    model.cpu() if move == "cpu" else model.to("cpu")
+    _check_cpu_inference_and_training(
+        model, synthetic_slirec, checkpoint, tmp_path / "predictions.txt"
+    )
