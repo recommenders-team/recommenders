@@ -11,7 +11,6 @@ from sklearn.preprocessing import normalize
 from recommenders.utils.python_utils import binarize
 from .geoimc_utils import length_normalize, reduce_dims
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("geoimc")
 
@@ -26,8 +25,8 @@ class DataPtr:
 
         Args:
             data (csr_matrix): The target data matrix.
-            entities (Iterator): An iterator (of 2 elements (ndarray)) containing
-            the features of row, col entities.
+            entities (Iterator): Two dense ndarrays or CSR matrices containing
+                the features of row and column entities. Either side may be sparse.
         """
         assert isspmatrix_csr(data)
 
