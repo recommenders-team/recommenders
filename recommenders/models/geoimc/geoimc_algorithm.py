@@ -84,7 +84,7 @@ class IMCProblem(object):
 
         IMCProblem._computeLoss_csrmatrix(
             self.X.dot(U.dot(B)),
-            V.T.dot(self.Z.T),
+            self.Z.dot(V).T,
             self.Y.data,
             self.Y.indices,
             self.Y.indptr,
@@ -112,7 +112,7 @@ class IMCProblem(object):
         )
 
         gradU = (
-            np.dot(self.X.T, residual_global_csr.dot(self.Z.dot(V.dot(B.T))))
+            self.X.T.dot(residual_global_csr.dot(self.Z.dot(V.dot(B.T))))
             / self.nSamples
         )
 
@@ -124,7 +124,7 @@ class IMCProblem(object):
         gradB_sym = (gradB + gradB.T) / 2
 
         gradV = (
-            np.dot((self.X.dot(U.dot(B))).T, residual_global_csr.dot(self.Z)).T
+            self.Z.T.dot(residual_global_csr.T.dot(self.X.dot(U.dot(B))))
             / self.nSamples
         )
 

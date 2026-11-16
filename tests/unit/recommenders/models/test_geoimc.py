@@ -157,3 +157,119 @@ def test_inferer_infer(dataPtr):
     nOccurences = collections.Counter(inference.ravel())
     assert nOccurences[0] + nOccurences[1] == inference.size
     assert np.max(np.count_nonzero(inference == 1, axis=0)) <= k
+
+
+@pytest.fixture
+def geoimc_sparse_case():
+    """A sparse observed matrix with distinct row and column feature dimensions."""
+    rng = np.random.default_rng(812)
+    row = rng.normal(size=(8, 4))
+    col = rng.normal(size=(7, 5))
+    row[np.abs(row) < 0.7] = 0
+    col[np.abs(col) < 0.7] = 0
+    ratings = rng.normal(size=(8, 7))
+    ratings[rng.random((8, 7)) < 0.4] = 0
+    target = csr_matrix(ratings)
+    weights = [
+        np.linalg.qr(rng.normal(size=(4, 2)))[0],
+        np.array([[1.3, 0.2], [0.2, 1.7]]),
+        np.linalg.qr(rng.normal(size=(5, 2)))[0],
+    ]
+    return target, row, col, weights
+
+
+def _geoimc_dense_objective(target, row, col, weights, regularizer):
+    """Independent full-matrix objective at only the observed entries."""
+    observed = target.tocoo()
+    predictions = row @ weights[0] @ weights[1] @ weights[2].T @ col.T
+    residuals = predictions[observed.row, observed.col] - observed.data
+    return 0.5 * np.mean(residuals**2) + 0.5 * regularizer * np.sum(weights[1] ** 2)
+
+
+@pytest.mark.experimental
+@pytest.mark.parametrize(
+    "row_sparse,col_sparse",
+    [(False, False), (True, False), (False, True), (True, True)],
+)
+def test_geoimc_sparse_feature_objective_and_gradients(
+    geoimc_sparse_case, row_sparse, col_sparse
+):
+    target, row, col, weights = geoimc_sparse_case
+    features = [
+        csr_matrix(row) if row_sparse else row,
+        csr_matrix(col) if col_sparse else col,
+    ]
+    problem = IMCProblem(DataPtr(target, features), rank=2, lambda1=0.03)
+    residual = np.zeros(target.nnz)
+    cost = problem._cost(weights, residual)
+    expected = _geoimc_dense_objective(target, row, col, weights, problem.lambda1)
+    np.testing.assert_allclose(cost, expected, rtol=1e-12, atol=1e-12)
+    gradients = problem._egrad(weights, residual)
+    for factor, (parameter, actual) in enumerate(zip(weights, gradients)):
+        assert actual.dtype == np.float64
+        numerical = np.zeros_like(parameter)
+        for index in np.ndindex(parameter.shape):
+            perturbation = np.zeros_like(parameter)
+            perturbation[index] = 1e-5
+            if factor == 1:
+                # The middle factor is symmetric positive definite.
+                perturbation = (perturbation + perturbation.T) / 2
+            plus = [value.copy() for value in weights]
+            minus = [value.copy() for value in weights]
+            plus[factor] += perturbation
+            minus[factor] -= perturbation
+            numerical[index] = (
+                _geoimc_dense_objective(target, row, col, plus, problem.lambda1)
+                - _geoimc_dense_objective(target, row, col, minus, problem.lambda1)
+            ) / 2e-5
+        np.testing.assert_allclose(actual, numerical, rtol=2e-7, atol=2e-9)
+
+
+@pytest.mark.experimental
+@pytest.mark.parametrize(
+    "row_sparse,col_sparse",
+    [(False, False), (True, False), (False, True), (True, True)],
+)
+def test_geoimc_sparse_features_fit_and_cold_start(
+    geoimc_sparse_case, row_sparse, col_sparse
+):
+    target, row, col, weights = geoimc_sparse_case
+    features = [
+        csr_matrix(row) if row_sparse else row.copy(),
+        csr_matrix(col) if col_sparse else col.copy(),
+    ]
+    train = DataPtr(target, features)
+    train.data_indices = np.array([0, 2, 3, 5, 6])
+    train.entity_indices[0] = train.data_indices
+    dense_train = DataPtr(target[train.data_indices], [row[train.data_indices], col])
+    models = [IMCProblem(data, rank=2, lambda1=0.03) for data in [train, dense_train]]
+    initial_cost = _geoimc_dense_objective(
+        dense_train.get_data(), dense_train.get_entity("row"), col, weights, 0.03
+    )
+    for model in models:
+        model.W = [value.copy() for value in weights]
+        model.solve(30, 8, 0)
+        assert model.optima_reached
+        assert all(np.isfinite(value).all() for value in model.W)
+    for actual, expected in zip(models[0].W, models[1].W):
+        np.testing.assert_allclose(actual, expected, rtol=1e-8, atol=1e-10)
+    final_cost = _geoimc_dense_objective(
+        dense_train.get_data(), dense_train.get_entity("row"), col, models[0].W, 0.03
+    )
+    assert final_cost < initial_cost
+    held_out = np.array([1, 4, 7])
+    test = DataPtr(target, features)
+    test.data_indices = held_out
+    test.entity_indices[0] = held_out
+    scores = Inferer().infer(test, models[0].W)
+    expected = (
+        row[held_out] @ models[1].W[0] @ models[1].W[1] @ models[1].W[2].T @ col.T
+    )
+    np.testing.assert_allclose(scores, expected, rtol=1e-8, atol=1e-10)
+    for actual, expected in zip(features, [row, col]):
+        np.testing.assert_array_equal(
+            actual.toarray() if hasattr(actual, "toarray") else actual, expected
+        )
+    for sparse, actual in zip([row_sparse, col_sparse], features):
+        if sparse:
+            assert isinstance(actual, csr_matrix)
