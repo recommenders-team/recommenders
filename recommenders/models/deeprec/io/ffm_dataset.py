@@ -119,6 +119,15 @@ class FFMDataset:
         feat_values = []
         for i, instance in enumerate(features):
             for field_idx, feature_idx, feature_value in instance:
+                # A flattened row may be in range while referring to a different
+                # instance. Validate the field before adding the instance offset.
+                if not 0 <= field_idx < self.field_count:
+                    raise ValueError(
+                        "Found 0-based field index {0} outside [0, {1}); check "
+                        "the data format and FIELD_COUNT setting.".format(
+                            field_idx, self.field_count
+                        )
+                    )
                 rows.append(i * self.field_count + field_idx)
                 feat_ids.append(feature_idx)
                 feat_values.append(feature_value)
