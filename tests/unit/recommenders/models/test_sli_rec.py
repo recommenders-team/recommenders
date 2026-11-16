@@ -3,6 +3,7 @@
 
 import os
 import pickle
+import copy
 
 import numpy as np
 import pytest
@@ -309,6 +310,141 @@ def test_slirec_forward_shapes(synthetic_slirec):
         logit = model.forward(batch)
     n = np_batch["labels"].shape[0]
     assert logit.shape == (n, 1)
+
+
+@pytest.mark.parametrize("batch_num_ngs", [0, 2])
+@pytest.mark.parametrize(
+    "maximum, history_length", [(5, 1), (5, 2), (5, 5), (5, 7), (1, 1), (1, 3)]
+)
+def test_slirec_fusion_uses_latest_observed_time(
+    synthetic_slirec, tmp_path, maximum, history_length, batch_num_ngs
+):
+    model = _build_model(
+        synthetic_slirec, max_seq_length=maximum, enable_BN=False, user_dropout=False
+    ).eval()
+    start, day = 1300000000, 86400
+    latest = start + (history_length - 1) * day
+    items = ",".join(f"I{i + 1}" for i in range(history_length))
+    categories = ",".join(["C1"] * history_length)
+    timestamps = ",".join(str(start + i * day) for i in range(history_length))
+    data = tmp_path / "recency.tsv"
+    data.write_text(
+        "\n".join(
+            f"1\tU1\tI{target}\tC1\t{latest + 3 * day}\t"
+            f"{items}\t{categories}\t{timestamps}"
+            for target in range(1, 9)
+        )
+        + "\n"
+    )
+    batch = model._to_tensors(
+        next(
+            model.iterator.load_data_from_file(
+                str(data), batch_size=8, batch_num_ngs=batch_num_ngs
+            )
+        )
+    )
+    observed = []
+    hook = model.fcn_alpha.register_forward_pre_hook(
+        lambda module, args: observed.append(args[0].detach().clone())
+    )
+    with torch.no_grad():
+        model(batch)
+    hook.remove()
+    assert len(observed) == 1
+    assert observed[0].shape[0] == 8 * (batch_num_ngs + 1)
+    torch.testing.assert_close(
+        observed[0][:, -1],
+        torch.full_like(observed[0][:, -1], np.log(3.0)),
+    )
+
+
+def test_slirec_fusion_ignores_padding_with_empty_and_mixed_histories(
+    synthetic_slirec,
+):
+    model = _build_model(
+        synthetic_slirec, max_seq_length=5, enable_BN=False, user_dropout=False
+    ).eval()
+    batch = model._to_tensors(
+        next(
+            model.iterator.load_data_from_file(
+                os.path.join(synthetic_slirec["dir"], "test_data"), batch_size=4
+            )
+        )
+    )
+    lengths = [0, 1, 3, 5]
+    batch["mask"].zero_()
+    times = torch.full((4, 10), 123.0, device=model.device)
+    batch["time_to_now"] = times[:, ::2]  # a noncontiguous time-feature view
+    for row, length in enumerate(lengths):
+        batch["mask"][row, :length] = 1
+        batch["time_to_now"][row, :length] = torch.arange(
+            length, 0, -1, dtype=torch.float32, device=model.device
+        )
+    observed = []
+    hook = model.fcn_alpha.register_forward_pre_hook(
+        lambda module, args: observed.append(args[0].detach().clone())
+    )
+    with torch.no_grad():
+        output = model(batch)
+    hook.remove()
+    assert torch.isfinite(output).all()
+    torch.testing.assert_close(
+        observed[0][:, -1], torch.tensor([0.0, 1.0, 1.0, 1.0], device=model.device)
+    )
+
+
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_slirec_recency_matches_reference_optimizer_step(synthetic_slirec, dtype):
+    dtype = getattr(torch, dtype)
+    model = _build_model(
+        synthetic_slirec,
+        max_seq_length=9,
+        init_value=0.5,
+        enable_BN=False,
+        user_dropout=False,
+    ).to(dtype=dtype)
+    reference = copy.deepcopy(model)
+    batch = model._to_tensors(
+        next(
+            model.iterator.load_data_from_file(
+                os.path.join(synthetic_slirec["dir"], "test_data"), batch_size=8
+            )
+        )
+    )
+    batch = {
+        key: value.to(dtype=dtype) if value.is_floating_point() else value
+        for key, value in batch.items()
+    }
+    # Independent row-wise reference: retain only observed events, then take the
+    # final event's time feature. All synthetic rows contain real observations.
+    expected_time = torch.stack(
+        [
+            times[mask.bool()][-1]
+            for times, mask in zip(batch["time_to_now"], batch["mask"])
+        ]
+    ).unsqueeze(1)
+    hook = reference.fcn_alpha.register_forward_pre_hook(
+        lambda module, args: (torch.cat([args[0][:, :-1], expected_time], dim=1),)
+    )
+    optimizers = [
+        torch.optim.Adam(m.parameters(), lr=0.001) for m in (model, reference)
+    ]
+    predictions = [m(batch) for m in (model, reference)]
+    hook.remove()
+    torch.testing.assert_close(predictions[0], predictions[1])
+    for prediction in predictions:
+        torch.nn.functional.binary_cross_entropy_with_logits(
+            prediction, batch["labels"]
+        ).backward()
+    for actual, expected in zip(model.parameters(), reference.parameters()):
+        if expected.grad is not None:
+            assert torch.isfinite(actual.grad).all()
+            torch.testing.assert_close(actual.grad, expected.grad)
+    for optimizer in optimizers:
+        optimizer.step()
+    for actual, expected in zip(model.parameters(), reference.parameters()):
+        assert torch.isfinite(actual).all()
+        torch.testing.assert_close(actual, expected)
 
 
 def test_slirec_fit_and_eval_smoke(synthetic_slirec):
