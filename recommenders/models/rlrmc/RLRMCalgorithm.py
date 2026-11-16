@@ -13,7 +13,6 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
 from numba import njit, prange
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -260,42 +259,49 @@ class RLRMCalgorithm(object):
         return [gradU1, gradU2, gradB]
 
     def predict(self, user_input, item_input, low_memory=False):
-        """Predict function of this trained model
+        """Predict ratings for each requested pair in its original order.
 
         Args:
             user_input ( list or element of list ): userID or userID list
             item_input ( list or element of list ): itemID or itemID list
+            low_memory (bool): Score one pair at a time instead of using sparse
+                batch scoring. Both paths restore the training mean.
 
         Returns:
-            list or float: list of predicted rating or predicted rating score.
+            np.ndarray: Predicted ratings, including repeated user-item pairs.
         """
         # index converting
-        user_input = np.array([self.user2id[x] for x in user_input])  # rows
-        item_input = np.array([self.item2id[x] for x in item_input])  # columns
+        user_input = np.array([self.user2id[x] for x in user_input], dtype=np.intp)
+        item_input = np.array([self.item2id[x] for x in item_input], dtype=np.intp)
         num_test = user_input.shape[0]
         if num_test != item_input.shape[0]:
             print("ERROR! Dimension mismatch in test data.")
             return None
-        output = np.empty(item_input.shape, dtype=np.float64)
-        output.fill(-self.train_mean)
         L = self.L
         R = self.R
         if low_memory:
             # for-loop
+            output = np.full(num_test, self.train_mean, dtype=np.float64)
             for i in np.arange(num_test):
                 output[i] += np.dot(L[user_input[i], :], R[item_input[i], :])
         else:
             # matrix multiplication
             d = self.model_param.get("num_row")
             T = self.model_param.get("num_col")
-            test = csr_matrix((output, (user_input, item_input)), shape=(d, T))
-            RLRMCalgorithm._computeLoss_csrmatrix(
-                L, R.T, test.data, test.indices, test.indptr, output
-            )
             lin_index_org = np.ravel_multi_index(
                 (user_input, item_input), dims=(d, T), mode="raise", order="C"
             )
-            idx1 = np.argsort(lin_index_org)
-            idx2 = np.argsort(idx1)
-            output = output[idx2]
+            # CSR combines duplicate coordinates. Score each sorted unique pair
+            # once, then restore every occurrence without summing mean offsets.
+            unique_pairs, inverse = np.unique(lin_index_org, return_inverse=True)
+            rows, cols = np.unravel_index(unique_pairs, (d, T))
+            test = csr_matrix(
+                (np.full(unique_pairs.size, -self.train_mean), (rows, cols)),
+                shape=(d, T),
+            )
+            output = np.empty(unique_pairs.size, dtype=np.float64)
+            RLRMCalgorithm._computeLoss_csrmatrix(
+                L, R.T, test.data, test.indices, test.indptr, output
+            )
+            output = output[inverse]
         return output

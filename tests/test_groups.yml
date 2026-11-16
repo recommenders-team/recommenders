@@ -473,3 +473,4 @@ experimental:
     - tests/unit/recommenders/models/test_geoimc.py::test_inferer_init
     - tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer
     - tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs
+    - tests/unit/recommenders/models/test_rlrmc.py
