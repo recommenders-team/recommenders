@@ -83,7 +83,7 @@ def interactions(df):
         (x, [y]) for x, y in zip(df.userID, df["occupation"])
     )
 
-    (interactions, _) = dataset.build_interactions(df.iloc[:, 0:3].values)
+    interactions, _ = dataset.build_interactions(df.iloc[:, 0:3].values)
 
     train_interactions, test_interactions = cross_validation.random_train_test_split(
         interactions,
@@ -180,18 +180,84 @@ def test_prepare_test_df():
     iids = np.array([0, 1, 2, 1, 0])
     uid_map = {"user_a": 0, "user_b": 1, "user_c": 2}
     iid_map = {"item_x": 0, "item_y": 1, "item_z": 2}
-    
+
     weights_data = [1.0, 2.0, 3.0, 4.0, 5.0]
-    weights = sparse.coo_matrix(
-        (weights_data, (uids, iids)),
-        shape=(3, 3)
-    )
-    
+    weights = sparse.coo_matrix((weights_data, (uids, iids)), shape=(3, 3))
+
     test_idx = slice(0, 3)
     result = prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights)
-    
+
     assert result.shape[0] == 3, "Should have 3 rows"
-    assert list(result.columns) == ["userID", "itemID", "rating"], "Should have correct columns"
-    assert result["userID"].tolist() == ["user_a", "user_b", "user_c"], "User IDs should be mapped correctly"
-    assert result["itemID"].tolist() == ["item_x", "item_y", "item_z"], "Item IDs should be mapped correctly"
+    assert list(result.columns) == [
+        "userID",
+        "itemID",
+        "rating",
+    ], "Should have correct columns"
+    assert result["userID"].tolist() == [
+        "user_a",
+        "user_b",
+        "user_c",
+    ], "User IDs should be mapped correctly"
+    assert result["itemID"].tolist() == [
+        "item_x",
+        "item_y",
+        "item_z",
+    ], "Item IDs should be mapped correctly"
     assert result["rating"].tolist() == [1.0, 2.0, 3.0], "Ratings should be correct"
+
+
+@pytest.mark.experimental
+@pytest.mark.parametrize("entity", ["users", "items"])
+@pytest.mark.parametrize("feature_kind", ["shared", "zero", "distinct"])
+@pytest.mark.parametrize("count", [0, 1, 3, 5])
+def test_similar_entities_exclude_query_with_ties(entity, feature_kind, count):
+    """Return other entities even when the query is tied with several candidates."""
+    from scipy import sparse
+
+    if feature_kind == "distinct":
+        features = sparse.eye(6, dtype=np.float32, format="csr")
+    elif feature_kind == "shared":
+        features = sparse.csr_matrix(np.ones((6, 1), dtype=np.float32))
+    else:
+        features = sparse.csr_matrix((6, 1), dtype=np.float32)
+
+    training_features = (
+        sparse.csr_matrix(np.ones((6, 1), dtype=np.float32))
+        if feature_kind == "zero"
+        else features
+    )
+    fitted = LightFM(no_components=4, loss="warp", random_state=7).fit(
+        sparse.eye(6, dtype=np.float32, format="coo"),
+        user_features=training_features,
+        item_features=training_features,
+        epochs=1,
+        num_threads=1,
+    )
+    if entity == "users":
+        search = similar_users
+        id_column = "userID"
+        _, representations = fitted.get_user_representations(features)
+    else:
+        search = similar_items
+        id_column = "itemID"
+        _, representations = fitted.get_item_representations(features)
+
+    # Normalize in float64 independently of the helper's ranking implementation.
+    vectors = representations.astype(np.float64)
+    norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+    normalized = vectors / np.where(norms == 0, 1, norms)
+    cosine = normalized @ normalized.T
+    for query in range(6):
+        result = search(query, features, fitted, N=count)
+        ids = result[id_column].to_numpy(dtype=int)
+        scores = result["score"].to_numpy(dtype=float)
+        assert len(result) == count
+        assert len(set(ids)) == count
+        assert query not in ids
+        assert result["score"].is_monotonic_decreasing
+        np.testing.assert_allclose(scores, cosine[query, ids], rtol=1e-6, atol=1e-7)
+        expected_scores = sorted(
+            (cosine[query, other] for other in range(6) if other != query),
+            reverse=True,
+        )[:count]
+        np.testing.assert_allclose(scores, expected_scores, rtol=1e-6, atol=1e-7)
