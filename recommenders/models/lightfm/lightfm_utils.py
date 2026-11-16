@@ -203,15 +203,15 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
     csr_weights = weights.tocsr()
     ratings = np.array(csr_weights[test_uids, test_iids]).flatten()
 
-    test_df = pd.DataFrame({
-        "userID": uid_map_keys[test_uids],
-        "itemID": iid_map_keys[test_iids],
-        "rating": ratings
-
-    })
+    test_df = pd.DataFrame(
+        {
+            "userID": uid_map_keys[test_uids],
+            "itemID": iid_map_keys[test_iids],
+            "rating": ratings,
+        }
+    )
 
     return test_df
-
 
 
 def prepare_all_predictions(
@@ -237,33 +237,33 @@ def prepare_all_predictions(
     Returns:
         pandas.DataFrame: all predictions
     """
-    users, items, preds = [], [], []  # noqa: F841
+    users, items = [], []
     item = list(data.itemID.unique())
     for user in data.userID.unique():
         user = [user] * len(item)
         users.extend(user)
         items.extend(item)
     all_predictions = pd.DataFrame(data={"userID": users, "itemID": items})
-    all_predictions["uid"] = all_predictions.userID.map(uid_map)
-    all_predictions["iid"] = all_predictions.itemID.map(iid_map)
-
-    dok_weights = interactions.todok()
-    all_predictions["rating"] = all_predictions.apply(
-        lambda x: dok_weights[x.uid, x.iid], axis=1
+    uids = all_predictions.userID.map(uid_map).to_numpy(dtype=np.int32)
+    iids = all_predictions.itemID.map(iid_map).to_numpy(dtype=np.int32)
+    ratings = (
+        np.asarray(interactions.tocsr()[uids, iids]).ravel()
+        if uids.size
+        else np.empty(0)
     )
+    keep = ratings < 1
+    all_predictions = all_predictions.loc[keep].reset_index(drop=True)
 
-    all_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)
-    all_predictions = all_predictions.drop("rating", axis=1)
-
-    all_predictions["prediction"] = all_predictions.apply(
-        lambda x: model.predict(
-            user_ids=np.array([x["uid"]], dtype=np.int32),
-            item_ids=np.array([x["iid"]], dtype=np.int32),
+    all_predictions["prediction"] = (
+        model.predict(
+            user_ids=uids[keep],
+            item_ids=iids[keep],
             user_features=user_features,
             item_features=item_features,
             num_threads=num_threads,
-        )[0],
-        axis=1,
+        )
+        if keep.any()
+        else np.empty(0, dtype=np.float32)
     )
 
     return all_predictions[["userID", "itemID", "prediction"]]
