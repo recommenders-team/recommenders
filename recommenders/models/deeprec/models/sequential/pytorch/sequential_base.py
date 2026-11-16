@@ -473,7 +473,8 @@ class SequentialBaseModel(nn.Module, abc.ABC):
         Args:
             filename (str): Evaluation file, grouped as ``1 + num_ngs`` consecutive rows.
             num_ngs (int): Negatives per positive in ``filename``.
-            batch_size (int): Batch size; defaults to the value used in ``fit``.
+            batch_size (int): Inference batch size; defaults to the value used in
+                ``fit``. Ranking groups may span inference batches.
             metrics, pairwise_metrics (list[str]): Override the reported metrics.
         """
         batch_size = batch_size if batch_size is not None else self.batch_size
@@ -482,7 +483,7 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             pairwise_metrics if pairwise_metrics is not None else self.pairwise_metrics
         )
         self.eval()
-        preds, labels, group_preds, group_labels = [], [], [], []
+        preds, labels = [], []
         group = num_ngs + 1
         for np_batch in self.iterator.load_data_from_file(
             filename,
@@ -498,8 +499,10 @@ class SequentialBaseModel(nn.Module, abc.ABC):
             step_labels = np_batch["labels"]
             preds.extend(np.reshape(pred, -1))
             labels.extend(np.reshape(step_labels, -1))
-            group_preds.extend(np.reshape(pred, (-1, group)))
-            group_labels.extend(np.reshape(step_labels, (-1, group)))
+
+        # Group in file order after collecting batches, which can split a group.
+        group_preds = np.reshape(preds, (-1, group))
+        group_labels = np.reshape(labels, (-1, group))
 
         res = cal_metric(labels, preds, metrics)
         res_pairwise = cal_metric(group_labels, group_preds, pairwise_metrics)
