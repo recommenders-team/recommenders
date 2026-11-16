@@ -154,6 +154,9 @@ class NumEncoder:
     def transform(self, df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         """Input a testing / validation set and return the converted 2 numpy.ndarray (x, y).
 
+        Unseen categories use a fitted rare-value bucket when available, or an
+        all-zero binary code otherwise.
+
         Args:
             df: Input dataframe.
 
@@ -197,7 +200,8 @@ class NumEncoder:
             del feats
             gc.collect()
         for item in tqdm(self.cate_cols):
-            feats = df[item].values
+            # Unknown ordinal categories are negative and may make the column float.
+            feats = df[item].clip(lower=0).to_numpy(dtype=np.int64)
             bit_len = self.Max_len[item]
             res = unpackbits(feats, bit_len).reshape((samples, -1))
             rows = np.concatenate([rows, res], axis=1)
