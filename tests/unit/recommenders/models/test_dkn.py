@@ -1,7 +1,9 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+import copy
 import os
+import types
 
 import numpy as np
 import pytest
@@ -9,6 +11,7 @@ import pytest
 try:
     import torch
     import torch.nn as nn
+    import torch.nn.functional as F
 
     from recommenders.models.deeprec.models.pytorch.dkn import (
         DKN,
@@ -241,6 +244,147 @@ def test_kcnn_copies_the_word_embeddings(build_kcnn):
 def test_kcnn_rejects_contexts_without_entities(build_kcnn):
     with pytest.raises(ValueError, match="context_embeddings requires"):
         build_kcnn(use_entity=False, use_context=True)
+
+
+def _full_table_forward(kcnn, words, entities):
+    """Reference calculation that projects every knowledge-graph row."""
+    word_table, *knowledge_tables = kcnn.embedding_tables()
+    channels = [F.embedding(words, word_table)] + [
+        F.embedding(entities, table) for table in knowledge_tables
+    ]
+    x = torch.cat(channels, dim=-1).transpose(1, 2)
+    return torch.cat([F.relu(conv(x)).amax(dim=-1) for conv in kcnn.convs], dim=1)
+
+
+@pytest.mark.parametrize(
+    "entity_rows, context_rows", [(127, 127), (127, None), (7, 127), (127, 7), (7, 7)]
+)
+def test_kcnn_bounds_projection_work_by_batch_or_vocabulary(
+    build_kcnn, entity_rows, context_rows
+):
+    rng = np.random.RandomState(17)
+    kcnn = build_kcnn(
+        entity_embeddings=rng.normal(size=(entity_rows, ENTITY_DIM)).astype(np.float32),
+        context_embeddings=(
+            None
+            if context_rows is None
+            else rng.normal(size=(context_rows, ENTITY_DIM)).astype(np.float32)
+        ),
+    )
+    words = torch.arange(20).reshape(4, 5) % 10
+    entities = words % min(entity_rows, context_rows or entity_rows)
+    projected_rows = []
+
+    def record_rows(module, inputs):
+        projected_rows.append(inputs[0].numel() // inputs[0].shape[-1])
+
+    transforms = [kcnn.entity_transform]
+    if context_rows is not None:
+        transforms.append(kcnn.context_transform)
+    handles = [layer.register_forward_pre_hook(record_rows) for layer in transforms]
+    try:
+        kcnn(words, entities)
+    finally:
+        for handle in handles:
+            handle.remove()
+
+    table_rows = [entity_rows] + ([] if context_rows is None else [context_rows])
+    assert projected_rows == [min(entities.numel(), rows) for rows in table_rows]
+
+
+@pytest.mark.parametrize("entity_rows", [7, 127])
+@pytest.mark.parametrize("use_context", [False, True])
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_kcnn_projection_order_preserves_outputs_and_gradients(
+    build_kcnn, entity_rows, use_context, dtype
+):
+    dtype = getattr(torch, dtype)
+    rng = np.random.RandomState(23)
+    actual = build_kcnn(
+        entity_embeddings=rng.normal(size=(entity_rows, ENTITY_DIM)).astype(np.float32),
+        context_embeddings=(
+            rng.normal(size=(entity_rows, ENTITY_DIM)).astype(np.float32)
+            if use_context
+            else None
+        ),
+    ).to(dtype=dtype)
+    reference = copy.deepcopy(actual)
+    # Repeated IDs test gradient accumulation; transposition gives noncontiguous IDs.
+    words = (torch.arange(20).reshape(5, 4) % 10).T
+    entities = words % 7
+    out = actual(words, entities)
+    expected = _full_table_forward(reference, words, entities)
+    torch.testing.assert_close(out, expected, rtol=2e-5, atol=2e-6)
+
+    weights = torch.linspace(0.1, 1.0, out.numel(), dtype=dtype).reshape_as(out)
+    (out * weights).sum().backward()
+    (expected * weights).sum().backward()
+    for name, parameter in actual.named_parameters():
+        torch.testing.assert_close(
+            parameter.grad,
+            reference.get_parameter(name).grad,
+            rtol=2e-5,
+            atol=2e-6,
+            msg=lambda message: name + ": " + message,
+        )
+
+
+def test_kcnn_projection_order_preserves_word_only_model(build_kcnn):
+    kcnn = build_kcnn(use_entity=False, use_context=False)
+    words = torch.arange(20).reshape(4, 5) % 10
+    entities = torch.full_like(words, 10000)  # Ignored without a knowledge channel.
+    torch.testing.assert_close(
+        kcnn(words, entities), _full_table_forward(kcnn, words, entities)
+    )
+
+
+def test_kcnn_full_table_regularization_includes_unselected_entities(
+    build_model, first_batch, synthetic_dkn
+):
+    model = build_model().eval()
+    _, batch = first_batch(model, synthetic_dkn["train"], 8)
+    # Extra rows are absent from every article, but still contribute to regularization.
+    for name in ("entity_embedding", "context_embedding"):
+        table = getattr(model.kcnn, name)
+        setattr(
+            model.kcnn, name, torch.cat([table, table.new_zeros(127, table.shape[1])])
+        )
+    before = model(batch).detach()
+    regular_before = model._regular_loss(0.1, 0.2, 0.0, 0.0).detach()
+    with torch.no_grad():
+        model.kcnn.entity_embedding[-1].fill_(10.0)
+        model.kcnn.context_embedding[-1].fill_(10.0)
+    torch.testing.assert_close(model(batch), before)
+    assert model._regular_loss(0.1, 0.2, 0.0, 0.0) > regular_before
+
+
+def test_kcnn_projection_order_preserves_dkn_training_and_evaluation(
+    build_model, first_batch, synthetic_dkn
+):
+    model = build_model()
+    for name in ("entity_embedding", "context_embedding"):
+        table = getattr(model.kcnn, name)
+        setattr(model.kcnn, name, table.repeat(20, 1))
+    reference = copy.deepcopy(model)
+    reference.kcnn.forward = types.MethodType(_full_table_forward, reference.kcnn)
+    _, batch = first_batch(model, synthetic_dkn["train"], 8)
+
+    losses = []
+    for network in (model, reference):
+        optimizer = torch.optim.SGD(network.parameters(), lr=0.1)
+        loss = network._data_loss(batch) + network._regular_loss(0.01, 0.02, 0.03, 0.04)
+        loss.backward()
+        optimizer.step()
+        losses.append(loss.detach())
+    torch.testing.assert_close(*losses)
+    for name, parameter in model.named_parameters():
+        torch.testing.assert_close(
+            parameter, reference.get_parameter(name), rtol=2e-5, atol=2e-6
+        )
+
+    assert model.run_eval(synthetic_dkn["test"], batch_size=8) == reference.run_eval(
+        synthetic_dkn["test"], batch_size=8
+    )
 
 
 # --------------------------- DKN components ---------------------------
