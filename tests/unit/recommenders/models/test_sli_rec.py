@@ -3,6 +3,7 @@
 
 import os
 import pickle
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -20,6 +21,7 @@ try:
     from recommenders.models.deeprec.models.sequential.pytorch.sequential_base import (
         Attention,
         FcnNet,
+        SequentialBaseModel,
     )
     from recommenders.models.deeprec.models.sequential.pytorch.sli_rec import (
         AttentionFcn,
@@ -212,6 +214,91 @@ def test_fcn_net_output_shape_2d_and_3d():
     net.eval()
     assert net(torch.randn(7, 12)).shape == (7, 1)
     assert net(torch.randn(7, 5, 12)).shape == (7, 5, 1)
+
+
+@pytest.mark.parametrize("dtype", ["float16", "float32", "float64"])
+@pytest.mark.parametrize("gap", [20.0, 1000.0])
+def test_pairwise_loss_and_gradients_remain_finite(dtype, gap):
+    dtype = getattr(torch, dtype)
+    logits = torch.tensor(
+        [[-gap, gap, 0.0], [gap, 0.0, -gap]], dtype=dtype, requires_grad=True
+    )
+    labels = torch.tensor([[1.0, 0.0, 0.0], [0.0, 0.0, 1.0]], dtype=dtype)
+    reference_logits = logits.detach().double().requires_grad_()
+    expected = torch.nn.functional.cross_entropy(reference_logits, torch.tensor([0, 2]))
+    loss = SequentialBaseModel._softmax_loss(
+        SimpleNamespace(train_num_ngs=2), logits, labels
+    )
+    tolerance = 0.002 if dtype == torch.float16 else 1e-6
+    torch.testing.assert_close(loss.double(), expected, rtol=tolerance, atol=tolerance)
+    loss.backward()
+    expected.backward()
+    assert torch.isfinite(logits.grad).all()
+    torch.testing.assert_close(
+        logits.grad.double(), reference_logits.grad, rtol=tolerance, atol=tolerance
+    )
+
+
+@pytest.mark.parametrize(
+    "labels",
+    [[[1, 0, 0], [0, 1, 0]], [[1, 1, 0], [0, 0, 0]], [[0.5, -1, 1], [0, 1, 0]]],
+)
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_pairwise_loss_preserves_positive_mask_and_group_reduction(labels, dtype):
+    dtype = getattr(torch, dtype)
+    logits = torch.tensor(
+        [[0.2, 0.8, -1.2], [-0.5, 1.4, 0.1]], dtype=dtype, requires_grad=True
+    )
+    labels = torch.tensor(labels, dtype=dtype)
+    probabilities = torch.softmax(logits, dim=-1)
+    expected = (
+        -3
+        * torch.where(labels == 1.0, probabilities, torch.ones_like(probabilities))
+        .log()
+        .mean()
+    )
+    actual = SequentialBaseModel._softmax_loss(
+        SimpleNamespace(train_num_ngs=2), logits, labels
+    )
+    torch.testing.assert_close(actual, expected)
+    expected_gradient = torch.autograd.grad(expected, logits, retain_graph=True)[0]
+    actual_gradient = torch.autograd.grad(actual, logits)[0]
+    torch.testing.assert_close(actual_gradient, expected_gradient)
+
+
+def test_pairwise_loss_supports_real_slirec_optimization(synthetic_slirec):
+    model = _build_model(
+        synthetic_slirec, enable_BN=False, user_dropout=False, init_value=2.0
+    ).to("cpu")
+    model.train_num_ngs = 4
+    np_batch = next(
+        batch
+        for batch in model.iterator.load_data_from_file(
+            os.path.join(synthetic_slirec["dir"], "test_data"),
+            batch_size=10,
+            batch_num_ngs=0,
+        )
+        if batch
+    )
+    batch = model._to_tensors(np_batch)
+    logits = model(batch)
+    # A valid training group whose positive currently has the lowest model score.
+    grouped = logits.view(-1, 5)
+    labels = torch.zeros_like(grouped)
+    labels.scatter_(1, grouped.argmin(dim=1, keepdim=True), 1.0)
+    expected = torch.nn.functional.cross_entropy(grouped, labels.argmax(dim=1))
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-6)
+    before = model.logit_fcn.out.weight.detach().clone()
+    loss = model._softmax_loss(logits, labels)
+    torch.testing.assert_close(loss, expected)
+    loss.backward()
+    assert all(
+        parameter.grad is None or torch.isfinite(parameter.grad).all()
+        for parameter in model.parameters()
+    )
+    optimizer.step()
+    assert not torch.equal(model.logit_fcn.out.weight, before)
+    assert all(torch.isfinite(parameter).all() for parameter in model.parameters())
 
 
 # --------------------------- Dataset ---------------------------

@@ -312,14 +312,15 @@ class SequentialBaseModel(nn.Module, abc.ABC):
         return out
 
     def _softmax_loss(self, logit: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        """Group-averaged positive log loss, without materializing probabilities."""
         group = self.train_num_ngs + 1
         logits = logit.view(-1, group)
         labels = labels.view(-1, group)
-        softmax_pred = torch.softmax(logits, dim=-1)
-        pos_softmax = torch.where(
-            labels == 1.0, softmax_pred, torch.ones_like(softmax_pred)
+        log_probabilities = torch.log_softmax(logits, dim=-1)
+        positive_log_probabilities = torch.where(
+            labels == 1.0, log_probabilities, torch.zeros_like(log_probabilities)
         )
-        return -group * torch.mean(torch.log(pos_softmax))
+        return -group * torch.mean(positive_log_probabilities)
 
     def _regular_loss(self, batch: dict) -> torch.Tensor:
         reg = torch.zeros((), device=self.device)
