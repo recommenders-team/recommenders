@@ -69,6 +69,10 @@ nightly:
     - tests/unit/recommenders/models/test_embdotbias_utils.py
     - tests/smoke/examples/test_notebooks_gpu.py::test_embdotbias_smoke
     - tests/functional/examples/test_notebooks_gpu.py::test_embdotbias_functional
+    - tests/unit/recommenders/models/test_two_tower_model.py
+    - tests/unit/recommenders/models/test_two_tower_utils.py
+    - tests/smoke/examples/test_notebooks_gpu.py::test_two_tower_smoke
+    - tests/functional/examples/test_notebooks_gpu.py::test_two_tower_functional
 
   group_gpu_003:
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm  # Always the first test to check the GPU works
@@ -451,6 +455,7 @@ pr_gate:
     - tests/unit/examples/test_notebooks_gpu.py::test_ncf
     - tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive
     - tests/unit/examples/test_notebooks_gpu.py::test_embdotbias
+    - tests/unit/examples/test_notebooks_gpu.py::test_two_tower
     - tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm  # Always the first test to check the GPU works
     - tests/unit/examples/test_notebooks_gpu.py::test_wide_deep
     - tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm

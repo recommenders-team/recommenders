@@ -81,6 +81,24 @@ def test_embdotbias_smoke(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
+def test_two_tower_smoke(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["two_tower"]
+    execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=3),
+    )
+    results = read_notebook(output_notebook)
+
+    assert results["map"] == pytest.approx(0.247348, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.381564, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.337222, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.172431, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.notebooks
+@pytest.mark.gpu
 def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xdeepfm_quickstart"]
     execute_notebook(

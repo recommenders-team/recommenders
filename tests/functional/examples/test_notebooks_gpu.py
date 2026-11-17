@@ -167,6 +167,39 @@ def test_embdotbias_functional(
 @pytest.mark.gpu
 @pytest.mark.notebooks
 @pytest.mark.parametrize(
+    "size, epochs, expected_values",
+    [
+        (
+            "100k",
+            5,
+            {
+                "map": 0.271784,
+                "ndcg": 0.411537,
+                "precision": 0.368187,
+                "recall": 0.192906,
+            },
+        ),
+    ],
+)
+def test_two_tower_functional(
+    notebooks, output_notebook, kernel_name, size, epochs, expected_values
+):
+    notebook_path = notebooks["two_tower"]
+    execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs),
+    )
+    results = read_notebook(output_notebook)
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
+@pytest.mark.parametrize(
     "epochs, expected_values, seed",
     [
         (

@@ -304,6 +304,21 @@ TF-IDF utilities
     :members:
 
 
+Two-Tower
+******************************
+.. automodule:: recommenders.models.two_tower.data_loader
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.two_tower.model
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.two_tower.training_utils
+    :members:
+    :special-members: __init__
+.. automodule:: recommenders.models.two_tower.utils
+    :members:
+
+
 Standard VAE
 ******************************
 .. automodule:: recommenders.models.vae.standard_vae

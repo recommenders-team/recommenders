@@ -23,6 +23,7 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [gru](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use GRU [13] to predict a set of movies the user is going to interact in a short time. |
 | [nextitnet](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use NextItNet [14] to predict a set of movies the user is going to interact in a short time. |
 | [sli-rec](slirec_amazon.ipynb) | Amazon | Python CPU, GPU | Use SLi-Rec [11] (PyTorch) to predict a set of movies the user is going to interact in a short time. |
+| [two-tower](two_tower_movielens.ipynb) | MovieLens | Python CPU, GPU | Utilizing a Two-Tower (dual-encoder) model [15] to retrieve top-k movie candidates in a Python+GPU (PyTorch) environment, using movie genres as item features.
 | [wide-and-deep](wide_deep_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Wide-and-Deep Model (Wide-and-Deep) [5] to predict movie ratings in a Python+GPU (TensorFlow) environment.
 | [xdeepfm](xdeepfm_criteo.ipynb) | Criteo | Python CPU, GPU |  Utilizing the eXtreme Deep Factorization Machine (xDeepFM) [3] (PyTorch) to learn both low and high order feature interactions for predicting CTR, in a Python+GPU environment.
 
@@ -40,3 +41,4 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 [12] _Personalized top-n sequential recommendation via convolutional sequence embedding_, Jiaxi Tang and Ke Wang, ACM WSDM 2018.<br>
 [13] _Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation_, Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio, arXiv preprint arXiv:1406.1078. 2014.<br>
 [14] _A Simple Convolutional Generative Network for Next Item Recommendation_, Fajie Yuan, Alexandros Karatzoglou, Ioannis Arapakis, Joemon M. Jose and Xiangnan He, WSDM 2019. <br>
+[15] _Sampling-Bias-Corrected Neural Modeling for Large Corpus Item Recommendations_, Xinyang Yi, Ji Yang, Lichan Hong, Derek Zhiyuan Cheng, Lukasz Heldt, Aditee Kumthekar, Zhe Zhao, Li Wei and Ed Chi. RecSys 2019.<br>

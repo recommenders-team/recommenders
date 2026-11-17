@@ -29,6 +29,18 @@ def test_embdotbias(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
+def test_two_tower(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["two_tower"]
+    execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="mock100", EPOCHS=1),
+    )
+
+
+@pytest.mark.notebooks
+@pytest.mark.gpu
 def test_ncf(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf"]
     execute_notebook(

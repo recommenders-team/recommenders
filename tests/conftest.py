@@ -230,6 +230,9 @@ def notebooks():
         "embdotbias": os.path.join(
             folder_notebooks, "00_quick_start", "embdotbias_movielens.ipynb"
         ),
+        "two_tower": os.path.join(
+            folder_notebooks, "00_quick_start", "two_tower_movielens.ipynb"
+        ),
         "xdeepfm_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "xdeepfm_criteo.ipynb"
         ),
