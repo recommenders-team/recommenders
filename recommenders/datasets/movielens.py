@@ -683,8 +683,8 @@ class MockMovielensSchema:
             size (int): number of rows to generate
             seed (int, optional): seeding the pseudo-number generation. Defaults to 100.
             keep_first_n_cols (int, optional): keep the first n default movielens columns.
-            keep_title_col (bool): remove the title column if False. Defaults to True.
-            keep_genre_col (bool): remove the genre column if False. Defaults to True.
+            keep_title_col (bool): remove the title column if False. Defaults to False.
+            keep_genre_col (bool): remove the genre column if False. Defaults to False.
 
         Returns:
             pandas.DataFrame: a mock dataset
