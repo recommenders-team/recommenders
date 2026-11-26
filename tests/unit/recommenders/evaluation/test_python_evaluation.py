@@ -266,6 +266,43 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
     ) == pytest.approx(0.785, TOL)
 
 
+@pytest.mark.parametrize(
+    "dtype, high_rating", [(np.int8, 8), (np.int16, 16), (np.int32, 32), (np.int64, 64)]
+)
+@pytest.mark.parametrize("perfect_order", [False, True])
+def test_ndcg_exponential_gain_does_not_overflow_integer_ratings(
+    dtype, high_rating, perfect_order
+):
+    truth = pd.DataFrame(
+        {
+            "userID": [1, 1],
+            "itemID": [1, 2],
+            "rating": np.array([high_rating, 1], dtype=dtype),
+        }
+    )
+    predictions = pd.DataFrame(
+        {
+            "userID": [1, 1],
+            "itemID": [1, 2],
+            "prediction": [1.0, 0.0] if perfect_order else [0.0, 1.0],
+        }
+    )
+    high_gain = float(2**high_rating - 1)
+    discount = np.log2(3)
+    expected = (
+        1.0
+        if perfect_order
+        else (1 + high_gain / discount) / (high_gain + 1 / discount)
+    )
+    result = ndcg_at_k(truth, predictions, k=2, score_type="exp", discfun_type="log2")
+    assert 0 <= result <= 1
+    assert result == pytest.approx(expected)
+    float_truth = truth.astype({"rating": float})
+    assert result == pytest.approx(
+        ndcg_at_k(float_truth, predictions, k=2, score_type="exp", discfun_type="log2")
+    )
+
+
 def test_python_map(rating_true, rating_pred, rating_nohit):
     assert (
         map(

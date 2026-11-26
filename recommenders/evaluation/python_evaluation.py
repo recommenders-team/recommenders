@@ -681,7 +681,7 @@ def ndcg_at_k(
     elif score_type == "raw":
         df_dcg["rel"] = df_dcg[col_rating]
     elif score_type == "exp":
-        df_dcg["rel"] = 2 ** df_dcg[col_rating] - 1
+        df_dcg["rel"] = 2.0 ** df_dcg[col_rating].astype(float) - 1
     else:
         raise ValueError("score_type must be one of 'binary', 'raw', 'exp'")
 
