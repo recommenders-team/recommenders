@@ -26,7 +26,7 @@ def compare_metric(df_list, metric="prec", stage="test"):
 
     Args:
         df_list (list): List of dataframes
-        metrics (str): name of metric to be extracted, optional
+        metric (str): name of metric to be extracted, optional
         stage (str): name of model fitting stage to be extracted, optional
 
     Returns:
